@@ -8,6 +8,7 @@ export default class BuildState {
   rules: Array<Rule> = []
 
   addRule (rule: Rule) {
+    console.log(`Add rule ${rule.constructor.name}`)
     this.rules.push(rule)
   }
 

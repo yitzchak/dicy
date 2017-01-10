@@ -1,7 +1,14 @@
 /* @flow */
 
 import BuildState from './BuildState'
+import File from './File'
 
 export default class RuleFactory {
-  async analyze (state: BuildState) {}
+  buildState: BuildState
+
+  constructor (buildState: BuildState) {
+    this.buildState = buildState
+  }
+
+  async analyze (files: Array<File>) {}
 }

@@ -8,17 +8,16 @@ export default class Rule {
   inputFiles: Map<string, File> = new Map()
   outputFiles: Map<string, File> = new Map()
   timeStamp: number
+  needsEvaluation: boolean = true
 
-  constructor (buildState: BuildState, inputPaths: Array<string> = [], outputPaths: Array<string> = []) {
+  constructor (buildState: BuildState) {
     this.buildState = buildState
-    buildState.addRule(this)
-    this.addInputFiles(inputPaths)
-    this.addOutputFiles(outputPaths)
   }
 
   async evaluate () {}
 
   getOutputFile (filePath: string) {
+    console.log(`Output file ${filePath}`)
     let file = this.outputFiles.get(filePath)
 
     if (!file) {
@@ -34,6 +33,7 @@ export default class Rule {
   }
 
   getInputFile (filePath: string) {
+    console.log(`Input file ${filePath}`)
     let file = this.inputFiles.get(filePath)
 
     if (!file) {

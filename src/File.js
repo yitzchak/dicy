@@ -6,6 +6,7 @@ export default class File {
   filePath: string
   timeStamp: number
   rules: Array<Rule> = []
+  analyzed: boolean = false
 
   constructor (filePath: string) {
     this.filePath = filePath
