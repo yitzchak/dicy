@@ -16,12 +16,11 @@ export default class Rule {
 
   async evaluate () {}
 
-  getOutputFile (filePath: string) {
-    console.log(`Output file ${filePath}`)
-    let file = this.outputFiles.get(filePath)
+  async getOutputFile (filePath: string) {
+    let file: ?File = this.outputFiles.get(filePath)
 
     if (!file) {
-      file = this.buildState.getFile(filePath)
+      file = await this.buildState.getFile(filePath)
       this.outputFiles.set(filePath, file)
     }
 
@@ -29,15 +28,14 @@ export default class Rule {
   }
 
   addOutputFiles (filePaths: Array<string>) {
-    filePaths.forEach(filePath => this.getOutputFile(filePath))
+    return Promise.all(filePaths.map(filePath => this.getOutputFile(filePath)))
   }
 
-  getInputFile (filePath: string) {
-    console.log(`Input file ${filePath}`)
-    let file = this.inputFiles.get(filePath)
+  async getInputFile (filePath: string) {
+    let file: ?File = this.inputFiles.get(filePath)
 
     if (!file) {
-      file = this.buildState.getFile(filePath)
+      file = await this.buildState.getFile(filePath)
       file.addRule(this)
       this.inputFiles.set(filePath, file)
     }
@@ -46,6 +44,6 @@ export default class Rule {
   }
 
   addInputFiles (filePaths: Array<string>) {
-    filePaths.forEach(filePath => this.getInputFile(filePath))
+    return Promise.all(filePaths.forEach(filePath => this.getInputFile(filePath)))
   }
 }

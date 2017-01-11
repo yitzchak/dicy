@@ -8,7 +8,7 @@ import File from '../File'
 import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
-class LaTeXRule extends Rule {
+class LaTeX extends Rule {
   filePath: string
 
   constructor (buildState: BuildState, filePath: string) {
@@ -33,18 +33,35 @@ class LaTeXRule extends Rule {
       '-recorder'
     ]
 
+    if (this.buildState.options.outputDirectory) {
+      args.push(`-output-directory="${this.buildState.options.outputDirectory}"`)
+    }
+
     args.push(`"${this.filePath}"`)
 
     return args
   }
 
+  resolveOutputPath (ext: string) {
+    let { dir, name } = path.parse(this.filePath)
+
+    if (this.buildState.options.jobName) {
+      name = this.buildState.options.jobName
+    }
+
+    if (this.buildState.options.outputDirectory) {
+      dir = path.resolve(dir, this.buildState.options.outputDirectory)
+    }
+
+    return path.format({ dir, name, ext })
+  }
+
   async parseRecorderOutput () {
-    const { dir, name } = path.parse(this.filePath)
-    const flsPath = path.format({ dir, name, ext: '.fls' })
+    const flsPath = this.resolveOutputPath('.fls')
     const contents = await fs.readFile(flsPath, { encoding: 'utf-8' })
     const filePattern = /^(INPUT|OUTPUT|PWD) (.*)$/gm
     let match
-    let rootPath: string
+    let rootPath: string = ''
 
     while ((match = filePattern.exec(contents)) !== null) {
       switch (match[1]) {
@@ -52,21 +69,22 @@ class LaTeXRule extends Rule {
           rootPath = match[2]
           break
         case 'INPUT':
-          this.getInputFile(path.resolve(rootPath, match[2]))
+          await this.getInputFile(path.resolve(rootPath, match[2]))
           break
         case 'OUTPUT':
-          this.getOutputFile(path.resolve(rootPath, match[2]))
+          const outputFile = await this.getOutputFile(path.resolve(rootPath, match[2]))
+          await outputFile.update()
           break
       }
     }
   }
 }
 
-export default class LaTeX extends RuleFactory {
+export default class LaTeXFactory extends RuleFactory {
   async analyze (files: Array<File>) {
     for (const file: File of files) {
-      if (/\.tex$/i.test(file.filePath)) {
-        this.buildState.addRule(new LaTeXRule(this.buildState, file.filePath))
+      if (file.type === 'LaTeX') {
+        this.buildState.addRule(new LaTeX(this.buildState, file.filePath))
       }
     }
   }

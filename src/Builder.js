@@ -42,9 +42,37 @@ export default class Builder {
   async evaluate () {
     for (const rule: Rule of this.buildState.rules) {
       if (rule.needsEvaluation) {
-        await rule.evaluate()
+        console.log(`Evaluating rule ${rule.constructor.name}`)
+        rule.timeStamp = new Date()
         rule.needsEvaluation = false
+        await rule.evaluate()
       }
+    }
+  }
+
+  async checkUpdates () {
+    for (const file of this.buildState.files.values()) {
+      if (file.hasBeenUpdated) {
+        for (const rule of file.rules) {
+          if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
+            console.log(`${file.filePath} triggered evaluation of ${rule.constructor.name}`)
+            rule.needsEvaluation = true
+          }
+        }
+        file.hasBeenUpdated = false
+      }
+    }
+  }
+
+  async build () {
+    let i = 0
+
+    while (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
+      this.buildState.rules.some(rule => rule.needsEvaluation)) {
+      await this.analyze()
+      await this.evaluate()
+      await this.checkUpdates()
+      if (++i === 5) break
     }
   }
 }
