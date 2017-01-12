@@ -1,6 +1,7 @@
 /* @flow */
 
 import crypto from 'crypto'
+import path from 'path'
 import Rule from './Rule'
 import fs from 'mz/fs'
 import type { FileType } from './types'
@@ -28,6 +29,16 @@ export default class File {
 
   constructor (filePath: string) {
     this.filePath = filePath
+  }
+
+  static async create (filePath: string) {
+    const file = new File(filePath)
+
+    await file.findType()
+    await file.updateTimeStamp()
+    await file.updateHash()
+
+    return file
   }
 
   async findType () {

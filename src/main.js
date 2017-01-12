@@ -15,17 +15,10 @@ program
   .option('--output-directory <outputDirectory>', 'output directory')
   .option('--job-name <jobName>', 'job name for job')
   .action(async (inputs, env) => {
-    const buildState = new BuildState()
-    const builder = new Builder(buildState)
-
     for (const filePath of inputs) {
-      await buildState.getFile(path.resolve(filePath))
+      const builder = await Builder.create(path.resolve(filePath), env)
+      await builder.build()
     }
-
-    buildState.setOptions(env)
-
-    await builder.initialize()
-    await builder.build()
   })
 
 program

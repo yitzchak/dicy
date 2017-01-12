@@ -8,6 +8,18 @@ export default class BuildState {
   rules: Array<Rule> = []
   options: Object = {}
 
+  constructor (options = {}) {
+    Object.assign(this.options, options)
+  }
+
+  static async create (filePath: string, options = {}) {
+    const buildState = new BuildState()
+
+    await buildState.getFile(filePath)
+
+    return buildState
+  }
+
   addRule (rule: Rule) {
     console.log(`Add rule ${rule.constructor.name}`)
     this.rules.push(rule)
@@ -17,10 +29,7 @@ export default class BuildState {
     let file: ?File = this.files.get(filePath)
 
     if (!file) {
-      file = new File(filePath)
-      await file.findType()
-      await file.updateTimeStamp()
-      await file.updateHash()
+      file = await File.create(filePath)
       this.files.set(filePath, file)
     }
 

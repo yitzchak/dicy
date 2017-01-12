@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "./node_modules/.bin/babel -d lib/ src/",
-    "prepublish": "npm run compile"
+    "prepublish": "npm run compile",
+    "bin": "node lib/main.js"
   },
   "bin": {
     "ouroboros": "lib/main.js"
@@ -20,6 +21,8 @@
   "dependencies": {
     "babel-polyfill": "^6.20.0",
     "commander": "^2.9.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "js-yaml": "^3.7.0",
     "mz": "^2.6.0"
   },
   "devDependencies": {
@@ -33,7 +36,8 @@
     "eslint-plugin-flowtype": "^2.29.1",
     "eslint-plugin-flowtype-errors": "^2.0.1",
     "eslint-plugin-promise": "^3.4.0",
-    "flow-bin": "^0.36.0"
+    "flow-bin": "^0.36.0",
+    "jasmine": "^2.5.3"
   },
   "babel": {
     "presets": [

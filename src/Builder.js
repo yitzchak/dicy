@@ -14,6 +14,15 @@ export default class Builder {
     this.buildState = buildState
   }
 
+  static async create (filePath: string, options = {}) {
+    const buildState = await BuildState.create(filePath, options)
+    const builder = new Builder(buildState)
+
+    await builder.initialize()
+
+    return builder
+  }
+
   async initialize () {
     const ruleFactoryPath: string = path.join(__dirname, 'RuleFactories')
     const entries: Array<string> = await fs.readdir(ruleFactoryPath)
