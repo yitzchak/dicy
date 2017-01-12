@@ -42,22 +42,8 @@ class LaTeX extends Rule {
     return args
   }
 
-  resolveOutputPath (ext: string) {
-    let { dir, name } = path.parse(this.filePath)
-
-    if (this.buildState.options.jobName) {
-      name = this.buildState.options.jobName
-    }
-
-    if (this.buildState.options.outputDirectory) {
-      dir = path.resolve(dir, this.buildState.options.outputDirectory)
-    }
-
-    return path.format({ dir, name, ext })
-  }
-
   async parseRecorderOutput () {
-    const flsPath = this.resolveOutputPath('.fls')
+    const flsPath = this.buildState.resolveOutputPath('.fls')
     const contents = await fs.readFile(flsPath, { encoding: 'utf-8' })
     const filePattern = /^(INPUT|OUTPUT|PWD) (.*)$/gm
     let match

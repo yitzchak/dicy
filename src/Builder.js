@@ -14,7 +14,7 @@ export default class Builder {
     this.buildState = buildState
   }
 
-  static async create (filePath: string, options = {}) {
+  static async create (filePath: string, options: Object = {}) {
     const buildState = await BuildState.create(filePath, options)
     const builder = new Builder(buildState)
 
@@ -83,5 +83,9 @@ export default class Builder {
       await this.checkUpdates()
       if (++i === 5) break
     }
+  }
+
+  async saveState () {
+    await this.buildState.save()
   }
 }
