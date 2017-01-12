@@ -5,13 +5,15 @@ import File from './File'
 
 export default class Rule {
   buildState: BuildState
+  id: string
   inputFiles: Map<string, File> = new Map()
   outputFiles: Map<string, File> = new Map()
   timeStamp: number
-  needsEvaluation: boolean = true
+  needsEvaluation: boolean = false
 
-  constructor (buildState: BuildState) {
+  constructor (buildState: BuildState, id: string) {
     this.buildState = buildState
+    this.id = id
   }
 
   async evaluate () {}
@@ -27,8 +29,10 @@ export default class Rule {
     return file
   }
 
-  addOutputFiles (filePaths: Array<string>) {
-    return Promise.all(filePaths.map(filePath => this.getOutputFile(filePath)))
+  async addOutputFiles (filePaths: Array<string>) {
+    for (const filePath of filePaths) {
+      await this.getOutputFile(filePath)
+    }
   }
 
   async getInputFile (filePath: string) {
@@ -36,14 +40,16 @@ export default class Rule {
 
     if (!file) {
       file = await this.buildState.getFile(filePath)
-      file.addRule(this)
+      await file.addRule(this)
       this.inputFiles.set(filePath, file)
     }
 
     return file
   }
 
-  addInputFiles (filePaths: Array<string>) {
-    return Promise.all(filePaths.forEach(filePath => this.getInputFile(filePath)))
+  async addInputFiles (filePaths: Array<string>) {
+    for (const filePath of filePaths) {
+      await this.getInputFile(filePath)
+    }
   }
 }

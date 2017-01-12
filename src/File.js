@@ -1,7 +1,6 @@
 /* @flow */
 
 import crypto from 'crypto'
-import path from 'path'
 import Rule from './Rule'
 import fs from 'mz/fs'
 import type { FileType } from './types'
@@ -25,18 +24,19 @@ export default class File {
   hash: string
   rules: Array<Rule> = []
   analyzed: boolean = false
-  hasBeenUpdated: boolean = true
+  hasBeenUpdated: boolean = false
 
-  constructor (filePath: string) {
+  constructor (filePath: string, timeStamp: ?Date, hash: ?string) {
     this.filePath = filePath
+    if (timeStamp) this.timeStamp = timeStamp
+    if (hash) this.hash = hash
   }
 
-  static async create (filePath: string) {
-    const file = new File(filePath)
+  static async create (filePath: string, timeStamp: ?Date, hash: ?string) {
+    const file = new File(filePath, timeStamp, hash)
 
     await file.findType()
-    await file.updateTimeStamp()
-    await file.updateHash()
+    file.hasBeenUpdated = await file.updateTimeStamp() && await file.updateHash()
 
     return file
   }
@@ -70,7 +70,7 @@ export default class File {
   }
 
   async updateHash () {
-    const hash = crypto.createHash('sha256')
+    const hash = crypto.createHash('sha512')
     hash.update(await fs.readFile(this.filePath))
     const oldHash = this.hash
     this.hash = hash.digest('base64')

@@ -9,8 +9,9 @@ import Rule from './Rule'
 export default class BuildState {
   filePath: string
   files: Map<string, File> = new Map()
-  rules: Array<Rule> = []
+  rules: Map<string, Rule> = new Map()
   options: Object = {}
+  cache: Object
 
   constructor (filePath: string, options: Object = {}) {
     this.filePath = filePath
@@ -39,16 +40,28 @@ export default class BuildState {
     return path.format({ dir, name, ext })
   }
 
-  addRule (rule: Rule) {
+  async addRule (rule: Rule) {
     console.log(`Add rule ${rule.constructor.name}`)
-    this.rules.push(rule)
+    this.rules.set(rule.id, rule)
+    if (this.cache && this.cache.rules[rule.id]) {
+      const cachedRule = this.cache.rules[rule.id]
+      rule.timeStamp = cachedRule.timeStamp
+      await rule.addInputFiles(cachedRule.inputFiles)
+      await rule.addOutputFiles(cachedRule.outputFiles)
+    }
   }
 
   async getFile (filePath: string): File {
     let file: ?File = this.files.get(filePath)
 
     if (!file) {
-      file = await File.create(filePath)
+      let timeStamp, hash
+
+      if (this.cache && this.cache.files[filePath]) {
+        timeStamp = this.cache.files[filePath].timeStamp
+        hash = this.cache.files[filePath].hash
+      }
+      file = await File.create(filePath, timeStamp, hash)
       this.files.set(filePath, file)
     }
 
@@ -59,13 +72,25 @@ export default class BuildState {
     Object.assign(this.options, options)
   }
 
-  async save () {
-    const statePath = this.resolveOutputPath('.yaml')
+  getCacheFilePath () {
+    return this.resolveOutputPath('.yaml')
+  }
+
+  async loadCache () {
+    const cacheFilePath = this.getCacheFilePath()
+    if (await fs.exists(cacheFilePath)) {
+      const contents = await fs.readFile(cacheFilePath)
+      this.cache = yaml.safeLoad(contents)
+    }
+  }
+
+  async saveCache () {
+    const cacheFilePath = this.getCacheFilePath()
     const state = {
       filePath: this.filePath,
       options: this.options,
       files: {},
-      rules: []
+      rules: {}
     }
 
     for (const file of this.files.values()) {
@@ -73,18 +98,19 @@ export default class BuildState {
         timeStamp: file.timeStamp,
         hash: file.hash
       }
+
+      if (file.type) state.files[file.filePath].type = file.type
     }
 
-    for (const rule of this.rules) {
-      state.rules.push({
-        name: rule.constructor.name,
+    for (const rule of this.rules.values()) {
+      state.rules[rule.id] = {
         timeStamp: rule.timeStamp,
         inputFiles: Array.from(rule.inputFiles.keys()),
         outputFiles: Array.from(rule.outputFiles.keys())
-      })
+      }
     }
 
     const serialized = yaml.safeDump(state)
-    await fs.writeFile(statePath, serialized)
+    await fs.writeFile(cacheFilePath, serialized)
   }
 }

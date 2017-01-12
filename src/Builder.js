@@ -49,7 +49,7 @@ export default class Builder {
   }
 
   async evaluate () {
-    for (const rule: Rule of this.buildState.rules) {
+    for (const rule: Rule of this.buildState.rules.values()) {
       if (rule.needsEvaluation) {
         console.log(`Evaluating rule ${rule.constructor.name}`)
         rule.timeStamp = new Date()
@@ -77,7 +77,7 @@ export default class Builder {
     let i = 0
 
     while (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
-      this.buildState.rules.some(rule => rule.needsEvaluation)) {
+      Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation)) {
       await this.analyze()
       await this.evaluate()
       await this.checkUpdates()
@@ -85,7 +85,11 @@ export default class Builder {
     }
   }
 
-  async saveState () {
-    await this.buildState.save()
+  async loadStateCache () {
+    await this.buildState.loadCache()
+  }
+
+  async saveStateCache () {
+    await this.buildState.saveCache()
   }
 }
