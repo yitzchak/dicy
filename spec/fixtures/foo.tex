@@ -1,5 +1,10 @@
 \documentclass{article}
 
+\usepackage[backend=bibtex]{biblatex}
+
+\bibliography{foo}{}
+
 \begin{document}
-  foo, wibble, wibble
+  foo, wibble, wibble \cite{wibble}
+  \printbibliography
 \end{document}

@@ -67,13 +67,13 @@ export default class BuildState {
   }
 
   async addRule (rule: Rule) {
-    console.log(`Add rule "${rule.id}"`)
+    console.log(`Add rule ${rule.id}`)
     this.rules.set(rule.id, rule)
     if (this.cache && this.cache.rules[rule.id]) {
       const cachedRule = this.cache.rules[rule.id]
       rule.timeStamp = cachedRule.timeStamp
-      await rule.addInputFiles(cachedRule.inputFiles)
-      await rule.addOutputFiles(cachedRule.outputFiles)
+      await rule.addInputs(cachedRule.inputs)
+      await rule.addOutputs(cachedRule.outputs)
     }
   }
 
@@ -120,20 +120,24 @@ export default class BuildState {
       rules: {}
     }
 
-    for (const [filePath, file] of this.files.entries()) {
-      state.files[filePath] = {
+    for (const file: File of this.files.values()) {
+      const fileCache = {
         timeStamp: file.timeStamp,
         hash: file.hash
       }
 
-      if (file.type) state.files[filePath].type = file.type
+      if (file.type) {
+        fileCache.type = file.type
+      }
+
+      state.files[file.normalizedFilePath] = fileCache
     }
 
     for (const rule of this.rules.values()) {
       state.rules[rule.id] = {
         timeStamp: rule.timeStamp,
-        inputFiles: Array.from(rule.inputFiles.keys()),
-        outputFiles: Array.from(rule.outputFiles.keys())
+        inputs: Array.from(rule.inputs.keys()),
+        outputs: Array.from(rule.outputs.keys())
       }
     }
 

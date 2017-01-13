@@ -50,18 +50,6 @@ export default class File {
         this.type = type
         break
       }
-      // if (properties.namePattern && !properties.namePattern.test(this.filePath)) {
-      //   continue
-      // }
-      //
-      // const contents = await fs.readFile(this.filePath, { encoding: 'utf-8' })
-      //
-      // if (properties.contentsPattern && !properties.contentsPattern.test(contents)) {
-      //   continue
-      // }
-      //
-      // this.type = type
-      // break
     }
   }
 
@@ -86,8 +74,8 @@ export default class File {
         .on('close', () => {
           resolve(match)
         })
-        resolve(true)
       } else {
+        resolve(true)
       }
     })
   }

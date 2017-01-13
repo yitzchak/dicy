@@ -6,58 +6,63 @@ import File from './File'
 export default class Rule {
   buildState: BuildState
   id: string
-  argumentFiles: Array<File>
-  inputFiles: Map<string, File> = new Map()
-  outputFiles: Map<string, File> = new Map()
+  parameters: Array<File>
+  inputs: Map<string, File> = new Map()
+  outputs: Map<string, File> = new Map()
   timeStamp: number
   needsEvaluation: boolean = false
 
-  constructor (buildState: BuildState, ...argumentFiles: Array<File>) {
+  constructor (buildState: BuildState, ...parameters: Array<File>) {
     this.buildState = buildState
-    this.argumentFiles = argumentFiles
-    this.id = `${this.constructor.name} ${argumentFiles.map(file => file.normalizedFilePath).join(' ')}`
-    for (const file of argumentFiles) {
-      this.inputFiles.set(file.normalizedFilePath, file)
+    this.parameters = parameters
+    this.id = `${this.constructor.name}(${parameters.map(file => file.normalizedFilePath).join()})`
+    for (const file of parameters) {
+      this.inputs.set(file.normalizedFilePath, file)
       file.addRule(this)
     }
   }
 
+  get firstParameter () {
+    if (this.parameters.length === 0) return undefined
+    return this.parameters[0]
+  }
+
   async evaluate () {}
 
-  async getOutputFile (filePath: string) {
+  async getOutput (filePath: string) {
     filePath = this.buildState.normalizePath(filePath)
-    let file: ?File = this.outputFiles.get(filePath)
+    let file: ?File = this.outputs.get(filePath)
 
     if (!file) {
       file = await this.buildState.getFile(filePath)
-      this.outputFiles.set(filePath, file)
+      this.outputs.set(filePath, file)
     }
 
     return file
   }
 
-  async addOutputFiles (filePaths: Array<string>) {
+  async addOutputs (filePaths: Array<string>) {
     for (const filePath of filePaths) {
-      await this.getOutputFile(filePath)
+      await this.getOutput(filePath)
     }
   }
 
-  async getInputFile (filePath: string) {
+  async getInput (filePath: string) {
     filePath = this.buildState.normalizePath(filePath)
-    let file: ?File = this.inputFiles.get(filePath)
+    let file: ?File = this.inputs.get(filePath)
 
     if (!file) {
       file = await this.buildState.getFile(filePath)
       await file.addRule(this)
-      this.inputFiles.set(filePath, file)
+      this.inputs.set(filePath, file)
     }
 
     return file
   }
 
-  async addInputFiles (filePaths: Array<string>) {
+  async addInputs (filePaths: Array<string>) {
     for (const filePath of filePaths) {
-      await this.getInputFile(filePath)
+      await this.getInput(filePath)
     }
   }
 }

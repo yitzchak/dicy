@@ -3,7 +3,6 @@
 import childProcess from 'mz/child_process'
 import fs from 'mz/fs'
 import path from 'path'
-import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
@@ -42,7 +41,7 @@ class LaTeX extends Rule {
       args.push(`-jobname="${this.buildState.options.jobName}"`)
     }
 
-    args.push(`"${path.basename(this.argumentFiles[0].filePath)}"`)
+    args.push(`"${path.basename(this.firstParameter.filePath)}"`)
 
     return args
   }
@@ -60,11 +59,11 @@ class LaTeX extends Rule {
           rootPath = match[2]
           break
         case 'INPUT':
-          await this.getInputFile(path.resolve(rootPath, match[2]))
+          await this.getInput(path.resolve(rootPath, match[2]))
           break
         case 'OUTPUT':
-          const outputFile = await this.getOutputFile(path.resolve(rootPath, match[2]))
-          await outputFile.update()
+          const output = await this.getOutput(path.resolve(rootPath, match[2]))
+          await output.update()
           break
       }
     }

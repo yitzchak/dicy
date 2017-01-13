@@ -51,7 +51,7 @@ export default class Builder {
   async evaluate () {
     for (const rule: Rule of this.buildState.rules.values()) {
       if (rule.needsEvaluation) {
-        console.log(`Evaluating rule ${rule.constructor.name}`)
+        console.log(`Evaluating rule ${rule.id}`)
         rule.timeStamp = new Date()
         rule.needsEvaluation = false
         await rule.evaluate()
@@ -64,7 +64,7 @@ export default class Builder {
       if (file.hasBeenUpdated) {
         for (const rule of file.rules.values()) {
           if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
-            console.log(`Updates to "${file.normalizedFilePath}" triggered evaluation of "${rule.id}"`)
+            console.log(`Evaluation of ${rule.id} trigged by updates to ${file.normalizedFilePath}`)
             rule.needsEvaluation = true
           }
         }
