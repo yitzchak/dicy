@@ -26,11 +26,15 @@ export default class BuildState {
     return buildState
   }
 
-  resolveOutputPath (ext: string) {
+  resolveOutputPath (ext: string, suffix?: string) {
     let { dir, name } = path.parse(this.filePath)
 
     if (this.options.jobName) {
       name = this.options.jobName
+    }
+
+    if (suffix) {
+      name = `${name}-${suffix}`
     }
 
     if (this.options.outputDirectory) {
@@ -73,7 +77,7 @@ export default class BuildState {
   }
 
   getCacheFilePath () {
-    return this.resolveOutputPath('.yaml')
+    return this.resolveOutputPath('.yaml', 'cache')
   }
 
   async loadCache () {

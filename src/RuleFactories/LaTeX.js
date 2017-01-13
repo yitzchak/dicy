@@ -18,15 +18,24 @@ class LaTeX extends Rule {
 
   async evaluate () {
     try {
-      const args = this.contructArguments()
-      await childProcess.exec(`pdflatex ${args.join(' ')}`)
+      const args = this.constructArguments()
+      const options = this.constructProcessOptions()
+      const command = `pdflatex ${args.join(' ')}`
+
+      await childProcess.exec(command, options)
       await this.parseRecorderOutput()
     } catch (error) {
       console.log(error)
     }
   }
 
-  contructArguments () {
+  constructProcessOptions () {
+    return {
+      cwd: path.dirname(this.buildState.filePath)
+    }
+  }
+
+  constructArguments () {
     const args = [
       '-interaction=batchmode',
       '-recorder'
@@ -40,7 +49,7 @@ class LaTeX extends Rule {
       args.push(`-jobname="${this.buildState.options.jobName}"`)
     }
 
-    args.push(`"${this.filePath}"`)
+    args.push(`"${path.basename(this.filePath)}"`)
 
     return args
   }

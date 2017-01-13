@@ -64,7 +64,7 @@ export default class Builder {
       if (file.hasBeenUpdated) {
         for (const rule of file.rules) {
           if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
-            console.log(`${file.filePath} triggered evaluation of ${rule.constructor.name}`)
+            console.log(`Updates to "${file.filePath}" triggered evaluation of "${rule.id}"`)
             rule.needsEvaluation = true
           }
         }

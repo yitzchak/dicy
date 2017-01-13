@@ -14,7 +14,7 @@ export default class File {
   ], [
     'LaTeX log', {
       namePattern: /\.log/i,
-      contentsPattern: /^This is (pdfTeX|TeX),/
+      contentsPattern: /^This is (pdf|e-u?pTeX|Lua|Xe)?TeX,/
     }
   ]])
 
@@ -69,12 +69,17 @@ export default class File {
     return oldTimeStamp !== this.timeStamp
   }
 
-  async updateHash () {
-    const hash = crypto.createHash('sha512')
-    hash.update(await fs.readFile(this.filePath))
-    const oldHash = this.hash
-    this.hash = hash.digest('base64')
-    return oldHash !== this.hash
+  updateHash () {
+    return new Promise((resolve, reject) => {
+      const hash = crypto.createHash('sha256')
+      fs.createReadStream(this.filePath)
+        .on('data', data => hash.update(data))
+        .on('end', () => {
+          const oldHash = this.hash
+          this.hash = hash.digest('base64')
+          resolve(oldHash !== this.hash)
+        })
+    })
   }
 
   async update () {
