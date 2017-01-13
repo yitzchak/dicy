@@ -15,7 +15,7 @@ export default class File {
   ], [
     'LaTeX log', {
       namePattern: /\.log/i,
-      contentsPattern: /^This is (pdf|e-u?pTeX|Lua|Xe)?TeX,/
+      contentsPattern: /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/
     }
   ]])
 
