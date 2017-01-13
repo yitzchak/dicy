@@ -6,14 +6,20 @@ import File from './File'
 export default class Rule {
   buildState: BuildState
   id: string
+  argumentFiles: Array<File>
   inputFiles: Map<string, File> = new Map()
   outputFiles: Map<string, File> = new Map()
   timeStamp: number
   needsEvaluation: boolean = false
 
-  constructor (buildState: BuildState, id: string) {
+  constructor (buildState: BuildState, ...argumentFiles: Array<File>) {
     this.buildState = buildState
-    this.id = id
+    this.argumentFiles = argumentFiles
+    this.id = `${this.constructor.name} ${argumentFiles.map(file => file.normalizedFilePath).join(' ')}`
+    for (const file of argumentFiles) {
+      this.inputFiles.set(file.normalizedFilePath, file)
+      file.addRule(this)
+    }
   }
 
   async evaluate () {}

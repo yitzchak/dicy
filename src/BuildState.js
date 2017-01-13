@@ -67,7 +67,7 @@ export default class BuildState {
   }
 
   async addRule (rule: Rule) {
-    console.log(`Add rule ${rule.constructor.name}`)
+    console.log(`Add rule "${rule.id}"`)
     this.rules.set(rule.id, rule)
     if (this.cache && this.cache.rules[rule.id]) {
       const cachedRule = this.cache.rules[rule.id]

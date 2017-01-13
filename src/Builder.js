@@ -62,9 +62,9 @@ export default class Builder {
   async checkUpdates () {
     for (const file of this.buildState.files.values()) {
       if (file.hasBeenUpdated) {
-        for (const rule of file.rules) {
+        for (const rule of file.rules.values()) {
           if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
-            console.log(`Updates to "${file.filePath}" triggered evaluation of "${rule.id}"`)
+            console.log(`Updates to "${file.normalizedFilePath}" triggered evaluation of "${rule.id}"`)
             rule.needsEvaluation = true
           }
         }

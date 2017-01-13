@@ -9,13 +9,6 @@ import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
 class LaTeX extends Rule {
-  filePath: string
-
-  constructor (buildState: BuildState, file: File) {
-    super(buildState, `LaTeX ${file.normalizedFilePath}`)
-    this.filePath = file.filePath
-  }
-
   async evaluate () {
     try {
       const args = this.constructArguments()
@@ -49,7 +42,7 @@ class LaTeX extends Rule {
       args.push(`-jobname="${this.buildState.options.jobName}"`)
     }
 
-    args.push(`"${path.basename(this.filePath)}"`)
+    args.push(`"${path.basename(this.argumentFiles[0].filePath)}"`)
 
     return args
   }
@@ -83,7 +76,6 @@ export default class LaTeXFactory extends RuleFactory {
     for (const file: File of files) {
       if (file.type === 'LaTeX') {
         const rule = new LaTeX(this.buildState, file)
-        await rule.getInputFile(file.filePath)
         await this.buildState.addRule(rule)
       }
     }

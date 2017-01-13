@@ -24,7 +24,7 @@ export default class File {
   type: string
   timeStamp: Date
   hash: string
-  rules: Array<Rule> = []
+  rules: Set<Rule> = new Set()
   analyzed: boolean = false
   hasBeenUpdated: boolean = false
 
@@ -53,13 +53,13 @@ export default class File {
       // if (properties.namePattern && !properties.namePattern.test(this.filePath)) {
       //   continue
       // }
-      // 
+      //
       // const contents = await fs.readFile(this.filePath, { encoding: 'utf-8' })
-      // 
+      //
       // if (properties.contentsPattern && !properties.contentsPattern.test(contents)) {
       //   continue
       // }
-      // 
+      //
       // this.type = type
       // break
     }
@@ -93,7 +93,7 @@ export default class File {
   }
 
   addRule (rule: Rule) {
-    this.rules.push(rule)
+    this.rules.add(rule)
   }
 
   async updateTimeStamp () {
