@@ -1,6 +1,6 @@
 /* @flow */
 
-import fs from 'mz/fs'
+import fs from 'fs-promise'
 import path from 'path'
 import yaml from 'js-yaml'
 import File from './File'
@@ -8,13 +8,15 @@ import Rule from './Rule'
 
 export default class BuildState {
   filePath: string
+  dir: string
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
   cache: Object
 
   constructor (filePath: string, options: Object = {}) {
-    this.filePath = filePath
+    this.filePath = path.basename(filePath)
+    this.dir = path.dirname(filePath)
     Object.assign(this.options, options)
   }
 
@@ -26,8 +28,28 @@ export default class BuildState {
     return buildState
   }
 
+  normalizePath (filePath: string) {
+    filePath = path.normalize(filePath)
+
+    if (path.isAbsolute(filePath)) {
+      const dirPaths: Array<string> = [
+        this.dir
+      ]
+
+      for (const dir of dirPaths) {
+        const candidateFilePath = path.relative(dir, filePath)
+        if (!candidateFilePath.startsWith('..')) {
+          return candidateFilePath
+        }
+      }
+    }
+
+    return filePath
+  }
+
   resolveOutputPath (ext: string, suffix?: string) {
-    let { dir, name } = path.parse(this.filePath)
+    let dir = this.dir
+    let { name } = path.parse(this.filePath)
 
     if (this.options.jobName) {
       name = this.options.jobName
@@ -56,6 +78,7 @@ export default class BuildState {
   }
 
   async getFile (filePath: string): File {
+    filePath = this.normalizePath(filePath)
     let file: ?File = this.files.get(filePath)
 
     if (!file) {
@@ -65,7 +88,7 @@ export default class BuildState {
         timeStamp = this.cache.files[filePath].timeStamp
         hash = this.cache.files[filePath].hash
       }
-      file = await File.create(filePath, timeStamp, hash)
+      file = await File.create(path.resolve(this.dir, filePath), filePath, timeStamp, hash)
       this.files.set(filePath, file)
     }
 
@@ -97,13 +120,13 @@ export default class BuildState {
       rules: {}
     }
 
-    for (const file of this.files.values()) {
-      state.files[file.filePath] = {
+    for (const [filePath, file] of this.files.entries()) {
+      state.files[filePath] = {
         timeStamp: file.timeStamp,
         hash: file.hash
       }
 
-      if (file.type) state.files[file.filePath].type = file.type
+      if (file.type) state.files[filePath].type = file.type
     }
 
     for (const rule of this.rules.values()) {

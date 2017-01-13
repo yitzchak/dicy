@@ -11,9 +11,9 @@ import RuleFactory from '../RuleFactory'
 class LaTeX extends Rule {
   filePath: string
 
-  constructor (buildState: BuildState, filePath: string) {
-    super(buildState, `LaTeX ${filePath}`)
-    this.filePath = filePath
+  constructor (buildState: BuildState, file: File) {
+    super(buildState, `LaTeX ${file.normalizedFilePath}`)
+    this.filePath = file.filePath
   }
 
   async evaluate () {
@@ -82,7 +82,7 @@ export default class LaTeXFactory extends RuleFactory {
   async analyze (files: Array<File>) {
     for (const file: File of files) {
       if (file.type === 'LaTeX') {
-        const rule = new LaTeX(this.buildState, file.filePath)
+        const rule = new LaTeX(this.buildState, file)
         await rule.getInputFile(file.filePath)
         await this.buildState.addRule(rule)
       }

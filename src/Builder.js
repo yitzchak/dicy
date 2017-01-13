@@ -1,7 +1,7 @@
 /* @flow */
 
 import path from 'path'
-import fs from 'mz/fs'
+import fs from 'fs-promise'
 import BuildState from './BuildState'
 import Rule from './Rule'
 import RuleFactory from './RuleFactory'
@@ -74,15 +74,20 @@ export default class Builder {
   }
 
   async build () {
-    let i = 0
+    if (this.buildState.options.outputDirectory) {
+      await fs.ensureDir(path.resolve(this.buildState.dir, this.buildState.options.outputDirectory))
+    }
+
+    await this.loadStateCache()
 
     while (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
       Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation)) {
       await this.analyze()
       await this.evaluate()
       await this.checkUpdates()
-      if (++i === 5) break
     }
+
+    await this.saveStateCache()
   }
 
   async loadStateCache () {

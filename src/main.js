@@ -31,9 +31,7 @@ program
 
     for (const filePath of inputs) {
       const builder = await Builder.create(path.resolve(filePath), options)
-      await builder.loadStateCache()
       await builder.build()
-      await builder.saveStateCache()
     }
   })
 

@@ -19,6 +19,7 @@ export default class Rule {
   async evaluate () {}
 
   async getOutputFile (filePath: string) {
+    filePath = this.buildState.normalizePath(filePath)
     let file: ?File = this.outputFiles.get(filePath)
 
     if (!file) {
@@ -36,6 +37,7 @@ export default class Rule {
   }
 
   async getInputFile (filePath: string) {
+    filePath = this.buildState.normalizePath(filePath)
     let file: ?File = this.inputFiles.get(filePath)
 
     if (!file) {
