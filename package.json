@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "./node_modules/.bin/babel -d lib/ src/",
     "prepublish": "npm run compile",
-    "bin": "node lib/main.js"
+    "bin": "node lib/main.js",
+    "lint": "./node_modules/.bin/eslint --color src"
   },
   "bin": {
     "ouroboros": "lib/main.js"
@@ -32,7 +33,7 @@
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-preset-flow": "^1.0.0",
     "babel-preset-latest": "^6.16.0",
-    "eslint": "^3.13.0",
+    "eslint": "^3.13.1",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-flowtype": "^2.29.1",
     "eslint-plugin-flowtype-errors": "^2.0.1",

@@ -5,6 +5,7 @@ import path from 'path'
 import yaml from 'js-yaml'
 import File from './File'
 import Rule from './Rule'
+import type { FileCache } from './types'
 
 export default class BuildState {
   filePath: string
@@ -74,10 +75,12 @@ export default class BuildState {
       rule.timeStamp = cachedRule.timeStamp
       await rule.addInputs(cachedRule.inputs)
       await rule.addOutputs(cachedRule.outputs)
+    } else {
+      rule.needsEvaluation = true
     }
   }
 
-  async getFile (filePath: string): File {
+  async getFile (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.files.get(filePath)
 
@@ -89,6 +92,7 @@ export default class BuildState {
         hash = this.cache.files[filePath].hash
       }
       file = await File.create(path.resolve(this.dir, filePath), filePath, timeStamp, hash)
+      if (!file) return
       this.files.set(filePath, file)
     }
 
@@ -121,7 +125,7 @@ export default class BuildState {
     }
 
     for (const file: File of this.files.values()) {
-      const fileCache = {
+      const fileCache: FileCache = {
         timeStamp: file.timeStamp,
         hash: file.hash
       }
@@ -141,7 +145,7 @@ export default class BuildState {
       }
     }
 
-    const serialized = yaml.safeDump(state)
+    const serialized = yaml.safeDump(state, { skipInvalid: true })
     await fs.writeFile(cacheFilePath, serialized)
   }
 }

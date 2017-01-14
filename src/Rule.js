@@ -6,7 +6,7 @@ import File from './File'
 export default class Rule {
   buildState: BuildState
   id: string
-  parameters: Array<File>
+  parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   timeStamp: number
@@ -16,25 +16,25 @@ export default class Rule {
     this.buildState = buildState
     this.parameters = parameters
     this.id = `${this.constructor.name}(${parameters.map(file => file.normalizedFilePath).join()})`
-    for (const file of parameters) {
+    for (const file: File of parameters) {
       this.inputs.set(file.normalizedFilePath, file)
       file.addRule(this)
     }
   }
 
-  get firstParameter () {
-    if (this.parameters.length === 0) return undefined
+  get firstParameter (): File {
     return this.parameters[0]
   }
 
   async evaluate () {}
 
-  async getOutput (filePath: string) {
+  async getOutput (filePath: string): Promise<?File> {
     filePath = this.buildState.normalizePath(filePath)
     let file: ?File = this.outputs.get(filePath)
 
     if (!file) {
       file = await this.buildState.getFile(filePath)
+      if (!file) return
       this.outputs.set(filePath, file)
     }
 
@@ -47,12 +47,13 @@ export default class Rule {
     }
   }
 
-  async getInput (filePath: string) {
+  async getInput (filePath: string): Promise<?File> {
     filePath = this.buildState.normalizePath(filePath)
     let file: ?File = this.inputs.get(filePath)
 
     if (!file) {
       file = await this.buildState.getFile(filePath)
+      if (!file) return
       await file.addRule(this)
       this.inputs.set(filePath, file)
     }

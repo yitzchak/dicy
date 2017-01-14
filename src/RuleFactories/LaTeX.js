@@ -23,7 +23,7 @@ class LaTeX extends Rule {
 
   constructProcessOptions () {
     return {
-      cwd: path.dirname(this.buildState.filePath)
+      cwd: this.buildState.dir
     }
   }
 

@@ -8,6 +8,15 @@ import type { FileType } from './types'
 
 export default class File {
   static fileTypes: Map<string, FileType> = new Map([[
+    'BibTeX Control File', {
+      namePattern: /-blx\.bib$/i
+    }
+  ], [
+    'BibTeX log', {
+      namePattern: /\.blg/i,
+      contentsPattern: /^This is BibTeX,/
+    }
+  ], [
     'LaTeX', {
       namePattern: /\.tex$/i,
       contentsPattern: /^\\documentclass/m
@@ -35,8 +44,10 @@ export default class File {
     if (hash) this.hash = hash
   }
 
-  static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string) {
-    const file = new File(filePath, normalizedFilePath, timeStamp, hash)
+  static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string): Promise<?File> {
+    if (!await fs.exists(filePath)) return
+
+    const file: File = new File(filePath, normalizedFilePath, timeStamp, hash)
 
     await file.findType()
     file.hasBeenUpdated = await file.updateTimeStamp() && await file.updateHash()
@@ -44,7 +55,7 @@ export default class File {
     return file
   }
 
-  async findType () {
+  async findType (): Promise<void> {
     for (const [type, properties] of File.fileTypes.entries()) {
       if (await this.isFileType(properties)) {
         this.type = type
@@ -66,7 +77,7 @@ export default class File {
         let match = false
 
         rl.on('line', line => {
-          if (fileType.contentsPattern.test(line)) {
+          if (fileType.contentsPattern && fileType.contentsPattern.test(line)) {
             match = true
             rl.close()
           }
@@ -80,18 +91,18 @@ export default class File {
     })
   }
 
-  addRule (rule: Rule) {
+  addRule (rule: Rule): void {
     this.rules.add(rule)
   }
 
-  async updateTimeStamp () {
+  async updateTimeStamp (): Promise<boolean> {
     const stats = await fs.stat(this.filePath)
     const oldTimeStamp = this.timeStamp
     this.timeStamp = stats.mtime
     return oldTimeStamp !== this.timeStamp
   }
 
-  updateHash () {
+  updateHash (): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const hash = crypto.createHash('sha256')
       fs.createReadStream(this.filePath)
@@ -104,7 +115,7 @@ export default class File {
     })
   }
 
-  async update () {
+  async update (): Promise<void> {
     this.hasBeenUpdated = this.hasBeenUpdated ||
       (await this.updateTimeStamp() && await this.updateHash())
   }
