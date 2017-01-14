@@ -17,6 +17,10 @@ export default class File {
       contentsPattern: /^This is BibTeX,/
     }
   ], [
+    'LaTeX File Listing', {
+      namePattern: /\.fls/i
+    }
+  ], [
     'LaTeX', {
       namePattern: /\.tex$/i,
       contentsPattern: /^\\documentclass/m
@@ -44,8 +48,8 @@ export default class File {
     if (hash) this.hash = hash
   }
 
-  static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string): Promise<?File> {
-    if (!await fs.exists(filePath)) return
+  static async create (filePath: string, normalizedFilePath: string, requireExistance: boolean = false, timeStamp: ?Date, hash: ?string): Promise<?File> {
+    if (requireExistance && !await fs.exists(filePath)) return
 
     const file: File = new File(filePath, normalizedFilePath, timeStamp, hash)
 
@@ -53,6 +57,10 @@ export default class File {
     file.hasBeenUpdated = await file.updateTimeStamp() && await file.updateHash()
 
     return file
+  }
+
+  exists () {
+    return fs.exists(this.filePath)
   }
 
   async findType (): Promise<void> {

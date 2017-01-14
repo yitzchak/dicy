@@ -1,7 +1,6 @@
 /* @flow */
 
 import childProcess from 'mz/child_process'
-import fs from 'mz/fs'
 import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
@@ -15,7 +14,10 @@ class LaTeX extends Rule {
       const command = `pdflatex ${args.join(' ')}`
 
       await childProcess.exec(command, options)
-      await this.parseRecorderOutput()
+      for (const ext of ['.fls', '.log']) {
+        const file = await this.getOutput(this.buildState.resolveOutputPath(ext))
+        if (file) file.update()
+      }
     } catch (error) {
       console.log(error)
     }
@@ -44,29 +46,6 @@ class LaTeX extends Rule {
     args.push(`"${path.basename(this.firstParameter.filePath)}"`)
 
     return args
-  }
-
-  async parseRecorderOutput () {
-    const flsPath = this.buildState.resolveOutputPath('.fls')
-    const contents = await fs.readFile(flsPath, { encoding: 'utf-8' })
-    const filePattern = /^(INPUT|OUTPUT|PWD) (.*)$/gm
-    let match
-    let rootPath: string = ''
-
-    while ((match = filePattern.exec(contents)) !== null) {
-      switch (match[1]) {
-        case 'PWD':
-          rootPath = match[2]
-          break
-        case 'INPUT':
-          await this.getInput(path.resolve(rootPath, match[2]))
-          break
-        case 'OUTPUT':
-          const output = await this.getOutput(path.resolve(rootPath, match[2]))
-          await output.update()
-          break
-      }
-    }
   }
 }
 
