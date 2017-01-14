@@ -52,9 +52,10 @@ export default class Builder {
     for (const rule: Rule of this.buildState.rules.values()) {
       if (rule.needsEvaluation) {
         console.log(`Evaluating rule ${rule.id}`)
+        await rule.evaluate()
+        await rule.updateOutputs()
         rule.timeStamp = new Date()
         rule.needsEvaluation = false
-        await rule.evaluate()
       }
     }
   }

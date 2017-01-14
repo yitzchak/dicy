@@ -1,8 +1,8 @@
 /* @flow */
 
 export type FileType = {
-  namePattern?: RegExp,
-  contentsPattern?: RegExp
+  fileName?: RegExp,
+  contents?: RegExp
 }
 
 export type FileCache = {

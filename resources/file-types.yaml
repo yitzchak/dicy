@@ -1,0 +1,15 @@
+BibTeX Control File:
+  fileName: !!js/regexp /-blx\.bib$/i
+BibTeX log:
+  fileName: !!js/regexp /\.blg$/i
+  contents: !!js/regexp /^This is BibTeX,/
+LaTeX File Listing:
+  fileName: !!js/regexp /\.fls$/i
+LaTeX File Listing/Parsed:
+  fileName: !!js/regexp /\.fls\.parsed$/i
+LaTeX:
+  fileName: !!js/regexp /\.tex$/i
+  contents: !!js/regexp /^\\documentclass/m
+LaTeX log:
+  fileName: !!js/regexp /\.log$/i
+  contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/

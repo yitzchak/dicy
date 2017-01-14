@@ -8,6 +8,18 @@ import RuleFactory from '../RuleFactory'
 
 class LaTeX extends Rule {
   async evaluate () {
+    let runLatex = true
+
+    for (const file: File of this.getUpdatedInputs()) {
+      if (file.type === 'LaTeX File Listing/Parsed') {
+        await this.updateDependencies(file)
+      } else {
+        runLatex = true
+      }
+    }
+
+    if (!runLatex) return
+
     try {
       const args = this.constructArguments()
       const options = this.constructProcessOptions()
@@ -15,11 +27,23 @@ class LaTeX extends Rule {
 
       await childProcess.exec(command, options)
       for (const ext of ['.fls', '.log']) {
-        const file = await this.getOutput(this.buildState.resolveOutputPath(ext))
-        if (file) file.update()
+        await this.getInput(this.buildState.resolveOutputPath(`${ext}.parsed`), false)
+        await this.getOutput(this.buildState.resolveOutputPath(ext))
+        // if (file) file.update()
+      }
+
+      for (const file: File of this.outputs.values()) {
+        await file.update()
       }
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  async updateDependencies (file: File) {
+    if (file.contents) {
+      await this.addInputs(file.contents.inputs)
+      await this.addOutputs(file.contents.outputs)
     }
   }
 

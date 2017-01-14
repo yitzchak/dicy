@@ -8,7 +8,10 @@ import RuleFactory from '../RuleFactory'
 
 class ParseLaTeXFileListing extends Rule {
   async evaluate () {
-    let latexRule: ?Rule
+    const result = {
+      inputs: [],
+      outputs: []
+    }
     const contents = await fs.readFile(this.firstParameter.filePath, { encoding: 'utf-8' })
     const filePattern = /^(INPUT|OUTPUT|PWD) (.*)$/gm
     let match
@@ -20,26 +23,17 @@ class ParseLaTeXFileListing extends Rule {
           rootPath = match[2]
           break
         case 'INPUT':
-          const input = await this.buildState.getFile(path.resolve(rootPath, match[2]))
-          if (input) {
-            if (!latexRule && input.type === 'LaTeX') {
-              latexRule = this.buildState.getRule('LaTeX', input)
-            }
-            if (latexRule) {
-              latexRule.getInput(input.filePath)
-            }
-          }
+          result.inputs.push(this.buildState.normalizePath(path.resolve(rootPath, match[2])))
           break
         case 'OUTPUT':
-          const output = await this.buildState.getFile(path.resolve(rootPath, match[2]))
-          if (output) {
-            if (latexRule) {
-              latexRule.getOutput(output.filePath)
-            }
-            await output.update()
-          }
+          result.outputs.push(this.buildState.normalizePath(path.resolve(rootPath, match[2])))
           break
       }
+    }
+
+    const outputFile: ?File = await this.getOutput(`${this.firstParameter.normalizedFilePath}.parsed`, false)
+    if (outputFile) {
+      await outputFile.setContents(result)
     }
   }
 }

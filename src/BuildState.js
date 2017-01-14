@@ -133,7 +133,8 @@ export default class BuildState {
     for (const file: File of this.files.values()) {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
-        hash: file.hash
+        hash: file.hash,
+        contents: file.contents
       }
 
       if (file.type) {

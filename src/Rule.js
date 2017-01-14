@@ -28,12 +28,12 @@ export default class Rule {
 
   async evaluate () {}
 
-  async getOutput (filePath: string): Promise<?File> {
+  async getOutput (filePath: string, requireExistance: boolean = true): Promise<?File> {
     filePath = this.buildState.normalizePath(filePath)
     let file: ?File = this.outputs.get(filePath)
 
     if (!file) {
-      file = await this.buildState.getFile(filePath)
+      file = await this.buildState.getFile(filePath, requireExistance)
       if (!file) return
       this.outputs.set(filePath, file)
     }
@@ -47,12 +47,24 @@ export default class Rule {
     }
   }
 
-  async getInput (filePath: string): Promise<?File> {
+  *getUpdatedInputs (): Iterable<File> {
+    for (const file: File of this.inputs.values()) {
+      if (!this.timeStamp || file.timeStamp > this.timeStamp) yield file
+    }
+  }
+
+  async updateOutputs () {
+    for (const file: File of this.outputs.values()) {
+      await file.update()
+    }
+  }
+
+  async getInput (filePath: string, requireExistance: boolean = true): Promise<?File> {
     filePath = this.buildState.normalizePath(filePath)
     let file: ?File = this.inputs.get(filePath)
 
     if (!file) {
-      file = await this.buildState.getFile(filePath)
+      file = await this.buildState.getFile(filePath, requireExistance)
       if (!file) return
       await file.addRule(this)
       this.inputs.set(filePath, file)
