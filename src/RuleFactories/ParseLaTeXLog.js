@@ -19,30 +19,33 @@ class ParseLaTeXLog extends Rule {
     let filePath: string
 
     await this.firstParameter.parse([{
+      names: ['filePath'],
       patterns: [/^\*\*(.*)$/],
       evaluate: (reference, groups) => {
-        filePath = groups[0]
+        filePath = groups.filePath
       }
     }, {
+      names: ['name'],
       patterns: [/^This is (.*),/],
       evaluate: (reference, groups) => {
-        name = groups[0]
+        name = groups.name
       }
     }, {
+      names: ['file', 'line', 'type', 'text'],
       patterns: [/^(?:(.*):(\d+):|!)(?: (.+) Error:)? (.+?)\.?$/],
       evaluate: (reference, groups) => {
         const message: Message = {
           severity: 'error',
           name,
-          type: groups[2],
-          text: groups[3],
+          type: groups.type,
+          text: groups.text,
           log: reference
         }
 
-        if (groups[0]) {
-          const line: number = parseInt(groups[1], 10)
+        if (groups.file) {
+          const line: number = parseInt(groups.line, 10)
           message.source = {
-            file: groups[0],
+            file: groups.file,
             start: line,
             end: line
           }
@@ -50,18 +53,19 @@ class ParseLaTeXLog extends Rule {
         }
       }
     }, {
+      names: ['type', 'severity', 'text', 'line'],
       patterns: [/^(.*) (Warning|Info): +(.*?)(?: on input line (\d+))?\.$/],
       evaluate: (reference, groups) => {
         const message: Message = {
-          severity: groups[1] === 'Info' ? 'info' : 'warning',
+          severity: groups.severity === 'Info' ? 'info' : 'warning',
           name,
-          type: groups[0],
-          text: groups[2],
+          type: groups.type,
+          text: groups.text,
           log: reference
         }
 
-        if (groups[3]) {
-          const line: number = parseInt(groups[3], 10)
+        if (groups.line) {
+          const line: number = parseInt(groups.line, 10)
           message.source = {
             file: filePath,
             start: line,

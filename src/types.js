@@ -18,8 +18,9 @@ export type RuleCache = {
 }
 
 export type Parser = {
+  names: Array<string>,
   patterns: Array<RegExp>,
-  evaluate: (reference: Reference, groups: Array<string>) => void
+  evaluate: (reference: Reference, groups: Object) => void
 }
 
 export type Reference = {

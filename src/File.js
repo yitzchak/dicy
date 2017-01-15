@@ -59,7 +59,11 @@ export default class File {
             const matches = parser.patterns.map((pattern, index) => lines[index].match(pattern))
             matched = matches.every(match => match)
             if (matched) {
-              const groups = [].concat(...matches.map(match => match.slice(1)))
+              const m = [].concat(...matches.map(match => match.slice(1)))
+              const groups: Object = {}
+              parser.names.map((name, index) => {
+                if (m[index] !== undefined) groups[name] = m[index]
+              })
               const reference: Reference = {
                 file: this.normalizedFilePath,
                 start: lineNumber,

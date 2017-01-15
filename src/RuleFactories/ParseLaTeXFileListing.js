@@ -15,22 +15,25 @@ class ParseLaTeXFileListing extends Rule {
   }
 
   async evaluate () {
+    let rootPath: string = ''
     const results = {
       INPUT: new Set(),
       OUTPUT: new Set()
     }
-    const contents = await fs.readFile(this.firstParameter.filePath, { encoding: 'utf-8' })
-    const filePattern = /^(INPUT|OUTPUT|PWD) (.*)$/gm
-    let match
-    let rootPath: string = ''
 
-    while ((match = filePattern.exec(contents)) !== null) {
-      if (match[1] === 'PWD') {
-        rootPath = match[2]
-      } else {
-        results[match[1]].add(this.buildState.normalizePath(path.resolve(rootPath, match[2])))
+    await this.firstParameter.parse([{
+      names: ['path'],
+      patterns: [/^PWD (.*)$/],
+      evaluate: (reference, groups) => {
+        rootPath = groups.path
       }
-    }
+    }, {
+      names: ['type', 'path'],
+      patterns: [/^(INPUT|OUTPUT) (.*)$/],
+      evaluate: (reference, groups) => {
+        results[groups.type].add(this.buildState.normalizePath(path.resolve(rootPath, groups.path)))
+      }
+    }])
 
     this.firstParameter.contents = {
       inputs: Array.from(results.INPUT),
