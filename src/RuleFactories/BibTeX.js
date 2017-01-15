@@ -1,7 +1,6 @@
 /* @flow */
 
 import childProcess from 'mz/child_process'
-import fs from 'mz/fs'
 import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
