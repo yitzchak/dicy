@@ -1,6 +1,5 @@
 /* @flow */
 
-import fs from 'fs-promise'
 import path from 'path'
 
 import BuildState from '../BuildState'

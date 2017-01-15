@@ -6,15 +6,24 @@ import File from '../File'
 import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
+import type { Message } from '../types'
+
 class LaTeX extends Rule {
   async evaluate () {
-    let runLatex = true
+    let runLatex = Array.from(this.getTriggers()).length === 0
 
     for (const file: File of this.getTriggers()) {
-      if (file.type === 'LaTeXFileListing') {
-        await this.updateDependencies(file)
-      } else {
-        runLatex = true
+      switch (file.type) {
+        case 'LaTeXFileListing':
+          await this.updateDependencies(file)
+          break
+        case 'LaTeXLog':
+          if (file.contents) {
+            runLatex = runLatex || file.contents.some((message: Message) => message.text === 'Please rerun LaTeX')
+          }
+          break
+        default:
+          runLatex = true
       }
     }
 
@@ -26,7 +35,7 @@ class LaTeX extends Rule {
       const command = `pdflatex ${args.join(' ')}`
 
       await childProcess.exec(command, options)
-      for (const ext of ['.fls']) {
+      for (const ext of ['.fls', '.log']) {
         await this.getInput(this.buildState.resolveOutputPath(ext), false)
         await this.getOutput(this.buildState.resolveOutputPath(ext))
         // if (file) file.update()
