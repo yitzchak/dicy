@@ -10,8 +10,8 @@ class LaTeX extends Rule {
   async evaluate () {
     let runLatex = true
 
-    for (const file: File of this.getUpdatedInputs()) {
-      if (file.type === 'LaTeX File Listing/Parsed') {
+    for (const file: File of this.getTriggers()) {
+      if (file.type === 'LaTeX File Listing') {
         await this.updateDependencies(file)
       } else {
         runLatex = true
@@ -26,8 +26,8 @@ class LaTeX extends Rule {
       const command = `pdflatex ${args.join(' ')}`
 
       await childProcess.exec(command, options)
-      for (const ext of ['.fls', '.log']) {
-        await this.getInput(this.buildState.resolveOutputPath(`${ext}.parsed`), false)
+      for (const ext of ['.fls']) {
+        await this.getInput(this.buildState.resolveOutputPath(ext), false)
         await this.getOutput(this.buildState.resolveOutputPath(ext))
         // if (file) file.update()
       }
@@ -42,6 +42,7 @@ class LaTeX extends Rule {
 
   async updateDependencies (file: File) {
     if (file.contents) {
+      console.log(`Update LaTeX dependencies...`)
       await this.addInputs(file.contents.inputs)
       await this.addOutputs(file.contents.outputs)
     }

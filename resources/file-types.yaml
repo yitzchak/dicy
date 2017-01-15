@@ -5,8 +5,6 @@ BibTeX log:
   contents: !!js/regexp /^This is BibTeX,/
 LaTeX File Listing:
   fileName: !!js/regexp /\.fls$/i
-LaTeX File Listing/Parsed:
-  fileName: !!js/regexp /\.fls\.parsed$/i
 LaTeX:
   fileName: !!js/regexp /\.tex$/i
   contents: !!js/regexp /^\\documentclass/m

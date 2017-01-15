@@ -30,6 +30,7 @@
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-eslint": "^7.0.0",
+    "babel-plugin-syntax-async-generators": "^6.13.0",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-preset-flow": "^1.0.0",
     "babel-preset-latest": "^6.16.0",
@@ -47,7 +48,8 @@
       "flow"
     ],
     "plugins": [
-      "transform-class-properties"
+      "transform-class-properties",
+      "syntax-async-generators"
     ]
   },
   "eslintConfig": {

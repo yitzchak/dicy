@@ -49,24 +49,27 @@ export default class Builder {
   }
 
   async evaluate () {
-    for (const rule: Rule of this.buildState.rules.values()) {
-      if (rule.needsEvaluation) {
-        console.log(`Evaluating rule ${rule.id}`)
-        await rule.evaluate()
-        await rule.updateOutputs()
-        rule.timeStamp = new Date()
-        rule.needsEvaluation = false
-      }
+    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation)
+    rules.sort((x, y) => y.constructor.name.startsWith('Parse') - x.constructor.name.startsWith('Parse'))
+
+    for (const rule: Rule of rules) {
+      console.log(`Evaluating rule ${rule.id}`)
+      rule.timeStamp = new Date()
+      rule.needsEvaluation = false
+      await rule.evaluate()
+      await rule.updateOutputs()
     }
   }
 
   async checkUpdates () {
     for (const file of this.buildState.files.values()) {
+      file.hasTriggeredEvaluation = false
       if (file.hasBeenUpdated) {
         for (const rule of file.rules.values()) {
           if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
             console.log(`Evaluation of ${rule.id} trigged by updates to ${file.normalizedFilePath}`)
             rule.needsEvaluation = true
+            file.hasTriggeredEvaluation = true
           }
         }
         file.hasBeenUpdated = false

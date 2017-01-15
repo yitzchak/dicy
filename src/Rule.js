@@ -11,6 +11,7 @@ export default class Rule {
   outputs: Map<string, File> = new Map()
   timeStamp: number
   needsEvaluation: boolean = false
+  priority: number = 1
 
   constructor (buildState: BuildState, ...parameters: Array<File>) {
     this.buildState = buildState
@@ -47,9 +48,9 @@ export default class Rule {
     }
   }
 
-  *getUpdatedInputs (): Iterable<File> {
+  *getTriggers (): Iterable<File> {
     for (const file: File of this.inputs.values()) {
-      if (!this.timeStamp || file.timeStamp > this.timeStamp) yield file
+      if (file.hasTriggeredEvaluation) yield file
     }
   }
 

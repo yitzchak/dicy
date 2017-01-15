@@ -7,10 +7,12 @@ import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
 class ParseLaTeXFileListing extends Rule {
+  priority: 0
+
   async evaluate () {
-    const result = {
-      inputs: [],
-      outputs: []
+    const results = {
+      INPUT: new Set(),
+      OUTPUT: new Set()
     }
     const contents = await fs.readFile(this.firstParameter.filePath, { encoding: 'utf-8' })
     const filePattern = /^(INPUT|OUTPUT|PWD) (.*)$/gm
@@ -18,22 +20,16 @@ class ParseLaTeXFileListing extends Rule {
     let rootPath: string = ''
 
     while ((match = filePattern.exec(contents)) !== null) {
-      switch (match[1]) {
-        case 'PWD':
-          rootPath = match[2]
-          break
-        case 'INPUT':
-          result.inputs.push(this.buildState.normalizePath(path.resolve(rootPath, match[2])))
-          break
-        case 'OUTPUT':
-          result.outputs.push(this.buildState.normalizePath(path.resolve(rootPath, match[2])))
-          break
+      if (match[1] === 'PWD') {
+        rootPath = match[2]
+      } else {
+        results[match[1]].add(this.buildState.normalizePath(path.resolve(rootPath, match[2])))
       }
     }
 
-    const outputFile: ?File = await this.getOutput(`${this.firstParameter.normalizedFilePath}.parsed`, false)
-    if (outputFile) {
-      await outputFile.setContents(result)
+    this.firstParameter.contents = {
+      inputs: Array.from(results.INPUT),
+      outputs: Array.from(results.OUTPUT)
     }
   }
 }
