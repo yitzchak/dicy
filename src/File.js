@@ -8,7 +8,7 @@ import yaml from 'js-yaml'
 
 import Rule from './Rule'
 
-import type { FileType } from './types'
+import type { FileType, Parser, Reference } from './types'
 
 export default class File {
   static fileTypes: Map<string, FileType>
@@ -22,7 +22,7 @@ export default class File {
   analyzed: boolean = false
   hasBeenUpdated: boolean = false
   hasTriggeredEvaluation: boolean = false
-  contents: ?Object
+  contents: ?any
 
   constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string) {
     this.filePath = filePath
@@ -42,13 +42,84 @@ export default class File {
     return file
   }
 
+  parse (parsers: Array<Parser>): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const bufferSize = parsers.reduce((current, parser) => Math.max(current, parser.patterns.length), 0)
+      const lines = []
+      let lineNumber = 1
+      const rl = readline.createInterface({
+        input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
+      })
+
+      rl.on('line', line => {
+        lines.push(line)
+        if (lines.length === bufferSize) {
+          let matched = false
+          for (const parser: Parser of parsers) {
+            const matches = parser.patterns.map((pattern, index) => lines[index].match(pattern))
+            matched = matches.every(match => match)
+            if (matched) {
+              const groups = [].concat(...matches.map(match => match.slice(1)))
+              const reference: Reference = {
+                file: this.normalizedFilePath,
+                start: lineNumber,
+                end: lineNumber + parser.patterns.length - 1
+              }
+              lines.splice(0, parser.patterns.length)
+              lineNumber += parser.patterns.length
+              parser.evaluate(reference, groups)
+              break
+            }
+          }
+          if (!matched) {
+            lines.shift()
+            lineNumber++
+          }
+        }
+      })
+      .on('close', () => {
+        resolve()
+      })
+    })
+
+    // const contents = await fs.readFile(this.filePath, { encoding: 'utf-8' })
+    // const lines = contents.split(/(\r\n?|\n)/)
+    // let lineNumber = 1
+    //
+    // while (lines.length !== 0) {
+    //   let matched = false
+    //   for (const parser: Parser of parsers) {
+    //     if (lines.length >= parser.patterns.length) {
+    //       const matches = parser.patterns.map((pattern, index) => lines[index].match(pattern))
+    //       matched = matches.every(match => match)
+    //       if (matched) {
+    //         const groups = [].concat(...matches.map(match => match.slice(1)))
+    //         const reference: Reference = {
+    //           file: this.filePath,
+    //           start: lineNumber,
+    //           end: lineNumber + parser.patterns.length - 1
+    //         }
+    //         lines.splice(0, parser.patterns.length)
+    //         lineNumber += parser.patterns.length
+    //         parser.evaluate(reference, groups)
+    //         break
+    //       }
+    //     }
+    //   }
+    //   if (!matched) {
+    //     lines.shift()
+    //     lineNumber++
+    //   }
+    // }
+  }
+
   exists () {
     return fs.exists(this.filePath)
   }
 
   async findType (): Promise<void> {
     if (!File.fileTypes) {
-      const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'file-types.yaml'))
+      const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'file-types.yaml'), { encoding: 'utf-8' })
       const value = yaml.load(contents)
       File.fileTypes = new Map()
       for (const name in value) {

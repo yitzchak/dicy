@@ -2,12 +2,17 @@
 
 import fs from 'fs-promise'
 import path from 'path'
+
+import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
 class ParseLaTeXFileListing extends Rule {
-  priority: 0
+  constructor (buildState: BuildState, ...parameters: Array<File>) {
+    super(buildState, ...parameters)
+    this.priority = 1
+  }
 
   async evaluate () {
     const results = {

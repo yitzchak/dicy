@@ -50,7 +50,7 @@ export default class Builder {
 
   async evaluate () {
     const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation)
-    rules.sort((x, y) => y.constructor.name.startsWith('Parse') - x.constructor.name.startsWith('Parse'))
+    rules.sort((x, y) => y.priority - x.priority)
 
     for (const rule: Rule of rules) {
       console.log(`Evaluating rule ${rule.id}`)

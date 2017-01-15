@@ -11,7 +11,7 @@ export default class Rule {
   outputs: Map<string, File> = new Map()
   timeStamp: number
   needsEvaluation: boolean = false
-  priority: number = 1
+  priority: number = 0
 
   constructor (buildState: BuildState, ...parameters: Array<File>) {
     this.buildState = buildState

@@ -16,3 +16,23 @@ export type RuleCache = {
   inputs: Array<string>,
   outputs: Array<string>
 }
+
+export type Parser = {
+  patterns: Array<RegExp>,
+  evaluate: (reference: Reference, groups: Array<string>) => void
+}
+
+export type Reference = {
+  file: string,
+  start: ?number,
+  end: ?number
+}
+
+export type Message = {
+  severity: 'info' | 'warning' | 'error',
+  text: string,
+  name?: string,
+  type?: string,
+  source?: Reference,
+  log?: Reference
+}
