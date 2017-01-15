@@ -11,7 +11,7 @@ class LaTeX extends Rule {
     let runLatex = true
 
     for (const file: File of this.getTriggers()) {
-      if (file.type === 'LaTeX File Listing') {
+      if (file.type === 'LaTeXFileListing') {
         await this.updateDependencies(file)
       } else {
         runLatex = true

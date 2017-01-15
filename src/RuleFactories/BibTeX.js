@@ -68,7 +68,7 @@ class BibTeX extends Rule {
 export default class BibTeXFactory extends RuleFactory {
   async analyze (files: Array<File>) {
     for (const file: File of files) {
-      if (file.type === 'BibTeX Control File') {
+      if (file.type === 'BibTeXControlFile') {
         const auxPath = this.buildState.resolveOutputPath('.aux')
         const auxFile = await this.buildState.getFile(auxPath)
         if (auxFile) {

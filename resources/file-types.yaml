@@ -1,13 +1,13 @@
-BibTeX Control File:
+BibTeXControlFile:
   fileName: !!js/regexp /-blx\.bib$/i
-BibTeX log:
+BibTeXLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp /^This is BibTeX,/
-LaTeX File Listing:
+LaTeXFileListing:
   fileName: !!js/regexp /\.fls$/i
 LaTeX:
   fileName: !!js/regexp /\.tex$/i
   contents: !!js/regexp /^\\documentclass/m
-LaTeX log:
+LaTeXLog:
   fileName: !!js/regexp /\.log$/i
   contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/

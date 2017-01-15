@@ -37,7 +37,7 @@ class ParseLaTeXFileListing extends Rule {
 export default class ParseLaTeXFileListingFactory extends RuleFactory {
   async analyze (files: Array<File>) {
     for (const file: File of files) {
-      if (file.type === 'LaTeX File Listing') {
+      if (file.type === 'LaTeXFileListing') {
         const rule = new ParseLaTeXFileListing(this.buildState, file)
         await this.buildState.addRule(rule)
       }
