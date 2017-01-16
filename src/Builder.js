@@ -53,7 +53,9 @@ export default class Builder {
     rules.sort((x, y) => y.priority - x.priority)
 
     for (const rule: Rule of rules) {
-      console.log(`Evaluating rule ${rule.id}`)
+      const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
+      const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
+      console.log(`Evaluating rule ${rule.id}${triggerText}`)
       rule.timeStamp = new Date()
       rule.needsEvaluation = false
       await rule.evaluate()
@@ -67,7 +69,6 @@ export default class Builder {
       if (file.hasBeenUpdated) {
         for (const rule of file.rules.values()) {
           if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
-            console.log(`Evaluation of ${rule.id} trigged by updates to ${file.normalizedFilePath}`)
             rule.needsEvaluation = true
             file.hasTriggeredEvaluation = true
           }

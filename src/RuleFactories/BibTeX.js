@@ -2,12 +2,27 @@
 
 import childProcess from 'mz/child_process'
 import path from 'path'
+
+import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
 class BibTeX extends Rule {
+  constructor (buildState: BuildState, ...parameters: Array<File>) {
+    super(buildState, ...parameters)
+    this.priority = 100
+  }
+
   async evaluate () {
+    await this.getInput(this.buildState.resolveOutputPath('.log'))
+
+    const run: boolean = Array.from(this.getTriggers()).some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run BibTeX/)))
+
+    if (!run) return
+
+    console.log('Running BibTeX...')
+
     try {
       const args = this.constructArguments()
       const options = this.constructProcessOptions()
@@ -19,13 +34,6 @@ class BibTeX extends Rule {
         this.buildState.resolveOutputPath('.blg')
       ])
       await this.parseOutput(stdout)
-
-      // This is kludge. Probably need to improve parsing dependency
-      const latexRuleId = `LaTeX(${this.buildState.filePath})`
-      const rule = this.buildState.rules.get(latexRuleId)
-      if (rule) {
-        rule.needsEvaluation = true
-      }
     } catch (error) {
       console.log(error)
     }

@@ -10,7 +10,7 @@ import RuleFactory from '../RuleFactory'
 class ParseLaTeXFileListing extends Rule {
   constructor (buildState: BuildState, ...parameters: Array<File>) {
     super(buildState, ...parameters)
-    this.priority = 1
+    this.priority = 200
   }
 
   async evaluate () {

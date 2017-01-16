@@ -19,7 +19,14 @@ class LaTeX extends Rule {
           break
         case 'LaTeXLog':
           if (file.contents) {
-            runLatex = runLatex || file.contents.some((message: Message) => message.text === 'Please rerun LaTeX')
+            runLatex = runLatex || file.contents.messages.some((message: Message) => message.text.match(/rerun LaTeX/))
+            // for (const message: Message of file.contents.messages) {
+            //   const match = message.text.match(/^... file '(.*)' not found$/)
+            //   if (match) {
+            //     console.log(match[1])
+            //     this.getInput(path.resolve(path.dirname(file.filePath), match[1]), false)
+            //   }
+            // }
           }
           break
         default:
@@ -28,6 +35,8 @@ class LaTeX extends Rule {
     }
 
     if (!runLatex) return
+
+    console.log('Running LaTeX...')
 
     try {
       const args = this.constructArguments()

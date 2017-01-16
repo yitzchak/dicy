@@ -5,12 +5,12 @@ import File from '../File'
 import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
-import type { Message, Reference } from '../types'
+import type { Message } from '../types'
 
 class ParseLaTeXLog extends Rule {
   constructor (buildState: BuildState, ...parameters: Array<File>) {
     super(buildState, ...parameters)
-    this.priority = 1
+    this.priority = 200
   }
 
   async evaluate () {
@@ -54,7 +54,7 @@ class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['type', 'severity', 'text', 'line'],
-      patterns: [/^(.*) (Warning|Info): +(.*?)(?: on input line (\d+))?\.$/],
+      patterns: [/^(.*) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/],
       evaluate: (reference, groups) => {
         const message: Message = {
           severity: groups.severity === 'Info' ? 'info' : 'warning',
@@ -75,9 +75,21 @@ class ParseLaTeXLog extends Rule {
 
         messages.push(message)
       }
+    }, {
+      names: ['package', 'text'],
+      patterns: [/^\(([^()]+)\) +(.*)$/],
+      evaluate: (reference, groups) => {
+        const message: Message = messages[messages.length - 1]
+        if (message && message.type && message.type.endsWith(groups.package)) {
+          message.text = `${message.text}\n${groups.text}`
+          if (message.log) message.log.end = reference.start
+        }
+      }
     }])
 
-    this.firstParameter.contents = messages
+    this.firstParameter.contents = {
+      messages
+    }
   }
 }
 
