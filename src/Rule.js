@@ -79,4 +79,15 @@ export default class Rule {
       await this.getInput(filePath)
     }
   }
+
+  async addResolvedOutputs (exts: Array<string>, circularDependency: boolean = false) {
+    for (const ext of exts) {
+      const filePath = this.buildState.resolveOutputPath(ext)
+      await this.getOutput(filePath)
+      if (circularDependency) {
+        await this.getInput(filePath)
+      }
+    }
+  }
+
 }

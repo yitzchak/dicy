@@ -44,11 +44,7 @@ class LaTeX extends Rule {
       const command = `pdflatex ${args.join(' ')}`
 
       await childProcess.exec(command, options)
-      for (const ext of ['.fls', '.log']) {
-        await this.getInput(this.buildState.resolveOutputPath(ext), false)
-        await this.getOutput(this.buildState.resolveOutputPath(ext))
-        // if (file) file.update()
-      }
+      await this.addResolvedOutputs(['.fls', '.log'], true)
 
       for (const file: File of this.outputs.values()) {
         await file.update()

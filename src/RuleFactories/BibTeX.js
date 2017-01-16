@@ -29,10 +29,7 @@ class BibTeX extends Rule {
       const command = `bibtex ${args.join(' ')}`
 
       const stdout = await childProcess.exec(command, options)
-      await this.addOutputs([
-        this.buildState.resolveOutputPath('.bbl'),
-        this.buildState.resolveOutputPath('.blg')
-      ])
+      await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {
       console.log(error)
