@@ -16,3 +16,6 @@ LaTeX:
 LaTeXLog:
   fileName: !!js/regexp /\.log$/i
   contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/
+MakeIndexLog:
+  fileName: !!js/regexp /\..lg$/i
+  contents: !!js/regexp /^This is makeindex,/
