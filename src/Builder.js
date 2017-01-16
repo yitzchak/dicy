@@ -79,17 +79,20 @@ export default class Builder {
   }
 
   async build () {
+    let evaluationCount = 0
+
     if (this.buildState.options.outputDirectory) {
       await fs.ensureDir(path.resolve(this.buildState.dir, this.buildState.options.outputDirectory))
     }
 
     await this.loadStateCache()
 
-    while (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
+    while (evaluationCount < 100 && Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
       Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation)) {
       await this.analyze()
       await this.evaluate()
       await this.checkUpdates()
+      evaluationCount++
     }
 
     await this.saveStateCache()
