@@ -15,10 +15,9 @@ export default class Rule extends BuildStateConsumer {
   timeStamp: number
   needsEvaluation: boolean = false
 
-  static async analyze (buildState: BuildState, file: File, jobName: ?string) {
+  static *analyze (buildState: BuildState, jobName: ?string, file: File): Iterable<Rule> {
     if (this.fileTypes.has(file.type)) {
-      const rule = new this(buildState, jobName, file)
-      await buildState.addRule(rule)
+      yield new this(buildState, jobName, file)
     }
   }
 

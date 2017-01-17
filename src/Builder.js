@@ -32,19 +32,30 @@ export default class Builder extends BuildStateConsumer {
 
       if (files.length === 0) return
 
-      for (const file: File of files) {
+      const file = files[0]
+
+      for (const ruleClass: Class<Rule> of this.ruleClasses) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          for (const ruleClass: Class<Rule> of this.ruleClasses) {
-            await ruleClass.analyze(this.buildState, file, jobName)
+          for (const rule: Rule of ruleClass.analyze(this.buildState, jobName, file)) {
+            await this.buildState.addRule(rule)
+            if (rule.needsEvaluation) await this.evaluateRule(rule)
           }
         }
       }
 
-      for (const file of files) {
-        file.analyzed = true
-      }
+      file.analyzed = true
     }
+  }
+
+  async evaluateRule (rule: Rule) {
+    const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
+    const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
+    console.log(`Evaluating rule ${rule.id}${triggerText}`)
+    rule.timeStamp = new Date()
+    rule.needsEvaluation = false
+    await rule.evaluate()
+    await rule.updateOutputs()
   }
 
   async evaluate () {
@@ -52,13 +63,7 @@ export default class Builder extends BuildStateConsumer {
     rules.sort((x, y) => y.constructor.priority - x.constructor.priority)
 
     for (const rule: Rule of rules) {
-      const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
-      const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
-      console.log(`Evaluating rule ${rule.id}${triggerText}`)
-      rule.timeStamp = new Date()
-      rule.needsEvaluation = false
-      await rule.evaluate()
-      await rule.updateOutputs()
+      await this.evaluateRule(rule)
     }
   }
 
@@ -102,8 +107,8 @@ export default class Builder extends BuildStateConsumer {
 
     await this.loadStateCache()
 
-    while (evaluationCount < 100 && Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
-      Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation)) {
+    while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
+      Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
       await this.analyze()
       await this.evaluate()
       await this.checkUpdates()

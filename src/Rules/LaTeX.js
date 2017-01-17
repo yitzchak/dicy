@@ -9,6 +9,7 @@ import type { Message } from '../types'
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
+  static priority: number = 0
 
   async evaluate () {
     let runLatex = Array.from(this.getTriggers()).length === 0
@@ -58,8 +59,8 @@ export default class LaTeX extends Rule {
   async updateDependencies (file: File) {
     if (file.contents) {
       console.log(`Update LaTeX dependencies...`)
-      await this.addInputs(file.contents.inputs)
-      await this.addOutputs(file.contents.outputs)
+      if (file.contents && file.contents.inputs) await this.addInputs(file.contents.inputs)
+      if (file.contents && file.contents.outputs) await this.addOutputs(file.contents.outputs)
     }
   }
 
