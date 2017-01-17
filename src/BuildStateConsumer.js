@@ -15,8 +15,8 @@ export default class BuildStateConsumer {
       get (target, key) {
         if (jobName) {
           if (key === 'jobName') return jobName
-          if (typeof target.jobNames === 'object') {
-            const jobOptions = target.jobNames[jobName]
+          if (target.jobs) {
+            const jobOptions = target.jobs[jobName]
             return (jobOptions && key in jobOptions) ? jobOptions[key] : target[key]
           }
         }
