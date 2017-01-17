@@ -2,9 +2,9 @@
 
 import BuildState from './BuildState'
 import File from './File'
+import BuildStateConsumer from './BuildStateConsumer'
 
-export default class Rule {
-  buildState: BuildState
+export default class Rule extends BuildStateConsumer {
   id: string
   parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
@@ -13,8 +13,8 @@ export default class Rule {
   needsEvaluation: boolean = false
   priority: number = 0
 
-  constructor (buildState: BuildState, ...parameters: Array<File>) {
-    this.buildState = buildState
+  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
+    super(buildState, jobName)
     this.parameters = parameters
     this.id = `${this.constructor.name}(${parameters.map(file => file.normalizedFilePath).join()})`
     for (const file: File of parameters) {
@@ -29,12 +29,12 @@ export default class Rule {
 
   async evaluate () {}
 
-  async getOutput (filePath: string, requireExistance: boolean = true): Promise<?File> {
-    filePath = this.buildState.normalizePath(filePath)
+  async getOutput (filePath: string): Promise<?File> {
+    filePath = this.normalizePath(filePath)
     let file: ?File = this.outputs.get(filePath)
 
     if (!file) {
-      file = await this.buildState.getFile(filePath, requireExistance)
+      file = await this.getFile(filePath)
       if (!file) return
       this.outputs.set(filePath, file)
     }
@@ -60,12 +60,12 @@ export default class Rule {
     }
   }
 
-  async getInput (filePath: string, requireExistance: boolean = true): Promise<?File> {
-    filePath = this.buildState.normalizePath(filePath)
+  async getInput (filePath: string): Promise<?File> {
+    filePath = this.normalizePath(filePath)
     let file: ?File = this.inputs.get(filePath)
 
     if (!file) {
-      file = await this.buildState.getFile(filePath, requireExistance)
+      file = await this.getFile(filePath)
       if (!file) return
       await file.addRule(this)
       this.inputs.set(filePath, file)
@@ -82,7 +82,7 @@ export default class Rule {
 
   async addResolvedOutputs (exts: Array<string>, circularDependency: boolean = false) {
     for (const ext of exts) {
-      const filePath = this.buildState.resolveOutputPath(ext)
+      const filePath = this.resolveOutputPath(ext)
       await this.getOutput(filePath)
       if (circularDependency) {
         await this.getInput(filePath)

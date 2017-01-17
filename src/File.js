@@ -19,6 +19,7 @@ export default class File {
   timeStamp: Date
   hash: string
   rules: Set<Rule> = new Set()
+  jobNames: Set<string> = new Set()
   analyzed: boolean = false
   hasBeenUpdated: boolean = false
   hasTriggeredEvaluation: boolean = false
@@ -31,8 +32,8 @@ export default class File {
     if (hash) this.hash = hash
   }
 
-  static async create (filePath: string, normalizedFilePath: string, requireExistance: boolean = false, timeStamp: ?Date, hash: ?string): Promise<?File> {
-    if (requireExistance && !await fs.exists(filePath)) return
+  static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string): Promise<?File> {
+    if (!await fs.exists(filePath)) return
 
     const file: File = new File(filePath, normalizedFilePath, timeStamp, hash)
 

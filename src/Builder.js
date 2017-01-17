@@ -5,14 +5,10 @@ import fs from 'fs-promise'
 import BuildState from './BuildState'
 import Rule from './Rule'
 import RuleFactory from './RuleFactory'
+import BuildStateConsumer from './BuildStateConsumer'
 
-export default class Builder {
-  buildState: BuildState
+export default class Builder extends BuildStateConsumer {
   ruleFactories: Array<RuleFactory> = []
-
-  constructor (buildState: BuildState) {
-    this.buildState = buildState
-  }
 
   static async create (filePath: string, options: Object = {}) {
     const buildState = await BuildState.create(filePath, options)
@@ -83,6 +79,22 @@ export default class Builder {
 
     if (this.buildState.options.outputDirectory) {
       await fs.ensureDir(path.resolve(this.buildState.dir, this.buildState.options.outputDirectory))
+    }
+
+    const jobNames = this.options.jobNames
+    if (jobNames) {
+      const file = await this.getFile(this.buildState.filePath)
+      if (file) {
+        if (typeof jobNames === 'object') {
+          for (const jobName in jobNames) {
+            file.jobNames.add(jobName)
+          }
+        } else {
+          for (const jobName of jobNames) {
+            file.jobNames.add(jobName)
+          }
+        }
+      }
     }
 
     await this.loadStateCache()

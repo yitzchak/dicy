@@ -82,7 +82,7 @@ export default class BuildState {
     return this.rules.get(id)
   }
 
-  async getFile (filePath: string, requireExistance: boolean = true): Promise<?File> {
+  async getFile (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.files.get(filePath)
 
@@ -93,7 +93,7 @@ export default class BuildState {
         timeStamp = this.cache.files[filePath].timeStamp
         hash = this.cache.files[filePath].hash
       }
-      file = await File.create(path.resolve(this.dir, filePath), filePath, requireExistance, timeStamp, hash)
+      file = await File.create(path.resolve(this.dir, filePath), filePath, timeStamp, hash)
       if (!file) return
       this.files.set(filePath, file)
     }

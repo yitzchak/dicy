@@ -5,6 +5,10 @@ import path from 'path'
 import program from 'commander'
 import Builder from './Builder'
 
+function parseArray (val) {
+  return val.split(/\s*,\s*/)
+}
+
 function cloneOptions (options) {
   const newOptions = {}
 
@@ -26,6 +30,7 @@ program
   .option('--output-format <format>', 'output format [pdf]', /^(pdf|ps|dvi)$/, 'pdf')
   .option('--output-directory <outputDirectory>', 'output directory')
   .option('--job-name <jobName>', 'job name for job')
+  .option('--job-names <jobNames>', 'job names', parseArray)
   .action(async (inputs, env) => {
     const options = cloneOptions(env.opts())
 
