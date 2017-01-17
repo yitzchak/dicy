@@ -83,13 +83,13 @@ export default class Builder extends BuildStateConsumer {
   async build () {
     let evaluationCount = 0
 
-    if (this.buildState.options.outputDirectory) {
-      await fs.ensureDir(path.resolve(this.buildState.dir, this.buildState.options.outputDirectory))
+    if (this.options.outputDirectory) {
+      await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
     }
 
     const jobNames = this.options.jobNames
     if (jobNames) {
-      const file = await this.getFile(this.buildState.filePath)
+      const file = await this.getFile(this.filePath)
       if (file) {
         if (Array.isArray(jobNames)) {
           for (const jobName of jobNames) {

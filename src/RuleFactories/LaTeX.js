@@ -64,7 +64,7 @@ class LaTeX extends Rule {
 
   constructProcessOptions () {
     return {
-      cwd: this.buildState.dir
+      cwd: this.rootPath
     }
   }
 

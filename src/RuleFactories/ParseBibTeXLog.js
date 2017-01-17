@@ -46,7 +46,7 @@ class ParseBibTeXLog extends Rule {
         const line = parseInt(groups.line, 10)
         if (message.log) message.log.end = reference.start
         message.source = {
-          file: this.buildState.normalizePath(groups.file),
+          file: this.normalizePath(groups.file),
           start: line,
           end: line
         }
@@ -62,7 +62,7 @@ class ParseBibTeXLog extends Rule {
           text: groups.text,
           log: reference,
           source: {
-            file: this.buildState.normalizePath(groups.file),
+            file: this.normalizePath(groups.file),
             start: line,
             end: line
           }

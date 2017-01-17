@@ -1,7 +1,5 @@
 /* @flow */
 
-import path from 'path'
-
 import BuildState from './BuildState'
 import File from './File'
 
@@ -27,23 +25,20 @@ export default class BuildStateConsumer {
     })
   }
 
+  get filePath (): string {
+    return this.buildState.filePath
+  }
+
+  get rootPath (): string {
+    return this.buildState.rootPath
+  }
+
   normalizePath (filePath: string) {
     return this.buildState.normalizePath(filePath)
   }
 
   resolveOutputPath (ext: string) {
-    let dir = this.buildState.dir
-    let { name } = path.parse(this.buildState.filePath)
-
-    if (this.options.jobName) {
-      name = this.options.jobName
-    }
-
-    if (this.options.outputDirectory) {
-      dir = path.resolve(dir, this.options.outputDirectory)
-    }
-
-    return path.format({ dir, name, ext })
+    return this.buildState.resolveOutputPath(ext, this.jobName)
   }
 
   async getFile (filePath: string): Promise<?File> {

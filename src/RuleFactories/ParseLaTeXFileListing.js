@@ -30,7 +30,7 @@ class ParseLaTeXFileListing extends Rule {
       names: ['type', 'path'],
       patterns: [/^(INPUT|OUTPUT) (.*)$/],
       evaluate: (reference, groups) => {
-        results[groups.type].add(this.buildState.normalizePath(path.resolve(rootPath, groups.path)))
+        results[groups.type].add(this.normalizePath(path.resolve(rootPath, groups.path)))
       }
     }])
 

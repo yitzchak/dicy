@@ -15,7 +15,7 @@ class BibTeX extends Rule {
   }
 
   async evaluate () {
-    await this.getInput(this.buildState.resolveOutputPath('.log'))
+    await this.getInput(this.resolveOutputPath('.log'))
 
     const triggers = Array.from(this.getTriggers())
     const run: boolean = triggers.length === 0 || triggers.some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run BibTeX/)))
@@ -39,11 +39,11 @@ class BibTeX extends Rule {
 
   constructProcessOptions () {
     const options: Object = {
-      cwd: this.buildState.dir
+      cwd: this.rootPath
     }
 
-    if (this.buildState.options.outputDirectory) {
-      options.env = Object.assign({}, process.env, { BIBINPUTS: `.:${this.buildState.options.outputDirectory}` })
+    if (this.options.outputDirectory) {
+      options.env = Object.assign({}, process.env, { BIBINPUTS: `.:${this.options.outputDirectory}` })
     }
 
     return options
@@ -62,9 +62,9 @@ class BibTeX extends Rule {
     let match
 
     while ((match = databasePattern.exec(stdout)) !== null) {
-      await this.getInput(path.resolve(this.buildState.dir, match[1]))
-      if (this.buildState.options.outputDirectory) {
-        await this.getInput(path.resolve(this.buildState.dir, this.buildState.options.outputDirectory, match[1]))
+      await this.getInput(path.resolve(this.rootPath, match[1]))
+      if (this.options.outputDirectory) {
+        await this.getInput(path.resolve(this.rootPath, this.options.outputDirectory, match[1]))
       }
     }
   }

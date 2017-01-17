@@ -15,7 +15,7 @@ class Biber extends Rule {
   }
 
   async evaluate () {
-    await this.getInput(this.buildState.resolveOutputPath('.log'))
+    await this.getInput(this.resolveOutputPath('.log'))
 
     const triggers = Array.from(this.getTriggers())
     const run: boolean = triggers.length === 0 || triggers.some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run Biber/)))
@@ -39,7 +39,7 @@ class Biber extends Rule {
 
   constructProcessOptions () {
     const options: Object = {
-      cwd: this.buildState.dir
+      cwd: this.rootPath
     }
 
     return options
@@ -58,9 +58,9 @@ class Biber extends Rule {
     let match
 
     while ((match = databasePattern.exec(stdout)) !== null) {
-      await this.getInput(path.resolve(this.buildState.dir, match[1]))
+      await this.getInput(path.resolve(this.rootPath, match[1]))
       if (this.options.outputDirectory) {
-        await this.getInput(path.resolve(this.buildState.dir, this.options.outputDirectory, match[1]))
+        await this.getInput(path.resolve(this.rootPath, this.options.outputDirectory, match[1]))
       }
     }
   }

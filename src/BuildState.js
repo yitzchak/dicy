@@ -9,7 +9,7 @@ import type { FileCache } from './types'
 
 export default class BuildState {
   filePath: string
-  dir: string
+  rootPath: string
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
@@ -17,7 +17,7 @@ export default class BuildState {
 
   constructor (filePath: string, options: Object = {}) {
     this.filePath = path.basename(filePath)
-    this.dir = path.dirname(filePath)
+    this.rootPath = path.dirname(filePath)
     Object.assign(this.options, options)
   }
 
@@ -34,7 +34,7 @@ export default class BuildState {
 
     if (path.isAbsolute(filePath)) {
       const dirPaths: Array<string> = [
-        this.dir
+        this.rootPath
       ]
 
       for (const dir of dirPaths) {
@@ -49,7 +49,7 @@ export default class BuildState {
   }
 
   resolveOutputPath (ext: string, jobName: ?string) {
-    let dir = this.dir
+    let dir = this.rootPath
     let { name } = path.parse(this.filePath)
 
     name = jobName || this.options.jobName || name
@@ -91,7 +91,7 @@ export default class BuildState {
         timeStamp = this.cache.files[filePath].timeStamp
         hash = this.cache.files[filePath].hash
       }
-      file = await File.create(path.resolve(this.dir, filePath), filePath, timeStamp, hash)
+      file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash)
       if (!file) return
       this.files.set(filePath, file)
     }
