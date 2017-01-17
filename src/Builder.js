@@ -4,12 +4,11 @@ import path from 'path'
 import fs from 'fs-promise'
 import BuildState from './BuildState'
 import Rule from './Rule'
-import RuleFactory from './RuleFactory'
 import BuildStateConsumer from './BuildStateConsumer'
 import File from './File'
 
 export default class Builder extends BuildStateConsumer {
-  ruleFactories: Array<RuleFactory> = []
+  ruleClasses: Array<Class<Rule>> = []
 
   static async create (filePath: string, options: Object = {}) {
     const buildState = await BuildState.create(filePath, options)
@@ -21,12 +20,10 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async initialize () {
-    const ruleFactoryPath: string = path.join(__dirname, 'RuleFactories')
-    const entries: Array<string> = await fs.readdir(ruleFactoryPath)
-    this.ruleFactories = entries.map(entry => {
-      const RuleFactoryImpl: Class<RuleFactory> = require(path.join(ruleFactoryPath, entry)).default
-      return new RuleFactoryImpl(this.buildState)
-    })
+    const ruleClassPath: string = path.join(__dirname, 'Rules')
+    const entries: Array<string> = await fs.readdir(ruleClassPath)
+    this.ruleClasses = entries.map(entry => require(path.join(ruleClassPath, entry)).default)
+    this.ruleClasses.sort((x, y) => y.priority - x.priority)
   }
 
   async analyze () {
@@ -38,8 +35,8 @@ export default class Builder extends BuildStateConsumer {
       for (const file: File of files) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          for (const ruleFactory of this.ruleFactories) {
-            await ruleFactory.analyze(file, jobName)
+          for (const ruleClass: Class<Rule> of this.ruleClasses) {
+            await ruleClass.analyze(this.buildState, file, jobName)
           }
         }
       }
@@ -52,7 +49,7 @@ export default class Builder extends BuildStateConsumer {
 
   async evaluate () {
     const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation)
-    rules.sort((x, y) => y.priority - x.priority)
+    rules.sort((x, y) => y.constructor.priority - x.constructor.priority)
 
     for (const rule: Rule of rules) {
       const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')

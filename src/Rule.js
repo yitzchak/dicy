@@ -5,13 +5,22 @@ import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
 export default class Rule extends BuildStateConsumer {
+  static fileTypes: Set<string> = new Set()
+  static priority: number = 0
+
   id: string
   parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   timeStamp: number
   needsEvaluation: boolean = false
-  priority: number = 0
+
+  static async analyze (buildState: BuildState, file: File, jobName: ?string) {
+    if (this.fileTypes.has(file.type)) {
+      const rule = new this(buildState, jobName, file)
+      await buildState.addRule(rule)
+    }
+  }
 
   constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
     super(buildState, jobName)

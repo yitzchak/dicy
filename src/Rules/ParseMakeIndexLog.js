@@ -1,19 +1,14 @@
 /* @flow */
 
-import BuildState from '../BuildState'
-import File from '../File'
 import Rule from '../Rule'
-import RuleFactory from '../RuleFactory'
 
 import type { Message } from '../types'
 
 const MESSAGE_PATTERN = /^\s+--\s*(.*)$/
 
-class ParseMakeIndexLog extends Rule {
-  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
-    super(buildState, jobName, ...parameters)
-    this.priority = 200
-  }
+export default class ParseMakeIndexLog extends Rule {
+  static fileTypes: Set<string> = new Set(['MakeIndexLog'])
+  static priority: number = 200
 
   async evaluate () {
     const messages: Array<Message> = []
@@ -63,15 +58,6 @@ class ParseMakeIndexLog extends Rule {
 
     this.firstParameter.contents = {
       messages
-    }
-  }
-}
-
-export default class ParseMakeIndexFileLog extends RuleFactory {
-  async analyze (file: File, jobName: ?string) {
-    if (file.type === 'MakeIndexLog') {
-      const rule = new ParseMakeIndexLog(this.buildState, jobName, file)
-      await this.buildState.addRule(rule)
     }
   }
 }

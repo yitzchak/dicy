@@ -1,17 +1,10 @@
 /* @flow */
 
-import BuildState from '../BuildState'
-import File from '../File'
 import Rule from '../Rule'
-import RuleFactory from '../RuleFactory'
 
-class ParseLaTeXMagic extends Rule {
+export default class ParseLaTeXMagic extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
-
-  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
-    super(buildState, jobName, ...parameters)
-    this.priority = 200
-  }
+  static priority: number = 200
 
   async evaluate () {
     const magic = {}
@@ -22,6 +15,9 @@ class ParseLaTeXMagic extends Rule {
       evaluate: (reference, groups) => {
         if (groups.name === 'jobNames') {
           magic[groups.name] = groups.value.trim().split(/\s*,\s*/)
+          for (const jobName of magic[groups.name]) {
+            this.firstParameter.jobNames.add(jobName)
+          }
         } else {
           magic[groups.name] = groups.value.trim()
         }
@@ -31,14 +27,5 @@ class ParseLaTeXMagic extends Rule {
     Object.assign(this.options, magic)
 
     // this.firstParameter.contents = { magic }
-  }
-}
-
-export default class ParseLaTeXMagicFactory extends RuleFactory {
-  async analyze (file: File, jobName: ?string) {
-    if (file.type === 'LaTeX') {
-      const rule = new ParseLaTeXMagic(this.buildState, undefined, file)
-      await this.buildState.addRule(rule)
-    }
   }
 }

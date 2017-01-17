@@ -1,17 +1,12 @@
 /* @flow */
 
-import BuildState from '../BuildState'
-import File from '../File'
 import Rule from '../Rule'
-import RuleFactory from '../RuleFactory'
 
 import type { Message } from '../types'
 
-class ParseLaTeXLog extends Rule {
-  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
-    super(buildState, jobName, ...parameters)
-    this.priority = 200
-  }
+export default class ParseLaTeXLog extends Rule {
+  static fileTypes: Set<string> = new Set(['LaTeXLog'])
+  static priority: number = 200
 
   async evaluate () {
     const messages: Array<Message> = []
@@ -89,15 +84,6 @@ class ParseLaTeXLog extends Rule {
 
     this.firstParameter.contents = {
       messages
-    }
-  }
-}
-
-export default class ParseLaTeXFileLog extends RuleFactory {
-  async analyze (file: File, jobName: ?string) {
-    if (file.type === 'LaTeXLog') {
-      const rule = new ParseLaTeXLog(this.buildState, jobName, file)
-      await this.buildState.addRule(rule)
     }
   }
 }

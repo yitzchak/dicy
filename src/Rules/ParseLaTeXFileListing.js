@@ -2,16 +2,11 @@
 
 import path from 'path'
 
-import BuildState from '../BuildState'
-import File from '../File'
 import Rule from '../Rule'
-import RuleFactory from '../RuleFactory'
 
-class ParseLaTeXFileListing extends Rule {
-  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
-    super(buildState, jobName, ...parameters)
-    this.priority = 200
-  }
+export default class ParseLaTeXFileListing extends Rule {
+  static fileTypes: Set<string> = new Set(['LaTeXFileListing'])
+  static priority: number = 200
 
   async evaluate () {
     let rootPath: string = ''
@@ -37,15 +32,6 @@ class ParseLaTeXFileListing extends Rule {
     this.firstParameter.contents = {
       inputs: Array.from(results.INPUT),
       outputs: Array.from(results.OUTPUT)
-    }
-  }
-}
-
-export default class ParseLaTeXFileListingFactory extends RuleFactory {
-  async analyze (file: File, jobName: ?string) {
-    if (file.type === 'LaTeXFileListing') {
-      const rule = new ParseLaTeXFileListing(this.buildState, jobName, file)
-      await this.buildState.addRule(rule)
     }
   }
 }

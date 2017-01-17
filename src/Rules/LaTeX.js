@@ -4,11 +4,12 @@ import childProcess from 'mz/child_process'
 import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
-import RuleFactory from '../RuleFactory'
 
 import type { Message } from '../types'
 
-class LaTeX extends Rule {
+export default class LaTeX extends Rule {
+  static fileTypes: Set<string> = new Set(['LaTeX'])
+
   async evaluate () {
     let runLatex = Array.from(this.getTriggers()).length === 0
 
@@ -85,14 +86,5 @@ class LaTeX extends Rule {
     args.push(`"${path.basename(this.firstParameter.filePath)}"`)
 
     return args
-  }
-}
-
-export default class LaTeXFactory extends RuleFactory {
-  async analyze (file: File, jobName: ?string) {
-    if (file.type === 'LaTeX') {
-      const rule = new LaTeX(this.buildState, jobName, file)
-      await this.buildState.addRule(rule)
-    }
   }
 }
