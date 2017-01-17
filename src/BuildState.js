@@ -48,13 +48,11 @@ export default class BuildState {
     return filePath
   }
 
-  resolveOutputPath (ext: string) {
+  resolveOutputPath (ext: string, jobName: ?string) {
     let dir = this.dir
     let { name } = path.parse(this.filePath)
 
-    if (this.options.jobName) {
-      name = this.options.jobName
-    }
+    name = jobName || this.options.jobName || name
 
     if (this.options.outputDirectory) {
       dir = path.resolve(dir, this.options.outputDirectory)
@@ -130,7 +128,8 @@ export default class BuildState {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
         hash: file.hash,
-        contents: file.contents
+        contents: file.contents,
+        jobNames: Array.from(file.jobNames.values())
       }
 
       if (file.type) {

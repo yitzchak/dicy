@@ -16,8 +16,10 @@ export default class Rule extends BuildStateConsumer {
   constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
     super(buildState, jobName)
     this.parameters = parameters
-    this.id = `${this.constructor.name}(${parameters.map(file => file.normalizedFilePath).join()})`
+    const jobNameId = jobName ? `;${jobName}` : ''
+    this.id = `${this.constructor.name}(${parameters.map(file => file.normalizedFilePath).join()}${jobNameId})`
     for (const file: File of parameters) {
+      if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.normalizedFilePath, file)
       file.addRule(this)
     }

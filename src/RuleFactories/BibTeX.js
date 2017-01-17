@@ -9,15 +9,16 @@ import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
 class BibTeX extends Rule {
-  constructor (buildState: BuildState, ...parameters: Array<File>) {
-    super(buildState, ...parameters)
+  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
+    super(buildState, jobName, ...parameters)
     this.priority = 100
   }
 
   async evaluate () {
     await this.getInput(this.buildState.resolveOutputPath('.log'))
 
-    const run: boolean = Array.from(this.getTriggers()).some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run BibTeX/)))
+    const triggers = Array.from(this.getTriggers())
+    const run: boolean = triggers.length === 0 || triggers.some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run BibTeX/)))
 
     if (!run) return
 
@@ -70,15 +71,13 @@ class BibTeX extends Rule {
 }
 
 export default class BibTeXFactory extends RuleFactory {
-  async analyze (files: Array<File>) {
-    for (const file: File of files) {
-      if (file.type === 'BibTeXControlFile') {
-        const auxPath = this.buildState.resolveOutputPath('.aux')
-        const auxFile = await this.buildState.getFile(auxPath)
-        if (auxFile) {
-          const rule = new BibTeX(this.buildState, auxFile)
-          await this.buildState.addRule(rule)
-        }
+  async analyze (file: File, jobName: ?string) {
+    if (file.type === 'BibTeXControlFile') {
+      const auxPath = this.buildState.resolveOutputPath('.aux', jobName)
+      const auxFile = await this.buildState.getFile(auxPath)
+      if (auxFile) {
+        const rule = new BibTeX(this.buildState, jobName, auxFile)
+        await this.buildState.addRule(rule)
       }
     }
   }

@@ -10,8 +10,8 @@ import type { Message } from '../types'
 const MESSAGE_PATTERN = /^\s+--\s*(.*)$/
 
 class ParseMakeIndexLog extends Rule {
-  constructor (buildState: BuildState, ...parameters: Array<File>) {
-    super(buildState, ...parameters)
+  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
+    super(buildState, jobName, ...parameters)
     this.priority = 200
   }
 
@@ -68,12 +68,10 @@ class ParseMakeIndexLog extends Rule {
 }
 
 export default class ParseMakeIndexFileLog extends RuleFactory {
-  async analyze (files: Array<File>) {
-    for (const file: File of files) {
-      if (file.type === 'MakeIndexLog') {
-        const rule = new ParseMakeIndexLog(this.buildState, file)
-        await this.buildState.addRule(rule)
-      }
+  async analyze (file: File, jobName: ?string) {
+    if (file.type === 'MakeIndexLog') {
+      const rule = new ParseMakeIndexLog(this.buildState, jobName, file)
+      await this.buildState.addRule(rule)
     }
   }
 }

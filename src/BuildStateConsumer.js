@@ -19,7 +19,7 @@ export default class BuildStateConsumer {
           if (key === 'jobName') return jobName
           if (typeof target.jobNames === 'object') {
             const jobOptions = target.jobNames[jobName]
-            return key in jobOptions ? jobOptions[key] : target[key]
+            return (jobOptions && key in jobOptions) ? jobOptions[key] : target[key]
           }
         }
         return target[key]
@@ -49,5 +49,6 @@ export default class BuildStateConsumer {
   async getFile (filePath: string): Promise<?File> {
     const file: ?File = await this.buildState.getFile(filePath)
     if (file && this.jobName) file.jobNames.add(this.jobName)
+    return file
   }
 }

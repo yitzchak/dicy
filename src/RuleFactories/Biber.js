@@ -9,15 +9,16 @@ import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
 class Biber extends Rule {
-  constructor (buildState: BuildState, ...parameters: Array<File>) {
-    super(buildState, ...parameters)
+  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
+    super(buildState, jobName, ...parameters)
     this.priority = 100
   }
 
   async evaluate () {
     await this.getInput(this.buildState.resolveOutputPath('.log'))
 
-    const run: boolean = Array.from(this.getTriggers()).some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run Biber/)))
+    const triggers = Array.from(this.getTriggers())
+    const run: boolean = triggers.length === 0 || triggers.some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run Biber/)))
 
     if (!run) return
 
@@ -58,20 +59,18 @@ class Biber extends Rule {
 
     while ((match = databasePattern.exec(stdout)) !== null) {
       await this.getInput(path.resolve(this.buildState.dir, match[1]))
-      if (this.buildState.options.outputDirectory) {
-        await this.getInput(path.resolve(this.buildState.dir, this.buildState.options.outputDirectory, match[1]))
+      if (this.options.outputDirectory) {
+        await this.getInput(path.resolve(this.buildState.dir, this.options.outputDirectory, match[1]))
       }
     }
   }
 }
 
 export default class BiberFactory extends RuleFactory {
-  async analyze (files: Array<File>) {
-    for (const file: File of files) {
-      if (file.type === 'BiberControlFile') {
-        const rule = new Biber(this.buildState, file)
-        await this.buildState.addRule(rule)
-      }
+  async analyze (file: File, jobName: ?string) {
+    if (file.type === 'BiberControlFile') {
+      const rule = new Biber(this.buildState, jobName, file)
+      await this.buildState.addRule(rule)
     }
   }
 }

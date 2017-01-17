@@ -8,8 +8,8 @@ import Rule from '../Rule'
 import RuleFactory from '../RuleFactory'
 
 class ParseLaTeXFileListing extends Rule {
-  constructor (buildState: BuildState, ...parameters: Array<File>) {
-    super(buildState, ...parameters)
+  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
+    super(buildState, jobName, ...parameters)
     this.priority = 200
   }
 
@@ -42,12 +42,10 @@ class ParseLaTeXFileListing extends Rule {
 }
 
 export default class ParseLaTeXFileListingFactory extends RuleFactory {
-  async analyze (files: Array<File>) {
-    for (const file: File of files) {
-      if (file.type === 'LaTeXFileListing') {
-        const rule = new ParseLaTeXFileListing(this.buildState, file)
-        await this.buildState.addRule(rule)
-      }
+  async analyze (file: File, jobName: ?string) {
+    if (file.type === 'LaTeXFileListing') {
+      const rule = new ParseLaTeXFileListing(this.buildState, jobName, file)
+      await this.buildState.addRule(rule)
     }
   }
 }

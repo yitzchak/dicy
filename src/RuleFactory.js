@@ -10,5 +10,5 @@ export default class RuleFactory {
     this.buildState = buildState
   }
 
-  async analyze (files: Array<File>) {}
+  async analyze (file: File, jobName: ?string) {}
 }

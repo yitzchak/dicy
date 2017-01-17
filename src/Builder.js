@@ -6,6 +6,7 @@ import BuildState from './BuildState'
 import Rule from './Rule'
 import RuleFactory from './RuleFactory'
 import BuildStateConsumer from './BuildStateConsumer'
+import File from './File'
 
 export default class Builder extends BuildStateConsumer {
   ruleFactories: Array<RuleFactory> = []
@@ -30,12 +31,17 @@ export default class Builder extends BuildStateConsumer {
 
   async analyze () {
     while (true) {
-      const files = Array.from(this.buildState.files.values()).filter(file => !file.analyzed)
+      const files: Array<File> = Array.from(this.buildState.files.values()).filter(file => !file.analyzed)
 
       if (files.length === 0) return
 
-      for (const ruleFactory of this.ruleFactories) {
-        await ruleFactory.analyze(files)
+      for (const file: File of files) {
+        const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
+        for (const jobName of jobNames) {
+          for (const ruleFactory of this.ruleFactories) {
+            await ruleFactory.analyze(file, jobName)
+          }
+        }
       }
 
       for (const file of files) {
@@ -85,12 +91,12 @@ export default class Builder extends BuildStateConsumer {
     if (jobNames) {
       const file = await this.getFile(this.buildState.filePath)
       if (file) {
-        if (typeof jobNames === 'object') {
-          for (const jobName in jobNames) {
+        if (Array.isArray(jobNames)) {
+          for (const jobName of jobNames) {
             file.jobNames.add(jobName)
           }
         } else {
-          for (const jobName of jobNames) {
+          for (const jobName in jobNames) {
             file.jobNames.add(jobName)
           }
         }

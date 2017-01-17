@@ -74,12 +74,12 @@ class LaTeX extends Rule {
       '-recorder'
     ]
 
-    if (this.buildState.options.outputDirectory) {
-      args.push(`-output-directory="${this.buildState.options.outputDirectory}"`)
+    if (this.options.outputDirectory) {
+      args.push(`-output-directory="${this.options.outputDirectory}"`)
     }
 
-    if (this.buildState.options.jobName) {
-      args.push(`-jobname="${this.buildState.options.jobName}"`)
+    if (this.options.jobName) {
+      args.push(`-jobname="${this.options.jobName}"`)
     }
 
     args.push(`"${path.basename(this.firstParameter.filePath)}"`)
@@ -89,12 +89,10 @@ class LaTeX extends Rule {
 }
 
 export default class LaTeXFactory extends RuleFactory {
-  async analyze (files: Array<File>) {
-    for (const file: File of files) {
-      if (file.type === 'LaTeX') {
-        const rule = new LaTeX(this.buildState, file)
-        await this.buildState.addRule(rule)
-      }
+  async analyze (file: File, jobName: ?string) {
+    if (file.type === 'LaTeX') {
+      const rule = new LaTeX(this.buildState, jobName, file)
+      await this.buildState.addRule(rule)
     }
   }
 }
