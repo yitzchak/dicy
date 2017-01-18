@@ -27,12 +27,14 @@ program
 
 program
   .command('build [inputs...]')
+  .option('-i, --ignore-cache', 'ignore the current cache')
   .option('--output-format <format>', 'output format [pdf]', /^(pdf|ps|dvi)$/, 'pdf')
   .option('--output-directory <outputDirectory>', 'output directory')
   .option('--job-name <jobName>', 'job name for job')
   .option('--job-names <jobNames>', 'job names', parseArray)
   .action(async (inputs, env) => {
     const options = cloneOptions(env.opts())
+    console.log(options)
 
     for (const filePath of inputs) {
       const builder = await Builder.create(path.resolve(filePath), options)

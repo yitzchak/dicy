@@ -10,6 +10,7 @@ import type { FileCache } from './types'
 export default class BuildState {
   filePath: string
   rootPath: string
+  phase: string
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
@@ -74,9 +75,15 @@ export default class BuildState {
     }
   }
 
-  getRule (name: string, ...parameters: Array<File | string>): ?Rule {
-    const normalizedPaths = parameters.map(item => (typeof item === 'string') ? this.normalizePath(item) : item.normalizedFilePath)
-    const id = `${name}(${normalizedPaths.join()})`
+  getRuleId (name: string, jobName: ?string, ...parameters: Array<File | string>): string {
+    const items = parameters.map(item => (typeof item === 'string') ? this.normalizePath(item) : item.normalizedFilePath)
+    items.unshift(jobName || '')
+    items.unshift(this.phase || '')
+    return `${name}(${items.join(';')})`
+  }
+
+  getRule (name: string, jobName: ?string, ...parameters: Array<File | string>): ?Rule {
+    const id = this.getRuleId(name, jobName, ...parameters)
     return this.rules.get(id)
   }
 
@@ -104,7 +111,12 @@ export default class BuildState {
   }
 
   getCacheFilePath () {
-    return this.resolveOutputPath('-cache.yaml')
+    const { name } = path.parse(this.filePath)
+    return path.format({
+      dir: this.rootPath,
+      name,
+      ext: '-cache.yaml'
+    })
   }
 
   async loadCache () {

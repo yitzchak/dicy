@@ -7,6 +7,7 @@ import BuildStateConsumer from './BuildStateConsumer'
 export default class Rule extends BuildStateConsumer {
   static fileTypes: Set<string> = new Set()
   static priority: number = 0
+  static phases: Set<string> = new Set(['execute'])
 
   id: string
   parameters: Array<File> = []
@@ -15,17 +16,16 @@ export default class Rule extends BuildStateConsumer {
   timeStamp: number
   needsEvaluation: boolean = false
 
-  static *analyze (buildState: BuildState, jobName: ?string, file: File): Iterable<Rule> {
-    if (this.fileTypes.has(file.type)) {
-      yield new this(buildState, jobName, file)
+  static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
+    if (this.phases.has(buildState.phase) && this.fileTypes.has(file.type)) {
+      return new this(buildState, jobName, file)
     }
   }
 
   constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
     super(buildState, jobName)
     this.parameters = parameters
-    const jobNameId = jobName ? `;${jobName}` : ''
-    this.id = `${this.constructor.name}(${parameters.map(file => file.normalizedFilePath).join()}${jobNameId})`
+    this.id = buildState.getRuleId(this.constructor.name, jobName, ...parameters)
     for (const file: File of parameters) {
       if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.normalizedFilePath, file)

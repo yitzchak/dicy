@@ -19,3 +19,5 @@ LaTeXLog:
 MakeIndexLog:
   fileName: !!js/regexp /\..lg$/i
   contents: !!js/regexp /^This is makeindex,/
+YAML:
+  fileName: !!js/regexp /\.yaml/i

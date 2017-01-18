@@ -37,7 +37,8 @@ export default class Builder extends BuildStateConsumer {
       for (const ruleClass: Class<Rule> of this.ruleClasses) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          for (const rule: Rule of ruleClass.analyze(this.buildState, jobName, file)) {
+          const rule = await ruleClass.analyze(this.buildState, jobName, file)
+          if (rule) {
             await this.buildState.addRule(rule)
             if (rule.needsEvaluation) await this.evaluateRule(rule)
           }
@@ -83,36 +84,44 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async build () {
-    let evaluationCount = 0
+    if (!this.options.ignoreCache) await this.loadStateCache()
 
-    if (this.options.outputDirectory) {
-      await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
-    }
+    for (const phase: string of ['initialize', 'execute', 'finalize']) {
+      this.buildState.phase = phase
+      for (const file of this.buildState.files.values()) {
+        file.analyzed = false
+      }
+      let evaluationCount = 0
 
-    const jobNames = this.options.jobNames
-    if (jobNames) {
-      const file = await this.getFile(this.filePath)
-      if (file) {
-        if (Array.isArray(jobNames)) {
-          for (const jobName of jobNames) {
-            file.jobNames.add(jobName)
-          }
-        } else {
-          for (const jobName in jobNames) {
-            file.jobNames.add(jobName)
+      if (phase === 'execute') {
+        if (this.options.outputDirectory) {
+          await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
+        }
+
+        const jobNames = this.options.jobNames
+        if (jobNames) {
+          const file = await this.getFile(this.filePath)
+          if (file) {
+            if (Array.isArray(jobNames)) {
+              for (const jobName of jobNames) {
+                file.jobNames.add(jobName)
+              }
+            } else {
+              for (const jobName in jobNames) {
+                file.jobNames.add(jobName)
+              }
+            }
           }
         }
       }
-    }
 
-    await this.loadStateCache()
-
-    while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
-      Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
-      await this.analyze()
-      await this.evaluate()
-      await this.checkUpdates()
-      evaluationCount++
+      while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
+        Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
+        await this.analyze()
+        await this.evaluate()
+        await this.checkUpdates()
+        evaluationCount++
+      }
     }
 
     await this.saveStateCache()
