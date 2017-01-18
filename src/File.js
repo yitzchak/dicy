@@ -86,36 +86,6 @@ export default class File {
         resolve()
       })
     })
-
-    // const contents = await fs.readFile(this.filePath, { encoding: 'utf-8' })
-    // const lines = contents.split(/(\r\n?|\n)/)
-    // let lineNumber = 1
-    //
-    // while (lines.length !== 0) {
-    //   let matched = false
-    //   for (const parser: Parser of parsers) {
-    //     if (lines.length >= parser.patterns.length) {
-    //       const matches = parser.patterns.map((pattern, index) => lines[index].match(pattern))
-    //       matched = matches.every(match => match)
-    //       if (matched) {
-    //         const groups = [].concat(...matches.map(match => match.slice(1)))
-    //         const reference: Reference = {
-    //           file: this.filePath,
-    //           start: lineNumber,
-    //           end: lineNumber + parser.patterns.length - 1
-    //         }
-    //         lines.splice(0, parser.patterns.length)
-    //         lineNumber += parser.patterns.length
-    //         parser.evaluate(reference, groups)
-    //         break
-    //       }
-    //     }
-    //   }
-    //   if (!matched) {
-    //     lines.shift()
-    //     lineNumber++
-    //   }
-    // }
   }
 
   exists () {

@@ -4,11 +4,12 @@
   "description": "A circular dependency builder designed with LaTeX in mind.",
   "main": "lib/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/.bin/jasmine",
     "compile": "./node_modules/.bin/babel -d lib/ src/",
     "prepublish": "npm run compile",
-    "bin": "node lib/main.js",
-    "lint": "./node_modules/.bin/eslint --color src"
+    "bin": "node lib/ouroboros.js",
+    "lint": "./node_modules/.bin/eslint --color src spec",
+    "flow-typed": "./node_modules/.bin/flow-typed update"
   },
   "bin": {
     "ouroboros": "lib/main.js"
@@ -34,12 +35,14 @@
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-preset-flow": "^1.0.0",
     "babel-preset-latest": "^6.16.0",
+    "babel-register": "^6.18.0",
     "eslint": "^3.13.1",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-flowtype": "^2.29.1",
     "eslint-plugin-flowtype-errors": "^2.0.1",
     "eslint-plugin-promise": "^3.4.0",
     "flow-bin": "^0.36.0",
+    "flow-typed": "^2.0.0",
     "jasmine": "^2.5.3"
   },
   "babel": {
