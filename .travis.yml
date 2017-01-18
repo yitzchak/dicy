@@ -8,7 +8,7 @@ addons:
   apt:
     packages:
     - texlive
-    - texlive-bibtex-extra
+    - biblatex
 after_script:
   - cat spec/fixtures/output/biber.log
   - cat spec/fixtures/output/bitex.log
