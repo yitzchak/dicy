@@ -1,11 +1,10 @@
 sudo: required
-branches:
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y texlive-latex-base
+  branches:
   only:
     - master
 language: node_js
 node_js:
   - node
-addons:
-  apt:
-    sources:
-      texlive-latex-base
