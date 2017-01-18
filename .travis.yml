@@ -1,12 +1,10 @@
+sudo: required
 branches:
   only:
     - master
-
 language: node_js
-
 node_js:
   - node
-
 addons:
   apt:
     sources:
