@@ -8,5 +8,6 @@ addons:
   apt:
     packages:
     - texlive
-before_script:
-  - pdflatex -v
+after_script:
+  - cat spec/fixtures/output/biber.log
+  - cat spec/fixtures/output/bitex.log
