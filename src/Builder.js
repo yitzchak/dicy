@@ -8,7 +8,7 @@ import BuildStateConsumer from './BuildStateConsumer'
 import File from './File'
 import Rule from './Rule'
 
-import type { Log, Message, Phase } from './types'
+import type { Command, Log, Message, Phase } from './types'
 
 export default class Builder extends BuildStateConsumer {
   ruleClasses: Array<Class<Rule>> = []
@@ -90,8 +90,10 @@ export default class Builder extends BuildStateConsumer {
     }
   }
 
-  async build (): Promise<boolean> {
+  async run (command: Command): Promise<boolean> {
     if (!this.options.ignoreCache) await this.loadStateCache()
+
+    this.buildState.command = command
 
     for (const phase: Phase of ['configure', 'initialize', 'execute', 'finalize']) {
       this.buildState.phase = phase

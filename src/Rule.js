@@ -4,12 +4,13 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Phase } from './types'
+import type { Command, Phase } from './types'
 
 export default class Rule extends BuildStateConsumer {
   static fileTypes: Set<string> = new Set()
   static priority: number = 0
   static phases: Set<Phase> = new Set(['execute'])
+  static commands: Set<Command> = new Set(['build'])
 
   id: string
   parameters: Array<File> = []
@@ -20,7 +21,9 @@ export default class Rule extends BuildStateConsumer {
   success: boolean = true
 
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
-    if (this.phases.has(buildState.phase) && this.fileTypes.has(file.type)) {
+    if (this.commands.has(buildState.command) &&
+      this.phases.has(buildState.phase) &&
+      this.fileTypes.has(file.type)) {
       return new this(buildState, jobName, file)
     }
   }

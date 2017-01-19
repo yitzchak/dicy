@@ -14,7 +14,7 @@ describe('Builder', () => {
   })
 
   it('verifies that getRuleId returns expected id', async (done) => {
-    expect(await builder.build()).toBeTruthy()
+    expect(await builder.run('build')).toBeTruthy()
     done()
   }, 10000)
 })

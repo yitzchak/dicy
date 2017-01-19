@@ -43,4 +43,6 @@ export type Message = {
 
 export type Phase = 'configure' | 'initialize' | 'execute' | 'finalize'
 
+export type Command = 'build' | 'report'
+
 export type Log = (message: Message) => void

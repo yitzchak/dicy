@@ -5,11 +5,12 @@ import path from 'path'
 import yaml from 'js-yaml'
 import File from './File'
 import Rule from './Rule'
-import type { FileCache, Log, Message, Phase } from './types'
+import type { Command, FileCache, Log, Message, Phase } from './types'
 
 export default class BuildState {
   filePath: string
   rootPath: string
+  command: Command
   phase: Phase
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
