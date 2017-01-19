@@ -1,13 +1,13 @@
 BiberControlFile:
   fileName: !!js/regexp /\.bcf$/i
+BibTeXControlFile:
+  fileName: !!js/regexp /-blx\.bib$/i
 BibTeXFile:
   fileName: !!js/regexp /\.bib$/i
 BiberLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp / This is Biber /
   hashSkip: !!js/regexp /===/
-BibTeXControlFile:
-  fileName: !!js/regexp /-blx\.bib$/i
 BibTeXLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp /^This is BibTeX,/
@@ -23,5 +23,7 @@ LaTeXLog:
 MakeIndexLog:
   fileName: !!js/regexp /\..lg$/i
   contents: !!js/regexp /^This is makeindex,/
+StateCache:
+  fileName: !!js/regexp /-cache\.yaml/i
 YAML:
   fileName: !!js/regexp /\.yaml/i
