@@ -62,7 +62,7 @@ export default class BuildStateConsumer {
   }
 
   log (message: Message) {
-    const loggingLevel = this.options.loggingLevel
+    const loggingLevel = this.options.loggingLevel || 'warning'
     if ((loggingLevel === 'warning' && message.severity === 'info') ||
       (loggingLevel === 'error' && message.severity !== 'error')) return
     this.buildState.log(message)

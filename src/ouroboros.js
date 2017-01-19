@@ -40,15 +40,18 @@ program
 
     for (const filePath of inputs) {
       const builder = await Builder.create(path.resolve(filePath), options, (message) => {
+        const nameText = message.name ? `[${message.name}] ` : ''
+        const typeText = message.type ? `${message.type}: ` : ''
+        const text = `${nameText}${typeText}${message.text.replace('\n', ' ')}`
         switch (message.severity) {
           case 'error':
-            console.error(chalk.red(message.text))
+            console.error(chalk.red(text))
             break
           case 'warning':
-            console.warn(chalk.yellow(message.text))
+            console.warn(chalk.yellow(text))
             break
           default:
-            console.info(message.text)
+            console.info(text)
             break
         }
       })
