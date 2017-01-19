@@ -4,10 +4,12 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
+import type { Phase } from './types'
+
 export default class Rule extends BuildStateConsumer {
   static fileTypes: Set<string> = new Set()
   static priority: number = 0
-  static phases: Set<string> = new Set(['execute'])
+  static phases: Set<Phase> = new Set(['execute'])
 
   id: string
   parameters: Array<File> = []

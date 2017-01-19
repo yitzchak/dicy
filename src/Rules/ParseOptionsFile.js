@@ -8,8 +8,10 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
+import type { Phase } from '../types'
+
 export default class ParseOptionsFile extends Rule {
-  static phases: Set<string> = new Set(['initialize'])
+  static phases: Set<Phase> = new Set(['configure'])
   static priority: number = 100
 
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {

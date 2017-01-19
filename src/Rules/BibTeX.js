@@ -18,7 +18,7 @@ export default class BibTeX extends Rule {
 
     if (!run) return true
 
-    console.log('Running BibTeX...')
+    this.info('Running BibTeX...')
 
     try {
       const args = await this.constructArguments()
@@ -29,7 +29,7 @@ export default class BibTeX extends Rule {
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {
-      console.log(error)
+      this.error(error)
       return false
     }
 

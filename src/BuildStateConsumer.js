@@ -3,6 +3,8 @@
 import BuildState from './BuildState'
 import File from './File'
 
+import type { Message } from './types'
+
 export default class BuildStateConsumer {
   buildState: BuildState
   options: Object
@@ -45,5 +47,24 @@ export default class BuildStateConsumer {
     const file: ?File = await this.buildState.getFile(filePath)
     if (file && this.jobName) file.jobNames.add(this.jobName)
     return file
+  }
+
+  error (text: string) {
+    this.log({ severity: 'error', text })
+  }
+
+  warning (text: string) {
+    this.log({ severity: 'warning', text })
+  }
+
+  info (text: string) {
+    this.log({ severity: 'info', text })
+  }
+
+  log (message: Message) {
+    const loggingLevel = this.options.loggingLevel
+    if ((loggingLevel === 'warning' && message.severity === 'info') ||
+      (loggingLevel === 'error' && message.severity !== 'error')) return
+    this.buildState.log(message)
   }
 }

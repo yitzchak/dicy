@@ -1,6 +1,7 @@
 /* @flow */
 
 import 'babel-polyfill'
+import chalk from 'chalk'
 import path from 'path'
 import program from 'commander'
 
@@ -33,12 +34,24 @@ program
   .option('--output-directory <outputDirectory>', 'output directory')
   .option('--job-name <jobName>', 'job name for job')
   .option('--job-names <jobNames>', 'job names', parseArray)
+  .option('--logging-level <loggingLevel>', 'logging level')
   .action(async (inputs, env) => {
     const options = cloneOptions(env.opts())
-    console.log(options)
 
     for (const filePath of inputs) {
-      const builder = await Builder.create(path.resolve(filePath), options)
+      const builder = await Builder.create(path.resolve(filePath), options, (message) => {
+        switch (message.severity) {
+          case 'error':
+            console.error(chalk.red(message.text))
+            break
+          case 'warning':
+            console.warn(chalk.yellow(message.text))
+            break
+          default:
+            console.info(message.text)
+            break
+        }
+      })
       await builder.build()
     }
   })

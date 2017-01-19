@@ -22,13 +22,6 @@ export default class LaTeX extends Rule {
         case 'LaTeXLog':
           if (file.contents) {
             runLatex = runLatex || file.contents.messages.some((message: Message) => message.text.match(/rerun LaTeX/))
-            // for (const message: Message of file.contents.messages) {
-            //   const match = message.text.match(/^... file '(.*)' not found$/)
-            //   if (match) {
-            //     console.log(match[1])
-            //     this.getInput(path.resolve(path.dirname(file.filePath), match[1]), false)
-            //   }
-            // }
           }
           break
         default:
@@ -38,7 +31,7 @@ export default class LaTeX extends Rule {
 
     if (!runLatex) return true
 
-    console.log('Running LaTeX...')
+    this.info('Running LaTeX...')
 
     try {
       const args = this.constructArguments()
@@ -52,7 +45,7 @@ export default class LaTeX extends Rule {
         await file.update()
       }
     } catch (error) {
-      console.log(error)
+      this.error(error)
       return false
     }
 
@@ -61,7 +54,7 @@ export default class LaTeX extends Rule {
 
   async updateDependencies (file: File) {
     if (file.contents) {
-      console.log(`Update LaTeX dependencies...`)
+      this.info(`Update LaTeX dependencies...`)
       if (file.contents && file.contents.inputs) await this.addInputs(file.contents.inputs)
       if (file.contents && file.contents.outputs) await this.addOutputs(file.contents.outputs)
     }

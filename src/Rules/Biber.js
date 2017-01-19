@@ -18,7 +18,7 @@ export default class Biber extends Rule {
 
     if (!run) return true
 
-    console.log('Running Biber...')
+    this.info('Running Biber...')
 
     try {
       const args = this.constructArguments()
@@ -29,7 +29,7 @@ export default class Biber extends Rule {
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {
-      console.log(error)
+      this.error(error)
       return false
     }
 

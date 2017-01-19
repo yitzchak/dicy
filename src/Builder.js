@@ -1,17 +1,20 @@
 /* @flow */
 
-import path from 'path'
 import fs from 'fs-promise'
+import path from 'path'
+
 import BuildState from './BuildState'
-import Rule from './Rule'
 import BuildStateConsumer from './BuildStateConsumer'
 import File from './File'
+import Rule from './Rule'
+
+import type { Log, Message, Phase } from './types'
 
 export default class Builder extends BuildStateConsumer {
   ruleClasses: Array<Class<Rule>> = []
 
-  static async create (filePath: string, options: Object = {}) {
-    const buildState = await BuildState.create(filePath, options)
+  static async create (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
+    const buildState = await BuildState.create(filePath, options, log)
     const builder = new Builder(buildState)
 
     await builder.initialize()
@@ -53,13 +56,13 @@ export default class Builder extends BuildStateConsumer {
     if (rule.success) {
       const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
       const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
-      console.log(`Evaluating rule ${rule.id}${triggerText}`)
+      this.info(`Evaluating rule ${rule.id}${triggerText}`)
       rule.timeStamp = new Date()
       rule.needsEvaluation = false
       rule.success = await rule.evaluate()
       await rule.updateOutputs()
     } else {
-      console.log(`Skipping rule ${rule.id} because of previous failure.`)
+      this.info(`Skipping rule ${rule.id} because of previous failure.`)
     }
   }
 
@@ -90,7 +93,7 @@ export default class Builder extends BuildStateConsumer {
   async build (): Promise<boolean> {
     if (!this.options.ignoreCache) await this.loadStateCache()
 
-    for (const phase: string of ['initialize', 'execute', 'finalize']) {
+    for (const phase: Phase of ['configure', 'initialize', 'execute', 'finalize']) {
       this.buildState.phase = phase
       for (const file of this.buildState.files.values()) {
         file.analyzed = false

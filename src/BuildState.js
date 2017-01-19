@@ -5,25 +5,27 @@ import path from 'path'
 import yaml from 'js-yaml'
 import File from './File'
 import Rule from './Rule'
-import type { FileCache } from './types'
+import type { FileCache, Log, Message, Phase } from './types'
 
 export default class BuildState {
   filePath: string
   rootPath: string
-  phase: string
+  phase: Phase
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
   cache: Object
+  log: Log
 
-  constructor (filePath: string, options: Object = {}) {
+  constructor (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
     this.filePath = path.basename(filePath)
     this.rootPath = path.dirname(filePath)
+    this.log = log
     Object.assign(this.options, options)
   }
 
-  static async create (filePath: string, options: Object = {}) {
-    const buildState = new BuildState(filePath, options)
+  static async create (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
+    const buildState = new BuildState(filePath, options, log)
 
     await buildState.getFile(filePath)
 
@@ -63,7 +65,6 @@ export default class BuildState {
   }
 
   async addRule (rule: Rule) {
-    console.log(`Add rule ${rule.id}`)
     this.rules.set(rule.id, rule)
     if (this.cache && this.cache.rules[rule.id]) {
       const cachedRule = this.cache.rules[rule.id]

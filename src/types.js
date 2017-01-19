@@ -29,11 +29,17 @@ export type Reference = {
   end: ?number
 }
 
+export type Severity = 'info' | 'warning' | 'error'
+
 export type Message = {
-  severity: 'info' | 'warning' | 'error',
+  severity: Severity,
   text: string,
   name?: string,
   type?: string,
   source?: Reference,
   log?: Reference
 }
+
+export type Phase = 'configure' | 'initialize' | 'execute' | 'finalize'
+
+export type Log = (message: Message) => void

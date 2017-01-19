@@ -2,8 +2,10 @@
 
 import Rule from '../Rule'
 
+import type { Phase } from '../types'
+
 export default class ParseLaTeXMagic extends Rule {
-  static phases: Set<string> = new Set(['initialize'])
+  static phases: Set<Phase> = new Set(['configure'])
   static fileTypes: Set<string> = new Set(['LaTeX'])
   static priority: number = 0
 
