@@ -85,5 +85,7 @@ export default class ParseLaTeXLog extends Rule {
     this.firstParameter.contents = {
       messages
     }
+
+    return true
   }
 }

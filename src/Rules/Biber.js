@@ -9,13 +9,14 @@ export default class Biber extends Rule {
   static fileTypes: Set<string> = new Set(['BiberControlFile'])
   static priority: number = 100
 
-  async evaluate () {
+  async evaluate (): Promise<boolean> {
     await this.getInput(this.resolveOutputPath('.log'))
 
     const triggers = Array.from(this.getTriggers())
-    const run: boolean = triggers.length === 0 || triggers.some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run Biber/)))
+    const run: boolean = triggers.length === 0 ||
+      triggers.some(file => file.type !== 'LaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run Biber/))))
 
-    if (!run) return
+    if (!run) return true
 
     console.log('Running Biber...')
 
@@ -29,7 +30,10 @@ export default class Biber extends Rule {
       await this.parseOutput(stdout)
     } catch (error) {
       console.log(error)
+      return false
     }
+
+    return true
   }
 
   constructProcessOptions () {
