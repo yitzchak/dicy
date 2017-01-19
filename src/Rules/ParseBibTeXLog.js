@@ -68,5 +68,7 @@ export default class ParseBibTeXLog extends Rule {
     this.firstParameter.contents = {
       messages
     }
+
+    return true
   }
 }

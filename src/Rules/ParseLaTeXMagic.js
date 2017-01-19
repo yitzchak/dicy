@@ -24,6 +24,6 @@ export default class ParseLaTeXMagic extends Rule {
 
     Object.assign(this.buildState.options, magic)
 
-    // this.firstParameter.contents = { magic }
+    return true
   }
 }

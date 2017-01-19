@@ -59,5 +59,7 @@ export default class ParseMakeIndexLog extends Rule {
     this.firstParameter.contents = {
       messages
     }
+
+    return true
   }
 }

@@ -13,9 +13,10 @@ export default class BibTeX extends Rule {
     await this.getInput(this.resolveOutputPath('.log'))
 
     const triggers = Array.from(this.getTriggers())
-    const run: boolean = triggers.length === 0 || triggers.some(file => file.type !== 'LaTeXLog' || file.contents.messages.some(message => message.text.match(/run BibTeX/)))
+    const run: boolean = triggers.length === 0 ||
+      triggers.some(file => file.type !== 'LaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run BibTeX/))))
 
-    if (!run) return
+    if (!run) return true
 
     console.log('Running BibTeX...')
 
@@ -29,7 +30,10 @@ export default class BibTeX extends Rule {
       await this.parseOutput(stdout)
     } catch (error) {
       console.log(error)
+      return false
     }
+
+    return true
   }
 
   constructProcessOptions () {

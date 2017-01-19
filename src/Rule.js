@@ -15,6 +15,7 @@ export default class Rule extends BuildStateConsumer {
   outputs: Map<string, File> = new Map()
   timeStamp: number
   needsEvaluation: boolean = false
+  success: boolean = true
 
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
     if (this.phases.has(buildState.phase) && this.fileTypes.has(file.type)) {
@@ -29,6 +30,7 @@ export default class Rule extends BuildStateConsumer {
     for (const file: File of parameters) {
       if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.normalizedFilePath, file)
+      // $FlowIgnore
       file.addRule(this)
     }
   }
@@ -37,7 +39,9 @@ export default class Rule extends BuildStateConsumer {
     return this.parameters[0]
   }
 
-  async evaluate () {}
+  async evaluate (): Promise<boolean> {
+    return false
+  }
 
   async getOutput (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
@@ -77,6 +81,7 @@ export default class Rule extends BuildStateConsumer {
     if (!file) {
       file = await this.getFile(filePath)
       if (!file) return
+      // $FlowIgnore
       await file.addRule(this)
       this.inputs.set(filePath, file)
     }

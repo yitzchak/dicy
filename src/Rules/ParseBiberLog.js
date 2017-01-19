@@ -39,5 +39,7 @@ export default class ParseBiberLog extends Rule {
     this.firstParameter.contents = {
       messages
     }
+
+    return true
   }
 }

@@ -50,13 +50,17 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async evaluateRule (rule: Rule) {
-    const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
-    const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
-    console.log(`Evaluating rule ${rule.id}${triggerText}`)
-    rule.timeStamp = new Date()
-    rule.needsEvaluation = false
-    await rule.evaluate()
-    await rule.updateOutputs()
+    if (rule.success) {
+      const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
+      const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
+      console.log(`Evaluating rule ${rule.id}${triggerText}`)
+      rule.timeStamp = new Date()
+      rule.needsEvaluation = false
+      rule.success = await rule.evaluate()
+      await rule.updateOutputs()
+    } else {
+      console.log(`Skipping rule ${rule.id} because of previous failure.`)
+    }
   }
 
   async evaluate () {
@@ -83,7 +87,7 @@ export default class Builder extends BuildStateConsumer {
     }
   }
 
-  async build () {
+  async build (): Promise<boolean> {
     if (!this.options.ignoreCache) await this.loadStateCache()
 
     for (const phase: string of ['initialize', 'execute', 'finalize']) {
@@ -125,6 +129,8 @@ export default class Builder extends BuildStateConsumer {
     }
 
     await this.saveStateCache()
+
+    return Array.from(this.buildState.rules.values()).every(rule => rule.success)
   }
 
   async loadStateCache () {

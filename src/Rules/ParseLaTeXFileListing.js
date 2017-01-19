@@ -33,5 +33,7 @@ export default class ParseLaTeXFileListing extends Rule {
       inputs: Array.from(results.INPUT),
       outputs: Array.from(results.OUTPUT)
     }
+
+    return true
   }
 }

@@ -25,5 +25,6 @@ export default class ParseOptionsFile extends Rule {
     const contents = await fs.readFile(this.firstParameter.filePath)
     const options = yaml.safeLoad(contents)
     Object.assign(this.buildState.options, options)
+    return true
   }
 }

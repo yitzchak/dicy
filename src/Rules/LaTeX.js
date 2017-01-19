@@ -36,7 +36,7 @@ export default class LaTeX extends Rule {
       }
     }
 
-    if (!runLatex) return
+    if (!runLatex) return true
 
     console.log('Running LaTeX...')
 
@@ -53,7 +53,10 @@ export default class LaTeX extends Rule {
       }
     } catch (error) {
       console.log(error)
+      return false
     }
+
+    return true
   }
 
   async updateDependencies (file: File) {
