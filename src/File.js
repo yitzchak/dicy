@@ -150,15 +150,27 @@ export default class File {
 
   updateHash (): Promise<boolean> {
     return new Promise((resolve, reject) => {
+      const fileType = File.fileTypes.get(this.type)
       const hash = crypto.createHash('sha256')
+      const finish = () => {
+        const oldHash = this.hash
+        this.hash = hash.digest('base64')
+        resolve(oldHash !== this.hash)
+      }
 
-      fs.createReadStream(this.filePath)
-        .on('data', data => hash.update(data))
-        .on('end', () => {
-          const oldHash = this.hash
-          this.hash = hash.digest('base64')
-          resolve(oldHash !== this.hash)
+      if (fileType && fileType.hashSkip) {
+        const rl = readline.createInterface({
+          input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
         })
+        rl.on('line', line => {
+          if (!fileType.hashSkip || !fileType.hashSkip.test(line)) hash.update(line)
+        })
+        .on('close', finish)
+      } else {
+        fs.createReadStream(this.filePath)
+          .on('data', data => hash.update(data))
+          .on('end', finish)
+      }
     })
   }
 

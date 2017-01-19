@@ -5,6 +5,7 @@ BibTeXFile:
 BiberLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp / This is Biber /
+  hashSkip: !!js/regexp /===/
 BibTeXControlFile:
   fileName: !!js/regexp /-blx\.bib$/i
 BibTeXLog:
@@ -18,6 +19,7 @@ LaTeX:
 LaTeXLog:
   fileName: !!js/regexp /\.log$/i
   contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/
+  hashSkip: !!js/regexp /^This is/
 MakeIndexLog:
   fileName: !!js/regexp /\..lg$/i
   contents: !!js/regexp /^This is makeindex,/
