@@ -21,7 +21,7 @@ export default class LaTeX extends Rule {
           break
         case 'LaTeXLog':
           if (file.contents) {
-            runLatex = runLatex || file.contents.messages.some((message: Message) => message.text.match(/rerun LaTeX/))
+            runLatex = runLatex || file.contents.messages.some((message: Message) => message.text.match(/(rerun LaTeX|Label(s) may have changed. Rerun)/))
           }
           break
         default:

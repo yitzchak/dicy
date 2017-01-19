@@ -3,11 +3,23 @@
 import childProcess from 'mz/child_process'
 import path from 'path'
 
+import BuildState from '../BuildState'
 import Rule from '../Rule'
+import File from '../File'
 
 export default class BibTeX extends Rule {
-  static fileTypes: Set<string> = new Set(['BibTeXControlFile'])
+  static fileTypes: Set<string> = new Set(['BibTeXControlFile', 'BibTeXFile'])
   static priority: number = 100
+
+  static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
+    if (this.phases.has(buildState.phase) && this.fileTypes.has(file.type)) {
+      const auxFile = await buildState.getFile(buildState.resolveOutputPath('.aux', jobName))
+      if (!auxFile) return
+      const id = buildState.getRuleId(this.name, jobName, auxFile)
+      if (buildState.getRule(id)) return
+      return new this(buildState, jobName, auxFile)
+    }
+  }
 
   async evaluate () {
     await this.getInput(this.resolveOutputPath('.log'))

@@ -1,5 +1,7 @@
 BiberControlFile:
   fileName: !!js/regexp /\.bcf$/i
+BibTeXFile:
+  fileName: !!js/regexp /\.bib$/i
 BiberLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp / This is Biber /
