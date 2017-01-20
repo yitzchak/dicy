@@ -8,7 +8,6 @@ import type { Command, Phase } from './types'
 
 export default class Rule extends BuildStateConsumer {
   static fileTypes: Set<string> = new Set()
-  static priority: number = 0
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
 

@@ -12,7 +12,6 @@ import type { Phase } from '../types'
 
 export default class ParseOptionsFile extends Rule {
   static phases: Set<Phase> = new Set(['configure'])
-  static priority: number = 100
 
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
     if (this.phases.has(buildState.phase) && file.normalizedFilePath === buildState.filePath) {
@@ -26,9 +25,8 @@ export default class ParseOptionsFile extends Rule {
   async evaluate () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedYAML`)
     if (!parsedFile) return false
-    const contents = await fs.readFile(this.firstParameter.filePath)
-    parsedFile.contents = yaml.safeLoad(contents)
-    parsedFile.forceUpdate()
+    const contents = await fs.readFile(this.firstParameter.filePath, { encoding: 'utf-8' })
+    parsedFile.value = yaml.safeLoad(contents)
 
     return true
   }

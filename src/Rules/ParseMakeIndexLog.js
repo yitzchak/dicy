@@ -58,10 +58,7 @@ export default class ParseMakeIndexLog extends Rule {
       }
     }])
 
-    parsedFile.contents = {
-      messages
-    }
-    parsedFile.forceUpdate()
+    parsedFile.value = { messages }
 
     return true
   }

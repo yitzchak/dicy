@@ -24,7 +24,7 @@ export default class File {
   analyzed: boolean = false
   hasBeenUpdated: boolean = false
   hasTriggeredEvaluation: boolean = false
-  contents: ?any
+  _value: ?any
 
   constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string) {
     this.filePath = filePath
@@ -86,6 +86,16 @@ export default class File {
         resolve()
       })
     })
+  }
+
+  get value (): ?any {
+    return this._value
+  }
+
+  set value (value: ?any) {
+    this._value = value
+    this.timeStamp = new Date()
+    this.hasBeenUpdated = true
   }
 
   exists () {

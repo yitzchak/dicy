@@ -9,7 +9,6 @@ import type { Message } from '../types'
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
-  static priority: number = 0
 
   async evaluate () {
     let runLatex = Array.from(this.getTriggers()).length === 0
@@ -20,8 +19,8 @@ export default class LaTeX extends Rule {
           await this.updateDependencies(file)
           break
         case 'ParsedLaTeXLog':
-          if (file.contents) {
-            runLatex = runLatex || file.contents.messages.some((message: Message) => message.text.match(/(rerun LaTeX|Label(s) may have changed. Rerun)/))
+          if (file.value) {
+            runLatex = runLatex || file.value.messages.some((message: Message) => message.text.match(/(rerun LaTeX|Label(s) may have changed. Rerun)/))
           }
           break
         default:
@@ -46,7 +45,7 @@ export default class LaTeX extends Rule {
         await file.update()
       }
     } catch (error) {
-      this.error(error)
+      this.error(error.toString())
       return false
     }
 
@@ -54,10 +53,10 @@ export default class LaTeX extends Rule {
   }
 
   async updateDependencies (file: File) {
-    if (file.contents) {
+    if (file.value) {
       this.info(`Update LaTeX dependencies...`)
-      if (file.contents && file.contents.inputs) await this.addInputs(file.contents.inputs)
-      if (file.contents && file.contents.outputs) await this.addOutputs(file.contents.outputs)
+      if (file.value && file.value.inputs) await this.addInputs(file.value.inputs)
+      if (file.value && file.value.outputs) await this.addOutputs(file.value.outputs)
     }
   }
 

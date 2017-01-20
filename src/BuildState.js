@@ -142,7 +142,7 @@ export default class BuildState {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
         hash: file.hash,
-        contents: file.contents,
+        value: file.value,
         jobNames: Array.from(file.jobNames.values())
       }
 

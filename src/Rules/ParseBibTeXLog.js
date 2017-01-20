@@ -6,7 +6,6 @@ import type { Message } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['BibTeXLog'])
-  static priority: number = 200
 
   async evaluate () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
@@ -67,10 +66,7 @@ export default class ParseBibTeXLog extends Rule {
       }
     }])
 
-    parsedFile.contents = {
-      messages
-    }
-    parsedFile.forceUpdate()
+    parsedFile.value = { messages }
 
     return true
   }

@@ -9,7 +9,6 @@ import File from '../File'
 
 export default class BibTeX extends Rule {
   static fileTypes: Set<string> = new Set(['BibTeXControlFile', 'BibTeXFile'])
-  static priority: number = 100
 
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
     if (this.phases.has(buildState.phase) && this.fileTypes.has(file.type)) {
@@ -24,7 +23,7 @@ export default class BibTeX extends Rule {
   async evaluate () {
     const triggers = Array.from(this.getTriggers())
     const run: boolean = triggers.length === 0 ||
-      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run BibTeX/))))
+      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.value && file.value.messages && file.value.messages.some(message => message.text.match(/run BibTeX/))))
 
     if (!run) return true
 
@@ -40,7 +39,7 @@ export default class BibTeX extends Rule {
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {
-      this.error(error)
+      this.error(error.toString())
       return false
     }
 
