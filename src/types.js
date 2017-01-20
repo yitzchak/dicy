@@ -3,7 +3,8 @@
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,
-  hashSkip?: RegExp
+  hashSkip?: RegExp,
+  virtual?: boolean
 }
 
 export type FileCache = {

@@ -17,7 +17,7 @@ export default class File {
   normalizedFilePath: string
   type: string
   timeStamp: Date
-  virtual: false
+  virtual: boolean = false
   hash: string
   rules: Set<Rule> = new Set()
   jobNames: Set<string> = new Set()
