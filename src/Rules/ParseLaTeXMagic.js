@@ -27,7 +27,8 @@ export default class ParseLaTeXMagic extends Rule {
     }])
 
     parsedFile.contents = magic
-    Object.assign(this.buildState.options, magic)
+    parsedFile.forceUpdate()
+//    Object.assign(this.buildState.options, magic)
 
     return true
   }

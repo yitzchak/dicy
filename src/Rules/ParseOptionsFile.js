@@ -28,7 +28,8 @@ export default class ParseOptionsFile extends Rule {
     if (!parsedFile) return false
     const contents = await fs.readFile(this.firstParameter.filePath)
     parsedFile.contents = yaml.safeLoad(contents)
-    Object.assign(this.buildState.options, parsedFile.contents)
+    parsedFile.forceUpdate()
+
     return true
   }
 }
