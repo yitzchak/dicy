@@ -16,10 +16,10 @@ export default class LaTeX extends Rule {
 
     for (const file: File of this.getTriggers()) {
       switch (file.type) {
-        case 'LaTeXFileListing':
+        case 'ParsedLaTeXFileListing':
           await this.updateDependencies(file)
           break
-        case 'LaTeXLog':
+        case 'ParsedLaTeXLog':
           if (file.contents) {
             runLatex = runLatex || file.contents.messages.some((message: Message) => message.text.match(/(rerun LaTeX|Label(s) may have changed. Rerun)/))
           }
@@ -39,7 +39,8 @@ export default class LaTeX extends Rule {
       const command = `pdflatex ${args.join(' ')}`
 
       await childProcess.exec(command, options)
-      await this.addResolvedOutputs(['.fls', '.log'], true)
+      await this.addResolvedInputs(['.fls-parsed', '.log-parsed'])
+      await this.addResolvedOutputs(['.fls', '.log'])
 
       for (const file: File of this.outputs.values()) {
         await file.update()

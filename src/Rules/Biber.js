@@ -10,11 +10,9 @@ export default class Biber extends Rule {
   static priority: number = 100
 
   async evaluate (): Promise<boolean> {
-    await this.getInput(this.resolveOutputPath('.log'))
-
     const triggers = Array.from(this.getTriggers())
     const run: boolean = triggers.length === 0 ||
-      triggers.some(file => file.type !== 'LaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run Biber/))))
+      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run Biber/))))
 
     if (!run) return true
 
@@ -26,6 +24,7 @@ export default class Biber extends Rule {
       const command = `biber ${args.join(' ')}`
 
       const stdout = await childProcess.exec(command, options)
+      await this.addResolvedInputs(['.log-parsed'])
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {

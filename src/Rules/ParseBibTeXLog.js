@@ -9,6 +9,8 @@ export default class ParseBibTeXLog extends Rule {
   static priority: number = 200
 
   async evaluate () {
+    const parsedFile = await this.getOutput(this.resolveOutputPath('.biber-log-parsed'))
+    if (!parsedFile) return false
     const messages: Array<Message> = []
 
     await this.firstParameter.parse([{
@@ -65,9 +67,10 @@ export default class ParseBibTeXLog extends Rule {
       }
     }])
 
-    this.firstParameter.contents = {
+    parsedFile.contents = {
       messages
     }
+    parsedFile.forceUpdate()
 
     return true
   }

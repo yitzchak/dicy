@@ -22,11 +22,9 @@ export default class BibTeX extends Rule {
   }
 
   async evaluate () {
-    await this.getInput(this.resolveOutputPath('.log'))
-
     const triggers = Array.from(this.getTriggers())
     const run: boolean = triggers.length === 0 ||
-      triggers.some(file => file.type !== 'LaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run BibTeX/))))
+      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run BibTeX/))))
 
     if (!run) return true
 
@@ -38,6 +36,7 @@ export default class BibTeX extends Rule {
       const command = `bibtex ${args.join(' ')}`
 
       const stdout = await childProcess.exec(command, options)
+      await this.addResolvedInputs(['.log-parsed'])
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {

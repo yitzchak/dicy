@@ -9,6 +9,8 @@ export default class ParseLaTeXFileListing extends Rule {
   static priority: number = 200
 
   async evaluate () {
+    const parsedFile = await this.getOutput(this.resolveOutputPath('.fls-parsed'))
+    if (!parsedFile) return false
     let rootPath: string = ''
     const results = {
       INPUT: new Set(),
@@ -29,10 +31,11 @@ export default class ParseLaTeXFileListing extends Rule {
       }
     }])
 
-    this.firstParameter.contents = {
+    parsedFile.contents = {
       inputs: Array.from(results.INPUT),
       outputs: Array.from(results.OUTPUT)
     }
+    parsedFile.forceUpdate()
 
     return true
   }

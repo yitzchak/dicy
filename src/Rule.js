@@ -100,6 +100,13 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
+  async addResolvedInputs (exts: Array<string>) {
+    for (const ext of exts) {
+      const filePath = this.resolveOutputPath(ext)
+      await this.getInput(filePath)
+    }
+  }
+
   async addResolvedOutputs (exts: Array<string>, circularDependency: boolean = false) {
     for (const ext of exts) {
       const filePath = this.resolveOutputPath(ext)

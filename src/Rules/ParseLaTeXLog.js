@@ -9,6 +9,8 @@ export default class ParseLaTeXLog extends Rule {
   static priority: number = 200
 
   async evaluate () {
+    const parsedFile = await this.getOutput(this.resolveOutputPath('.log-parsed'))
+    if (!parsedFile) return false
     const messages: Array<Message> = []
     let name: string
     let filePath: string
@@ -82,9 +84,10 @@ export default class ParseLaTeXLog extends Rule {
       }
     }])
 
-    this.firstParameter.contents = {
+    parsedFile.contents = {
       messages
     }
+    parsedFile.forceUpdate()
 
     return true
   }
