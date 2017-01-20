@@ -68,7 +68,7 @@ export default class Builder extends BuildStateConsumer {
 
   async evaluate () {
     const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation)
-    rules.sort((x, y) => y.constructor.priority - x.constructor.priority)
+    if (this.buildState.phase !== 'execute') rules.sort((x, y) => y.constructor.priority - x.constructor.priority)
 
     for (const rule: Rule of rules) {
       await this.evaluateRule(rule)

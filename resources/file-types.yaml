@@ -39,6 +39,9 @@ LaTeXLog:
 MakeIndexLog:
   fileName: !!js/regexp /\..lg$/i
   contents: !!js/regexp /^This is makeindex,/
+ParsedMakeIndexLog:
+  fileName: !!js/regexp /\..lg-parsed$/i
+  virtual: true
 StateCache:
   fileName: !!js/regexp /-cache\.yaml/i
 YAML:
