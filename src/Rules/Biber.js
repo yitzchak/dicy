@@ -24,7 +24,7 @@ export default class Biber extends Rule {
       const command = `biber ${args.join(' ')}`
 
       const stdout = await childProcess.exec(command, options)
-      await this.addResolvedInputs(['.log-parsed'])
+      await this.addResolvedInputs(['.log-ParsedLaTeXLog'])
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {

@@ -24,9 +24,11 @@ export default class ParseOptionsFile extends Rule {
   }
 
   async evaluate () {
+    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedYAML`)
+    if (!parsedFile) return false
     const contents = await fs.readFile(this.firstParameter.filePath)
-    const options = yaml.safeLoad(contents)
-    Object.assign(this.buildState.options, options)
+    parsedFile.contents = yaml.safeLoad(contents)
+    Object.assign(this.buildState.options, parsedFile.contents)
     return true
   }
 }

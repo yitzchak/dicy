@@ -9,28 +9,26 @@ BiberLog:
   contents: !!js/regexp / This is Biber /
   hashSkip: !!js/regexp /===/
 ParsedBiberLog:
-  fileName: !!js/regexp /\.biber-log-parsed$/i
   virtual: true
 BibTeXLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp /^This is BibTeX,/
 ParsedBibTeXLog:
-  fileName: !!js/regexp /\.bitex-log-parsed$/i
   virtual: true
 ParsedLaTeXFileListing:
-  fileName: !!js/regexp /\.fls-parsed$/i
   virtual: true
 LaTeXFileListing:
   fileName: !!js/regexp /\.fls$/i
 LaTeX:
   fileName: !!js/regexp /\.tex$/i
   contents: !!js/regexp /^\\documentclass/m
+ParsedLaTeXMagic:
+  virtual: true
 LaTeXClass:
   fileName: !!js/regexp /\.cls$/i
 LaTeXStyle:
   fileName: !!js/regexp /\.sty$/i
 ParsedLaTeXLog:
-  fileName: !!js/regexp /\.log-parsed$/i
   virtual: true
 LaTeXLog:
   fileName: !!js/regexp /\.log$/i
@@ -40,9 +38,10 @@ MakeIndexLog:
   fileName: !!js/regexp /\..lg$/i
   contents: !!js/regexp /^This is makeindex,/
 ParsedMakeIndexLog:
-  fileName: !!js/regexp /\..lg-parsed$/i
   virtual: true
 StateCache:
-  fileName: !!js/regexp /-cache\.yaml/i
+  fileName: !!js/regexp /-cache\.yaml$/i
 YAML:
-  fileName: !!js/regexp /\.yaml/i
+  fileName: !!js/regexp /\.yaml$/i
+ParsedYAML:
+  virtual: true

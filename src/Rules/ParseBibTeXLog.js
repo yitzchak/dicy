@@ -9,7 +9,7 @@ export default class ParseBibTeXLog extends Rule {
   static priority: number = 200
 
   async evaluate () {
-    const parsedFile = await this.getOutput(this.resolveOutputPath('.biber-log-parsed'))
+    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
     if (!parsedFile) return false
     const messages: Array<Message> = []
 

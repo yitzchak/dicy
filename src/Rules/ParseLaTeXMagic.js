@@ -10,6 +10,8 @@ export default class ParseLaTeXMagic extends Rule {
   static priority: number = 0
 
   async evaluate () {
+    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXMagic`)
+    if (!parsedFile) return false
     const magic = {}
 
     await this.firstParameter.parse([{
@@ -24,6 +26,7 @@ export default class ParseLaTeXMagic extends Rule {
       }
     }])
 
+    parsedFile.contents = magic
     Object.assign(this.buildState.options, magic)
 
     return true

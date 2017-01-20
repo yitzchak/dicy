@@ -39,7 +39,7 @@ export default class LaTeX extends Rule {
       const command = `pdflatex ${args.join(' ')}`
 
       await childProcess.exec(command, options)
-      await this.addResolvedInputs(['.fls-parsed', '.log-parsed'])
+      await this.addResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
       await this.addResolvedOutputs(['.fls', '.log'])
 
       for (const file: File of this.outputs.values()) {

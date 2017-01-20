@@ -11,7 +11,7 @@ export default class ParseMakeIndexLog extends Rule {
   static priority: number = 200
 
   async evaluate () {
-    const parsedFile = await this.getOutput(this.resolveOutputPath(`${this.firstParameter.normalizedFilePath}-parsed`))
+    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedMakeIndexLog`)
     if (!parsedFile) return false
     const messages: Array<Message> = []
 

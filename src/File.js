@@ -103,7 +103,7 @@ export default class File {
     }
 
     for (const [type, properties] of File.fileTypes.entries()) {
-      if (await this.isFileType(properties)) {
+      if (await this.isFileType(type, properties)) {
         this.type = type
         this.virtual = !!properties.virtual
         break
@@ -111,7 +111,9 @@ export default class File {
     }
   }
 
-  isFileType (fileType: FileType): Promise<boolean> {
+  isFileType (name: string, fileType: FileType): Promise<boolean> {
+    if (fileType.virtual) return Promise.resolve(this.filePath.endsWith(`-${name}`))
+
     return new Promise((resolve, reject) => {
       if (fileType.fileName && !fileType.fileName.test(this.filePath)) {
         return resolve(false)
