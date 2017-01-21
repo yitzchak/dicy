@@ -31,7 +31,7 @@ export type Reference = {
   end: ?number
 }
 
-export type Severity = 'info' | 'warning' | 'error'
+export type Severity = 'trace' | 'info' | 'warning' | 'error'
 
 export type Message = {
   severity: Severity,

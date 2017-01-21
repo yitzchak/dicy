@@ -65,7 +65,7 @@ export default class Builder extends BuildStateConsumer {
     if (rule.success) {
       const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
       const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
-      this.info(`Evaluating rule ${rule.id}${triggerText}`)
+      this.trace(`Evaluating rule ${rule.id}${triggerText}`)
       rule.timeStamp = new Date()
       rule.needsEvaluation = false
       rule.success = await rule.evaluate()

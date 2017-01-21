@@ -39,6 +39,9 @@ const command = async (inputs, env) => {
         case 'warning':
           console.warn(chalk.yellow(text))
           break
+        case 'trace':
+          console.warn(chalk.blue(text))
+          break
         default:
           console.info(text)
           break
