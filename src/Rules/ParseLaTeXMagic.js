@@ -1,13 +1,19 @@
 /* @flow */
 
 import Rule from '../Rule'
+import File from '../File'
 
 import type { Phase } from '../types'
 
 export default class ParseLaTeXMagic extends Rule {
   static phases: Set<Phase> = new Set(['configure'])
   static fileTypes: Set<string> = new Set(['LaTeX'])
-  static priority: number = 0
+
+  output: ?File
+
+  async initialize () {
+    this.output = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXMagic`)
+  }
 
   async evaluate () {
     const magic = {}
@@ -24,7 +30,7 @@ export default class ParseLaTeXMagic extends Rule {
       }
     }])
 
-    Object.assign(this.buildState.options, magic)
+    if (this.output) this.output.value = magic
 
     return true
   }

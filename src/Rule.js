@@ -8,7 +8,6 @@ import type { Command, Phase } from './types'
 
 export default class Rule extends BuildStateConsumer {
   static fileTypes: Set<string> = new Set()
-  static priority: number = 0
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
 
@@ -20,11 +19,23 @@ export default class Rule extends BuildStateConsumer {
   needsEvaluation: boolean = false
   success: boolean = true
 
+  static async phaseAnalyze (buildState: BuildState, jobName: ?string) {
+    if (this.commands.has(buildState.command) &&
+      this.phases.has(buildState.phase) &&
+      this.fileTypes.size === 0) {
+      const rule = new this(buildState, jobName)
+      await rule.initialize()
+      return rule
+    }
+  }
+
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
     if (this.commands.has(buildState.command) &&
       this.phases.has(buildState.phase) &&
       this.fileTypes.has(file.type)) {
-      return new this(buildState, jobName, file)
+      const rule = new this(buildState, jobName, file)
+      await rule.initialize()
+      return rule
     }
   }
 
@@ -40,8 +51,14 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
+  async initialize () {}
+
   get firstParameter (): File {
     return this.parameters[0]
+  }
+
+  get secondParameter (): File {
+    return this.parameters[1]
   }
 
   async evaluate (): Promise<boolean> {
@@ -100,6 +117,13 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
+  async addResolvedInputs (exts: Array<string>) {
+    for (const ext of exts) {
+      const filePath = this.resolveOutputPath(ext)
+      await this.getInput(filePath)
+    }
+  }
+
   async addResolvedOutputs (exts: Array<string>, circularDependency: boolean = false) {
     for (const ext of exts) {
       const filePath = this.resolveOutputPath(ext)
@@ -110,4 +134,7 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
+  toString (): string {
+    return this.id
+  }
 }

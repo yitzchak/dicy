@@ -26,14 +26,22 @@ export default class Builder extends BuildStateConsumer {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
     const entries: Array<string> = await fs.readdir(ruleClassPath)
     this.ruleClasses = entries.map(entry => require(path.join(ruleClassPath, entry)).default)
-    this.ruleClasses.sort((x, y) => y.priority - x.priority)
+  }
+
+  async phaseAnalyze () {
+    for (const ruleClass: Class<Rule> of this.ruleClasses) {
+      const rule = await ruleClass.phaseAnalyze(this.buildState, undefined)
+      if (rule) {
+        await this.buildState.addRule(rule)
+      }
+    }
   }
 
   async analyze () {
     while (true) {
       const files: Array<File> = Array.from(this.buildState.files.values()).filter(file => !file.analyzed)
 
-      if (files.length === 0) return
+      if (files.length === 0) break
 
       const file = files[0]
 
@@ -43,20 +51,21 @@ export default class Builder extends BuildStateConsumer {
           const rule = await ruleClass.analyze(this.buildState, jobName, file)
           if (rule) {
             await this.buildState.addRule(rule)
-            if (rule.needsEvaluation) await this.evaluateRule(rule)
           }
         }
       }
 
       file.analyzed = true
     }
+
+    this.buildState.calculateDistances()
   }
 
   async evaluateRule (rule: Rule) {
     if (rule.success) {
       const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
       const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
-      this.info(`Evaluating rule ${rule.id}${triggerText}`)
+      this.trace(`Evaluating rule ${rule.id}${triggerText}`)
       rule.timeStamp = new Date()
       rule.needsEvaluation = false
       rule.success = await rule.evaluate()
@@ -68,10 +77,31 @@ export default class Builder extends BuildStateConsumer {
 
   async evaluate () {
     const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation)
-    rules.sort((x, y) => y.constructor.priority - x.constructor.priority)
+    const ruleGroups: Array<Array<Rule>> = []
 
-    for (const rule: Rule of rules) {
-      await this.evaluateRule(rule)
+    for (const rule of rules) {
+      let notUsed = true
+      for (const ruleGroup of ruleGroups) {
+        if (this.buildState.distances.has(`${ruleGroup[0].id} ${rule.id}`) || this.buildState.distances.has(`${rule.id} ${ruleGroup[0].id}`)) {
+          ruleGroup.push(rule)
+          notUsed = false
+          break
+        }
+      }
+      if (notUsed) ruleGroups.push([rule])
+    }
+
+    for (const ruleGroup of ruleGroups) {
+      ruleGroup.sort((x: Rule, y: Rule) => {
+        const xy: ?number = this.buildState.distances.get(`${x.id} ${y.id}`)
+        const yx: ?number = this.buildState.distances.get(`${y.id} ${x.id}`)
+        if (typeof xy === 'number' && typeof yx === 'number') return xy - yx
+        if (xy === yx) return 0
+        return typeof xy === 'number' ? -1 : 1
+      })
+      for (const rule of ruleGroup) {
+        await this.evaluateRule(rule)
+      }
     }
   }
 
@@ -102,27 +132,7 @@ export default class Builder extends BuildStateConsumer {
       }
       let evaluationCount = 0
 
-      if (phase === 'execute') {
-        if (this.options.outputDirectory) {
-          await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
-        }
-
-        const jobNames = this.options.jobNames
-        if (jobNames) {
-          const file = await this.getFile(this.filePath)
-          if (file) {
-            if (Array.isArray(jobNames)) {
-              for (const jobName of jobNames) {
-                file.jobNames.add(jobName)
-              }
-            } else {
-              for (const jobName in jobNames) {
-                file.jobNames.add(jobName)
-              }
-            }
-          }
-        }
-      }
+      await this.phaseAnalyze()
 
       while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
         Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {

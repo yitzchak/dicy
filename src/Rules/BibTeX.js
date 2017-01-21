@@ -3,34 +3,28 @@
 import childProcess from 'mz/child_process'
 import path from 'path'
 
-import BuildState from '../BuildState'
 import Rule from '../Rule'
 import File from '../File'
 
 export default class BibTeX extends Rule {
-  static fileTypes: Set<string> = new Set(['BibTeXControlFile', 'BibTeXFile'])
-  static priority: number = 100
+  static fileTypes: Set<string> = new Set(['ParsedLaTeXLog'])
 
-  static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
-    if (this.phases.has(buildState.phase) && this.fileTypes.has(file.type)) {
-      const auxFile = await buildState.getFile(buildState.resolveOutputPath('.aux', jobName))
-      if (!auxFile) return
-      const id = buildState.getRuleId(this.name, jobName, auxFile)
-      if (buildState.getRule(id)) return
-      return new this(buildState, jobName, auxFile)
-    }
-  }
+  input: ?File
 
   async evaluate () {
-    await this.getInput(this.resolveOutputPath('.log'))
+    if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.messages && !!this.firstParameter.value.messages.some(message => message.text.match(/BibTeX/))) {
+      this.input = await this.getInput(this.resolveOutputPath('.aux'))
+    }
+
+    if (!this.input) return true
 
     const triggers = Array.from(this.getTriggers())
     const run: boolean = triggers.length === 0 ||
-      triggers.some(file => file.type !== 'LaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run BibTeX/))))
+      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.value && file.value.messages && file.value.messages.some(message => message.text.match(/run BibTeX/))))
 
     if (!run) return true
 
-    this.info('Running BibTeX...')
+    this.info(`Running ${this.id}...`)
 
     try {
       const args = await this.constructArguments()
@@ -41,7 +35,7 @@ export default class BibTeX extends Rule {
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {
-      this.error(error)
+      this.error(error.toString())
       return false
     }
 
@@ -62,9 +56,8 @@ export default class BibTeX extends Rule {
 
   async constructArguments () {
     const args = []
-    const auxFile = await this.getInput(this.resolveOutputPath('.aux'))
 
-    if (auxFile) args.push(`"${auxFile.normalizedFilePath}"`)
+    if (this.input) args.push(`"${this.input.normalizedFilePath}"`)
 
     return args
   }

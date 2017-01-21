@@ -17,13 +17,14 @@ export default class File {
   normalizedFilePath: string
   type: string
   timeStamp: Date
+  virtual: boolean = false
   hash: string
   rules: Set<Rule> = new Set()
   jobNames: Set<string> = new Set()
   analyzed: boolean = false
   hasBeenUpdated: boolean = false
   hasTriggeredEvaluation: boolean = false
-  contents: ?any
+  _value: ?any
 
   constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string) {
     this.filePath = filePath
@@ -33,11 +34,10 @@ export default class File {
   }
 
   static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string): Promise<?File> {
-    if (!await fs.exists(filePath)) return
-
     const file: File = new File(filePath, normalizedFilePath, timeStamp, hash)
 
     await file.findType()
+    if (!file.virtual && !await fs.exists(filePath)) return
     file.hasBeenUpdated = await file.updateTimeStamp() && await file.updateHash()
 
     return file
@@ -88,6 +88,16 @@ export default class File {
     })
   }
 
+  get value (): ?any {
+    return this._value
+  }
+
+  set value (value: ?any) {
+    this._value = value
+    this.timeStamp = new Date()
+    this.hasBeenUpdated = true
+  }
+
   exists () {
     return fs.exists(this.filePath)
   }
@@ -103,33 +113,40 @@ export default class File {
     }
 
     for (const [type, properties] of File.fileTypes.entries()) {
-      if (await this.isFileType(properties)) {
+      if (await this.isFileType(type, properties)) {
         this.type = type
+        this.virtual = !!properties.virtual
         break
       }
     }
   }
 
-  isFileType (fileType: FileType): Promise<boolean> {
+  isFileType (name: string, fileType: FileType): Promise<boolean> {
+    if (fileType.virtual) return Promise.resolve(this.filePath.endsWith(`-${name}`))
+
     return new Promise((resolve, reject) => {
       if (fileType.fileName && !fileType.fileName.test(this.filePath)) {
         return resolve(false)
       }
 
       if (fileType.contents) {
-        const rl = readline.createInterface({
-          input: fs.createReadStream(this.filePath)
-        })
-        let match = false
+        fs.exists(this.filePath).then(exists => {
+          if (exists) {
+            const rl = readline.createInterface({
+              input: fs.createReadStream(this.filePath)
+            })
+            let match = false
 
-        rl.on('line', line => {
-          if (fileType.contents && fileType.contents.test(line)) {
-            match = true
-            rl.close()
-          }
-        })
-        .on('close', () => {
-          resolve(match)
+            rl.on('line', line => {
+              if (fileType.contents && fileType.contents.test(line)) {
+                match = true
+                rl.close()
+              }
+            })
+            .on('close', () => {
+              resolve(match)
+            })
+          } else resolve(false)
         })
       } else {
         resolve(true)
@@ -142,6 +159,7 @@ export default class File {
   }
 
   async updateTimeStamp (): Promise<boolean> {
+    if (this.virtual) return false
     const stats = await fs.stat(this.filePath)
     const oldTimeStamp = this.timeStamp
     this.timeStamp = stats.mtime
@@ -149,6 +167,8 @@ export default class File {
   }
 
   updateHash (): Promise<boolean> {
+    if (this.virtual) return Promise.resolve(false)
+
     return new Promise((resolve, reject) => {
       const fileType = File.fileTypes.get(this.type)
       const hash = crypto.createHash('sha256')
@@ -177,5 +197,10 @@ export default class File {
   async update (): Promise<void> {
     const updated = await this.updateTimeStamp() && await this.updateHash()
     this.hasBeenUpdated = this.hasBeenUpdated || updated
+  }
+
+  forceUpdate () {
+    this.timeStamp = new Date()
+    this.hasBeenUpdated = true
   }
 }

@@ -10,8 +10,8 @@ export default class ReportLogMessages extends Rule {
   static phases: Set<Phase> = new Set(['finalize'])
 
   async evaluate () {
-    if (this.firstParameter.contents) {
-      for (const message: Message of this.firstParameter.contents.messages) {
+    if (this.firstParameter.value) {
+      for (const message: Message of this.firstParameter.value.messages) {
         this.log(message)
       }
     }

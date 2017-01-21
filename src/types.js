@@ -3,7 +3,8 @@
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,
-  hashSkip?: RegExp
+  hashSkip?: RegExp,
+  virtual?: boolean
 }
 
 export type FileCache = {
@@ -30,7 +31,7 @@ export type Reference = {
   end: ?number
 }
 
-export type Severity = 'info' | 'warning' | 'error'
+export type Severity = 'trace' | 'info' | 'warning' | 'error'
 
 export type Message = {
   severity: Severity,

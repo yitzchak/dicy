@@ -6,9 +6,10 @@ import type { Message } from '../types'
 
 export default class ParseLaTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXLog'])
-  static priority: number = 200
 
   async evaluate () {
+    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
+    if (!parsedFile) return false
     const messages: Array<Message> = []
     let name: string
     let filePath: string
@@ -82,9 +83,7 @@ export default class ParseLaTeXLog extends Rule {
       }
     }])
 
-    this.firstParameter.contents = {
-      messages
-    }
+    parsedFile.value = { messages }
 
     return true
   }

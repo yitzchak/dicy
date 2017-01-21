@@ -17,6 +17,7 @@ export default class BuildState {
   options: Object = {}
   cache: Object
   log: Log
+  distances: Map<string, number> = new Map()
 
   constructor (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
     this.filePath = path.basename(filePath)
@@ -142,7 +143,7 @@ export default class BuildState {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
         hash: file.hash,
-        contents: file.contents,
+        value: file.value,
         jobNames: Array.from(file.jobNames.values())
       }
 
@@ -163,5 +164,27 @@ export default class BuildState {
 
     const serialized = yaml.safeDump(state, { skipInvalid: true })
     await fs.writeFile(cacheFilePath, serialized)
+  }
+
+  calculateDistances (): void {
+    this.distances.clear()
+
+    for (const from of this.rules.values()) {
+      let rules = new Set([from])
+
+      for (let distance = 1; distance < 2 * this.rules.size; distance++) {
+        const newRules = new Set()
+        for (const rule of rules.values()) {
+          for (const output of rule.outputs.values()) {
+            for (const adj of output.rules.values()) {
+              const id = `${from.id} ${adj.id}`
+              this.distances.set(id, Math.min(distance, this.distances.get(id) || Number.MAX_SAFE_INTEGER))
+              newRules.add(adj)
+            }
+          }
+        }
+        rules = newRules
+      }
+    }
   }
 }

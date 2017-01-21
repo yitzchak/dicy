@@ -7,18 +7,15 @@ import Rule from '../Rule'
 
 export default class Biber extends Rule {
   static fileTypes: Set<string> = new Set(['BiberControlFile'])
-  static priority: number = 100
 
   async evaluate (): Promise<boolean> {
-    await this.getInput(this.resolveOutputPath('.log'))
-
     const triggers = Array.from(this.getTriggers())
     const run: boolean = triggers.length === 0 ||
-      triggers.some(file => file.type !== 'LaTeXLog' || (file.contents && file.contents.messages && file.contents.messages.some(message => message.text.match(/run Biber/))))
+      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.value && file.value.messages && file.value.messages.some(message => message.text.match(/run Biber/))))
 
     if (!run) return true
 
-    this.info('Running Biber...')
+    this.info(`Running ${this.id}...`)
 
     try {
       const args = this.constructArguments()
@@ -26,10 +23,11 @@ export default class Biber extends Rule {
       const command = `biber ${args.join(' ')}`
 
       const stdout = await childProcess.exec(command, options)
+      await this.addResolvedInputs(['.log-ParsedLaTeXLog'])
       await this.addResolvedOutputs(['.bbl', '.blg'])
       await this.parseOutput(stdout)
     } catch (error) {
-      this.error(error)
+      this.error(error.toString())
       return false
     }
 

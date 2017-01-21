@@ -6,9 +6,10 @@ import Rule from '../Rule'
 
 export default class ParseLaTeXFileListing extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXFileListing'])
-  static priority: number = 200
 
   async evaluate () {
+    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXFileListing`)
+    if (!parsedFile) return false
     let rootPath: string = ''
     const results = {
       INPUT: new Set(),
@@ -29,7 +30,7 @@ export default class ParseLaTeXFileListing extends Rule {
       }
     }])
 
-    this.firstParameter.contents = {
+    parsedFile.value = {
       inputs: Array.from(results.INPUT),
       outputs: Array.from(results.OUTPUT)
     }
