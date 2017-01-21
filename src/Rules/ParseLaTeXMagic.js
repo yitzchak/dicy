@@ -9,10 +9,10 @@ export default class ParseLaTeXMagic extends Rule {
   static phases: Set<Phase> = new Set(['configure'])
   static fileTypes: Set<string> = new Set(['LaTeX'])
 
-  parsedFile: ?File
+  output: ?File
 
   async initialize () {
-    this.parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXMagic`)
+    this.output = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXMagic`)
   }
 
   async evaluate () {
@@ -30,7 +30,7 @@ export default class ParseLaTeXMagic extends Rule {
       }
     }])
 
-    if (this.parsedFile) this.parsedFile.value = magic
+    if (this.output) this.output.value = magic
 
     return true
   }

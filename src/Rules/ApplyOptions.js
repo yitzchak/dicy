@@ -14,14 +14,12 @@ export default class ApplyOptions extends Rule {
     const { dir, name, ext } = path.parse(this.filePath)
     const exts = ['.yaml-ParsedYAML', `${ext}-ParsedLaTeXMagic`]
     for (const ext of exts) {
-      const file = await this.getInput(path.format({ dir, name, ext }))
-      if (file) this.parameters.push(file)
+      await this.getInput(path.format({ dir, name, ext }))
     }
-    this.id = this.buildState.getRuleId(this.constructor.name, this.jobName, ...this.parameters)
   }
 
   async evaluate () {
-    for (const file: File of this.parameters) {
+    for (const file: File of this.inputs.values()) {
       if (file.value) Object.assign(this.buildState.options, file.value)
     }
     return true
