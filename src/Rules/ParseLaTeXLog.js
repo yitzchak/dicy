@@ -27,6 +27,16 @@ export default class ParseLaTeXLog extends Rule {
         name = groups.name
       }
     }, {
+      names: ['text'],
+      patterns: [/^Package: (.*)$/],
+      evaluate: (reference, groups) => {
+        messages.push({
+          severity: 'info',
+          text: groups.text,
+          log: reference
+        })
+      }
+    }, {
       names: ['file', 'line', 'type', 'text'],
       patterns: [/^(?:(.*):(\d+):|!)(?: (.+) Error:)? (.+?)\.?$/],
       evaluate: (reference, groups) => {

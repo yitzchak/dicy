@@ -6,13 +6,12 @@
   "scripts": {
     "test": "echo Linting sources ... && ./node_modules/.bin/eslint --color src spec && echo Running specs... && ./node_modules/.bin/jasmine",
     "compile": "./node_modules/.bin/babel -d lib/ src/",
-    "prepublish": "npm run compile",
-    "bin": "node lib/ouroboros.js",
+    "bin": "lib/ouroboros.js",
     "lint": "./node_modules/.bin/eslint --color src spec",
     "flow-typed": "./node_modules/.bin/flow-typed update"
   },
   "bin": {
-    "ouroboros": "lib/main.js"
+    "ouroboros": "lib/ouroboros.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +23,6 @@
     "babel-polyfill": "^6.20.0",
     "chalk": "^1.1.3",
     "commander": "^2.9.0",
-    "eslint-plugin-standard": "^2.0.1",
     "fs-promise": "^1.0.0",
     "js-yaml": "^3.7.0",
     "mz": "^2.6.0"

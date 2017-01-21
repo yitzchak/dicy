@@ -12,7 +12,7 @@ export default class BibTeX extends Rule {
   input: ?File
 
   async evaluate () {
-    if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.messages && !!this.firstParameter.value.messages.some(message => message.text.match(/BibTeX/))) {
+    if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.messages && !!this.firstParameter.value.messages.some(message => message.text.match(/(BibTeX|natbib)/))) {
       this.input = await this.getInput(this.resolveOutputPath('.aux'))
     }
 
