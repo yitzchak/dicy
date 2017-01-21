@@ -1,3 +1,7 @@
+LaTeXAuxilary:
+  fileName: !!js/regexp /\.aux$/i
+ParsedLaTeXAuxilary:
+  virtual: true
 BiberControlFile:
   fileName: !!js/regexp /\.bcf$/i
 BibTeXControlFile:

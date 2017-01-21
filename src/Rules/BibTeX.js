@@ -7,12 +7,12 @@ import Rule from '../Rule'
 import File from '../File'
 
 export default class BibTeX extends Rule {
-  static fileTypes: Set<string> = new Set(['ParsedLaTeXLog'])
+  static fileTypes: Set<string> = new Set(['ParsedLaTeXAuxilary'])
 
   input: ?File
 
   async evaluate () {
-    if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.messages && !!this.firstParameter.value.messages.some(message => message.text.match(/(BibTeX|natbib)/))) {
+    if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.bibdata) {
       this.input = await this.getInput(this.resolveOutputPath('.aux'))
     }
 
