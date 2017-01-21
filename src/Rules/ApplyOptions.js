@@ -6,10 +6,9 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Phase } from '../types'
+import type { Phase } from '../types'
 
 export default class ApplyOptions extends Rule {
-  static commands: Set<Command> = new Set(['build', 'report'])
   static phases: Set<Phase> = new Set(['configure'])
 
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {

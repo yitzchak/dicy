@@ -27,7 +27,7 @@ export default class BibTeX extends Rule {
 
     if (!run) return true
 
-    this.info('Running BibTeX...')
+    this.info(`Running ${this.id}...`)
 
     try {
       const args = await this.constructArguments()

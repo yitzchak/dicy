@@ -32,7 +32,7 @@ export default class Builder extends BuildStateConsumer {
     while (true) {
       const files: Array<File> = Array.from(this.buildState.files.values()).filter(file => !file.analyzed)
 
-      if (files.length === 0) return
+      if (files.length === 0) break
 
       const file = files[0]
 
@@ -42,7 +42,7 @@ export default class Builder extends BuildStateConsumer {
           const rule = await ruleClass.analyze(this.buildState, jobName, file)
           if (rule) {
             await this.buildState.addRule(rule)
-            if (rule.needsEvaluation) await this.evaluateRule(rule)
+            // if (rule.needsEvaluation) await this.evaluateRule(rule)
           }
         }
       }
@@ -67,9 +67,31 @@ export default class Builder extends BuildStateConsumer {
 
   async evaluate () {
     const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation)
+    const ruleGroups: Array<Array<Rule>> = []
 
-    for (const rule: Rule of rules) {
-      await this.evaluateRule(rule)
+    for (const rule of rules) {
+      let notUsed = true
+      for (const ruleGroup of ruleGroups) {
+        if (this.buildState.distances.has(`${ruleGroup[0].id} ${rule.id}`) || this.buildState.distances.has(`${rule.id} ${ruleGroup[0].id}`)) {
+          ruleGroup.push(rule)
+          notUsed = false
+          break
+        }
+      }
+      if (notUsed) ruleGroups.push([rule])
+    }
+
+    for (const ruleGroup of ruleGroups) {
+      ruleGroup.sort((x: Rule, y: Rule) => {
+        const xy: ?number = this.buildState.distances.get(`${x.id} ${y.id}`)
+        const yx: ?number = this.buildState.distances.get(`${y.id} ${x.id}`)
+        if (typeof xy === 'number' && typeof yx === 'number') return xy - yx
+        if (xy === yx) return 0
+        return typeof xy === 'number' ? -1 : 1
+      })
+      for (const rule of ruleGroup) {
+        await this.evaluateRule(rule)
+      }
     }
   }
 
@@ -125,6 +147,7 @@ export default class Builder extends BuildStateConsumer {
       while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
         Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
         await this.analyze()
+        this.buildState.calculateDistances()
         await this.evaluate()
         await this.checkUpdates()
         evaluationCount++

@@ -23,7 +23,9 @@ export default class Rule extends BuildStateConsumer {
     if (this.commands.has(buildState.command) &&
       this.phases.has(buildState.phase) &&
       this.fileTypes.has(file.type)) {
-      return new this(buildState, jobName, file)
+      const rule = new this(buildState, jobName, file)
+      await rule.initialize()
+      return rule
     }
   }
 
@@ -38,6 +40,8 @@ export default class Rule extends BuildStateConsumer {
       file.addRule(this)
     }
   }
+
+  async initialize () {}
 
   get firstParameter (): File {
     return this.parameters[0]
@@ -116,4 +120,7 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
+  toString (): string {
+    return this.id
+  }
 }

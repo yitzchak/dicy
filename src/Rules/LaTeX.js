@@ -30,7 +30,7 @@ export default class LaTeX extends Rule {
 
     if (!runLatex) return true
 
-    this.info('Running LaTeX...')
+    this.info(`Running ${this.id}...`)
 
     try {
       const args = this.constructArguments()
@@ -54,7 +54,7 @@ export default class LaTeX extends Rule {
 
   async updateDependencies (file: File) {
     if (file.value) {
-      this.info(`Update LaTeX dependencies...`)
+      this.info(`Update ${this.id} dependencies...`)
       if (file.value && file.value.inputs) await this.addInputs(file.value.inputs)
       if (file.value && file.value.outputs) await this.addOutputs(file.value.outputs)
     }

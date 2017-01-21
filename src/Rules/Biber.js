@@ -15,7 +15,7 @@ export default class Biber extends Rule {
 
     if (!run) return true
 
-    this.info('Running Biber...')
+    this.info(`Running ${this.id}...`)
 
     try {
       const args = this.constructArguments()
