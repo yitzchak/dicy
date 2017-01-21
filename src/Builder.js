@@ -28,6 +28,15 @@ export default class Builder extends BuildStateConsumer {
     this.ruleClasses = entries.map(entry => require(path.join(ruleClassPath, entry)).default)
   }
 
+  async phaseAnalyze () {
+    for (const ruleClass: Class<Rule> of this.ruleClasses) {
+      const rule = await ruleClass.phaseAnalyze(this.buildState, undefined)
+      if (rule) {
+        await this.buildState.addRule(rule)
+      }
+    }
+  }
+
   async analyze () {
     while (true) {
       const files: Array<File> = Array.from(this.buildState.files.values()).filter(file => !file.analyzed)
@@ -42,13 +51,14 @@ export default class Builder extends BuildStateConsumer {
           const rule = await ruleClass.analyze(this.buildState, jobName, file)
           if (rule) {
             await this.buildState.addRule(rule)
-            // if (rule.needsEvaluation) await this.evaluateRule(rule)
           }
         }
       }
 
       file.analyzed = true
     }
+
+    this.buildState.calculateDistances()
   }
 
   async evaluateRule (rule: Rule) {
@@ -122,32 +132,11 @@ export default class Builder extends BuildStateConsumer {
       }
       let evaluationCount = 0
 
-      if (phase === 'execute') {
-        if (this.options.outputDirectory) {
-          await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
-        }
-
-        const jobNames = this.options.jobNames
-        if (jobNames) {
-          const file = await this.getFile(this.filePath)
-          if (file) {
-            if (Array.isArray(jobNames)) {
-              for (const jobName of jobNames) {
-                file.jobNames.add(jobName)
-              }
-            } else {
-              for (const jobName in jobNames) {
-                file.jobNames.add(jobName)
-              }
-            }
-          }
-        }
-      }
+      await this.phaseAnalyze()
 
       while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
         Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
         await this.analyze()
-        this.buildState.calculateDistances()
         await this.evaluate()
         await this.checkUpdates()
         evaluationCount++

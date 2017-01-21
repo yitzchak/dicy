@@ -19,6 +19,16 @@ export default class Rule extends BuildStateConsumer {
   needsEvaluation: boolean = false
   success: boolean = true
 
+  static async phaseAnalyze (buildState: BuildState, jobName: ?string) {
+    if (this.commands.has(buildState.command) &&
+      this.phases.has(buildState.phase) &&
+      this.fileTypes.size === 0) {
+      const rule = new this(buildState, jobName)
+      await rule.initialize()
+      return rule
+    }
+  }
+
   static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
     if (this.commands.has(buildState.command) &&
       this.phases.has(buildState.phase) &&
@@ -45,6 +55,10 @@ export default class Rule extends BuildStateConsumer {
 
   get firstParameter (): File {
     return this.parameters[0]
+  }
+
+  get secondParameter (): File {
+    return this.parameters[1]
   }
 
   async evaluate (): Promise<boolean> {
