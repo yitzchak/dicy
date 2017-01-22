@@ -143,7 +143,7 @@ export default class Builder extends BuildStateConsumer {
       }
     }
 
-    await this.saveStateCache()
+    if (command === 'build') await this.saveStateCache()
 
     return Array.from(this.buildState.rules.values()).every(rule => rule.success)
   }

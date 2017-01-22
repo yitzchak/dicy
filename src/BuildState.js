@@ -95,13 +95,14 @@ export default class BuildState {
     let file: ?File = this.files.get(filePath)
 
     if (!file) {
-      let timeStamp, hash
+      let timeStamp, hash, value
 
       if (this.cache && this.cache.files[filePath]) {
         timeStamp = this.cache.files[filePath].timeStamp
         hash = this.cache.files[filePath].hash
+        value = this.cache.files[filePath].value
       }
-      file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash)
+      file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash, value)
       if (!file) return
       this.files.set(filePath, file)
     }

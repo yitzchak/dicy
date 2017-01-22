@@ -11,6 +11,10 @@ export default class BibTeX extends Rule {
 
   input: ?File
 
+  async initialize () {
+    await this.getInput(this.resolveOutputPath('.log-ParsedLaTeXLog'))
+  }
+
   async evaluate () {
     if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.bibdata) {
       this.input = await this.getInput(this.resolveOutputPath('.aux'))

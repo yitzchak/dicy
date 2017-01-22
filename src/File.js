@@ -26,15 +26,16 @@ export default class File {
   hasTriggeredEvaluation: boolean = false
   _value: ?any
 
-  constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string) {
+  constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string, value: ?any) {
     this.filePath = filePath
     this.normalizedFilePath = normalizedFilePath
     if (timeStamp) this.timeStamp = timeStamp
     if (hash) this.hash = hash
+    if (value) this.value = value
   }
 
-  static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string): Promise<?File> {
-    const file: File = new File(filePath, normalizedFilePath, timeStamp, hash)
+  static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string, value: ?any): Promise<?File> {
+    const file: File = new File(filePath, normalizedFilePath, timeStamp, hash, value)
 
     await file.findType()
     if (!file.virtual && !await fs.exists(filePath)) return
