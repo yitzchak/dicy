@@ -5,10 +5,11 @@ import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Phase } from '../types'
+import type { EvaluationTrigger, Phase } from '../types'
 
 export default class ApplyOptions extends Rule {
   static phases: Set<Phase> = new Set(['configure'])
+  static evaluationTrigger: EvaluationTrigger = 'always'
 
   async initialize () {
     const { dir, name, ext } = path.parse(this.filePath)

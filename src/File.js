@@ -31,7 +31,7 @@ export default class File {
     this.normalizedFilePath = normalizedFilePath
     if (timeStamp) this.timeStamp = timeStamp
     if (hash) this.hash = hash
-    if (value) this.value = value
+    if (value) this._value = value
   }
 
   static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string, value: ?any): Promise<?File> {

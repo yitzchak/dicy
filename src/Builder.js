@@ -121,8 +121,6 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async run (command: Command): Promise<boolean> {
-    if (!this.options.ignoreCache) await this.loadStateCache()
-
     this.buildState.command = command
 
     for (const phase: Phase of ['configure', 'initialize', 'execute', 'finalize']) {

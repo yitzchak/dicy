@@ -29,6 +29,7 @@ export default class BuildState {
   static async create (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
     const buildState = new BuildState(filePath, options, log)
 
+    if (!options.ignoreCache) await buildState.loadCache()
     await buildState.getFile(filePath)
 
     return buildState
@@ -73,6 +74,7 @@ export default class BuildState {
       rule.timeStamp = cachedRule.timeStamp
       await rule.addInputs(cachedRule.inputs)
       await rule.addOutputs(cachedRule.outputs)
+      rule.needsEvaluation = rule.constructor.evaluationTrigger === 'always' || Array.from(rule.inputs.values()).some(input => input.hasBeenUpdated)
     } else {
       rule.needsEvaluation = true
     }

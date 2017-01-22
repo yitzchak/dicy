@@ -47,3 +47,5 @@ export type Phase = 'configure' | 'initialize' | 'execute' | 'finalize'
 export type Command = 'build' | 'report'
 
 export type Log = (message: Message) => void
+
+export type EvaluationTrigger = 'always' | 'timeStamp' | 'hash'
