@@ -7,6 +7,8 @@ import Rule from '../Rule'
 
 import type { Message } from '../types'
 
+const PDF_CAPABLE_LATEX = /^(pdf|xe|lua)latex$/
+
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
 
@@ -33,9 +35,8 @@ export default class LaTeX extends Rule {
     this.info(`Running ${this.id}...`)
 
     try {
-      const args = this.constructArguments()
       const options = this.constructProcessOptions()
-      const command = `pdflatex ${args.join(' ')}`
+      const command = this.constructCommand()
 
       await childProcess.exec(command, options)
       await this.addResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
@@ -66,7 +67,7 @@ export default class LaTeX extends Rule {
     }
   }
 
-  constructArguments () {
+  constructCommand () {
     const args = [
       '-interaction=batchmode',
       '-recorder'
@@ -96,8 +97,21 @@ export default class LaTeX extends Rule {
         break
     }
 
+    if (PDF_CAPABLE_LATEX.test(this.options.engine)) {
+      if (this.options.outputFormat !== 'pdf') {
+        switch (this.options.engine) {
+          case 'xelatex':
+            args.push('-no-pdf')
+            break
+          default:
+            args.push('-output-format=dvi')
+            break
+        }
+      }
+    }
+
     args.push(`"${path.basename(this.firstParameter.filePath)}"`)
 
-    return args
+    return `${this.options.engine} ${args.join(' ')}`
   }
 }

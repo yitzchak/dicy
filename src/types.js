@@ -3,6 +3,7 @@
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,
+  hash?: boolean,
   hashSkip?: RegExp,
   virtual?: boolean
 }

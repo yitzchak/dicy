@@ -1,3 +1,7 @@
+engine:
+  description: LaTeX engine, e.g. latex, pdflatex or uplatex
+  type: string
+  defaultValue: pdflatex
 synctex:
   description: generate SyncTeX annotations
   type: boolean

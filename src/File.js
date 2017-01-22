@@ -18,6 +18,7 @@ export default class File {
   type: string
   timeStamp: Date
   virtual: boolean = false
+  useHash: boolean = false
   hash: string
   rules: Set<Rule> = new Set()
   jobNames: Set<string> = new Set()
@@ -117,6 +118,7 @@ export default class File {
       if (await this.isFileType(type, properties)) {
         this.type = type
         this.virtual = !!properties.virtual
+        this.useHash = !!properties.hash
         break
       }
     }
@@ -168,7 +170,7 @@ export default class File {
   }
 
   updateHash (): Promise<boolean> {
-    if (this.virtual) return Promise.resolve(false)
+    if (this.virtual || !this.useHash) return Promise.resolve(false)
 
     return new Promise((resolve, reject) => {
       const fileType = File.fileTypes.get(this.type)

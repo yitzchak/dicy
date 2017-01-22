@@ -1,35 +1,49 @@
+DVI:
+  fileName: !!js/regexp /\.(dvi|xdv)$/i
+PDF:
+  fileName: !!js/regexp /\.pdf$/i
 LaTeXAuxilary:
   fileName: !!js/regexp /\.aux$/i
+  hash: true
 ParsedLaTeXAuxilary:
   virtual: true
 BiberControlFile:
   fileName: !!js/regexp /\.bcf$/i
+  hash: true
 BibTeXControlFile:
   fileName: !!js/regexp /-blx\.bib$/i
+  hash: true
 BibTeXFile:
   fileName: !!js/regexp /\.bib$/i
+  hash: true
 BiberLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp / This is Biber /
   hashSkip: !!js/regexp /===/
+  hash: true
 ParsedBiberLog:
   virtual: true
 IndexControlFile:
   fileName: !!js/regexp /\.idx$/i
+  hash: true
 Index:
   fileName: !!js/regexp /\.ind$/i
+  hash: true
 BibTeXLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp /^This is BibTeX,/
+  hash: true
 ParsedBibTeXLog:
   virtual: true
 ParsedLaTeXFileListing:
   virtual: true
 LaTeXFileListing:
   fileName: !!js/regexp /\.fls$/i
+  hash: true
 LaTeX:
   fileName: !!js/regexp /\.tex$/i
   contents: !!js/regexp /^\\documentclass/m
+  hash: true
 ParsedLaTeXMagic:
   virtual: true
 LaTeXClass:
@@ -42,14 +56,17 @@ LaTeXLog:
   fileName: !!js/regexp /\.log$/i
   contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/
   hashSkip: !!js/regexp /^This is/
+  hash: true
 MakeIndexLog:
   fileName: !!js/regexp /\..lg$/i
   contents: !!js/regexp /^This is makeindex,/
+  hash: true
 ParsedMakeIndexLog:
   virtual: true
 StateCache:
   fileName: !!js/regexp /-cache\.yaml$/i
 YAML:
   fileName: !!js/regexp /\.yaml$/i
+  hash: true
 ParsedYAML:
   virtual: true
