@@ -2,6 +2,7 @@
 /* @flow */
 
 import 'babel-polyfill'
+import _ from 'lodash'
 import chalk from 'chalk'
 import path from 'path'
 import program from 'commander'
@@ -55,24 +56,40 @@ const command = async (inputs, env) => {
 program
   .version('0.0.0')
 
-program
-  .command('build [inputs...]')
-  .alias('b')
-  .description('Build the inputs')
-  .option('-i, --ignore-cache', 'ignore the current cache')
-  .option('--output-format <format>', 'output format [pdf]', /^(pdf|ps|dvi)$/, 'pdf')
-  .option('--output-directory <outputDirectory>', 'output directory')
-  .option('--job-name <jobName>', 'job name for job')
-  .option('--job-names <jobNames>', 'job names', parseArray)
-  .option('--logging-level <loggingLevel>', 'logging level')
-  .action(command)
+Builder.getOptionDefinitions().then(definitions => {
+  function loadOptions (pc) {
+    for (const name in definitions) {
+      const option = definitions[name]
+      const kebabName = _.kebabCase(name)
+      const alias = option.alias ? `-${option.alias}, ` : ''
 
-program
-  .command('report [inputs...]')
-  .alias('r')
-  .description('Report the results from a previous build')
-  .option('--logging-level <loggingLevel>', 'logging level')
-  .action(command)
+      switch (option.type) {
+        case 'string':
+          pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, option.defaultValue)
+          break
+        case 'strings':
+          pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, parseArray, option.defaultValue)
+          break
+        case 'boolean':
+          pc = pc.option(`${alias}--${option.defaultValue ? 'no-' : ''}${kebabName}`, option.description)
+          break
+      }
+    }
+    return pc
+  }
 
-program
-  .parse(process.argv)
+  loadOptions(program
+    .command('build [inputs...]')
+    .alias('b')
+    .description('Build the inputs'))
+    .action(command)
+
+  loadOptions(program
+    .command('report [inputs...]')
+    .alias('r')
+    .description('Report the results from a previous build'))
+    .action(command)
+
+  program
+    .parse(process.argv)
+}, error => { console.log(error) })

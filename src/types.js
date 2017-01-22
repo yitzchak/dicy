@@ -48,4 +48,10 @@ export type Command = 'build' | 'report'
 
 export type Log = (message: Message) => void
 
-export type EvaluationTrigger = 'always' | 'timeStamp' | 'hash'
+export type Option = {
+  type: 'string' | 'strings' | 'number' | 'numbers' | 'boolean',
+  defaultValue?: any,
+  description: string,
+  values?: Array<any>,
+  alias?: string
+}

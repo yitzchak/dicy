@@ -2,13 +2,14 @@
 
 import fs from 'fs-promise'
 import path from 'path'
+import yaml from 'js-yaml'
 
 import BuildState from './BuildState'
 import BuildStateConsumer from './BuildStateConsumer'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Log, Message, Phase } from './types'
+import type { Command, Log, Message, Option, Phase } from './types'
 
 export default class Builder extends BuildStateConsumer {
   ruleClasses: Array<Class<Rule>> = []
@@ -152,5 +153,10 @@ export default class Builder extends BuildStateConsumer {
 
   async saveStateCache () {
     await this.buildState.saveCache()
+  }
+
+  static async getOptionDefinitions (): Promise<{ [name: string]: Option }> {
+    const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'option-definitions.yaml'), { encoding: 'utf-8' })
+    return yaml.load(contents)
   }
 }

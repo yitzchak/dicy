@@ -66,10 +66,10 @@ export default class BuildStateConsumer {
   }
 
   log (message: Message) {
-    const loggingLevel = this.options.loggingLevel || 'warning'
-    if ((loggingLevel === 'info' && message.severity === 'trace') ||
-      (loggingLevel === 'warning' && (message.severity === 'trace' || message.severity === 'info')) ||
-      (loggingLevel === 'error' && message.severity !== 'error')) return
+    const messageLevel = this.options.messageLevel || 'warning'
+    if ((messageLevel === 'info' && message.severity === 'trace') ||
+      (messageLevel === 'warning' && (message.severity === 'trace' || message.severity === 'info')) ||
+      (messageLevel === 'error' && message.severity !== 'error')) return
     this.buildState.log(message)
   }
 }
