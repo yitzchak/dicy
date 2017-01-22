@@ -4,13 +4,13 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Command, Phase, EvaluationTrigger } from './types'
+import type { Command, Phase } from './types'
 
 export default class Rule extends BuildStateConsumer {
   static fileTypes: Set<string> = new Set()
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
-  static evaluationTrigger: EvaluationTrigger = 'hash'
+  static alwaysEvaluate: boolean = false
 
   id: string
   parameters: Array<File> = []
@@ -26,7 +26,7 @@ export default class Rule extends BuildStateConsumer {
       this.fileTypes.size === 0) {
       const rule = new this(buildState, jobName)
       await rule.initialize()
-      rule.needsEvaluation = this.evaluationTrigger === 'always'
+      rule.needsEvaluation = this.alwaysEvaluate
       return rule
     }
   }
@@ -37,7 +37,7 @@ export default class Rule extends BuildStateConsumer {
       this.fileTypes.has(file.type)) {
       const rule = new this(buildState, jobName, file)
       await rule.initialize()
-      rule.needsEvaluation = this.evaluationTrigger === 'always'
+      rule.needsEvaluation = this.alwaysEvaluate
       return rule
     }
   }

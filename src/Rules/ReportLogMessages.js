@@ -2,13 +2,13 @@
 
 import Rule from '../Rule'
 
-import type { EvaluationTrigger, Command, Message, Phase } from '../types'
+import type { Command, Message, Phase } from '../types'
 
 export default class ReportLogMessages extends Rule {
   static fileTypes: Set<string> = new Set(['ParsedBiberLog', 'ParsedBibTeXLog', 'ParsedLaTeXLog', 'ParsedMakeIndexLog'])
   static commands: Set<Command> = new Set(['report'])
   static phases: Set<Phase> = new Set(['finalize'])
-  static evaluationTrigger: EvaluationTrigger = 'always'
+  static alwaysEvaluate: boolean = true
 
   async evaluate () {
     if (this.firstParameter.value) {

@@ -5,11 +5,11 @@ import path from 'path'
 
 import Rule from '../Rule'
 
-import type { EvaluationTrigger, Phase } from '../types'
+import type { Phase } from '../types'
 
 export default class CreateOutputTree extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
-  static evaluationTrigger: EvaluationTrigger = 'always'
+  static alwaysEvaluate: boolean = true
 
   async evaluate () {
     if (this.options.outputDirectory) {

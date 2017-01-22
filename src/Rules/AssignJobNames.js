@@ -2,11 +2,11 @@
 
 import Rule from '../Rule'
 
-import type { EvaluationTrigger, Phase } from '../types'
+import type { Phase } from '../types'
 
 export default class AssignJobNames extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
-  static evaluationTrigger: EvaluationTrigger = 'always'
+  static alwaysEvaluate: boolean = true
 
   async evaluate () {
     const jobNames = this.options.jobNames

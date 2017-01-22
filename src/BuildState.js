@@ -74,7 +74,7 @@ export default class BuildState {
       rule.timeStamp = cachedRule.timeStamp
       await rule.addInputs(cachedRule.inputs)
       await rule.addOutputs(cachedRule.outputs)
-      rule.needsEvaluation = rule.constructor.evaluationTrigger === 'always' || Array.from(rule.inputs.values()).some(input => input.hasBeenUpdated)
+      rule.needsEvaluation = rule.constructor.alwaysEvaluate || Array.from(rule.inputs.values()).some(input => input.hasBeenUpdated)
     } else {
       rule.needsEvaluation = true
     }
