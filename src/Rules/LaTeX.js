@@ -80,6 +80,22 @@ export default class LaTeX extends Rule {
       args.push(`-jobname="${this.options.jobName}"`)
     }
 
+    if (this.options.synctex) {
+      args.push('-synctex=1')
+    }
+
+    switch (this.options.shellEscape) {
+      case 'disable':
+        args.push('-no-shell-escape')
+        break
+      case 'restricted':
+        args.push('-shell-restricted')
+        break
+      case 'enable':
+        args.push('-shell-escape')
+        break
+    }
+
     args.push(`"${path.basename(this.firstParameter.filePath)}"`)
 
     return args

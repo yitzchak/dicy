@@ -14,6 +14,10 @@ BiberLog:
   hashSkip: !!js/regexp /===/
 ParsedBiberLog:
   virtual: true
+IndexControlFile:
+  fileName: !!js/regexp /\.idx$/i
+Index:
+  fileName: !!js/regexp /\.ind$/i
 BibTeXLog:
   fileName: !!js/regexp /\.blg$/i
   contents: !!js/regexp /^This is BibTeX,/

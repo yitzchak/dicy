@@ -65,7 +65,11 @@ Builder.getOptionDefinitions().then(definitions => {
 
       switch (option.type) {
         case 'string':
-          pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, option.defaultValue)
+          if (option.values) {
+            pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, new RegExp(`^(${option.values.join('|')})$`), option.defaultValue)
+          } else {
+            pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, option.defaultValue)
+          }
           break
         case 'strings':
           pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, parseArray, option.defaultValue)
