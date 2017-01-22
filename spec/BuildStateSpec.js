@@ -12,7 +12,6 @@ describe('BuildState', () => {
 
   it('verifies that getRuleId returns expected id', () => {
     buildState.phase = 'initialize'
-    console.log(buildState.getRuleId('quux', 'bar', 'foo.tex'))
-    expect(buildState.getRuleId('quux', 'bar', 'foo.tex')).toEqual('quux(initialize;bar;foo.tex)')
+    expect(buildState.getRuleId('quux', 'bar', 'foo.tex')).toBe('quux(initialize;bar;foo.tex)')
   })
 })
