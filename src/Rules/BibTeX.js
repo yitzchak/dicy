@@ -1,6 +1,5 @@
 /* @flow */
 
-import childProcess from 'mz/child_process'
 import path from 'path'
 
 import Rule from '../Rule'
@@ -28,22 +27,7 @@ export default class BibTeX extends Rule {
 
     if (!run) return true
 
-    this.info(`Running ${this.id}...`)
-
-    try {
-      const args = await this.constructArguments()
-      const options = this.constructProcessOptions()
-      const command = `bibtex ${args.join(' ')}`
-
-      const stdout = await childProcess.exec(command, options)
-      await this.addResolvedOutputs(['.bbl', '.blg'])
-      await this.parseOutput(stdout)
-    } catch (error) {
-      this.error(error.toString())
-      return false
-    }
-
-    return true
+    return await this.execute()
   }
 
   constructProcessOptions () {
@@ -58,17 +42,15 @@ export default class BibTeX extends Rule {
     return options
   }
 
-  async constructArguments () {
-    const args = []
-
-    if (this.input) args.push(`"${this.input.normalizedFilePath}"`)
-
-    return args
+  constructCommand () {
+    return `bibtex "${this.input ? this.input.normalizedFilePath : ''}"`
   }
 
-  async parseOutput (stdout: string) {
+  async postExecute (stdout: string, stderr: string) {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
+
+    await this.addResolvedOutputs(['.bbl', '.blg'])
 
     while ((match = databasePattern.exec(stdout)) !== null) {
       await this.getInput(path.resolve(this.rootPath, match[1]))

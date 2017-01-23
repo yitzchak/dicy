@@ -1,19 +1,23 @@
 /* @flow */
 
-import childProcess from 'mz/child_process'
 import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 
 import type { Message } from '../types'
 
-const PDF_CAPABLE_LATEX = /^(pdf|xe|lua)latex$/
+const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
+const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|run \(pdf\)latex)/
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
 
+  async initialize () {
+    await this.addResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
+  }
+
   async evaluate () {
-    let runLatex = Array.from(this.getTriggers()).length === 0
+    let run = Array.from(this.getTriggers()).length === 0
 
     for (const file: File of this.getTriggers()) {
       switch (file.type) {
@@ -22,35 +26,19 @@ export default class LaTeX extends Rule {
           break
         case 'ParsedLaTeXLog':
           if (file.value) {
-            runLatex = runLatex || file.value.messages.some((message: Message) => message.text.match(/(rerun LaTeX|Label(s) may have changed. Rerun)/))
+            run = run || file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))
           }
           break
         default:
-          runLatex = true
+          run = true
       }
     }
 
-    if (!runLatex) return true
+    return !run || await this.execute()
+  }
 
-    this.info(`Running ${this.id}...`)
-
-    try {
-      const options = this.constructProcessOptions()
-      const command = this.constructCommand()
-
-      await childProcess.exec(command, options)
-      await this.addResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
-      await this.addResolvedOutputs(['.fls', '.log'])
-
-      for (const file: File of this.outputs.values()) {
-        await file.update()
-      }
-    } catch (error) {
-      this.error(error.toString())
-      return false
-    }
-
-    return true
+  async postExecute (stdout: string, stderr: string) {
+    await this.addResolvedOutputs(['.fls', '.log'])
   }
 
   async updateDependencies (file: File) {
@@ -58,12 +46,6 @@ export default class LaTeX extends Rule {
       this.trace(`Update ${this.id} dependencies...`)
       if (file.value && file.value.inputs) await this.addInputs(file.value.inputs)
       if (file.value && file.value.outputs) await this.addOutputs(file.value.outputs)
-    }
-  }
-
-  constructProcessOptions () {
-    return {
-      cwd: this.rootPath
     }
   }
 
@@ -97,7 +79,7 @@ export default class LaTeX extends Rule {
         break
     }
 
-    if (PDF_CAPABLE_LATEX.test(this.options.engine)) {
+    if (PDF_CAPABLE_LATEX_PATTERN.test(this.options.engine)) {
       if (this.options.outputFormat !== 'pdf') {
         switch (this.options.engine) {
           case 'xelatex':

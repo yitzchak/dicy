@@ -1,5 +1,7 @@
 /* @flow */
 
+import childProcess from 'mz/child_process'
+
 import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
@@ -142,7 +144,31 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
-  toString (): string {
-    return this.id
+  async execute () {
+    try {
+      const options = this.constructProcessOptions()
+      const command = this.constructCommand()
+
+      this.info(`Running ${this.id}...`)
+      const { stdout, stderr } = await childProcess.exec(command, options)
+      await this.postExecute(stdout, stderr)
+    } catch (error) {
+      this.error(error.toString())
+      return false
+    }
+
+    return true
+  }
+
+  async postExecute (stdout: string, stderr: string) {}
+
+  constructProcessOptions (): Object {
+    return {
+      cwd: this.rootPath
+    }
+  }
+
+  constructCommand (): string {
+    return ''
   }
 }
