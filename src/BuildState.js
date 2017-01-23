@@ -5,7 +5,7 @@ import path from 'path'
 import yaml from 'js-yaml'
 import File from './File'
 import Rule from './Rule'
-import type { Command, FileCache, Log, Message, Phase } from './types'
+import type { Command, FileCache, Log, Message, Option, Phase } from './types'
 
 export default class BuildState {
   filePath: string
@@ -15,19 +15,25 @@ export default class BuildState {
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
+  optionSchema: Map<string, Option> = new Map()
   cache: Object
   log: Log
   distances: Map<string, number> = new Map()
 
-  constructor (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
+  constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}, log: Log = (message: Message): void => {}) {
     this.filePath = path.basename(filePath)
     this.rootPath = path.dirname(filePath)
     this.log = log
+    for (const name in schema) {
+      const option = schema[name]
+      this.optionSchema.set(name, option)
+      if (option.defaultValue) this.options[name] = option.defaultValue
+    }
     Object.assign(this.options, options)
   }
 
-  static async create (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
-    const buildState = new BuildState(filePath, options, log)
+  static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}, log: Log = (message: Message): void => {}) {
+    const buildState = new BuildState(filePath, options, schema, log)
 
     if (!options.ignoreCache) await buildState.loadCache()
     await buildState.getFile(filePath)

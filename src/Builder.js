@@ -15,7 +15,8 @@ export default class Builder extends BuildStateConsumer {
   ruleClasses: Array<Class<Rule>> = []
 
   static async create (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
-    const buildState = await BuildState.create(filePath, options, log)
+    const schema = await Builder.getOptionDefinitions()
+    const buildState = await BuildState.create(filePath, options, schema, log)
     const builder = new Builder(buildState)
 
     await builder.initialize()
@@ -156,7 +157,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   static async getOptionDefinitions (): Promise<{ [name: string]: Option }> {
-    const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'option-definitions.yaml'), { encoding: 'utf-8' })
+    const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'option-schema.yaml'), { encoding: 'utf-8' })
     return yaml.load(contents)
   }
 }
