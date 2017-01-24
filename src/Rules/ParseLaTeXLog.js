@@ -31,6 +31,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^Package: (.*)$/],
       evaluate: (reference, groups) => {
         messages.push({
+          name,
           severity: 'info',
           text: groups.text,
           log: reference

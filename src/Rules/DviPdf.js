@@ -10,10 +10,6 @@ export default class DviPdf extends Rule {
     return buildState.options.outputFormat === 'pdf'
   }
 
-  async evaluate (): Promise<boolean> {
-    return await this.execute()
-  }
-
   constructCommand () {
     return `xdvipdfmx -o "${this.resolveOutputPath('.pdf')}" "${this.firstParameter.normalizedFilePath}"`
   }

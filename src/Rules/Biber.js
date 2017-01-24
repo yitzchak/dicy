@@ -8,15 +8,13 @@ export default class Biber extends Rule {
   static fileTypes: Set<string> = new Set(['BiberControlFile'])
 
   async initialize () {
-    await this.addResolvedInputs(['.log-ParsedLaTeXLog'])
+    await this.addResolvedInputs('.log-ParsedLaTeXLog')
   }
 
-  async evaluate (): Promise<boolean> {
+  async preEvaluate (): Promise<boolean> {
     const triggers = Array.from(this.getTriggers())
-    const run: boolean = triggers.length === 0 ||
+    return triggers.length === 0 ||
       triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.value && file.value.messages && file.value.messages.some(message => message.text.match(/run Biber/))))
-
-    return !run || await this.execute()
   }
 
   constructCommand () {

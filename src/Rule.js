@@ -71,9 +71,29 @@ export default class Rule extends BuildStateConsumer {
     return this.parameters[1]
   }
 
-  async evaluate (): Promise<boolean> {
-    return false
+  async preEvaluate (): Promise<boolean> {
+    return true
   }
+
+  async evaluate (): Promise<boolean> {
+    try {
+      if (!await this.preEvaluate()) return true
+
+      const options = this.constructProcessOptions()
+      const command = this.constructCommand()
+
+      this.info(`Running ${this.id}...`)
+      const { stdout, stderr } = await childProcess.exec(command, options)
+      await this.postEvaluate(stdout, stderr)
+    } catch (error) {
+      this.error(error.toString())
+      return false
+    }
+
+    return true
+  }
+
+  async postEvaluate (stdout: string, stderr: string) {}
 
   async getOutput (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
@@ -127,40 +147,19 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
-  async addResolvedInputs (exts: Array<string>) {
+  async addResolvedInputs (...exts: Array<string>) {
     for (const ext of exts) {
       const filePath = this.resolveOutputPath(ext)
       await this.getInput(filePath)
     }
   }
 
-  async addResolvedOutputs (exts: Array<string>, circularDependency: boolean = false) {
+  async addResolvedOutputs (...exts: Array<string>) {
     for (const ext of exts) {
       const filePath = this.resolveOutputPath(ext)
       await this.getOutput(filePath)
-      if (circularDependency) {
-        await this.getInput(filePath)
-      }
     }
   }
-
-  async execute () {
-    try {
-      const options = this.constructProcessOptions()
-      const command = this.constructCommand()
-
-      this.info(`Running ${this.id}...`)
-      const { stdout, stderr } = await childProcess.exec(command, options)
-      await this.postExecute(stdout, stderr)
-    } catch (error) {
-      this.error(error.toString())
-      return false
-    }
-
-    return true
-  }
-
-  async postExecute (stdout: string, stderr: string) {}
 
   constructProcessOptions (): Object {
     return {

@@ -13,10 +13,10 @@ export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
 
   async initialize () {
-    await this.addResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
+    await this.addResolvedInputs('.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog')
   }
 
-  async evaluate () {
+  async preEvaluate () {
     let run = Array.from(this.getTriggers()).length === 0
 
     for (const file: File of this.getTriggers()) {
@@ -34,11 +34,11 @@ export default class LaTeX extends Rule {
       }
     }
 
-    return !run || await this.execute()
+    return run
   }
 
-  async postExecute (stdout: string, stderr: string) {
-    await this.addResolvedOutputs(['.fls', '.log'])
+  async postEvaluate (stdout: string, stderr: string) {
+    await this.addResolvedOutputs('.fls', '.log')
   }
 
   async updateDependencies (file: File) {

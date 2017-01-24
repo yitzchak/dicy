@@ -14,20 +14,16 @@ export default class BibTeX extends Rule {
     await this.getInput(this.resolveOutputPath('.log-ParsedLaTeXLog'))
   }
 
-  async evaluate () {
+  async preEvaluate () {
     if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.bibdata) {
       this.input = await this.getInput(this.resolveOutputPath('.aux'))
     }
 
-    if (!this.input) return true
+    if (!this.input) return false
 
     const triggers = Array.from(this.getTriggers())
-    const run: boolean = triggers.length === 0 ||
+    return triggers.length === 0 ||
       triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.value && file.value.messages && file.value.messages.some(message => message.text.match(/run BibTeX/))))
-
-    if (!run) return true
-
-    return await this.execute()
   }
 
   constructProcessOptions () {
@@ -46,11 +42,11 @@ export default class BibTeX extends Rule {
     return `bibtex "${this.input ? this.input.normalizedFilePath : ''}"`
   }
 
-  async postExecute (stdout: string, stderr: string) {
+  async postEvaluate (stdout: string, stderr: string) {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 
-    await this.addResolvedOutputs(['.bbl', '.blg'])
+    await this.addResolvedOutputs('.bbl', '.blg')
 
     while ((match = databasePattern.exec(stdout)) !== null) {
       await this.getInput(path.resolve(this.rootPath, match[1]))
