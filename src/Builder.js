@@ -53,6 +53,7 @@ export default class Builder extends BuildStateConsumer {
           const rule = await ruleClass.analyze(this.buildState, jobName, file)
           if (rule) {
             await this.buildState.addRule(rule)
+            file.hasTriggeredEvaluation = true
           }
         }
       }
@@ -101,8 +102,17 @@ export default class Builder extends BuildStateConsumer {
         if (xy === yx) return 0
         return typeof xy === 'number' ? -1 : 1
       })
+    }
+
+    for (const ruleGroup of ruleGroups) {
       for (const rule of ruleGroup) {
-        await this.evaluateRule(rule)
+        if (!rule.constructor.exclusive) await this.evaluateRule(rule)
+      }
+    }
+
+    for (const ruleGroup of ruleGroups) {
+      for (const rule of ruleGroup) {
+        if (rule.constructor.exclusive) await this.evaluateRule(rule)
       }
     }
   }

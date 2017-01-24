@@ -92,6 +92,17 @@ export default class ParseLaTeXLog extends Rule {
           if (message.log) message.log.end = reference.start
         }
       }
+    }, {
+      names: ['text'],
+      patterns: [/^(No file .*\.)$/],
+      evaluate: (reference, groups) => {
+        messages.push({
+          severity: 'warning',
+          name,
+          text: groups.text,
+          log: reference
+        })
+      }
     }])
 
     parsedFile.value = { messages }

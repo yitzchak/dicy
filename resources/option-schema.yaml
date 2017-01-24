@@ -43,6 +43,8 @@ outputFormat:
   commands:
     - build
 severity:
+  aliases:
+    - s
   description: severity of messages to display [trace, info, warning (default), error]
   type: string
   defaultValue: warning

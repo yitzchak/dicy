@@ -7,10 +7,11 @@ import Rule from '../Rule'
 import type { Message } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
-const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|run \(pdf\)latex)/
+const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|run \(pdf\)latex|No file )/i
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
+  static exclusive: boolean = true
 
   async initialize () {
     await this.addResolvedInputs('.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog')
@@ -22,7 +23,14 @@ export default class LaTeX extends Rule {
     for (const file: File of this.getTriggers()) {
       switch (file.type) {
         case 'ParsedLaTeXFileListing':
-          await this.updateDependencies(file)
+          this.trace(`Update ${this.id} dependencies...`)
+          if (file.value && file.value.inputs) {
+            for (const input of file.value.inputs) {
+              const inputFile = await this.getInput(input)
+              run = run || (inputFile && inputFile.hasBeenUpdated)
+            }
+          }
+          if (file.value && file.value.outputs) await this.addOutputs(file.value.outputs)
           break
         case 'ParsedLaTeXLog':
           if (file.value) {
@@ -38,15 +46,8 @@ export default class LaTeX extends Rule {
   }
 
   async postEvaluate (stdout: string, stderr: string) {
-    await this.addResolvedOutputs('.fls', '.log')
-  }
-
-  async updateDependencies (file: File) {
-    if (file.value) {
-      this.trace(`Update ${this.id} dependencies...`)
-      if (file.value && file.value.inputs) await this.addInputs(file.value.inputs)
-      if (file.value && file.value.outputs) await this.addOutputs(file.value.outputs)
-    }
+    await this.addResolvedInputs('.aux')
+    await this.addResolvedOutputs('.aux', '.fls', '.log')
   }
 
   constructCommand () {

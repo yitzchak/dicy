@@ -13,6 +13,7 @@ export default class Rule extends BuildStateConsumer {
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = false
+  static exclusive: boolean = false
 
   id: string
   parameters: Array<File> = []
