@@ -63,22 +63,25 @@ Builder.getOptionDefinitions().then(definitions => {
 
       if (!option.commands.includes(pc.name())) continue
 
-      const kebabName = _.kebabCase(name)
-      const alias = option.alias ? `-${option.alias}, ` : ''
+      const prefix = (option.type === 'boolean' && option.defaultValue) ? 'no-' : ''
+      const flagList = [].concat(option.aliases || [], name)
+        .map(name => name.length === 1 ? `-${name}` : `--${prefix}${_.kebabCase(name)}`)
+        .join(', ')
+      const flags = (option.type === 'boolean') ? flagList : `${flagList} <${name}>`
 
       switch (option.type) {
         case 'string':
           if (option.values) {
-            pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, new RegExp(`^(${option.values.join('|')})$`), option.defaultValue)
+            pc = pc.option(flags, option.description, new RegExp(`^(${option.values.join('|')})$`), option.defaultValue)
           } else {
-            pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, option.defaultValue)
+            pc = pc.option(flags, option.description, option.defaultValue)
           }
           break
         case 'strings':
-          pc = pc.option(`${alias}--${kebabName} <${name}>`, option.description, parseArray, option.defaultValue)
+          pc = pc.option(flags, option.description, parseArray, option.defaultValue)
           break
         case 'boolean':
-          pc = pc.option(`${alias}--${option.defaultValue ? 'no-' : ''}${kebabName}`, option.description)
+          pc = pc.option(flags, option.description)
           break
       }
     }
