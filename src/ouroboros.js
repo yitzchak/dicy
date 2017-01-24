@@ -55,6 +55,7 @@ const command = async (inputs, env) => {
 
 program
   .version('0.0.0')
+  .description('An experimental circular builder for LaTeX')
 
 Builder.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
