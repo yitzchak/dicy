@@ -2,6 +2,8 @@ DVI:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
 PDF:
   fileName: !!js/regexp /\.pdf$/i
+SVG:
+  fileName: !!js/regexp /\.svg$/i
 LaTeXAuxilary:
   fileName: !!js/regexp /\.aux$/i
   hash: true
