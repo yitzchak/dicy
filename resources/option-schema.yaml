@@ -29,9 +29,13 @@ ignoreCache:
 jobName:
   description: job name used for latex
   type: string
+  commands:
+    - build
 jobNames:
   description: job names used for latex
   type: strings
+  commands:
+    - build
 messageLevel:
   description: severity of messages to display [trace, info, warning (default), error]
   type: string
@@ -41,6 +45,9 @@ messageLevel:
     - info
     - warning
     - error
+  commands:
+    - build
+    - report
 outputDirectory:
   description: name of directory for output files
   type: string

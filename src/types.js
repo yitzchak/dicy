@@ -54,5 +54,6 @@ export type Option = {
   defaultValue?: any,
   description: string,
   values?: Array<any>,
-  alias?: string
+  alias?: string,
+  commands: Array<string>
 }

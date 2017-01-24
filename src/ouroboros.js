@@ -60,6 +60,9 @@ Builder.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const name in definitions) {
       const option = definitions[name]
+
+      if (!option.commands.includes(pc.name())) continue
+
       const kebabName = _.kebabCase(name)
       const alias = option.alias ? `-${option.alias}, ` : ''
 
