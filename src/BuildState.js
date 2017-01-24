@@ -80,7 +80,13 @@ export default class BuildState {
       rule.timeStamp = cachedRule.timeStamp
       await rule.addInputs(cachedRule.inputs)
       await rule.addOutputs(cachedRule.outputs)
-      rule.needsEvaluation = rule.constructor.alwaysEvaluate || Array.from(rule.inputs.values()).some(input => input.hasBeenUpdated)
+      rule.needsEvaluation = rule.constructor.alwaysEvaluate
+      for (const input of rule.inputs.values()) {
+        if (input.hasBeenUpdated) {
+          rule.needsEvaluation = true
+          input.hasTriggeredEvaluation = true
+        }
+      }
     } else {
       rule.needsEvaluation = true
     }

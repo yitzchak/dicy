@@ -79,7 +79,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async evaluate () {
-    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation)
+    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(this.buildState.phase))
     const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
@@ -134,11 +134,21 @@ export default class Builder extends BuildStateConsumer {
 
   async run (command: Command): Promise<boolean> {
     this.buildState.command = command
+    const updatedFiles = Array.from(this.buildState.files.values()).filter(file => file.hasBeenUpdated)
 
     for (const phase: Phase of ['configure', 'initialize', 'execute', 'finalize']) {
       this.buildState.phase = phase
       for (const file of this.buildState.files.values()) {
         file.analyzed = false
+      }
+      for (const file of updatedFiles) {
+        file.hasBeenUpdated = true
+        for (const rule of file.rules.values()) {
+          if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
+            rule.needsEvaluation = true
+            file.hasTriggeredEvaluation = true
+          }
+        }
       }
       let evaluationCount = 0
 
