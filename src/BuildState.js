@@ -80,15 +80,12 @@ export default class BuildState {
       rule.timeStamp = cachedRule.timeStamp
       await rule.addInputs(cachedRule.inputs)
       await rule.addOutputs(cachedRule.outputs)
-      rule.needsEvaluation = rule.constructor.alwaysEvaluate
+      if (rule.constructor.alwaysEvaluate) rule.actions.add('evaluate')
       for (const input of rule.inputs.values()) {
-        if (input.hasBeenUpdated) {
-          rule.needsEvaluation = true
-          input.hasTriggeredEvaluation = true
-        }
+        await rule.addInputFileActions(input)
       }
     } else {
-      rule.needsEvaluation = true
+      rule.actions.add('evaluate')
     }
   }
 

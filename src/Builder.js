@@ -68,8 +68,8 @@ export default class Builder extends BuildStateConsumer {
       const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
       this.trace(`Evaluating rule ${rule.id}${triggerText}`)
       rule.timeStamp = new Date()
-      rule.needsEvaluation = false
       rule.success = await rule.evaluate()
+      rule.actions.clear()
       await rule.updateOutputs()
     } else {
       this.info(`Skipping rule ${rule.id} because of previous failure.`)
@@ -77,7 +77,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async evaluate () {
-    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(this.buildState.phase))
+    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.actions.size !== 0 && rule.constructor.phases.has(this.buildState.phase))
     const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
@@ -118,15 +118,10 @@ export default class Builder extends BuildStateConsumer {
   async checkUpdates () {
     for (const file of this.buildState.files.values()) {
       file.hasTriggeredEvaluation = false
-      if (file.hasBeenUpdated) {
-        for (const rule of file.rules.values()) {
-          if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
-            rule.needsEvaluation = true
-            file.hasTriggeredEvaluation = true
-          }
-        }
-        file.hasBeenUpdated = false
+      for (const rule of file.rules.values()) {
+        await rule.addInputFileActions(file)
       }
+      file.hasBeenUpdated = false
     }
   }
 
@@ -142,18 +137,15 @@ export default class Builder extends BuildStateConsumer {
       for (const file of updatedFiles) {
         file.hasBeenUpdated = true
         for (const rule of file.rules.values()) {
-          if (!rule.timeStamp || rule.timeStamp < file.timeStamp) {
-            rule.needsEvaluation = true
-            file.hasTriggeredEvaluation = true
-          }
+          await rule.addInputFileActions(file)
         }
       }
       let evaluationCount = 0
 
       await this.analyzePhase()
 
-      while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
-        Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
+      while (evaluationCount < 10 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
+        Array.from(this.buildState.rules.values()).some(rule => rule.actions.size !== 0))) {
         await this.analyzeFiles()
         await this.evaluate()
         await this.checkUpdates()

@@ -2,28 +2,47 @@
 
 import path from 'path'
 
-import Rule from '../Rule'
+import BuildState from '../BuildState'
 import File from '../File'
+import Rule from '../Rule'
+
+import type { Message } from '../types'
 
 export default class BibTeX extends Rule {
   static fileTypes: Set<string> = new Set(['ParsedLaTeXAuxilary'])
 
   input: ?File
 
+  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
+    if (!await super.appliesToFile(buildState, jobName, file)) return false
+    return !!file.value && !!file.value.bibdata
+  }
+
   async initialize () {
-    await this.getInput(this.resolveOutputPath('.log-ParsedLaTeXLog'))
+    await this.getResolvedInput('.log-ParsedLaTeXLog')
+    this.input = await this.getResolvedInput('.aux')
+  }
+
+  async addInputFileActions (file: File): Promise<void> {
+    switch (file.type) {
+      case 'ParsedLaTeXLog':
+        if (file.value && file.value.messages.some((message: Message) => /run BibTeX/.test(message.text))) {
+          this.actions.add('evaluate')
+          file.hasTriggeredEvaluation = true
+        }
+        break
+      case 'ParsedLaTeXAuxilary':
+        break
+      default:
+        await super.addInputFileActions(file)
+        break
+    }
   }
 
   async preEvaluate () {
-    if (!this.input && !!this.firstParameter.value && !!this.firstParameter.value.bibdata) {
-      this.input = await this.getInput(this.resolveOutputPath('.aux'))
-    }
+    if (!this.input) this.actions.delete('evaluate')
 
-    if (!this.input) return false
-
-    const triggers = Array.from(this.getTriggers())
-    return triggers.length === 0 ||
-      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.value && file.value.messages && file.value.messages.some(message => message.text.match(/run BibTeX/))))
+    return true
   }
 
   constructProcessOptions () {

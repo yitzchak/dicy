@@ -1,8 +1,9 @@
 /* @flow */
 
-import path from 'path'
-
+import File from '../File'
 import Rule from '../Rule'
+
+import type { Message } from '../types'
 
 export default class Biber extends Rule {
   static fileTypes: Set<string> = new Set(['BiberControlFile'])
@@ -11,25 +12,25 @@ export default class Biber extends Rule {
     await this.addResolvedInputs('.log-ParsedLaTeXLog')
   }
 
-  async preEvaluate (): Promise<boolean> {
-    const triggers = Array.from(this.getTriggers())
-    return triggers.length === 0 ||
-      triggers.some(file => file.type !== 'ParsedLaTeXLog' || (file.value && file.value.messages && file.value.messages.some(message => message.text.match(/run Biber/))))
+  async addInputFileActions (file: File): Promise<void> {
+    switch (file.type) {
+      case 'ParsedLaTeXLog':
+        if (file.value && file.value.messages.some((message: Message) => /run Biber/.test(message.text))) {
+          this.actions.add('evaluate')
+          file.hasTriggeredEvaluation = true
+        }
+        break
+      default:
+        await super.addInputFileActions(file)
+        break
+    }
   }
 
   constructCommand () {
     return `biber "${this.firstParameter.normalizedFilePath}"`
   }
 
-  async parseOutput (stdout: string) {
-    const databasePattern = /^Database file #\d+: (.*)$/mg
-    let match
-
-    while ((match = databasePattern.exec(stdout)) !== null) {
-      await this.getInput(path.resolve(this.rootPath, match[1]))
-      if (this.options.outputDirectory) {
-        await this.getInput(path.resolve(this.rootPath, this.options.outputDirectory, match[1]))
-      }
-    }
+  async postEvaluate (stdout: string, stderr: string) {
+    await this.addResolvedOutputs('.bbl', '.blg')
   }
 }

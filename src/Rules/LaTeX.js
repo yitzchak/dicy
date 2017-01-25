@@ -7,7 +7,7 @@ import Rule from '../Rule'
 import type { Message } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
-const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|run \(pdf\)latex|No file )/i
+const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No file )/i
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
@@ -17,32 +17,40 @@ export default class LaTeX extends Rule {
     await this.addResolvedInputs('.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog')
   }
 
-  async preEvaluate () {
-    let run = Array.from(this.getTriggers()).length === 0
+  async addInputFileActions (file: File): Promise<void> {
+    switch (file.type) {
+      case 'ParsedLaTeXFileListing':
+        this.actions.add('dependencies')
+        file.hasTriggeredEvaluation = true
+        break
+      case 'ParsedLaTeXLog':
+        if (file.value && file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
+          this.actions.add('evaluate')
+          file.hasTriggeredEvaluation = true
+        }
+        break
+      default:
+        await super.addInputFileActions(file)
+        break
+    }
+  }
 
-    for (const file: File of this.getTriggers()) {
-      switch (file.type) {
-        case 'ParsedLaTeXFileListing':
-          this.trace(`Update ${this.id} dependencies...`)
-          if (file.value && file.value.inputs) {
-            for (const input of file.value.inputs) {
-              const inputFile = await this.getInput(input)
-              run = run || (inputFile && inputFile.hasBeenUpdated)
-            }
+  async preEvaluate () {
+    if (this.actions.has('dependencies')) {
+      this.trace(`Update ${this.id} dependencies...`)
+      const file = await this.getResolvedInput('.fls-ParsedLaTeXFileListing')
+      if (file && file.value) {
+        if (file.value.inputs) {
+          for (const input of file.value.inputs) {
+            const inputFile = await this.getInput(input)
+            if (inputFile) await this.addInputFileActions(inputFile)
           }
-          if (file.value && file.value.outputs) await this.addOutputs(file.value.outputs)
-          break
-        case 'ParsedLaTeXLog':
-          if (file.value) {
-            run = run || file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))
-          }
-          break
-        default:
-          run = true
+        }
+        if (file.value.outputs) await this.addOutputs(file.value.outputs)
       }
     }
 
-    return run
+    return true
   }
 
   async postEvaluate (stdout: string, stderr: string) {

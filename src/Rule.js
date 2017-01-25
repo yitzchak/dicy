@@ -20,14 +20,14 @@ export default class Rule extends BuildStateConsumer {
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   timeStamp: number
-  needsEvaluation: boolean = false
+  actions: Set<string> = new Set()
   success: boolean = true
 
   static async analyzePhase (buildState: BuildState, jobName: ?string) {
     if (await this.appliesToPhase(buildState, jobName)) {
       const rule = new this(buildState, jobName)
       await rule.initialize()
-      rule.needsEvaluation = this.alwaysEvaluate
+      if (rule.alwaysEvaluate) rule.actions.add('evaluate')
       return rule
     }
   }
@@ -42,7 +42,7 @@ export default class Rule extends BuildStateConsumer {
     if (await this.appliesToFile(buildState, jobName, file)) {
       const rule = new this(buildState, jobName, file)
       await rule.initialize()
-      rule.needsEvaluation = this.alwaysEvaluate
+      if (rule.alwaysEvaluate) rule.actions.add('evaluate')
       return rule
     }
   }
@@ -67,6 +67,13 @@ export default class Rule extends BuildStateConsumer {
 
   async initialize () {}
 
+  async addInputFileActions (file: File): Promise<void> {
+    if (file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
+      this.actions.add('evaluate')
+      file.hasTriggeredEvaluation = true
+    }
+  }
+
   get firstParameter (): File {
     return this.parameters[0]
   }
@@ -81,14 +88,16 @@ export default class Rule extends BuildStateConsumer {
 
   async evaluate (): Promise<boolean> {
     try {
-      if (!await this.preEvaluate()) return true
+      if (!await this.preEvaluate()) return false
 
-      const options = this.constructProcessOptions()
-      const command = this.constructCommand()
+      if (this.actions.has('evaluate')) {
+        const options = this.constructProcessOptions()
+        const command = this.constructCommand()
 
-      this.info(`Running ${this.id}...`)
-      const { stdout, stderr } = await childProcess.exec(command, options)
-      await this.postEvaluate(stdout, stderr)
+        this.info(`Running ${this.id}...`)
+        const { stdout, stderr } = await childProcess.exec(command, options)
+        await this.postEvaluate(stdout, stderr)
+      }
     } catch (error) {
       this.error(error.toString())
       return false
