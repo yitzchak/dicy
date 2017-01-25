@@ -51,7 +51,6 @@ export default class Builder extends BuildStateConsumer {
           const rule = await ruleClass.analyzeFile(this.buildState, jobName, file)
           if (rule) {
             await this.buildState.addRule(rule)
-            file.hasTriggeredEvaluation = true
           }
         }
       }
@@ -64,7 +63,7 @@ export default class Builder extends BuildStateConsumer {
 
   async evaluateRule (rule: Rule) {
     if (rule.success) {
-      const triggers = Array.from(rule.getTriggers()).map(file => file.normalizedFilePath).join(', ')
+      const triggers = rule.getTriggers().map(file => file.normalizedFilePath).join(', ')
       const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
       this.trace(`Evaluating rule ${rule.id}${triggerText}`)
       rule.timeStamp = new Date()
@@ -117,7 +116,6 @@ export default class Builder extends BuildStateConsumer {
 
   async checkUpdates () {
     for (const file of this.buildState.files.values()) {
-      file.hasTriggeredEvaluation = false
       for (const rule of file.rules.values()) {
         await rule.addInputFileActions(file)
       }

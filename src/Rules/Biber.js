@@ -16,8 +16,7 @@ export default class Biber extends Rule {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages.some((message: Message) => /run Biber/.test(message.text))) {
-          this.actions.add('evaluate')
-          file.hasTriggeredEvaluation = true
+          this.addAction(file)
         }
         break
       default:
@@ -30,7 +29,8 @@ export default class Biber extends Rule {
     return `biber "${this.firstParameter.normalizedFilePath}"`
   }
 
-  async postEvaluate (stdout: string, stderr: string) {
+  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
     await this.addResolvedOutputs('.bbl', '.blg')
+    return true
   }
 }

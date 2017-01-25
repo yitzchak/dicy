@@ -20,14 +20,14 @@ export default class Rule extends BuildStateConsumer {
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   timeStamp: number
-  actions: Set<string> = new Set()
+  actions: Map<string, Set<File>> = new Map()
   success: boolean = true
 
   static async analyzePhase (buildState: BuildState, jobName: ?string) {
     if (await this.appliesToPhase(buildState, jobName)) {
       const rule = new this(buildState, jobName)
       await rule.initialize()
-      if (rule.alwaysEvaluate) rule.actions.add('evaluate')
+      if (rule.alwaysEvaluate) rule.addAction()
       return rule
     }
   }
@@ -42,7 +42,7 @@ export default class Rule extends BuildStateConsumer {
     if (await this.appliesToFile(buildState, jobName, file)) {
       const rule = new this(buildState, jobName, file)
       await rule.initialize()
-      if (rule.alwaysEvaluate) rule.actions.add('evaluate')
+      if (rule.alwaysEvaluate) rule.addAction(file)
       return rule
     }
   }
@@ -69,8 +69,16 @@ export default class Rule extends BuildStateConsumer {
 
   async addInputFileActions (file: File): Promise<void> {
     if (file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
-      this.actions.add('evaluate')
-      file.hasTriggeredEvaluation = true
+      this.addAction(file)
+    }
+  }
+
+  addAction (file: ?File, action: string = 'evaluate'): void {
+    const files: ?Set<File> = this.actions.get(action)
+    if (!files) {
+      this.actions.set(action, new Set(file ? [file] : []))
+    } else if (file) {
+      files.add(file)
     }
   }
 
@@ -106,7 +114,9 @@ export default class Rule extends BuildStateConsumer {
     return true
   }
 
-  async postEvaluate (stdout: string, stderr: string) {}
+  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
+    return true
+  }
 
   async getOutput (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
@@ -121,16 +131,23 @@ export default class Rule extends BuildStateConsumer {
     return file
   }
 
-  async addOutputs (filePaths: Array<string>) {
+  async getOutputs (filePaths: Array<string>): Promise<Array<File>> {
+    const files = []
+
     for (const filePath of filePaths) {
-      await this.getOutput(filePath)
+      const file = await this.getOutput(filePath)
+      if (file) files.push(file)
     }
+
+    return files
   }
 
-  *getTriggers (): Iterable<File> {
-    for (const file: File of this.inputs.values()) {
-      if (file.hasTriggeredEvaluation) yield file
+  getTriggers (): Array<File> {
+    const files: Set<File> = new Set()
+    for (const actionFiles of this.actions.values()) {
+      for (const file of actionFiles.values()) files.add(file)
     }
+    return Array.from(files.values())
   }
 
   async updateOutputs () {
@@ -154,10 +171,15 @@ export default class Rule extends BuildStateConsumer {
     return file
   }
 
-  async addInputs (filePaths: Array<string>) {
+  async getInputs (filePaths: Array<string>): Promise<Array<File>> {
+    const files = []
+
     for (const filePath of filePaths) {
-      await this.getInput(filePath)
+      const file = await this.getInput(filePath)
+      if (file) files.push(file)
     }
+
+    return files
   }
 
   async getResolvedInput (ext: string): Promise<?File> {
@@ -165,10 +187,15 @@ export default class Rule extends BuildStateConsumer {
     return await this.getInput(filePath)
   }
 
-  async addResolvedInputs (...exts: Array<string>) {
+  async addResolvedInputs (...exts: Array<string>): Promise<Array<File>> {
+    const files = []
+
     for (const ext of exts) {
-      await this.getResolvedInput(ext)
+      const file = await this.getResolvedInput(ext)
+      if (file) files.push(file)
     }
+
+    return files
   }
 
   async getResolvedOutput (ext: string): Promise<?File> {
@@ -176,10 +203,15 @@ export default class Rule extends BuildStateConsumer {
     return await this.getOutput(filePath)
   }
 
-  async addResolvedOutputs (...exts: Array<string>): Promise<void> {
+  async addResolvedOutputs (...exts: Array<string>): Promise<Array<File>> {
+    const files = []
+
     for (const ext of exts) {
-      await this.getResolvedOutput(ext)
+      const file = await this.getResolvedOutput(ext)
+      if (file) files.push(file)
     }
+
+    return files
   }
 
   constructProcessOptions (): Object {

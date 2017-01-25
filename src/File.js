@@ -24,7 +24,6 @@ export default class File {
   jobNames: Set<string> = new Set()
   analyzed: boolean = false
   hasBeenUpdated: boolean = false
-  hasTriggeredEvaluation: boolean = false
   _value: ?any
 
   constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string, value: ?any) {

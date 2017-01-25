@@ -78,14 +78,14 @@ export default class BuildState {
     if (this.cache && this.cache.rules[rule.id]) {
       const cachedRule = this.cache.rules[rule.id]
       rule.timeStamp = cachedRule.timeStamp
-      await rule.addInputs(cachedRule.inputs)
-      await rule.addOutputs(cachedRule.outputs)
-      if (rule.constructor.alwaysEvaluate) rule.actions.add('evaluate')
+      await rule.getInputs(cachedRule.inputs)
+      await rule.getOutputs(cachedRule.outputs)
+      if (rule.constructor.alwaysEvaluate) rule.addAction()
       for (const input of rule.inputs.values()) {
         await rule.addInputFileActions(input)
       }
     } else {
-      rule.actions.add('evaluate')
+      rule.addAction()
     }
   }
 

@@ -16,7 +16,8 @@ export default class DviToPs extends Rule {
     return `dvips -o "${this.resolveOutputPath('.ps')}" "${this.firstParameter.normalizedFilePath}"`
   }
 
-  async postEvaluate () {
+  async postEvaluate (): Promise<boolean> {
     await this.addResolvedOutputs('.ps')
+    return true
   }
 }

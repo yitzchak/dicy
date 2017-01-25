@@ -27,8 +27,7 @@ export default class BibTeX extends Rule {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages.some((message: Message) => /run BibTeX/.test(message.text))) {
-          this.actions.add('evaluate')
-          file.hasTriggeredEvaluation = true
+          this.addAction(file)
         }
         break
       case 'ParsedLaTeXAuxilary':
@@ -61,7 +60,7 @@ export default class BibTeX extends Rule {
     return `bibtex "${this.input ? this.input.normalizedFilePath : ''}"`
   }
 
-  async postEvaluate (stdout: string, stderr: string) {
+  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 
@@ -73,5 +72,7 @@ export default class BibTeX extends Rule {
         await this.getInput(path.resolve(this.rootPath, this.options.outputDirectory, match[1]))
       }
     }
+
+    return true
   }
 }

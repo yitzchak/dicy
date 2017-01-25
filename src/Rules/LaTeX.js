@@ -20,13 +20,11 @@ export default class LaTeX extends Rule {
   async addInputFileActions (file: File): Promise<void> {
     switch (file.type) {
       case 'ParsedLaTeXFileListing':
-        this.actions.add('dependencies')
-        file.hasTriggeredEvaluation = true
+        this.addAction(file, 'dependencies')
         break
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
-          this.actions.add('evaluate')
-          file.hasTriggeredEvaluation = true
+          this.addAction(file)
         }
         break
       default:
@@ -36,26 +34,30 @@ export default class LaTeX extends Rule {
   }
 
   async preEvaluate () {
-    if (this.actions.has('dependencies')) {
+    const files = this.actions.get('dependencies')
+
+    if (files) {
       this.trace(`Update ${this.id} dependencies...`)
-      const file = await this.getResolvedInput('.fls-ParsedLaTeXFileListing')
-      if (file && file.value) {
-        if (file.value.inputs) {
-          for (const input of file.value.inputs) {
-            const inputFile = await this.getInput(input)
-            if (inputFile) await this.addInputFileActions(inputFile)
+      for (const file of files.values()) {
+        if (file.value) {
+          const { inputs, outputs } = file.value
+          if (inputs) {
+            for (const input of await this.getInputs(inputs)) {
+              await this.addInputFileActions(input)
+            }
           }
+          if (outputs) await this.getOutputs(outputs)
         }
-        if (file.value.outputs) await this.addOutputs(file.value.outputs)
       }
     }
 
     return true
   }
 
-  async postEvaluate (stdout: string, stderr: string) {
+  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
     await this.addResolvedInputs('.aux')
     await this.addResolvedOutputs('.aux', '.fls', '.log')
+    return true
   }
 
   constructCommand () {

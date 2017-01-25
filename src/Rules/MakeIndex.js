@@ -9,8 +9,9 @@ export default class MakeIndex extends Rule {
     await this.addResolvedInputs('.ilg-ParsedMakeIndexLog')
   }
 
-  async postEvaluate (stdout: string, stderr: string) {
+  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
     await this.addResolvedOutputs('.ind', '.ilg')
+    return true
   }
 
   constructCommand () {
