@@ -30,27 +30,25 @@ export default class Builder extends BuildStateConsumer {
     this.ruleClasses = entries.map(entry => require(path.join(ruleClassPath, entry)).default)
   }
 
-  async phaseAnalyze () {
+  async analyzePhase () {
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
-      const rule = await ruleClass.phaseAnalyze(this.buildState, undefined)
+      const rule = await ruleClass.analyzePhase(this.buildState, undefined)
       if (rule) {
         await this.buildState.addRule(rule)
       }
     }
   }
 
-  async analyze () {
+  async analyzeFiles () {
     while (true) {
-      const files: Array<File> = Array.from(this.buildState.files.values()).filter(file => !file.analyzed)
+      const file: ?File = Array.from(this.buildState.files.values()).find(file => !file.analyzed)
 
-      if (files.length === 0) break
-
-      const file = files[0]
+      if (!file) break
 
       for (const ruleClass: Class<Rule> of this.ruleClasses) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          const rule = await ruleClass.analyze(this.buildState, jobName, file)
+          const rule = await ruleClass.analyzeFile(this.buildState, jobName, file)
           if (rule) {
             await this.buildState.addRule(rule)
             file.hasTriggeredEvaluation = true
@@ -152,11 +150,11 @@ export default class Builder extends BuildStateConsumer {
       }
       let evaluationCount = 0
 
-      await this.phaseAnalyze()
+      await this.analyzePhase()
 
       while (evaluationCount < 100 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
         Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
-        await this.analyze()
+        await this.analyzeFiles()
         await this.evaluate()
         await this.checkUpdates()
         evaluationCount++

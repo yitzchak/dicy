@@ -12,8 +12,9 @@ export default class ReportLogMessages extends Rule {
   static phases: Set<Phase> = new Set(['finalize'])
   static alwaysEvaluate: boolean = true
 
-  static async analyzeCheck (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
-    return buildState.command === 'report' || buildState.options.reportLogMessages
+  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
+    return (buildState.command === 'report' || buildState.options.reportLogMessages) &&
+      await super.appliesToFile(buildState, jobName, file)
   }
 
   async evaluate () {

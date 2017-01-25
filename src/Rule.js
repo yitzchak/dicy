@@ -23,10 +23,8 @@ export default class Rule extends BuildStateConsumer {
   needsEvaluation: boolean = false
   success: boolean = true
 
-  static async phaseAnalyze (buildState: BuildState, jobName: ?string) {
-    if (this.commands.has(buildState.command) &&
-      this.phases.has(buildState.phase) &&
-      this.fileTypes.size === 0) {
+  static async analyzePhase (buildState: BuildState, jobName: ?string) {
+    if (await this.appliesToPhase(buildState, jobName)) {
       const rule = new this(buildState, jobName)
       await rule.initialize()
       rule.needsEvaluation = this.alwaysEvaluate
@@ -34,11 +32,14 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
-  static async analyze (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
-    if (this.commands.has(buildState.command) &&
+  static async appliesToPhase (buildState: BuildState, jobName: ?string): Promise<boolean> {
+    return this.commands.has(buildState.command) &&
       this.phases.has(buildState.phase) &&
-      this.fileTypes.has(file.type) &&
-      await this.analyzeCheck(buildState, jobName, file)) {
+      this.fileTypes.size === 0
+  }
+
+  static async analyzeFile (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
+    if (await this.appliesToFile(buildState, jobName, file)) {
       const rule = new this(buildState, jobName, file)
       await rule.initialize()
       rule.needsEvaluation = this.alwaysEvaluate
@@ -46,8 +47,10 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
-  static async analyzeCheck (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
-    return true
+  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
+    return this.commands.has(buildState.command) &&
+      this.phases.has(buildState.phase) &&
+      this.fileTypes.has(file.type)
   }
 
   constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
