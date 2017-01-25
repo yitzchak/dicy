@@ -151,17 +151,25 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
+  async getResolvedInput (ext: string): Promise<?File> {
+    const filePath = this.resolveOutputPath(ext)
+    return await this.getInput(filePath)
+  }
+
   async addResolvedInputs (...exts: Array<string>) {
     for (const ext of exts) {
-      const filePath = this.resolveOutputPath(ext)
-      await this.getInput(filePath)
+      await this.getResolvedInput(ext)
     }
   }
 
-  async addResolvedOutputs (...exts: Array<string>) {
+  async getResolvedOutput (ext: string): Promise<?File> {
+    const filePath = this.resolveOutputPath(ext)
+    return await this.getOutput(filePath)
+  }
+
+  async addResolvedOutputs (...exts: Array<string>): Promise<void> {
     for (const ext of exts) {
-      const filePath = this.resolveOutputPath(ext)
-      await this.getOutput(filePath)
+      await this.getResolvedOutput(ext)
     }
   }
 
