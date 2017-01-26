@@ -9,6 +9,7 @@ addons:
   apt:
     packages:
     - biber
+    - feynmf
     - texlive-latex-base
     - texlive-latex-recommended
     - texlive-latex-extra
