@@ -9,7 +9,7 @@ export default class Biber extends Rule {
   static fileTypes: Set<string> = new Set(['BiberControlFile'])
 
   async initialize () {
-    await this.addResolvedInputs('.log-ParsedLaTeXLog')
+    await this.getResolvedInputs('.log-ParsedLaTeXLog')
   }
 
   async addInputFileActions (file: File): Promise<void> {
@@ -30,7 +30,7 @@ export default class Biber extends Rule {
   }
 
   async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
-    await this.addResolvedOutputs('.bbl', '.blg')
+    await this.getResolvedOutputs('.bbl', '.blg')
     return true
   }
 }

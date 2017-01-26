@@ -17,7 +17,7 @@ export default class DviToSvg extends Rule {
   }
 
   async postEvaluate (): Promise<boolean> {
-    await this.addResolvedOutputs('.svg')
+    await this.getResolvedOutputs('.svg')
     return true
   }
 }

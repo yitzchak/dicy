@@ -187,7 +187,7 @@ export default class Rule extends BuildStateConsumer {
     return await this.getInput(filePath)
   }
 
-  async addResolvedInputs (...exts: Array<string>): Promise<Array<File>> {
+  async getResolvedInputs (...exts: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const ext of exts) {
@@ -203,7 +203,7 @@ export default class Rule extends BuildStateConsumer {
     return await this.getOutput(filePath)
   }
 
-  async addResolvedOutputs (...exts: Array<string>): Promise<Array<File>> {
+  async getResolvedOutputs (...exts: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const ext of exts) {

@@ -17,7 +17,7 @@ export default class DviToPs extends Rule {
   }
 
   async postEvaluate (): Promise<boolean> {
-    await this.addResolvedOutputs('.ps')
+    await this.getResolvedOutputs('.ps')
     return true
   }
 }

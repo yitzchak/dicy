@@ -14,7 +14,7 @@ export default class LaTeX extends Rule {
   static exclusive: boolean = true
 
   async initialize () {
-    await this.addResolvedInputs('.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog')
+    await this.getResolvedInputs('.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog')
   }
 
   async addInputFileActions (file: File): Promise<void> {
@@ -55,8 +55,8 @@ export default class LaTeX extends Rule {
   }
 
   async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
-    await this.addResolvedInputs('.aux')
-    await this.addResolvedOutputs('.aux', '.fls', '.log')
+    await this.getResolvedInputs('.aux')
+    await this.getResolvedOutputs('.aux', '.fls', '.log')
     return true
   }
 

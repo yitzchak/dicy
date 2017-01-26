@@ -64,7 +64,7 @@ export default class BibTeX extends Rule {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 
-    await this.addResolvedOutputs('.bbl', '.blg')
+    await this.getResolvedOutputs('.bbl', '.blg')
 
     while ((match = databasePattern.exec(stdout)) !== null) {
       await this.getInput(path.resolve(this.rootPath, match[1]))
