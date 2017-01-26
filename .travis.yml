@@ -14,5 +14,5 @@ addons:
     - texlive-latex-extra
     - texlive-bibtex-extra
 after_script:
-  - cat spec/fixtures/output/bibtex.log
+  - cat spec/fixtures/output/pkg-feynmp.log
   
