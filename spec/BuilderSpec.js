@@ -11,7 +11,7 @@ describe('Builder', () => {
   let messages: Array<Message>
 
   beforeEach(async (done) => {
-    const options = { ignoreCache: true, severity: 'error' }
+    const options = { ignoreCache: true, severity: 'error', reportLogMesssages: true }
     messages = []
     builder = await Builder.create(path.resolve(__dirname, 'fixtures', 'foo.tex'), options, message => { messages.push(message) })
     done()
