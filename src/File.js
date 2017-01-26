@@ -1,5 +1,6 @@
 /* @flow */
 
+import _ from 'lodash'
 import crypto from 'crypto'
 import fs from 'mz/fs'
 import path from 'path'
@@ -94,9 +95,11 @@ export default class File {
   }
 
   set value (value: ?any) {
-    this._value = value
+    if (!_.isEqual(value, this._value)) {
+      this.hasBeenUpdated = true
+    }
     this.timeStamp = new Date()
-    this.hasBeenUpdated = true
+    this._value = value
   }
 
   exists () {

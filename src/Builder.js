@@ -76,7 +76,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async evaluate () {
-    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.actions.size !== 0 && rule.constructor.phases.has(this.buildState.phase))
+    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(this.buildState.phase))
     const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
@@ -143,7 +143,7 @@ export default class Builder extends BuildStateConsumer {
       await this.analyzePhase()
 
       while (evaluationCount < 10 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
-        Array.from(this.buildState.rules.values()).some(rule => rule.actions.size !== 0))) {
+        Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
         await this.analyzeFiles()
         await this.evaluate()
         await this.checkUpdates()

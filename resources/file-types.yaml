@@ -26,10 +26,10 @@ BiberLog:
 ParsedBiberLog:
   virtual: true
 IndexControlFile:
-  fileName: !!js/regexp /\.idx$/i
+  fileName: !!js/regexp /\..dx$/i
   hash: true
 Index:
-  fileName: !!js/regexp /\.ind$/i
+  fileName: !!js/regexp /\..nd$/i
   hash: true
 BibTeXLog:
   fileName: !!js/regexp /\.blg$/i
@@ -59,6 +59,10 @@ LaTeXLog:
   contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/
   hashSkip: !!js/regexp /^This is/
   hash: true
+NomenclatureControlFile:
+  fileName: !!js/regexp /\.nlo$/i
+NomenclatureListing:
+  fileName: !!js/regexp /\.nls$/i
 MakeIndexLog:
   fileName: !!js/regexp /\..lg$/i
   contents: !!js/regexp /^This is makeindex,/

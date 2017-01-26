@@ -90,6 +90,10 @@ export default class Rule extends BuildStateConsumer {
     return this.parameters[1]
   }
 
+  get needsEvaluation (): boolean {
+    return this.actions.size !== 0
+  }
+
   async preEvaluate (): Promise<boolean> {
     return true
   }
@@ -104,7 +108,7 @@ export default class Rule extends BuildStateConsumer {
 
         this.info(`Running ${this.id}...`)
         const { stdout, stderr } = await childProcess.exec(command, options)
-        await this.postEvaluate(stdout, stderr)
+        return await this.postEvaluate(stdout, stderr)
       }
     } catch (error) {
       this.error(error.toString())
