@@ -9,3 +9,6 @@ addons:
     packages:
     - texlive
     - biblatex
+after_script:
+  - cat spec/fixtures/output/bibtex.log
+  
