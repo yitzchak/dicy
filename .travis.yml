@@ -8,7 +8,10 @@ node_js:
 addons:
   apt:
     packages:
-    - texlive-full
+    - biber
+    - texlive-latex-base
+    - texlive-latex-recommended
+    - texlive-latex-extra
 after_script:
   - cat spec/fixtures/output/bibtex.log
   
