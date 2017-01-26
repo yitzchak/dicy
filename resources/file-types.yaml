@@ -25,6 +25,9 @@ BiberLog:
   hash: true
 ParsedBiberLog:
   virtual: true
+BibRefControlFile:
+  fileName: !!js/regexp /\.bdx$/i
+  hash: true
 IndexControlFile:
   fileName: !!js/regexp /\..dx$/i
   hash: true
@@ -37,6 +40,12 @@ BibTeXLog:
   hash: true
 ParsedBibTeXLog:
   virtual: true
+MetaPost:
+  fileName: !!js/regexp /\.mp$/i
+  hash: true
+MetaPostOutput:
+  fileName: !!js/regexp /\.1$/i
+  hash: true
 ParsedLaTeXFileListing:
   virtual: true
 LaTeXFileListing:
@@ -61,10 +70,12 @@ LaTeXLog:
   hash: true
 NomenclatureControlFile:
   fileName: !!js/regexp /\.nlo$/i
+  hash: true
 NomenclatureListing:
   fileName: !!js/regexp /\.nls$/i
+  hash: true
 MakeIndexLog:
-  fileName: !!js/regexp /\..lg$/i
+  fileName: !!js/regexp /\..+lg$/i
   contents: !!js/regexp /^This is makeindex,/
   hash: true
 ParsedMakeIndexLog:

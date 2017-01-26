@@ -1,0 +1,15 @@
+%!TeX outputDirectory = output
+\documentclass{article}
+
+\usepackage{autind,bibref}
+
+\newindex{aut}{adx}{and}{Name Index}
+
+\begin{document}
+  \adjustcitation\cite
+  \nocite*
+  foo, wibble, wibble \cite{wibble}, gronk.
+  \bibliographystyle{xplain}
+  \bibliography{foo}
+  \printindex[aut]
+\end{document}
