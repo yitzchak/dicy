@@ -21,5 +21,5 @@ describe('Builder', () => {
     expect(await builder.run('build')).toBeTruthy()
     expect(messages).toEqual([])
     done()
-  }, 10000)
+  }, 20000)
 })
