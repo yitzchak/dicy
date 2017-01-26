@@ -68,6 +68,21 @@ LaTeXLog:
   contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/
   hashSkip: !!js/regexp /^This is/
   hash: true
+IndexStyleFile:
+  fileName: !!js/regexp /\.ist$/i
+  hash: true
+AcronymControlFile:
+  fileName: !!js/regexp /\.alo$/i
+  hash: true
+AcronymListing:
+  fileName: !!js/regexp /\.als$/i
+  hash: true
+GlossaryControlFile:
+  fileName: !!js/regexp /\.glo$/i
+  hash: true
+GlossaryListing:
+  fileName: !!js/regexp /\.gls$/i
+  hash: true
 NomenclatureControlFile:
   fileName: !!js/regexp /\.nlo$/i
   hash: true
@@ -77,6 +92,11 @@ NomenclatureListing:
 MakeIndexLog:
   fileName: !!js/regexp /\..+lg$/i
   contents: !!js/regexp /^This is makeindex,/
+  hash: true
+XindyLog:
+  fileName: !!js/regexp /\..+lg$/i
+  contents: !!js/regexp /^;; This logfile was generated automatically by `xindy'/
+  hashSkip: !!js/regexp /^;; at /
   hash: true
 ParsedMakeIndexLog:
   virtual: true
