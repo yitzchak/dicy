@@ -7,8 +7,7 @@ node_js:
 addons:
   apt:
     packages:
-    - texlive
-    - texlive-latex-extra
+    - texlive-full
     - biblatex
 after_script:
   - cat spec/fixtures/output/bibtex.log
