@@ -1,3 +1,4 @@
+dist: trusty
 branches:
   only:
     - master
@@ -7,5 +8,11 @@ node_js:
 addons:
   apt:
     packages:
-    - texlive
-    - biblatex
+    - biber
+    - texlive-latex-base
+    - texlive-latex-recommended
+    - texlive-latex-extra
+    - texlive-bibtex-extra
+after_script:
+  - cat spec/fixtures/output/bibtex.log
+  
