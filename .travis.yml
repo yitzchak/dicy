@@ -15,5 +15,3 @@ addons:
     - texlive-metapost
     - biber
     - feynmf
-after_script:
-  - cat spec/fixtures/pkg-feynmp.log
