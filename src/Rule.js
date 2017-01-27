@@ -1,12 +1,20 @@
 /* @flow */
 
-import childProcess from 'mz/child_process'
+import childProcess from 'child_process'
 
 import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
 import type { Command, Phase } from './types'
+
+function execute (command: string, options: Object): Promise<Object> {
+  return new Promise((resolve, reject) => {
+    childProcess.exec(command, options, (error, stdout, stderr) => {
+      resolve({ error, stdout, stderr })
+    })
+  })
+}
 
 export default class Rule extends BuildStateConsumer {
   static fileTypes: Set<string> = new Set()
@@ -99,23 +107,22 @@ export default class Rule extends BuildStateConsumer {
   }
 
   async evaluate (): Promise<boolean> {
-    try {
-      if (!await this.preEvaluate()) return false
+    let success = await this.preEvaluate()
 
-      if (this.actions.has('evaluate')) {
-        const options = this.constructProcessOptions()
-        const command = this.constructCommand()
+    if (this.actions.has('evaluate')) {
+      const options = this.constructProcessOptions()
+      const command = this.constructCommand()
 
-        this.info(`Running ${this.id}...`)
-        const { stdout, stderr } = await childProcess.exec(command, options)
-        return await this.postEvaluate(stdout, stderr)
+      this.info(`Running ${this.id}...`)
+      const { stdout, stderr, error } = await execute(command, options)
+      if (error) {
+        this.error(error.toString())
+        success = false
       }
-    } catch (error) {
-      this.error(error.toString())
-      return false
+      success = await this.postEvaluate(stdout, stderr) && success
     }
 
-    return true
+    return success
   }
 
   async postEvaluate (stdout: string, stderr: string): Promise<boolean> {

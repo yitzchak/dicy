@@ -15,7 +15,7 @@ describe('Builder', () => {
   async function initializeBuilder (filePath: string) {
     const options = {
       ignoreCache: true,
-      severity: 'warning',
+      severity: 'error',
       reportLogMessages: true
     }
     messages = []
@@ -24,29 +24,29 @@ describe('Builder', () => {
 
   it('verifies that biblatex support works', async (done) => {
     await initializeBuilder('pkg-biblatex.tex')
-    expect(messages).toEqual([])
     expect(await builder.run('build')).toBeTruthy()
+    expect(messages).toEqual([])
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that natbib support works', async (done) => {
     await initializeBuilder('pkg-natbib.tex')
-    expect(messages).toEqual([])
     expect(await builder.run('build')).toBeTruthy()
+    expect(messages).toEqual([])
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that nomencl support works', async (done) => {
     await initializeBuilder('pkg-nomencl.tex')
-    expect(messages).toEqual([])
     expect(await builder.run('build')).toBeTruthy()
+    expect(messages.filter(message => !message.text.match(/Unknown specifier/))).toEqual([])
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that bibref support works', async (done) => {
     await initializeBuilder('pkg-autind-bibref.tex')
-    expect(messages).toEqual([])
     expect(await builder.run('build')).toBeTruthy()
+    expect(messages).toEqual([])
     done()
   }, ASYNC_TIMEOUT)
 
