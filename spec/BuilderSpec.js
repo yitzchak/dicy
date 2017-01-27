@@ -4,6 +4,8 @@ import 'babel-polyfill'
 import path from 'path'
 
 import { Builder } from '../src/main'
+import { cloneFixtures } from './helpers'
+
 import type { Message } from '../src/types'
 
 const ASYNC_TIMEOUT = 20000
@@ -11,16 +13,21 @@ const ASYNC_TIMEOUT = 20000
 describe('Builder', () => {
   let builder: Builder
   let messages: Array<Message>
+  let fixturesPath: string
 
   async function initializeBuilder (filePath: string) {
     const options = {
-      ignoreCache: true,
       severity: 'error',
       reportLogMessages: true
     }
     messages = []
-    builder = await Builder.create(path.resolve(__dirname, 'fixtures', filePath), options, message => { messages.push(message) })
+    builder = await Builder.create(path.resolve(fixturesPath, filePath), options, message => { messages.push(message) })
   }
+
+  beforeEach(async (done) => {
+    fixturesPath = await cloneFixtures()
+    done()
+  })
 
   it('verifies that biblatex support works', async (done) => {
     await initializeBuilder('pkg-biblatex.tex')
