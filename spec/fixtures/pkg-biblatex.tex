@@ -1,15 +1,13 @@
+%!TeX outputDirectory = output
 %!TeX jobNames = bibtex, biber
 \documentclass{article}
 
 \usepackage[backend=\jobname]{biblatex}
-\usepackage[noautomatic]{imakeidx}
 
 \bibliography{foo}{}
 \makeindex
 
 \begin{document}
-  \PackageWarning{bar}{Package issue}
-  foo, wibble, wibble \cite{wibble}, \index{gronk}gronk.
+  foo, wibble, wibble \cite{wibble}, gronk.
   \printbibliography
-  \printindex
 \end{document}

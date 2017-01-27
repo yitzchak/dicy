@@ -22,8 +22,15 @@ describe('Builder', () => {
     builder = await Builder.create(path.resolve(__dirname, 'fixtures', filePath), options, message => { messages.push(message) })
   }
 
-  it('verifies that Builder run returns expected true', async (done) => {
-    await initializeBuilder('foo.tex')
+  it('verifies that biblatex support works', async (done) => {
+    await initializeBuilder('pkg-biblatex.tex')
+    expect(messages).toEqual([])
+    expect(await builder.run('build')).toBeTruthy()
+    done()
+  }, ASYNC_TIMEOUT)
+
+  it('verifies that natbib support works', async (done) => {
+    await initializeBuilder('pkg-natbib.tex')
     expect(messages).toEqual([])
     expect(await builder.run('build')).toBeTruthy()
     done()
