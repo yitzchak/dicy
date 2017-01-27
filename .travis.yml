@@ -8,12 +8,12 @@ node_js:
 addons:
   apt:
     packages:
-    - biber
-    - feynmf
     - texlive-latex-base
     - texlive-latex-recommended
     - texlive-latex-extra
     - texlive-bibtex-extra
+    - texlive-metapost
+    - biber
+    - feynmf
 after_script:
   - cat spec/fixtures/pkg-feynmp.log
-  
