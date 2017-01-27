@@ -12,9 +12,6 @@ export default class MetaPost extends Rule {
   }
 
   constructProcessOptions (): Object {
-    console.log(this.options.outputDirectory
-            ? path.resolve(this.rootPath, this.options.outputDirectory)
-            : this.rootPath)
     return {
       cwd: this.options.outputDirectory
         ? path.resolve(this.rootPath, this.options.outputDirectory)
