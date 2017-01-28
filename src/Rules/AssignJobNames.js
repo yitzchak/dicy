@@ -9,6 +9,7 @@ export default class AssignJobNames extends Rule {
   static alwaysEvaluate: boolean = true
 
   async evaluate () {
+    this.actionTrace()
     const jobNames = this.options.jobNames
     if (jobNames) {
       const file = await this.getFile(this.filePath)

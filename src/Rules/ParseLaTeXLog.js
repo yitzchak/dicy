@@ -10,6 +10,7 @@ export default class ParseLaTeXLog extends Rule {
   async evaluate () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
     if (!parsedFile) return false
+    this.actionTrace()
     const messages: Array<Message> = []
     let name: string
     let filePath: string

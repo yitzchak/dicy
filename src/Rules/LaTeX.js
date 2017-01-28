@@ -20,7 +20,9 @@ export default class LaTeX extends Rule {
   async addInputFileActions (file: File): Promise<void> {
     switch (file.type) {
       case 'ParsedLaTeXFileListing':
-        this.addAction(file, 'dependencies')
+        if (file.hasBeenUpdated) {
+          this.addAction(file, 'updateDependencies')
+        }
         break
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
@@ -34,10 +36,10 @@ export default class LaTeX extends Rule {
   }
 
   async preEvaluate () {
-    const files = this.actions.get('dependencies')
+    const files = this.actions.get('updateDependencies')
 
     if (files) {
-      this.trace(`Update ${this.id} dependencies...`)
+      this.actionTrace('updateDependencies')
       for (const file of files.values()) {
         if (file.value) {
           const { inputs, outputs } = file.value

@@ -6,7 +6,7 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Command, Phase } from './types'
+import type { Action, Command, Phase } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ export default class Rule extends BuildStateConsumer {
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   timeStamp: number
-  actions: Map<string, Set<File>> = new Map()
+  actions: Map<Action, Set<File>> = new Map()
   success: boolean = true
 
   static async analyzePhase (buildState: BuildState, jobName: ?string) {
@@ -81,7 +81,7 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
-  addAction (file: ?File, action: string = 'evaluate'): void {
+  addAction (file: ?File, action: Action = 'execute'): void {
     const files: ?Set<File> = this.actions.get(action)
     if (!files) {
       this.actions.set(action, new Set(file ? [file] : []))
@@ -109,11 +109,16 @@ export default class Rule extends BuildStateConsumer {
   async evaluate (): Promise<boolean> {
     let success = await this.preEvaluate()
 
-    if (this.actions.has('evaluate')) {
+    if (this.actions.has('execute')) {
       const options = this.constructProcessOptions()
       const command = this.constructCommand()
 
-      this.info(`Running ${this.id}...`)
+      this.actionTrace()
+      this.log({
+        severity: 'info',
+        name: this.id,
+        text: `Executing \`${command}\``
+      })
       const { stdout, stderr, error } = await execute(command, options)
       if (error) {
         this.error(error.toString())
@@ -151,14 +156,6 @@ export default class Rule extends BuildStateConsumer {
     }
 
     return files
-  }
-
-  getTriggers (): Array<File> {
-    const files: Set<File> = new Set()
-    for (const actionFiles of this.actions.values()) {
-      for (const file of actionFiles.values()) files.add(file)
-    }
-    return Array.from(files.values())
   }
 
   async updateOutputs () {
@@ -233,5 +230,16 @@ export default class Rule extends BuildStateConsumer {
 
   constructCommand (): string {
     return ''
+  }
+
+  actionTrace (action: Action = 'execute') {
+    const files: ?Set<File> = this.actions.get(action)
+    const triggers = files ? Array.from(files.values()).map(file => file.normalizedFilePath).join(', ') : ''
+    const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
+    this.log({
+      severity: 'trace',
+      name: this.id,
+      text: `Evaluating ${action} action${triggerText}`
+    })
   }
 }

@@ -39,7 +39,7 @@ export default class BibTeX extends Rule {
   }
 
   async preEvaluate () {
-    if (!this.input) this.actions.delete('evaluate')
+    if (!this.input) this.actions.delete('execute')
 
     return true
   }

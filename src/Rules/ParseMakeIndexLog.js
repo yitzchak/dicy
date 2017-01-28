@@ -13,6 +13,7 @@ export default class ParseMakeIndexLog extends Rule {
   async evaluate () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedMakeIndexLog`)
     if (!parsedFile) return false
+    this.actionTrace()
     const messages: Array<Message> = []
 
     await this.firstParameter.parse([{

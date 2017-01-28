@@ -10,6 +10,7 @@ export default class ParseBibTeXLog extends Rule {
   async evaluate () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
     if (!parsedFile) return false
+    this.actionTrace()
     const messages: Array<Message> = []
 
     await this.firstParameter.parse([{

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
     "compile": "babel -d lib/ src/",
-    "bin": "lib/ouroboros.js",
+    "ouroboros": "node lib/ouroboros.js",
     "lint": "eslint --color src spec",
     "flow-typed": "flow-typed update"
   },

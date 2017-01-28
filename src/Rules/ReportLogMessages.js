@@ -19,6 +19,8 @@ export default class ReportLogMessages extends Rule {
 
   async evaluate () {
     if (this.firstParameter.value) {
+      this.actionTrace()
+      // $FlowIgnore
       for (const message: Message of this.firstParameter.value.messages) {
         this.log(message)
       }

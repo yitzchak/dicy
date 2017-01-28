@@ -1,5 +1,7 @@
 /* @flow */
 
+export type Action = 'execute' | 'updateDependencies'
+
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,

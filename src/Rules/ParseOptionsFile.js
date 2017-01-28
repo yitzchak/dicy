@@ -23,6 +23,8 @@ export default class ParseOptionsFile extends Rule {
 
   async evaluate () {
     if (!this.input) return true
+    this.actionTrace()
+    // $FlowIgnore
     const contents = await fs.readFile(this.input.filePath, { encoding: 'utf-8' })
     const value = yaml.safeLoad(contents)
     if (this.output) this.output.value = value

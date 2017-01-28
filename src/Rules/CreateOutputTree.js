@@ -13,6 +13,7 @@ export default class CreateOutputTree extends Rule {
 
   async evaluate () {
     if (this.options.outputDirectory) {
+      this.actionTrace()
       await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
     }
     return true

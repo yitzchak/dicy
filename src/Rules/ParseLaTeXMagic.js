@@ -16,6 +16,7 @@ export default class ParseLaTeXMagic extends Rule {
   }
 
   async evaluate () {
+    this.actionTrace()
     const magic = {}
 
     await this.firstParameter.parse([{

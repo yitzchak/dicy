@@ -63,9 +63,6 @@ export default class Builder extends BuildStateConsumer {
 
   async evaluateRule (rule: Rule) {
     if (rule.success) {
-      const triggers = rule.getTriggers().map(file => file.normalizedFilePath).join(', ')
-      const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
-      this.trace(`Evaluating rule ${rule.id}${triggerText}`)
       rule.timeStamp = new Date()
       rule.success = await rule.evaluate()
       rule.actions.clear()

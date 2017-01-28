@@ -11,6 +11,7 @@ export default class RestoreCache extends Rule {
   static alwaysEvaluate: boolean = true
 
   async evaluate () {
+    this.actionTrace()
     for (const filePath in this.buildState.cache.files) {
       await this.getOutput(filePath)
     }

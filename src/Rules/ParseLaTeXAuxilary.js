@@ -8,6 +8,7 @@ export default class ParseLaTeXAuxilary extends Rule {
   async evaluate () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXAuxilary`)
     if (!parsedFile) return false
+    this.actionTrace()
     const results = {}
 
     await this.firstParameter.parse([{

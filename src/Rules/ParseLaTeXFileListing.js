@@ -10,6 +10,7 @@ export default class ParseLaTeXFileListing extends Rule {
   async evaluate () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXFileListing`)
     if (!parsedFile) return false
+    this.actionTrace()
     let rootPath: string = ''
     const results = {
       INPUT: new Set(),
