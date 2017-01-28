@@ -20,12 +20,7 @@ export default class Knitr extends Rule {
   }
 
   constructCommand () {
-    const args = [
-      '-e "library(knitr)"',
-      '-e "opts_knit$set(concordance=TRUE)"',
-      `-e "knit('${escapePath(this.firstParameter.normalizedFilePath)}')"`
-    ]
-
-    return `Rscript ${args.join(' ')}`
+    const filePath = escapePath(this.firstParameter.normalizedFilePath)
+    return `Rscript -e "library(knitr);opts_knit$set(concordance=TRUE);knit('${filePath}')"`
   }
 }
