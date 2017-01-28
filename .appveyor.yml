@@ -10,7 +10,8 @@ environment:
     MIKTEX_HOME: '%PROGRAMFILES%\MiKTeX 2.9'
 
 install:
-  - sh scripts/install_tex
+  - cinst miktex
+  - refreshenv
   - ps: Install-Product node 7
   - npm install
 
