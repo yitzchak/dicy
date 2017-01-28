@@ -3,9 +3,8 @@
 install_miktex() {
   echo "Installing MiKTeX..."
   cinst miktex
-
-  # Update environment
-  export PATH="${PATH}:${MIKTEX_HOME}/miktex/bin/x64"
+  refreshenv
+  initexmf --set-config-value=[MPM]AutoInstall=0
 }
 
 install_miktex

@@ -1,3 +1,6 @@
+os:
+  - linux
+  - osx
 dist: trusty
 branches:
   only:
@@ -15,3 +18,5 @@ addons:
     - texlive-metapost
     - biber
     - feynmf
+install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update && brew tap caskroom/cask && brew cask install mactex; fi;
