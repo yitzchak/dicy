@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+install_miktex() {
+  echo "Installing MiKTeX..."
+  cinst miktex
+
+  # Update environment
+  export PATH="${PATH}:${MIKTEX_HOME}/miktex/bin/x64"
+}
+
+install_miktex

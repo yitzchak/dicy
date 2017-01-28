@@ -5,10 +5,10 @@
   "main": "lib/main.js",
   "scripts": {
     "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
-    "compile": "node ./node_modules/.bin/babel -d lib/ src/",
+    "compile": "babel -d lib/ src/",
     "bin": "lib/ouroboros.js",
     "lint": "eslint --color src spec",
-    "flow-typed": "node ./node_modules/.bin/flow-typed update"
+    "flow-typed": "flow-typed update"
   },
   "bin": {
     "ouroboros": "lib/ouroboros.js"
