@@ -4,7 +4,7 @@ import 'babel-polyfill'
 import path from 'path'
 
 import { Builder } from '../src/main'
-import { cloneFixtures } from './helpers'
+import { cloneFixtures, customMatchers } from './helpers'
 
 import type { Message } from '../src/types'
 
@@ -26,47 +26,67 @@ describe('Builder', () => {
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()
+    // $FlowIgnore
+    jasmine.addMatchers(customMatchers)
     done()
   })
 
   it('verifies that biblatex support works', async (done) => {
     await initializeBuilder('pkg-biblatex.tex')
     expect(await builder.run('build')).toBeTruthy()
-    expect(messages).toEqual([])
+    // $FlowIgnore
+    expect(messages).toEqualMessages([])
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that natbib support works', async (done) => {
     await initializeBuilder('pkg-natbib.tex')
     expect(await builder.run('build')).toBeTruthy()
-    expect(messages).toEqual([])
+    // $FlowIgnore
+    expect(messages).toEqualMessages([])
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that nomencl support works', async (done) => {
     await initializeBuilder('pkg-nomencl.tex')
     expect(await builder.run('build')).toBeTruthy()
-    expect(messages.filter(message => !message.text.match(/Unknown specifier/))).toEqual([])
+    // $FlowIgnore
+    expect(messages).toEqualMessages([{
+      name: 'makeindex',
+      type: 'Input style',
+      text: 'Unknown specifier lethead_suffix.'
+    }, {
+      name: 'makeindex',
+      type: 'Input style',
+      text: 'Unknown specifier lethead_prefix.'
+    }, {
+      name: 'makeindex',
+      type: 'Input style',
+      text: 'Unknown specifier lethead_flag.'
+    }])
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that bibref support works', async (done) => {
     await initializeBuilder('pkg-autind-bibref.tex')
     expect(await builder.run('build')).toBeTruthy()
-    expect(messages).toEqual([])
+    // $FlowIgnore
+    expect(messages).toEqualMessages([])
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that glossary support works', async (done) => {
     await initializeBuilder('pkg-glossaries.tex')
-    expect(messages).toEqual([])
+    // $FlowIgnore
+    expect(messages).toEqualMessages([])
     expect(await builder.run('build')).toBeTruthy()
     done()
   }, ASYNC_TIMEOUT)
 
   it('verifies that MetaPost support works', async (done) => {
     await initializeBuilder('pkg-feynmp.tex')
-    expect(messages).toEqual([])
+    // $FlowIgnore
+    expect(messages).toEqualMessages([])
     expect(await builder.run('build')).toBeTruthy()
     done()
   }, ASYNC_TIMEOUT)

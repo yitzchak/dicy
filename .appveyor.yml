@@ -1,0 +1,23 @@
+branches:
+  only:
+    - master
+
+skip_tags: true
+clone_depth: 1
+
+environment:
+  global:
+    MIKTEX_HOME: '%PROGRAMFILES%\\MiKTeX 2.9'
+
+install:
+  - cinst miktex
+  - refreshenv
+  - pdflatex --help
+  - initexmf --set-config-value=[MPM]AutoInstall=0
+  - ps: Install-Product node 7
+  - npm install
+
+test_script:
+  - npm test
+
+build: off

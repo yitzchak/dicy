@@ -15,3 +15,5 @@ addons:
     - texlive-metapost
     - biber
     - feynmf
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update && brew tap caskroom/cask && brew cask install mactex; fi;
