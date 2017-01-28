@@ -7,7 +7,7 @@ clone_depth: 1
 
 install:
   - cinst miktex
-  - ps: Install-Product node 6 x64
+  - ps: Install-Product node 7
   - npm install
 
 test_script:
