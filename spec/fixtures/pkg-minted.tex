@@ -1,0 +1,14 @@
+%!TeX outputDirectory = output
+\documentclass{article}
+
+\usepackage[outputdir=output]{minted}
+
+\begin{document}
+\section{Scheme Sample - The Euclidean Algorithm}
+\begin{minted}{scheme}
+(define (gcd a b)
+  (if (zero? b)
+    a
+    (gcd b (modulo a b))))
+\end{minted}
+\end{document}

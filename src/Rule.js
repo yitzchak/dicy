@@ -10,6 +10,7 @@ import type { Action, Command, Phase } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
+    if (process.platform !== 'win32') command = command.replace('$', '\\$')
     childProcess.exec(command, options, (error, stdout, stderr) => {
       resolve({ error, stdout, stderr })
     })

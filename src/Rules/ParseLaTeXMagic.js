@@ -7,7 +7,7 @@ import type { Phase } from '../types'
 
 export default class ParseLaTeXMagic extends Rule {
   static phases: Set<Phase> = new Set(['configure'])
-  static fileTypes: Set<string> = new Set(['LaTeX'])
+  static fileTypes: Set<string> = new Set(['LaTeX', 'Knitr'])
 
   output: ?File
 

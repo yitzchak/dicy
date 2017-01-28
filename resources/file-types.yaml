@@ -12,6 +12,12 @@ ParsedLaTeXAuxilary:
 BiberControlFile:
   fileName: !!js/regexp /\.bcf$/i
   hash: true
+Knitr:
+  fileName: !!js/regexp /\.Rnw$/i
+  hash: true
+KnitrConcordance:
+  fileName: !!js/regexp /-concordance\.tex$/i
+  hash: true
 BibTeXControlFile:
   fileName: !!js/regexp /-blx\.bib$/i
   hash: true
