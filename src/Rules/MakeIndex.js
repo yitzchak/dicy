@@ -32,7 +32,7 @@ export default class MakeIndex extends Rule {
     }
   }
 
-  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getOutputs([this.logPath, this.outputPath])
     return true
   }

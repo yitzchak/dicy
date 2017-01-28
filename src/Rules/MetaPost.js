@@ -19,7 +19,7 @@ export default class MetaPost extends Rule {
     }
   }
 
-  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs('.1')
     return true
   }

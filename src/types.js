@@ -1,6 +1,6 @@
 /* @flow */
 
-export type Action = 'execute' | 'updateDependencies'
+export type Action = 'run' | 'updateDependencies'
 
 export type FileType = {
   fileName?: RegExp,

@@ -11,7 +11,7 @@ export default class MakeGlossaries extends Rule {
     await this.getResolvedInputs('.acn', '.ist')
   }
 
-  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs('.acr', '.alg', '.gls', '.glg')
     return true
   }

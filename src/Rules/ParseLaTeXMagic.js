@@ -15,8 +15,7 @@ export default class ParseLaTeXMagic extends Rule {
     this.output = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXMagic`)
   }
 
-  async evaluate () {
-    this.actionTrace()
+  async run () {
     const magic = {}
 
     await this.firstParameter.parse([{

@@ -63,10 +63,7 @@ export default class Builder extends BuildStateConsumer {
 
   async evaluateRule (rule: Rule) {
     if (rule.success) {
-      rule.timeStamp = new Date()
-      rule.success = await rule.evaluate()
-      rule.actions.clear()
-      await rule.updateOutputs()
+      await rule.evaluate()
     } else {
       this.info(`Skipping rule ${rule.id} because of previous failure.`)
     }

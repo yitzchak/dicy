@@ -16,7 +16,7 @@ export default class DviToSvg extends Rule {
     return `dvisvgm -o "${this.resolveOutputPath('.svg')}" "${this.firstParameter.normalizedFilePath}"`
   }
 
-  async postEvaluate (): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs('.svg')
     return true
   }

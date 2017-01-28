@@ -21,9 +21,8 @@ export default class ParseOptionsFile extends Rule {
     this.output = await this.getOutput(path.format({ dir, name, ext: '.yaml-ParsedYAML' }))
   }
 
-  async evaluate () {
+  async run () {
     if (!this.input) return true
-    this.actionTrace()
     // $FlowIgnore
     const contents = await fs.readFile(this.input.filePath, { encoding: 'utf-8' })
     const value = yaml.safeLoad(contents)

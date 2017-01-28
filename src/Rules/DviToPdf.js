@@ -16,7 +16,7 @@ export default class DviToPdf extends Rule {
     return `xdvipdfmx -o "${this.resolveOutputPath('.pdf')}" "${this.firstParameter.normalizedFilePath}"`
   }
 
-  async postEvaluate (): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs('.pdf')
     return true
   }

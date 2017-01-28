@@ -10,10 +10,9 @@ export default class ParseMakeIndexLog extends Rule {
   static fileTypes: Set<string> = new Set(['MakeIndexLog'])
   static priority: number = 200
 
-  async evaluate () {
+  async run () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedMakeIndexLog`)
     if (!parsedFile) return false
-    this.actionTrace()
     const messages: Array<Message> = []
 
     await this.firstParameter.parse([{

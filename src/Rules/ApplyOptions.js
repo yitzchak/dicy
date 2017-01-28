@@ -19,8 +19,7 @@ export default class ApplyOptions extends Rule {
     }
   }
 
-  async evaluate () {
-    this.actionTrace()
+  async run () {
     for (const file: File of this.inputs.values()) {
       if (file.value) Object.assign(this.buildState.options, file.value)
     }

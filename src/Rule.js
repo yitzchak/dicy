@@ -75,13 +75,13 @@ export default class Rule extends BuildStateConsumer {
 
   async initialize () {}
 
-  async addInputFileActions (file: File): Promise<void> {
+  async addInputFileActions (file: File, action: Action = 'run'): Promise<void> {
     if (file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
-      this.addAction(file)
+      this.addAction(file, action)
     }
   }
 
-  addAction (file: ?File, action: Action = 'execute'): void {
+  addAction (file: ?File, action: Action = 'run'): void {
     const files: ?Set<File> = this.actions.get(action)
     if (!files) {
       this.actions.set(action, new Set(file ? [file] : []))
@@ -102,35 +102,54 @@ export default class Rule extends BuildStateConsumer {
     return this.actions.size !== 0
   }
 
-  async preEvaluate (): Promise<boolean> {
-    return true
-  }
+  async preEvaluate (): Promise<void> {}
 
   async evaluate (): Promise<boolean> {
-    let success = await this.preEvaluate()
+    let success = true
 
-    if (this.actions.has('execute')) {
-      const options = this.constructProcessOptions()
-      const command = this.constructCommand()
+    this.timeStamp = new Date()
+    await this.preEvaluate()
 
-      this.actionTrace()
-      this.log({
-        severity: 'info',
-        name: this.id,
-        text: `Executing \`${command}\``
-      })
-      const { stdout, stderr, error } = await execute(command, options)
-      if (error) {
-        this.error(error.toString())
-        success = false
-      }
-      success = await this.postEvaluate(stdout, stderr) && success
+    if (this.actions.has('updateDependencies')) {
+      this.actionTrace('updateDependencies')
+      success = await this.updateDependencies() && success
     }
+
+    if (this.actions.has('run')) {
+      this.actionTrace('run')
+      success = await this.run() && success
+    }
+
+    this.actions.clear()
+    await this.updateOutputs()
+    this.success = success
 
     return success
   }
 
-  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
+  async updateDependencies (): Promise<boolean> {
+    return true
+  }
+
+  async run (): Promise<boolean> {
+    let success: boolean = true
+    const options = this.constructProcessOptions()
+    const command = this.constructCommand()
+
+    this.log({
+      severity: 'info',
+      name: this.id,
+      text: `Executing \`${command}\``
+    })
+    const { stdout, stderr, error } = await execute(command, options)
+    if (error) {
+      this.error(error.toString())
+      success = false
+    }
+    return await this.processOutput(stdout, stderr) && success
+  }
+
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     return true
   }
 
@@ -232,7 +251,7 @@ export default class Rule extends BuildStateConsumer {
     return ''
   }
 
-  actionTrace (action: Action = 'execute') {
+  actionTrace (action: Action) {
     const files: ?Set<File> = this.actions.get(action)
     const triggers = files ? Array.from(files.values()).map(file => file.normalizedFilePath).join(', ') : ''
     const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''

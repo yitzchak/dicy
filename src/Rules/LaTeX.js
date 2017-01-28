@@ -35,11 +35,10 @@ export default class LaTeX extends Rule {
     }
   }
 
-  async preEvaluate () {
+  async updateDependencies (): Promise<boolean> {
     const files = this.actions.get('updateDependencies')
 
     if (files) {
-      this.actionTrace('updateDependencies')
       for (const file of files.values()) {
         if (file.value) {
           const { inputs, outputs } = file.value
@@ -56,7 +55,7 @@ export default class LaTeX extends Rule {
     return true
   }
 
-  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedInputs('.aux')
     await this.getResolvedOutputs('.aux', '.fls', '.log')
     return true

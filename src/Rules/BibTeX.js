@@ -39,9 +39,7 @@ export default class BibTeX extends Rule {
   }
 
   async preEvaluate () {
-    if (!this.input) this.actions.delete('execute')
-
-    return true
+    if (!this.input) this.actions.delete('run')
   }
 
   constructProcessOptions () {
@@ -60,7 +58,7 @@ export default class BibTeX extends Rule {
     return `bibtex "${this.input ? this.input.normalizedFilePath : ''}"`
   }
 
-  async postEvaluate (stdout: string, stderr: string): Promise<boolean> {
+  async processOptions (stdout: string, stderr: string): Promise<boolean> {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 

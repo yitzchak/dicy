@@ -11,9 +11,8 @@ export default class CreateOutputTree extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
   static alwaysEvaluate: boolean = true
 
-  async evaluate () {
+  async run () {
     if (this.options.outputDirectory) {
-      this.actionTrace()
       await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
     }
     return true

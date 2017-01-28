@@ -17,9 +17,8 @@ export default class ReportLogMessages extends Rule {
       await super.appliesToFile(buildState, jobName, file)
   }
 
-  async evaluate () {
+  async run () {
     if (this.firstParameter.value) {
-      this.actionTrace()
       // $FlowIgnore
       for (const message: Message of this.firstParameter.value.messages) {
         this.log(message)

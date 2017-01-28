@@ -5,10 +5,9 @@ import Rule from '../Rule'
 export default class ParseLaTeXAuxilary extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXAuxilary'])
 
-  async evaluate () {
+  async run () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXAuxilary`)
     if (!parsedFile) return false
-    this.actionTrace()
     const results = {}
 
     await this.firstParameter.parse([{

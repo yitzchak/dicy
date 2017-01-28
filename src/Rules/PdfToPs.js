@@ -16,7 +16,7 @@ export default class DviToPdf extends Rule {
     return `pdf2ps "${this.firstParameter.normalizedFilePath}" "${this.resolveOutputPath('.ps')}"`
   }
 
-  async postEvaluate (): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs('.ps')
     return true
   }
