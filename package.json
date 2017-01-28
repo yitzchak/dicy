@@ -4,10 +4,10 @@
   "description": "A circular dependency builder designed with LaTeX in mind.",
   "main": "lib/main.js",
   "scripts": {
-    "test": "echo Linting sources ... && node ./node_modules/.bin/eslint --color src spec && echo Running specs... && node ./node_modules/.bin/jasmine",
+    "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
     "compile": "node ./node_modules/.bin/babel -d lib/ src/",
     "bin": "lib/ouroboros.js",
-    "lint": "node ./node_modules/.bin/eslint --color src spec",
+    "lint": "eslint --color src spec",
     "flow-typed": "node ./node_modules/.bin/flow-typed update"
   },
   "bin": {
