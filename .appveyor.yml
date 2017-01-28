@@ -5,14 +5,10 @@ branches:
 skip_tags: true
 clone_depth: 1
 
-environment:
-  matrix:
-    - TEX_DIST: miktex
-
 install:
+  - cinst miktex
   - ps: Install-Product node 7 x64
   - npm install
-  - if %TEX_DIST% == "miktex" cinst miktex
 
 test_script:
   - npm test
