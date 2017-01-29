@@ -62,7 +62,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async evaluateRule (rule: Rule) {
-    if (rule.success) {
+    if (true/*rule.success*/) {
       await rule.evaluate()
     } else {
       this.info(`Skipping rule ${rule.id} because of previous failure.`)

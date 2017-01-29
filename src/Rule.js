@@ -243,7 +243,8 @@ export default class Rule extends BuildStateConsumer {
 
   constructProcessOptions (): Object {
     return {
-      cwd: this.rootPath
+      cwd: this.rootPath,
+      env: Object.assign({}, process.env)
     }
   }
 

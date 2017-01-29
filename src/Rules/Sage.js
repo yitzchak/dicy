@@ -4,11 +4,11 @@ import path from 'path'
 
 import Rule from '../Rule'
 
-export default class MetaPost extends Rule {
-  static fileTypes: Set<string> = new Set(['MetaPost'])
+export default class Sage extends Rule {
+  static fileTypes: Set<string> = new Set(['Sage'])
 
   constructCommand () {
-    return `mpost "${path.basename(this.firstParameter.normalizedFilePath)}"`
+    return `sage "${path.basename(this.firstParameter.normalizedFilePath)}"`
   }
 
   constructProcessOptions (): Object {
@@ -21,7 +21,9 @@ export default class MetaPost extends Rule {
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     const { dir, name } = path.parse(this.firstParameter.normalizedFilePath)
-    await this.getOutput(path.format({ dir, name, ext: '.1' }))
+    for (const ext of ['.sout', '.sage.cmd', 'scmd']) {
+      await this.getOutput(path.format({ dir, name, ext }))
+    }
     return true
   }
 }

@@ -60,6 +60,22 @@ export default class LaTeX extends Rule {
     return true
   }
 
+  constructProcessOptions (): Object {
+    const options = super.constructProcessOptions()
+
+    if (this.options.outputDirectory) {
+      const paths = [
+        path.resolve(this.buildState.rootPath, this.options.outputDirectory),
+        ''
+      ]
+
+      if (options.env.TEXINPUTS) paths.shift(options.env.TEXINPUTS)
+      options.env.TEXINPUTS = paths.join(':')
+    }
+
+    return options
+  }
+
   constructCommand () {
     const args = [
       '-interaction=batchmode',
