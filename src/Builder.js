@@ -87,25 +87,26 @@ export default class Builder extends BuildStateConsumer {
 
     for (const ruleGroup of ruleGroups) {
       ruleGroup.sort((x: Rule, y: Rule) => {
-        const xy: ?number = this.buildState.distances.get(`${x.id} ${y.id}`)
-        const yx: ?number = this.buildState.distances.get(`${y.id} ${x.id}`)
-        if (typeof xy === 'number' && typeof yx === 'number') return xy - yx
-        if (xy === yx) return 0
-        return typeof xy === 'number' ? -1 : 1
+        const xx: number = this.getDistance(x, x) || Number.MAX_SAFE_INTEGER
+        const yy: number = this.getDistance(y, y) || Number.MAX_SAFE_INTEGER
+        const xy: ?number = this.getDistance(x, y)
+        const yx: ?number = this.getDistance(y, x)
+        if (xx === yy) {
+          if (typeof xy === 'number' && typeof yx === 'number') return xy - yx
+          if (xy === yx) return 0
+          return typeof xy === 'number' ? -1 : 1
+        } else {
+          return yy - xx
+        }
       })
-    }
 
-    for (const ruleGroup of ruleGroups) {
       for (const rule of ruleGroup) {
-        if (!rule.constructor.exclusive) await this.evaluateRule(rule)
+        await this.checkUpdates()
+        await this.evaluateRule(rule)
       }
     }
 
-    for (const ruleGroup of ruleGroups) {
-      for (const rule of ruleGroup) {
-        if (rule.constructor.exclusive) await this.evaluateRule(rule)
-      }
-    }
+    await this.checkUpdates()
   }
 
   async checkUpdates () {
@@ -140,7 +141,6 @@ export default class Builder extends BuildStateConsumer {
         Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
         await this.analyzeFiles()
         await this.evaluate()
-        await this.checkUpdates()
         evaluationCount++
       }
     }

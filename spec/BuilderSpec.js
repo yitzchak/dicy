@@ -17,6 +17,7 @@ describe('Builder', () => {
 
   async function initializeBuilder (filePath: string) {
     const options = {
+      ignoreCache: true,
       severity: 'error',
       reportLogMessages: true
     }

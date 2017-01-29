@@ -7,8 +7,12 @@ import type { Message } from '../types'
 export default class ParseBibTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['BibTeXLog'])
 
+  async initialize () {
+    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBibTeXLog`)
+  }
+
   async run () {
-    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
+    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBibTeXLog`)
     if (!parsedFile) return false
     const messages: Array<Message> = []
 

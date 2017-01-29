@@ -58,7 +58,7 @@ export default class BibTeX extends Rule {
     return `bibtex "${this.input ? this.input.normalizedFilePath : ''}"`
   }
 
-  async processOptions (stdout: string, stderr: string): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 

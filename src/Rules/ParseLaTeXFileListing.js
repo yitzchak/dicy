@@ -7,6 +7,10 @@ import Rule from '../Rule'
 export default class ParseLaTeXFileListing extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXFileListing'])
 
+  async initialize () {
+    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXFileListing`)
+  }
+
   async run () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXFileListing`)
     if (!parsedFile) return false

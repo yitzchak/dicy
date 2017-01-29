@@ -2,6 +2,7 @@
 
 import BuildState from './BuildState'
 import File from './File'
+import Rule from './Rule'
 
 import type { Message } from './types'
 
@@ -71,5 +72,9 @@ export default class BuildStateConsumer {
       (severity === 'warning' && (message.severity === 'trace' || message.severity === 'info')) ||
       (severity === 'error' && message.severity !== 'error')) return
     this.buildState.log(message)
+  }
+
+  getDistance (x: Rule, y: Rule): ?number {
+    return this.buildState.getDistance(x, y)
   }
 }

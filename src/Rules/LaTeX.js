@@ -11,7 +11,6 @@ const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No fi
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
-  static exclusive: boolean = true
 
   async initialize () {
     await this.getResolvedInputs('.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog')

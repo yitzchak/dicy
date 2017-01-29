@@ -7,6 +7,10 @@ import type { Message } from '../types'
 export default class ParseLaTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXLog'])
 
+  async initialize () {
+    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
+  }
+
   async run () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
     if (!parsedFile) return false

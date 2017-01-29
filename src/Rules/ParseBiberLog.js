@@ -7,6 +7,10 @@ import type { Message } from '../types'
 export default class ParseBiberLog extends Rule {
   static fileTypes: Set<string> = new Set(['BiberLog'])
 
+  async initialize () {
+    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
+  }
+
   async run () {
     const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
     if (!parsedFile) return false

@@ -199,4 +199,8 @@ export default class BuildState {
       }
     }
   }
+
+  getDistance (x: Rule, y: Rule): ?number {
+    return this.distances.get(`${x.id} ${y.id}`)
+  }
 }

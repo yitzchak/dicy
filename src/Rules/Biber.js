@@ -29,7 +29,7 @@ export default class Biber extends Rule {
     return `biber "${this.firstParameter.normalizedFilePath}"`
   }
 
-  async postprocess (stdout: string, stderr: string): Promise<boolean> {
+  async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs('.bbl', '.blg')
     return true
   }
