@@ -1,3 +1,6 @@
+Asymptote:
+  fileName: !!js/regexp /\.asy$/i
+  hash: true
 DVI:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
 PDF:
