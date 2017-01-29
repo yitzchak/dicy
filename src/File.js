@@ -172,7 +172,7 @@ export default class File {
   }
 
   updateHash (): Promise<boolean> {
-    if (this.virtual || !this.useHash) return Promise.resolve(false)
+    if (this.virtual || !this.useHash) return Promise.resolve(true)
 
     return new Promise((resolve, reject) => {
       const fileType = File.fileTypes.get(this.type)

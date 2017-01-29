@@ -56,7 +56,7 @@ export default class LaTeX extends Rule {
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedInputs('.aux')
-    await this.getResolvedOutputs('.aux', '.fls', '.log')
+    await this.getResolvedOutputs('.aux', '.fls', '.log', '.synctex.gz')
     return true
   }
 

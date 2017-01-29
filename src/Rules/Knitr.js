@@ -21,6 +21,11 @@ export default class Knitr extends Rule {
 
   constructCommand () {
     const filePath = escapePath(this.firstParameter.normalizedFilePath)
-    return `Rscript -e "library(knitr);opts_knit$set(concordance=TRUE);knit('${filePath}')"`
+    const lines = ['library(knitr)']
+
+    if (this.options.synctex) lines.push('opts_knit$set(concordance=TRUE)')
+    lines.push(`knit('${filePath}')`)
+
+    return `Rscript -e "${lines.join(';')}"`
   }
 }
