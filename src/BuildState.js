@@ -60,20 +60,6 @@ export default class BuildState {
     return filePath
   }
 
-  resolveOutputPath (ext: string, jobName: ?string, outputDirectory: ?string) {
-    let dir = this.rootPath
-    let { name } = path.parse(this.filePath)
-
-    name = jobName || this.options.jobName || name
-
-    outputDirectory = outputDirectory || this.options.outputDirectory
-    if (outputDirectory) {
-      dir = path.resolve(dir, outputDirectory)
-    }
-
-    return path.format({ dir, name, ext })
-  }
-
   async addRule (rule: Rule) {
     this.rules.set(rule.id, rule)
     if (this.cache && this.cache.rules[rule.id]) {

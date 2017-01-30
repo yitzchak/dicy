@@ -1,5 +1,7 @@
 jobs:
-  bibtex-foo:
+  bibtex-1: {}
+  bibtex-2:
     outputDirectory: output
-  biber-bar:
+  biber-1: {}
+  biber-2:
     outputDirectory: output

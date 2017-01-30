@@ -13,11 +13,11 @@ export default class DviToPdf extends Rule {
   }
 
   constructCommand () {
-    return `xdvipdfmx -o "${this.resolveOutputPath('.pdf')}" "${this.firstParameter.normalizedFilePath}"`
+    return `xdvipdfmx -o "${this.resolveGeneratedPath('.pdf')}" "${this.firstParameter.normalizedFilePath}"`
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs('.pdf')
+    await this.getGeneratedOutputs('.pdf')
     return true
   }
 }

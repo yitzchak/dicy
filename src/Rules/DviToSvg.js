@@ -13,11 +13,11 @@ export default class DviToSvg extends Rule {
   }
 
   constructCommand () {
-    return `dvisvgm -o "${this.resolveOutputPath('.svg')}" "${this.firstParameter.normalizedFilePath}"`
+    return `dvisvgm -o "${this.resolveGeneratedPath('.svg')}" "${this.firstParameter.normalizedFilePath}"`
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs('.svg')
+    await this.getGeneratedOutputs('.svg')
     return true
   }
 }

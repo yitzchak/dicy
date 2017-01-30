@@ -1,7 +1,6 @@
 /* @flow */
 
 import fs from 'fs-promise'
-import path from 'path'
 import yaml from 'js-yaml'
 
 import File from '../File'
@@ -16,9 +15,8 @@ export default class ParseOptionsFile extends Rule {
   output: ?File
 
   async initialize () {
-    const { dir, name } = path.parse(this.filePath)
-    this.input = await this.getInput(path.format({ dir, name, ext: '.yaml' }))
-    this.output = await this.getOutput(path.format({ dir, name, ext: '.yaml-ParsedYAML' }))
+    this.input = await this.getSourceInput('.yaml')
+    this.output = await this.getSourceOutput('.yaml-ParsedYAML')
   }
 
   async run () {

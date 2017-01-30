@@ -8,11 +8,11 @@ export default class MakeGlossaries extends Rule {
   static fileTypes: Set<string> = new Set(['GlossaryControlFile'])
 
   async initialize (): Promise<void> {
-    await this.getResolvedInputs('.acn', '.ist')
+    await this.getGeneratedInputs('.acn', '.ist')
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs('.acr', '.alg', '.gls', '.glg')
+    await this.getGeneratedOutputs('.acr', '.alg', '.gls', '.glg')
     return true
   }
 

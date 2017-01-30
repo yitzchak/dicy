@@ -209,32 +209,64 @@ export default class Rule extends BuildStateConsumer {
     return files
   }
 
-  async getResolvedInput (ext: string): Promise<?File> {
-    const filePath = this.resolveOutputPath(ext)
+  async getGeneratedInput (ext: string): Promise<?File> {
+    const filePath = this.resolveGeneratedPath(ext)
     return await this.getInput(filePath)
   }
 
-  async getResolvedInputs (...exts: Array<string>): Promise<Array<File>> {
+  async getGeneratedInputs (...exts: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const ext of exts) {
-      const file = await this.getResolvedInput(ext)
+      const file = await this.getGeneratedInput(ext)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getResolvedOutput (ext: string): Promise<?File> {
-    const filePath = this.resolveOutputPath(ext)
+  async getGeneratedOutput (ext: string): Promise<?File> {
+    const filePath = this.resolveGeneratedPath(ext)
     return await this.getOutput(filePath)
   }
 
-  async getResolvedOutputs (...exts: Array<string>): Promise<Array<File>> {
+  async getGeneratedOutputs (...exts: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const ext of exts) {
-      const file = await this.getResolvedOutput(ext)
+      const file = await this.getGeneratedOutput(ext)
+      if (file) files.push(file)
+    }
+
+    return files
+  }
+
+  async getSourceInput (ext: string): Promise<?File> {
+    const filePath = this.resolveSourcePath(ext)
+    return await this.getInput(filePath)
+  }
+
+  async getSourceInputs (...exts: Array<string>): Promise<Array<File>> {
+    const files = []
+
+    for (const ext of exts) {
+      const file = await this.getSourceInput(ext)
+      if (file) files.push(file)
+    }
+
+    return files
+  }
+
+  async getSourceOutput (ext: string): Promise<?File> {
+    const filePath = this.resolveSourcePath(ext)
+    return await this.getOutput(filePath)
+  }
+
+  async getSourceOutputs (...exts: Array<string>): Promise<Array<File>> {
+    const files = []
+
+    for (const ext of exts) {
+      const file = await this.getSourceOutput(ext)
       if (file) files.push(file)
     }
 

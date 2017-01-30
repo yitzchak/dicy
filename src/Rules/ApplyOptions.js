@@ -12,11 +12,8 @@ export default class ApplyOptions extends Rule {
   static alwaysEvaluate: boolean = true
 
   async initialize () {
-    const { dir, name, ext } = path.parse(this.filePath)
-    const exts = ['.yaml-ParsedYAML', `${ext}-ParsedLaTeXMagic`]
-    for (const ext of exts) {
-      await this.getInput(path.format({ dir, name, ext }))
-    }
+    const ext = path.extname(this.filePath)
+    await this.getSourceInputs('.yaml-ParsedYAML', `${ext}-ParsedLaTeXMagic`)
   }
 
   async run () {
