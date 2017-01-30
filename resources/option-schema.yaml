@@ -4,6 +4,13 @@ engine:
   defaultValue: pdflatex
   commands:
     - build
+ignoreRules:
+  description: ignore specific rules when processing
+  type: strings
+  defaultValue: []
+  commands:
+    - build
+    - report
 ignoreCache:
   aliases:
     - i

@@ -20,6 +20,8 @@ export default class Asymptote extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
+    const output = await this.getGeneratedOutput('.log-AsymptoteLog')
+    if (output) output.value = `${stdout}\n${stderr}`
     return true
   }
 }

@@ -1,8 +1,8 @@
 jobs:
-  j1:
-  j2:
+  job-1: {}
+  job-2:
     outputDirectory: output
-  j3:
+  job-3:
     engine: xelatex
-  j4:
+  job-4:
     engine: latex

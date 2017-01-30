@@ -48,15 +48,10 @@ export default class File {
   parse (parsers: Array<Parser>): Promise<void> {
     return new Promise((resolve, reject) => {
       const bufferSize = parsers.reduce((current, parser) => Math.max(current, parser.patterns.length), 0)
-      const lines = []
+      let lines = []
       let lineNumber = 1
-      const rl = readline.createInterface({
-        input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
-      })
-
-      rl.on('line', line => {
-        lines.push(line)
-        if (lines.length === bufferSize) {
+      const checkForMatches = () => {
+        while (lines.length >= bufferSize) {
           let matched = false
           for (const parser: Parser of parsers) {
             const matches = parser.patterns.map((pattern, index) => lines[index].match(pattern))
@@ -83,10 +78,24 @@ export default class File {
             lineNumber++
           }
         }
-      })
-      .on('close', () => {
-        resolve()
-      })
+      }
+
+      if (this.virtual) {
+        lines = this.value ? this.value.toString().split(/\r?\n/) : []
+        checkForMatches()
+      } else {
+        const rl = readline.createInterface({
+          input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
+        })
+
+        rl.on('line', line => {
+          lines.push(line)
+          checkForMatches()
+        })
+        .on('close', () => {
+          resolve()
+        })
+      }
     })
   }
 

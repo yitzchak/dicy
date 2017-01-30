@@ -27,7 +27,8 @@ export default class Builder extends BuildStateConsumer {
   async initialize () {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
     const entries: Array<string> = await fs.readdir(ruleClassPath)
-    this.ruleClasses = entries.map(entry => require(path.join(ruleClassPath, entry)).default)
+    this.ruleClasses = entries
+      .map(entry => require(path.join(ruleClassPath, entry)).default)
   }
 
   async analyzePhase () {

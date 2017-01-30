@@ -62,12 +62,20 @@ export default class BuildState {
 
   async addRule (rule: Rule) {
     this.rules.set(rule.id, rule)
+    // Look for the rule in the cache
     if (this.cache && this.cache.rules[rule.id]) {
       const cachedRule = this.cache.rules[rule.id]
-      rule.timeStamp = cachedRule.timeStamp
       await rule.getInputs(cachedRule.inputs)
-      await rule.getOutputs(cachedRule.outputs)
-      if (rule.constructor.alwaysEvaluate) rule.addAction()
+      const outputs = await rule.getOutputs(cachedRule.outputs)
+      if (outputs.length === cachedRule.outputs.length) {
+        // All outputs still exist so we used the cached timeStamp.
+        rule.timeStamp = cachedRule.timeStamp
+        if (rule.constructor.alwaysEvaluate) rule.addAction()
+      } else {
+        // At least one of the outputs is missing so we force evaluation of the
+        // rule.
+        rule.addAction()
+      }
       for (const input of rule.inputs.values()) {
         await rule.addInputFileActions(input)
       }
@@ -95,13 +103,20 @@ export default class BuildState {
     if (!file) {
       let timeStamp, hash, value
 
+      // Check for the file in the cache
       if (this.cache && this.cache.files[filePath]) {
         timeStamp = this.cache.files[filePath].timeStamp
         hash = this.cache.files[filePath].hash
         value = this.cache.files[filePath].value
       }
       file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash, value)
-      if (!file) return
+      if (!file) {
+        // the file no longer exists so we remove it from the cache. This
+        // guarantees that even if the file is recreated with the same timeStamp
+        // and hash it will still trigger dependent rules.
+        if (this.cache) delete this.cache.files[filePath]
+        return
+      }
       this.files.set(filePath, file)
     }
 
@@ -110,6 +125,25 @@ export default class BuildState {
 
   setOptions (options: Object) {
     Object.assign(this.options, options)
+  }
+
+  getOption (name: string, jobName: ?string): ?any {
+    if (name === 'jobNames') {
+      if ('jobName' in this.options) return [this.options.jobName]
+      if ('jobNames' in this.options) return this.options.jobNames
+      if ('jobs' in this.options) return Object.keys(this.options.jobs)
+      return []
+    }
+
+    if (jobName) {
+      if (name === 'jobName') return jobName
+      if ('jobs' in this.options) {
+        const jobOptions = this.options.jobs[jobName]
+        if (jobOptions && name in jobOptions) return jobOptions[name]
+      }
+    }
+
+    return this.options[name]
   }
 
   getCacheFilePath () {

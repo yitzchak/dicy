@@ -47,15 +47,18 @@ export default class BuildStateConsumer {
     return this.buildState.normalizePath(filePath)
   }
 
-  resolveGeneratedPath (ext: string) {
-    let dir = this.rootPath
-    let { name } = path.parse(this.filePath)
+  resolveGeneratedPath (ext: string, absolute: boolean = false) {
+    let { dir, name } = path.parse(this.filePath)
 
     name = this.jobName || this.options.jobName || name
 
     const outputDirectory = this.options.outputDirectory
     if (outputDirectory) {
-      dir = path.resolve(dir, outputDirectory)
+      dir = path.join(dir, outputDirectory)
+    }
+
+    if (absolute) {
+      dir = path.resolve(this.rootPath, dir)
     }
 
     return path.format({ dir, name, ext })

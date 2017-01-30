@@ -15,7 +15,7 @@ export default class PatchSyncTeX extends Rule {
 
   constructCommand () {
     const filePath = escapePath(this.buildState.filePath)
-    const synctexPath = escapePath(this.normalizePath(this.resolveGeneratedPath('')))
+    const synctexPath = escapePath(this.resolveGeneratedPath(''))
     const lines = [
       'library(patchSynctex)',
       `patchSynctex('${filePath}',syncfile='${synctexPath}')`]

@@ -1,10 +1,24 @@
+AsymptoteLog:
+  virtual: true
 Asymptote:
   fileName: !!js/regexp /\.asy$/i
+  hash: true
+AsymptotePre:
+  fileName: !!js/regexp /\.pre$/i
   hash: true
 DVI:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
 PDF:
   fileName: !!js/regexp /\.pdf$/i
+  hash: true
+  hashSkip: !!js/regexp /^\/(CreationDate|ModDate|ID)/
+OUT:
+  fileName: !!js/regexp /\.out$/i
+  hash: true
+EPS:
+  fileName: !!js/regexp /\.eps$/i
+  hash: true
+  hashSkip: !!js/regexp /^\%%/
 SVG:
   fileName: !!js/regexp /\.svg$/i
 LaTeXAuxilary:
