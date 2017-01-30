@@ -8,7 +8,7 @@ import { cloneFixtures, customMatchers } from './helpers'
 
 import type { Message } from '../src/types'
 
-const ASYNC_TIMEOUT = 20000
+const ASYNC_TIMEOUT = 40000
 
 describe('Builder', () => {
   let builder: Builder
