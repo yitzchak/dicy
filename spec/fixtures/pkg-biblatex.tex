@@ -1,11 +1,12 @@
-%!TeX outputDirectory = output
-%!TeX jobNames = bibtex, biber
 \documentclass{article}
 
-\usepackage[backend=\jobname]{biblatex}
+\usepackage{xstring}
+
+\StrBefore*{\jobname}{-}[\backend]
+
+\usepackage[backend=\backend]{biblatex}
 
 \bibliography{foo}{}
-\makeindex
 
 \begin{document}
   foo, wibble, wibble \cite{wibble}, gronk.

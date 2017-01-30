@@ -15,6 +15,11 @@ export default class CreateOutputTree extends Rule {
     if (this.options.outputDirectory) {
       await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
     }
+    for (const jobName in this.options.jobs || {}) {
+      if (this.options.jobs[jobName].outputDirectory) {
+        await fs.ensureDir(path.resolve(this.rootPath, this.options.jobs[jobName].outputDirectory))
+      }
+    }
     return true
   }
 }

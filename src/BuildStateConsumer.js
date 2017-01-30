@@ -16,7 +16,12 @@ export default class BuildStateConsumer {
     this.buildState = buildState
     this.options = new Proxy(buildState.options, {
       get (target, key) {
-        if (jobName) {
+        if (key === 'jobNames') {
+          if ('jobName' in target) return [target.jobName]
+          if ('jobNames' in target) return target.jobNames
+          if ('jobs' in target) return Object.keys(target.jobs)
+          return []
+        } else if (jobName) {
           if (key === 'jobName') return jobName
           if (target.jobs) {
             const jobOptions = target.jobs[jobName]
@@ -41,7 +46,7 @@ export default class BuildStateConsumer {
   }
 
   resolveOutputPath (ext: string) {
-    return this.buildState.resolveOutputPath(ext, this.jobName)
+    return this.buildState.resolveOutputPath(ext, this.jobName, this.options.outputDirectory)
   }
 
   async getFile (filePath: string): Promise<?File> {

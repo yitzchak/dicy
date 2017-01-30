@@ -1,0 +1,5 @@
+jobs:
+  bibtex-foo:
+    outputDirectory: output
+  biber-bar:
+    outputDirectory: output

@@ -123,3 +123,6 @@ YAML:
   hash: true
 ParsedYAML:
   virtual: true
+XML:
+  fileName: !!js/regexp /\.xml$/i
+  hash: true

@@ -60,14 +60,15 @@ export default class BuildState {
     return filePath
   }
 
-  resolveOutputPath (ext: string, jobName: ?string) {
+  resolveOutputPath (ext: string, jobName: ?string, outputDirectory: ?string) {
     let dir = this.rootPath
     let { name } = path.parse(this.filePath)
 
     name = jobName || this.options.jobName || name
 
-    if (this.options.outputDirectory) {
-      dir = path.resolve(dir, this.options.outputDirectory)
+    outputDirectory = outputDirectory || this.options.outputDirectory
+    if (outputDirectory) {
+      dir = path.resolve(dir, outputDirectory)
     }
 
     return path.format({ dir, name, ext })
