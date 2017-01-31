@@ -9,7 +9,7 @@ export default class Asymptote extends Rule {
   static fileTypes: Set<string> = new Set(['Asymptote'])
 
   async initialize () {
-    await this.getGeneratedInput(`.log-ParsedAsymptoteLog`)
+    await this.getResolvedInput(`.log-ParsedAsymptoteLog`)
   }
 
   async addInputFileActions (file: File): Promise<void> {
@@ -54,7 +54,7 @@ export default class Asymptote extends Rule {
     for (const ext of ['_0.pdf', '_0.eps']) {
       await this.getOutput(path.format({ dir, name, ext }))
     }
-    const output = await this.getGeneratedOutput('.log-AsymptoteLog')
+    const output = await this.getResolvedOutput('.log-AsymptoteLog')
     if (output) output.value = `${stdout}\n${stderr}`
     return true
   }

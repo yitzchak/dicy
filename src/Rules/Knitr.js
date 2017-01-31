@@ -10,7 +10,7 @@ export default class Knitr extends Rule {
   static fileTypes: Set<string> = new Set(['Knitr'])
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getSourceOutputs('.tex', '-concordance.tex')
+    await this.getResolvedOutputs(['.tex', '-concordance.tex'], { useJobName: false, useOutputDirectory: false })
     return true
   }
 

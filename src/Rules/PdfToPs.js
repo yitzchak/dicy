@@ -13,11 +13,11 @@ export default class DviToPdf extends Rule {
   }
 
   constructCommand () {
-    return `pdf2ps "${this.firstParameter.normalizedFilePath}" "${this.resolveGeneratedPath('.ps')}"`
+    return `pdf2ps "${this.firstParameter.normalizedFilePath}" "${this.resolvePath('.ps')}"`
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getGeneratedOutputs('.ps')
+    await this.getResolvedOutputs(['.ps'])
     return true
   }
 }

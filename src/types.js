@@ -1,5 +1,11 @@
 /* @flow */
 
+export type ResolvePathOptions = {
+  absolute?: boolean,
+  useJobName?: boolean,
+  useOutputDirectory?: boolean
+}
+
 export type Action = 'run' | 'updateDependencies'
 
 export type FileType = {

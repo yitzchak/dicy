@@ -6,7 +6,7 @@ import BuildState from './BuildState'
 import File from './File'
 import Rule from './Rule'
 
-import type { Message } from './types'
+import type { Message, ResolvePathOptions } from './types'
 
 export default class BuildStateConsumer {
   buildState: BuildState
@@ -47,13 +47,13 @@ export default class BuildStateConsumer {
     return this.buildState.normalizePath(filePath)
   }
 
-  resolveGeneratedPath (ext: string, absolute: boolean = false) {
+  resolvePath (ext: string, { absolute = false, useJobName = true, useOutputDirectory = true }: ResolvePathOptions = {}) {
     let { dir, name } = path.parse(this.filePath)
 
-    name = this.jobName || this.options.jobName || name
+    if (useJobName) name = this.jobName || this.options.jobName || name
 
     const outputDirectory = this.options.outputDirectory
-    if (outputDirectory) {
+    if (useOutputDirectory && outputDirectory) {
       dir = path.join(dir, outputDirectory)
     }
 
@@ -61,12 +61,6 @@ export default class BuildStateConsumer {
       dir = path.resolve(this.rootPath, dir)
     }
 
-    return path.format({ dir, name, ext })
-  }
-
-  resolveSourcePath (ext: string, absolute: boolean = false) {
-    let { dir, name } = path.parse(this.filePath)
-    if (absolute) dir = path.resolve(this.rootPath, dir)
     return path.format({ dir, name, ext })
   }
 

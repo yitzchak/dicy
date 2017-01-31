@@ -13,7 +13,7 @@ export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
 
   async initialize () {
-    await this.getGeneratedInputs('.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog')
+    await this.getResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
   }
 
   async addInputFileActions (file: File): Promise<void> {
@@ -55,8 +55,8 @@ export default class LaTeX extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getGeneratedInputs('.aux')
-    await this.getGeneratedOutputs('.aux', '.fls', '.log', '.synctex.gz')
+    await this.getResolvedInputs(['.aux'])
+    await this.getResolvedOutputs(['.aux', '.fls', '.log', '.synctex.gz'])
     return true
   }
 

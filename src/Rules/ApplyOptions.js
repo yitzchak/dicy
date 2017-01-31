@@ -13,7 +13,7 @@ export default class ApplyOptions extends Rule {
 
   async initialize () {
     const ext = path.extname(this.filePath)
-    await this.getSourceInputs('.yaml-ParsedYAML', `${ext}-ParsedLaTeXMagic`)
+    await this.getResolvedInputs(['.yaml-ParsedYAML', `${ext}-ParsedLaTeXMagic`], { useJobName: false, useOutputDirectory: false })
   }
 
   async run () {
