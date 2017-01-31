@@ -40,14 +40,6 @@ describe('Builder', () => {
     done()
   }, ASYNC_TIMEOUT)
 
-  it('verifies that minted support works', async (done) => {
-    await initializeBuilder('pkg-minted.tex')
-    expect(await builder.run('build')).toBeTruthy()
-    // $FlowIgnore
-    expect(messages).toEqualMessages([])
-    done()
-  }, ASYNC_TIMEOUT)
-
   it('verifies that natbib support works', async (done) => {
     await initializeBuilder('pkg-natbib.tex')
     expect(await builder.run('build')).toBeTruthy()
