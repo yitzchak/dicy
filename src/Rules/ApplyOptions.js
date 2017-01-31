@@ -5,10 +5,10 @@ import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Phase } from '../types'
+import type { Command } from '../types'
 
 export default class ApplyOptions extends Rule {
-  static phases: Set<Phase> = new Set(['configure'])
+  static commands: Set<Command> = new Set(['load'])
   static alwaysEvaluate: boolean = true
 
   async initialize () {

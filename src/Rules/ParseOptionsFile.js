@@ -6,10 +6,10 @@ import yaml from 'js-yaml'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Phase } from '../types'
+import type { Command } from '../types'
 
 export default class ParseOptionsFile extends Rule {
-  static phases: Set<Phase> = new Set(['configure'])
+  static commands: Set<Command> = new Set(['load'])
 
   input: ?File
   output: ?File

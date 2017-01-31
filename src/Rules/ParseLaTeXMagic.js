@@ -3,10 +3,10 @@
 import Rule from '../Rule'
 import File from '../File'
 
-import type { Phase } from '../types'
+import type { Command } from '../types'
 
 export default class ParseLaTeXMagic extends Rule {
-  static phases: Set<Phase> = new Set(['configure'])
+  static commands: Set<Command> = new Set(['load'])
   static fileTypes: Set<string> = new Set(['LaTeX', 'Knitr'])
 
   output: ?File

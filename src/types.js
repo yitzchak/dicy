@@ -51,9 +51,9 @@ export type Message = {
   log?: Reference
 }
 
-export type Phase = 'configure' | 'initialize' | 'execute' | 'finalize'
+export type Phase = 'initialize' | 'execute' | 'finalize'
 
-export type Command = 'build' | 'report'
+export type Command = 'build' | 'load' | 'report'
 
 export type Log = (message: Message) => void
 

@@ -29,6 +29,7 @@ export default class Builder extends BuildStateConsumer {
     const entries: Array<string> = await fs.readdir(ruleClassPath)
     this.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
+    await this.run('load')
   }
 
   async analyzePhase () {
@@ -120,43 +121,37 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async run (command: Command): Promise<boolean> {
-    this.buildState.command = command
-    const updatedFiles = Array.from(this.buildState.files.values()).filter(file => file.hasBeenUpdated)
-
-    for (const phase: Phase of ['configure', 'initialize', 'execute', 'finalize']) {
-      this.buildState.phase = phase
-      for (const file of this.buildState.files.values()) {
-        file.analyzed = false
-      }
-      for (const file of updatedFiles) {
-        file.hasBeenUpdated = true
-        for (const rule of file.rules.values()) {
-          await rule.addInputFileActions(file)
-        }
-      }
-      let evaluationCount = 0
-
-      await this.analyzePhase()
-
-      while (evaluationCount < 10 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
-        Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
-        await this.analyzeFiles()
-        await this.evaluate()
-        evaluationCount++
-      }
+    for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
+      await this.runPhase(phase, command)
     }
 
-    if (command === 'build') await this.saveStateCache()
+    // if (command === 'build') await this.saveStateCache()
 
     return Array.from(this.buildState.rules.values()).every(rule => rule.success)
   }
 
-  async loadStateCache () {
-    await this.buildState.loadCache()
-  }
+  async runPhase (phase: Phase, command: Command): Promise<void> {
+    const updatedFiles = Array.from(this.buildState.files.values()).filter(file => file.hasBeenUpdated)
 
-  async saveStateCache () {
-    await this.buildState.saveCache()
+    this.buildState.command = command
+    this.buildState.phase = phase
+    for (const file of this.buildState.files.values()) {
+      file.analyzed = false
+    }
+    let evaluationCount = 0
+
+    await this.analyzePhase()
+
+    while (evaluationCount < 10 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
+      Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
+      await this.analyzeFiles()
+      await this.evaluate()
+      evaluationCount++
+    }
+
+    for (const file of updatedFiles) {
+      file.hasBeenUpdated = true
+    }
   }
 
   static async getOptionDefinitions (): Promise<{ [name: string]: Option }> {

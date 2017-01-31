@@ -1,11 +1,9 @@
 /* @flow */
 
-import fs from 'fs-promise'
 import path from 'path'
-import yaml from 'js-yaml'
 import File from './File'
 import Rule from './Rule'
-import type { Command, FileCache, Log, Message, Option, Phase } from './types'
+import type { Command, Log, Message, Option, Phase } from './types'
 
 export default class BuildState {
   filePath: string
@@ -35,13 +33,12 @@ export default class BuildState {
   static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}, log: Log = (message: Message): void => {}) {
     const buildState = new BuildState(filePath, options, schema, log)
 
-    if (!options.ignoreCache) await buildState.loadCache()
     await buildState.getFile(filePath)
 
     return buildState
   }
 
-  normalizePath (filePath: string) {
+  normalizePath (filePath: string): string {
     filePath = path.normalize(filePath)
 
     if (path.isAbsolute(filePath)) {
@@ -60,7 +57,7 @@ export default class BuildState {
     return filePath
   }
 
-  async addRule (rule: Rule) {
+  async addRule (rule: Rule): Promise<void> {
     this.rules.set(rule.id, rule)
     // Look for the rule in the cache
     if (this.cache && this.cache.rules[rule.id]) {
@@ -88,6 +85,7 @@ export default class BuildState {
     const items = parameters.map(item => (typeof item === 'string') ? this.normalizePath(item) : item.normalizedFilePath)
     items.unshift(jobName || '')
     items.unshift(this.phase || '')
+    items.unshift(this.command || '')
     return `${name}(${items.join(';')})`
   }
 
@@ -144,59 +142,6 @@ export default class BuildState {
     }
 
     return this.options[name]
-  }
-
-  getCacheFilePath () {
-    const { name } = path.parse(this.filePath)
-    return path.format({
-      dir: this.rootPath,
-      name,
-      ext: '-cache.yaml'
-    })
-  }
-
-  async loadCache () {
-    const cacheFilePath = this.getCacheFilePath()
-    if (await fs.exists(cacheFilePath)) {
-      const contents = await fs.readFile(cacheFilePath)
-      this.cache = yaml.safeLoad(contents)
-    }
-  }
-
-  async saveCache () {
-    const cacheFilePath = this.getCacheFilePath()
-    const state = {
-      filePath: this.filePath,
-      options: this.options,
-      files: {},
-      rules: {}
-    }
-
-    for (const file: File of this.files.values()) {
-      const fileCache: FileCache = {
-        timeStamp: file.timeStamp,
-        hash: file.hash,
-        value: file.value,
-        jobNames: Array.from(file.jobNames.values())
-      }
-
-      if (file.type) {
-        fileCache.type = file.type
-      }
-
-      state.files[file.normalizedFilePath] = fileCache
-    }
-
-    for (const rule of this.rules.values()) {
-      state.rules[rule.id] = {
-        timeStamp: rule.timeStamp,
-        inputs: Array.from(rule.inputs.keys()),
-        outputs: Array.from(rule.outputs.keys())
-      }
-    }
-
-    const serialized = yaml.safeDump(state, { skipInvalid: true })
-    await fs.writeFile(cacheFilePath, serialized)
   }
 
   calculateDistances (): void {

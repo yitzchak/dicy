@@ -2,10 +2,11 @@
 
 import Rule from '../Rule'
 
-import type { Phase } from '../types'
+import type { Command, Phase } from '../types'
 
 export default class AssignJobNames extends Rule {
-  static phases: Set<Phase> = new Set(['initialize'])
+  static phases: Set<Phase> = new Set(['finalize'])
+  static commands: Set<Command> = new Set(['load'])
   static alwaysEvaluate: boolean = true
 
   async run () {

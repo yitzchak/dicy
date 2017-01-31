@@ -11,9 +11,10 @@ describe('BuildState', () => {
   })
 
   it('verifies that getRuleId returns expected id', () => {
-    buildState.phase = 'initialize'
+    buildState.phase = 'execute'
+    buildState.command = 'build'
     const result = buildState.getRuleId('quux', 'bar', 'foo.tex')
-    const expectedResult = 'quux(initialize;bar;foo.tex)'
+    const expectedResult = 'quux(build;execute;bar;foo.tex)'
     expect(result).toEqual(expectedResult)
   })
 })
