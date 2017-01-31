@@ -1,5 +1,7 @@
 AsymptoteLog:
   virtual: true
+ParsedAsymptoteLog:
+  virtual: true
 Asymptote:
   fileName: !!js/regexp /\.asy$/i
   hash: true

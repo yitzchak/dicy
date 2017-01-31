@@ -83,6 +83,7 @@ export default class File {
       if (this.virtual) {
         lines = this.value ? this.value.toString().split(/\r?\n/) : []
         checkForMatches()
+        resolve()
       } else {
         const rl = readline.createInterface({
           input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
