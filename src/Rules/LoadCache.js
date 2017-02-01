@@ -23,7 +23,7 @@ export default class LoadCache extends Rule {
   }
 
   async preEvaluate () {
-    if (this.options.ignoreCache || !fs.exists(this.cacheFilePath)) this.actions.delete('run')
+    if (this.options.ignoreCache || !await fs.exists(this.cacheFilePath)) this.actions.delete('run')
   }
 
   async run () {
