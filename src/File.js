@@ -2,7 +2,7 @@
 
 import _ from 'lodash'
 import crypto from 'crypto'
-import fs from 'mz/fs'
+import fs from 'fs-promise'
 import path from 'path'
 import readline from 'readline'
 import yaml from 'js-yaml'
@@ -112,10 +112,6 @@ export default class File {
     this._value = value
   }
 
-  exists () {
-    return fs.exists(this.filePath)
-  }
-
   async findType (): Promise<void> {
     if (!File.fileTypes) {
       const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'file-types.yaml'), { encoding: 'utf-8' })
@@ -212,10 +208,5 @@ export default class File {
   async update (): Promise<void> {
     const updated = await this.updateTimeStamp() && await this.updateHash()
     this.hasBeenUpdated = this.hasBeenUpdated || updated
-  }
-
-  forceUpdate () {
-    this.timeStamp = new Date()
-    this.hasBeenUpdated = true
   }
 }
