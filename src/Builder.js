@@ -131,11 +131,10 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async runPhase (phase: Phase, command: Command): Promise<void> {
-    const updatedFiles = Array.from(this.buildState.files.values()).filter(file => file.hasBeenUpdated)
-
     this.buildState.command = command
     this.buildState.phase = phase
     for (const file of this.buildState.files.values()) {
+      file.hasBeenUpdated = file.hasBeenUpdatedCache
       file.analyzed = false
     }
     let evaluationCount = 0
@@ -147,10 +146,6 @@ export default class Builder extends BuildStateConsumer {
       await this.analyzeFiles()
       await this.evaluate()
       evaluationCount++
-    }
-
-    for (const file of updatedFiles) {
-      file.hasBeenUpdated = true
     }
   }
 

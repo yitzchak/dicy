@@ -13,7 +13,12 @@ export default class DviToPs extends Rule {
   }
 
   constructCommand () {
-    return `dvips -o "${this.resolvePath('.ps')}" "${this.firstParameter.normalizedFilePath}"`
+    return [
+      'dvips',
+      '-o',
+      this.resolvePath('.ps'),
+      this.firstParameter.normalizedFilePath
+    ]
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

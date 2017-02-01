@@ -18,11 +18,11 @@ export default class MakeGlossaries extends Rule {
 
   constructCommand () {
     const { dir, name } = path.parse(this.firstParameter.normalizedFilePath)
-    const args = []
+    const args = ['makeglossaries']
 
-    if (dir) args.push(`-d "${dir}"`)
-    args.push(`"${name}"`)
+    if (dir) args.push('-d', dir)
+    args.push(name)
 
-    return `makeglossaries ${args.join(' ')}`
+    return args
   }
 }

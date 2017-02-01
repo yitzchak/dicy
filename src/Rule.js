@@ -1,6 +1,7 @@
 /* @flow */
 
 import childProcess from 'child_process'
+import commandJoin from 'command-join'
 
 import BuildState from './BuildState'
 import File from './File'
@@ -134,7 +135,7 @@ export default class Rule extends BuildStateConsumer {
   async run (): Promise<boolean> {
     let success: boolean = true
     const options = this.constructProcessOptions()
-    const command = this.constructCommand()
+    const command = commandJoin(this.constructCommand())
 
     this.log({
       severity: 'info',
@@ -248,8 +249,8 @@ export default class Rule extends BuildStateConsumer {
     }
   }
 
-  constructCommand (): string {
-    return ''
+  constructCommand (): Array<string> {
+    return []
   }
 
   actionTrace (action: Action) {

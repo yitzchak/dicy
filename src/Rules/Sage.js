@@ -8,7 +8,7 @@ export default class Sage extends Rule {
   static fileTypes: Set<string> = new Set(['Sage'])
 
   constructCommand () {
-    return `sage "${path.basename(this.firstParameter.normalizedFilePath)}"`
+    return ['sage', path.basename(this.firstParameter.normalizedFilePath)]
   }
 
   constructProcessOptions (): Object {

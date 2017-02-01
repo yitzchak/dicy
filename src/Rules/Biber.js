@@ -26,7 +26,7 @@ export default class Biber extends Rule {
   }
 
   constructCommand () {
-    return `biber "${this.firstParameter.normalizedFilePath}"`
+    return ['biber', this.firstParameter.normalizedFilePath]
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

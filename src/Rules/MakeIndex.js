@@ -39,13 +39,14 @@ export default class MakeIndex extends Rule {
 
   constructCommand () {
     const args = [
-      `-t "${this.logPath}"`,
-      `-o "${this.outputPath}"`
+      'makeindex',
+      '-t', this.logPath,
+      '-o', this.outputPath
     ]
 
-    if (this.stylePath) args.push(`-s "${this.stylePath}"`)
-    args.push(`"${this.firstParameter.normalizedFilePath}"`)
+    if (this.stylePath) args.push('-s', this.stylePath)
+    args.push(this.firstParameter.normalizedFilePath)
 
-    return `makeindex ${args.join(' ')}`
+    return args
   }
 }

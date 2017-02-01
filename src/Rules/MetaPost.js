@@ -8,7 +8,7 @@ export default class MetaPost extends Rule {
   static fileTypes: Set<string> = new Set(['MetaPost'])
 
   constructCommand () {
-    return `mpost "${path.basename(this.firstParameter.normalizedFilePath)}"`
+    return ['mpost', path.basename(this.firstParameter.normalizedFilePath)]
   }
 
   constructProcessOptions (): Object {

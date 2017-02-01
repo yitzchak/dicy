@@ -24,7 +24,8 @@ export default class File {
   rules: Set<Rule> = new Set()
   jobNames: Set<string> = new Set()
   analyzed: boolean = false
-  hasBeenUpdated: boolean = false
+  _hasBeenUpdated: boolean = false
+  hasBeenUpdatedCache: boolean = false
   _value: ?any
 
   constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string, value: ?any) {
@@ -98,6 +99,15 @@ export default class File {
         })
       }
     })
+  }
+
+  get hasBeenUpdated (): boolean {
+    return this._hasBeenUpdated
+  }
+
+  set hasBeenUpdated (value: boolean) {
+    this._hasBeenUpdated = value
+    this.hasBeenUpdatedCache = value || this.hasBeenUpdatedCache
   }
 
   get value (): ?any {

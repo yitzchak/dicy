@@ -1,6 +1,7 @@
 /* @flow */
 
 import path from 'path'
+
 import File from '../File'
 import Rule from '../Rule'
 
@@ -78,16 +79,17 @@ export default class LaTeX extends Rule {
 
   constructCommand () {
     const args = [
+      this.options.engine,
       '-interaction=batchmode',
       '-recorder'
     ]
 
     if (this.options.outputDirectory) {
-      args.push(`-output-directory="${this.options.outputDirectory}"`)
+      args.push(`-output-directory=${this.options.outputDirectory}`)
     }
 
     if (this.options.jobName) {
-      args.push(`-jobname="${this.options.jobName}"`)
+      args.push(`-jobname=${this.options.jobName}`)
     }
 
     if (this.options.synctex) {
@@ -119,8 +121,8 @@ export default class LaTeX extends Rule {
       }
     }
 
-    args.push(`"${this.firstParameter.normalizedFilePath}"`)
+    args.push(`${this.firstParameter.normalizedFilePath}`)
 
-    return `${this.options.engine} ${args.join(' ')}`
+    return args
   }
 }

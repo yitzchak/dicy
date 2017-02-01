@@ -55,7 +55,7 @@ export default class BibTeX extends Rule {
   }
 
   constructCommand () {
-    return `bibtex "${this.input ? this.input.normalizedFilePath : ''}"`
+    return ['bibtex', this.input ? this.input.normalizedFilePath : '']
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

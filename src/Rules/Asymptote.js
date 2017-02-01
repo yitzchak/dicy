@@ -38,7 +38,12 @@ export default class Asymptote extends Rule {
   }
 
   constructCommand () {
-    return `asy -offscreen -vv "${path.basename(this.firstParameter.normalizedFilePath)}"`
+    return [
+      'asy',
+      '-offscreen',
+      '-vv',
+      path.basename(this.firstParameter.normalizedFilePath)
+    ]
   }
 
   constructProcessOptions (): Object {

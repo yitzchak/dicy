@@ -21,6 +21,6 @@ export default class Knitr extends Rule {
     if (this.options.synctex) lines.push('opts_knit$set(concordance=TRUE)')
     lines.push(`knit('${filePath}')`)
 
-    return `Rscript -e "${lines.join(';')}"`
+    return ['Rscript', '-e', lines.join(';')]
   }
 }
