@@ -28,7 +28,8 @@ export default class SaveCache extends Rule {
       filePath: this.filePath,
       options: this.options,
       files: {},
-      rules: {}
+      rules: {},
+      commands: {}
     }
 
     for (const file: File of this.buildState.files.values()) {
@@ -52,6 +53,10 @@ export default class SaveCache extends Rule {
         inputs: Array.from(rule.inputs.keys()),
         outputs: Array.from(rule.outputs.keys())
       }
+    }
+
+    for (const [command, rules] of this.buildState.commands) {
+      state.commands[command] = rules
     }
 
     const serialized = yaml.safeDump(state, { skipInvalid: true })

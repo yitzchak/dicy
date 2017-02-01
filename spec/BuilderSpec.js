@@ -65,6 +65,19 @@ describe('Builder', () => {
       type: 'Input style',
       text: 'Unknown specifier lethead_flag.'
     }])
+    expect(builder.buildState.commands.get('build')).toEqual([
+      'CreateOutputTree(build;initialize;)',
+      'LaTeX(build;execute;;pkg-nomencl.tex)',
+      'ParseLaTeXAuxilary(build;execute;;output/pkg-nomencl.aux)',
+      'ParseLaTeXFileListing(build;execute;;output/pkg-nomencl.fls)',
+      'ParseLaTeXLog(build;execute;;output/pkg-nomencl.log)',
+      'LaTeX(build;execute;;pkg-nomencl.tex)',
+      'MakeIndex(build;execute;;output/pkg-nomencl.nlo)',
+      'ParseMakeIndexLog(build;execute;;output/pkg-nomencl.nlg)',
+      'SaveCache(build;finalize;)',
+      'ReportLogMessages(build;finalize;;output/pkg-nomencl.log-ParsedLaTeXLog)',
+      'ReportLogMessages(build;finalize;;output/pkg-nomencl.nlg-ParsedMakeIndexLog)'
+    ])
     done()
   }, ASYNC_TIMEOUT)
 

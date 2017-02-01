@@ -12,6 +12,7 @@ export default class BuildState {
   phase: Phase
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
+  commands: Map<string, Array<string>> = new Map()
   options: Object = {}
   optionSchema: Map<string, Option> = new Map()
   cache: Object
