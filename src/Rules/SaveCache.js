@@ -12,6 +12,7 @@ export default class SaveCache extends Rule {
   static phases: Set<Phase> = new Set(['finalize'])
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = true
+  static ignoreJobName: boolean = true
 
   cacheFilePath: string
 

@@ -34,9 +34,12 @@ export default class Builder extends BuildStateConsumer {
 
   async analyzePhase () {
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
-      const rule = await ruleClass.analyzePhase(this.buildState, undefined)
-      if (rule) {
-        await this.buildState.addRule(rule)
+      const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
+      for (const jobName of jobNames) {
+        const rule = await ruleClass.analyzePhase(this.buildState, jobName)
+        if (rule) {
+          await this.buildState.addRule(rule)
+        }
       }
     }
   }

@@ -79,7 +79,8 @@ describe('Builder', () => {
       'ParseMakeIndexLog(build;execute;;output/pkg-nomencl.nlg)',
       'ParseLaTeXFileListing(build;execute;;output/pkg-nomencl.fls)',
       'ParseLaTeXLog(build;execute;;output/pkg-nomencl.log)',
-      'LaTeX(build;execute;;pkg-nomencl.tex)', 'SaveCache(build;finalize;)',
+      'LaTeX(build;execute;;pkg-nomencl.tex)',
+      'SaveCache(build;finalize;)',
       'ReportLogMessages(build;finalize;;output/pkg-nomencl.log-ParsedLaTeXLog)',
       'ReportLogMessages(build;finalize;;output/pkg-nomencl.nlg-ParsedMakeIndexLog)'
     ])

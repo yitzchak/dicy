@@ -10,20 +10,9 @@ export default class AssignJobNames extends Rule {
   static alwaysEvaluate: boolean = true
 
   async run () {
-    const jobNames = this.options.jobNames
-    if (jobNames) {
-      const file = await this.getFile(this.filePath)
-      if (file) {
-        if (Array.isArray(jobNames)) {
-          for (const jobName of jobNames) {
-            file.jobNames.add(jobName)
-          }
-        } else {
-          for (const jobName in jobNames) {
-            file.jobNames.add(jobName)
-          }
-        }
-      }
+    const file = await this.getFile(this.filePath)
+    if (file && this.jobName) {
+      file.jobNames.add(this.jobName)
     }
     return true
   }

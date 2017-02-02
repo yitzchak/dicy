@@ -22,7 +22,7 @@ export default class BuildStateConsumer {
           if ('jobName' in target) return [target.jobName]
           if ('jobNames' in target) return target.jobNames
           if ('jobs' in target) return Object.keys(target.jobs)
-          return []
+          return [undefined]
         } else if (jobName) {
           if (key === 'jobName') return jobName
           if (target.jobs) {

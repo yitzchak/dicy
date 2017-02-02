@@ -10,6 +10,7 @@ import type { Command } from '../types'
 export default class ApplyOptions extends Rule {
   static commands: Set<Command> = new Set(['load'])
   static alwaysEvaluate: boolean = true
+  static ignoreJobName: boolean = true
 
   async initialize () {
     const ext = path.extname(this.filePath)

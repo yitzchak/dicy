@@ -9,6 +9,7 @@ export default class RestoreCache extends Rule {
   static commands: Set<Command> = new Set(['report'])
   static phases: Set<Phase> = new Set(['initialize'])
   static alwaysEvaluate: boolean = true
+  static ignoreJobName: boolean = true
 
   async run () {
     for (const filePath in this.buildState.cache.files) {
