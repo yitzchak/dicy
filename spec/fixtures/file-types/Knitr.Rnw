@@ -1,0 +1,20 @@
+%!TeX outputDirectory = output
+\documentclass{article}
+
+\usepackage{parskip}
+
+\begin{document}
+Some random data:
+
+<<some-random>>=
+set.seed(100)
+(x=rnorm(40))
+@
+
+The mean of $x$ is \Sexpr{mean(x)} and the variance of $x$ is \Sexpr{var(x)}. A
+histogram of the data:
+
+<<some-plots, fig.width=8, fig.height=6, out.width='\\linewidth'>>=
+hist(x,main='')
+@
+\end{document}

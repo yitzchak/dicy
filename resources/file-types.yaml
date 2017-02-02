@@ -8,20 +8,20 @@ Asymptote:
 AsymptotePre:
   fileName: !!js/regexp /\.pre$/i
   hash: true
-DVI:
+DeviceIndependentFile:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
-PDF:
+PortableDocumentFormat:
   fileName: !!js/regexp /\.pdf$/i
   hash: true
   hashSkip: !!js/regexp /^\/(CreationDate|ModDate|ID)/
 OUT:
   fileName: !!js/regexp /\.out$/i
   hash: true
-EPS:
+EncapsulatedPostScript:
   fileName: !!js/regexp /\.eps$/i
   hash: true
   hashSkip: !!js/regexp /^\%%/
-SVG:
+ScalableVectorGraphics:
   fileName: !!js/regexp /\.svg$/i
 LaTeXAuxilary:
   fileName: !!js/regexp /\.aux$/i

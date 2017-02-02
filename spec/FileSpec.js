@@ -1,6 +1,7 @@
 /* @flow */
 
 import 'babel-polyfill'
+import fs from 'fs-promise'
 import path from 'path'
 
 import { cloneFixtures } from './helpers'
@@ -49,6 +50,17 @@ describe('File', () => {
     const file = await createFile('wibble-blx.bib')
     expect(file).toBeDefined()
     if (file) expect(file.type).toEqual('BibTeXControlFile')
+    done()
+  })
+
+  it('verifies that the detected file types are correct', async (done) => {
+    const rootPath = path.join(fixturesPath, 'file-types')
+    for (const fileName of await fs.readdir(rootPath)) {
+      const [, type] = fileName.match(/^([^.-]+)/)
+      const file = await createFile(path.join('file-types', fileName))
+      expect(file).toBeDefined()
+      if (file) expect(file.type).toEqual(type)
+    }
     done()
   })
 })

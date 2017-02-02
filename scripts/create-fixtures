@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+cd spec/fixtures/file-types
+
+echo Creating Knitr files...
+Rscript -e "library(knitr);opts_knit\$set(concordance=TRUE);knit('Knitr.Rnw')" &>/dev/null
+rm -rf Knitr.tex figure
+mv Knitr-concordance.tex KnitrConcordance-concordance.tex
+
+echo Creating LaTeX files...
+mkdir output
+latex -jobname=biber -interaction=batchmode -recorder -output-directory=output -synctex=1 LaTeX.tex &>/dev/null
+biber output/biber.bcf &>/dev/null
+cp output/biber.aux LaTeXAuxilary.aux
+cp output/biber.bcf BiberControlFile.bcf
+cp output/biber.blg BiberLog.blg
+cp output/biber.fls LaTeXFileListing.fls
+cp output/biber.log LaTeXLog.log
+
+rm -rf output

@@ -5,7 +5,7 @@ import File from '../File'
 import Rule from '../Rule'
 
 export default class DviToPdf extends Rule {
-  static fileTypes: Set<string> = new Set(['PDF'])
+  static fileTypes: Set<string> = new Set(['PortableDocumentFormat'])
 
   static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
     return buildState.options.outputFormat === 'ps' &&
