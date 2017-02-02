@@ -1,0 +1,38 @@
+outputDirectory: output
+meta:
+  messages:
+    -
+      name: makeindex
+      type: Input style
+      text: Unknown specifier lethead_suffix.
+    -
+      name: makeindex
+      type: Input style
+      text: Unknown specifier lethead_prefix.
+    -
+      name: makeindex
+      type: Input style
+      text: Unknown specifier lethead_flag.
+  evaluations:
+    - LoadCache(load;initialize;)
+    - ParseOptionsFile(load;execute;)
+    - ParseLaTeXMagic(load;execute;;pkg-nomencl.tex)
+    - ApplyOptions(load;execute;)
+    - AssignJobNames(load;finalize;)
+    - CreateOutputTree(build;initialize;)
+    - LaTeX(build;execute;;pkg-nomencl.tex)
+    - ParseLaTeXAuxilary(build;execute;;output/pkg-nomencl.aux)
+    - ParseLaTeXFileListing(build;execute;;output/pkg-nomencl.fls)
+    - ParseLaTeXLog(build;execute;;output/pkg-nomencl.log)
+    - LaTeX(build;execute;;pkg-nomencl.tex)
+    - MakeIndex(build;execute;;output/pkg-nomencl.nlo)
+    - ParseLaTeXFileListing(build;execute;;output/pkg-nomencl.fls)
+    - ParseLaTeXLog(build;execute;;output/pkg-nomencl.log)
+    - LaTeX(build;execute;;pkg-nomencl.tex)
+    - ParseMakeIndexLog(build;execute;;output/pkg-nomencl.nlg)
+    - ParseLaTeXFileListing(build;execute;;output/pkg-nomencl.fls)
+    - ParseLaTeXLog(build;execute;;output/pkg-nomencl.log)
+    - LaTeX(build;execute;;pkg-nomencl.tex)
+    - SaveCache(build;finalize;)
+    - ReportLogMessages(build;finalize;;output/pkg-nomencl.log-ParsedLaTeXLog)
+    - ReportLogMessages(build;finalize;;output/pkg-nomencl.nlg-ParsedMakeIndexLog)

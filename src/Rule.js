@@ -125,12 +125,7 @@ export default class Rule extends BuildStateConsumer {
     this.actions.clear()
     await this.updateOutputs()
     this.success = success
-    const rules = this.buildState.commands.get(this.buildState.command)
-    if (rules) {
-      rules.push(this.id)
-    } else {
-      this.buildState.commands.set(this.buildState.command, [this.id])
-    }
+    this.buildState.evaluations.push(this.id)
 
     return success
   }
