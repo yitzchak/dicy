@@ -1,24 +1,109 @@
-messages:
-  - severity: warning
-    name: pdfTeX
-    type: Package biblatex
-    text: |-
-      Using fall-back BibTeX(8) backend:
-      functionality may be reduced/unavailable.
-    log:
-      file: bibtex-1.log
-      start: 216
-      end: 217
-  - severity: warning
-    name: pdfTeX
-    type: Package biblatex
-    text: |-
-      Using fall-back BibTeX(8) backend:
-      functionality may be reduced/unavailable.
-    log:
-      file: output/bibtex-2.log
-      start: 216
-      end: 217
+command:
+  - id: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=bibtex-1
+      pkg-biblatex.tex
+  - id: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=bibtex-2 pkg-biblatex.tex
+  - id: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=biber-1
+      pkg-biblatex.tex
+  - id: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=biber-2 pkg-biblatex.tex
+  - id: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=bibtex-1
+      pkg-biblatex.tex
+  - id: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=bibtex-2 pkg-biblatex.tex
+  - id: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=biber-1
+      pkg-biblatex.tex
+  - id: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=biber-2 pkg-biblatex.tex
+  - id: BibTeX(build;execute;bibtex-1;bibtex-1.aux-ParsedLaTeXAuxilary)
+    command: bibtex bibtex-1.aux
+  - id: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=bibtex-1
+      pkg-biblatex.tex
+  - id: BibTeX(build;execute;bibtex-2;output/bibtex-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/bibtex-2.aux
+  - id: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=bibtex-2 pkg-biblatex.tex
+  - id: Biber(build;execute;biber-1;biber-1.bcf)
+    command: biber biber-1.bcf
+  - id: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=biber-1
+      pkg-biblatex.tex
+  - id: Biber(build;execute;biber-2;output/biber-2.bcf)
+    command: biber output/biber-2.bcf
+  - id: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=biber-2 pkg-biblatex.tex
+  - id: BibTeX(build;execute;bibtex-1;bibtex-1.aux-ParsedLaTeXAuxilary)
+    command: bibtex bibtex-1.aux
+  - id: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=bibtex-1
+      pkg-biblatex.tex
+  - id: BibTeX(build;execute;bibtex-2;output/bibtex-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/bibtex-2.aux
+  - id: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=bibtex-2 pkg-biblatex.tex
+  - id: Biber(build;execute;biber-1;biber-1.bcf)
+    command: biber biber-1.bcf
+  - id: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=biber-1
+      pkg-biblatex.tex
+  - id: Biber(build;execute;biber-2;output/biber-2.bcf)
+    command: biber output/biber-2.bcf
+  - id: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=biber-2 pkg-biblatex.tex
+  - id: BibTeX(build;execute;bibtex-1;bibtex-1.aux-ParsedLaTeXAuxilary)
+    command: bibtex bibtex-1.aux
+  - id: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=bibtex-1
+      pkg-biblatex.tex
+  - id: BibTeX(build;execute;bibtex-2;output/bibtex-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/bibtex-2.aux
+  - id: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=bibtex-2 pkg-biblatex.tex
+  - id: Biber(build;execute;biber-1;biber-1.bcf)
+    command: biber biber-1.bcf
+  - id: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=biber-1
+      pkg-biblatex.tex
+  - id: Biber(build;execute;biber-2;output/biber-2.bcf)
+    command: biber output/biber-2.bcf
+  - id: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=biber-2 pkg-biblatex.tex
+log:
   - severity: warning
     name: pdfTeX
     type: Package biblatex

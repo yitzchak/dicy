@@ -18,6 +18,10 @@ export default class LaTeX extends Rule {
   }
 
   async addInputFileActions (file: File): Promise<void> {
+    if (!this.constructor.commands.has(this.command) || !this.constructor.phases.has(this.phase)) {
+      return
+    }
+
     switch (file.type) {
       case 'ParsedLaTeXFileListing':
         if (file.hasBeenUpdated) {

@@ -6,7 +6,7 @@ import BuildState from './BuildState'
 import File from './File'
 import Rule from './Rule'
 
-import type { Message, ResolvePathOptions } from './types'
+import type { Command, Message, Phase, ResolvePathOptions } from './types'
 
 export default class BuildStateConsumer {
   buildState: BuildState
@@ -41,6 +41,14 @@ export default class BuildStateConsumer {
 
   get rootPath (): string {
     return this.buildState.rootPath
+  }
+
+  get phase (): Phase {
+    return this.buildState.phase
+  }
+
+  get command (): Command {
+    return this.buildState.command
   }
 
   normalizePath (filePath: string) {
@@ -91,10 +99,63 @@ export default class BuildStateConsumer {
     if ((severity === 'info' && message.severity === 'trace') ||
       (severity === 'warning' && (message.severity === 'trace' || message.severity === 'info')) ||
       (severity === 'error' && message.severity !== 'error')) return
-    this.buildState.emit('message', message)
+    this.emit('log', message)
   }
 
   getDistance (x: Rule, y: Rule): ?number {
     return this.buildState.getDistance(x, y)
+  }
+
+  // EventEmmitter proxy
+  addListener (eventName: string, listener: Function) {
+    return this.buildState.addListener(eventName, listener)
+  }
+
+  emit (eventName: string, ...args: Array<any>) {
+    return this.buildState.emit(eventName, ...args)
+  }
+
+  eventNames () {
+    return this.buildState.eventNames()
+  }
+
+  getMaxListeners () {
+    return this.buildState.eventNames()
+  }
+
+  listenerCount (eventName: string) {
+    return this.buildState.listenerCount(eventName)
+  }
+
+  listeners (eventName: string) {
+    return this.buildState.listeners(eventName)
+  }
+
+  on (eventName: string, listener: Function) {
+    return this.buildState.on(eventName, listener)
+  }
+
+  once (eventName: string, listener: Function) {
+    return this.buildState.once(eventName, listener)
+  }
+
+  prependListener (eventName: string, listener: Function) {
+    return this.buildState.prependListener(eventName, listener)
+  }
+
+  prependOnceListener (eventName: string, listener: Function) {
+    return this.buildState.prependOnceListener(eventName, listener)
+  }
+
+  removeAllListeners (eventName: string) {
+    return this.buildState.removeAllListeners(eventName)
+  }
+
+  removeListener (eventName: string, listener: Function) {
+    return this.buildState.removeListener(eventName, listener)
+  }
+
+  setMaxListeners (n: number) {
+    return this.buildState.setMaxListeners(n)
   }
 }

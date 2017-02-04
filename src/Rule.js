@@ -78,7 +78,9 @@ export default class Rule extends BuildStateConsumer {
   async initialize () {}
 
   async addInputFileActions (file: File, action: Action = 'run'): Promise<void> {
-    if (file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
+    if (this.constructor.commands.has(this.command) &&
+      this.constructor.phases.has(this.phase) &&
+      file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
       this.addAction(file, action)
     }
   }
@@ -138,10 +140,9 @@ export default class Rule extends BuildStateConsumer {
     const options = this.constructProcessOptions()
     const command = commandJoin(this.constructCommand())
 
-    this.log({
-      severity: 'info',
-      name: this.id,
-      text: `Executing \`${command}\``
+    this.emit('command', {
+      id: this.id,
+      command
     })
     const { stdout, stderr, error } = await execute(command, options)
     if (error) {
@@ -256,12 +257,10 @@ export default class Rule extends BuildStateConsumer {
 
   actionTrace (action: Action) {
     const files: ?Set<File> = this.actions.get(action)
-    const triggers = files ? Array.from(files.values()).map(file => file.normalizedFilePath).join(', ') : ''
-    const triggerText = triggers ? ` triggered by updates to ${triggers}` : ''
-    this.log({
-      severity: 'trace',
-      name: this.id,
-      text: `Evaluating ${action} action${triggerText}`
+    this.emit('action', {
+      action,
+      id: this.id,
+      triggers: files ? Array.from(files).map(file => file.normalizedFilePath) : []
     })
   }
 }

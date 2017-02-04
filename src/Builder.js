@@ -128,8 +128,6 @@ export default class Builder extends BuildStateConsumer {
       await this.runPhase(phase, command)
     }
 
-    // if (command === 'build') await this.saveStateCache()
-
     return Array.from(this.buildState.rules.values()).every(rule => rule.success)
   }
 
@@ -144,7 +142,7 @@ export default class Builder extends BuildStateConsumer {
 
     await this.analyzePhase()
 
-    while (evaluationCount < 10 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
+    while (evaluationCount < 20 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
       Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
       await this.analyzeFiles()
       await this.evaluate()

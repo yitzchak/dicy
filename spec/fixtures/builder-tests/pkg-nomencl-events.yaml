@@ -1,4 +1,35 @@
-messages:
+command:
+  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
+  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-nomencl.tex
+  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
+  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-nomencl.tex
+  - id: MakeIndex(build;execute;job-1;job-1.nlo)
+    command: makeindex -t job-1.nlg -o job-1.nls -s nomencl.ist job-1.nlo
+  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
+  - id: MakeIndex(build;execute;job-2;output/job-2.nlo)
+    command: >-
+      makeindex -t output/job-2.nlg -o output/job-2.nls -s nomencl.ist
+      output/job-2.nlo
+  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-nomencl.tex
+  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
+  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-nomencl.tex
+log:
   - severity: error
     name: makeindex
     text: Unknown specifier lethead_prefix.

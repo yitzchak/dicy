@@ -1,1 +1,26 @@
-messages: []
+command:
+  - id: LaTeX(build;execute;job-1;test-name with spaces.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=job-1 'test-name with
+      spaces.tex'
+  - id: LaTeX(build;execute;job-2;test-name with spaces.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 'test-name with spaces.tex'
+  - id: LaTeX(build;execute;job-1;test-name with spaces.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=job-1 'test-name with
+      spaces.tex'
+  - id: LaTeX(build;execute;job-2;test-name with spaces.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 'test-name with spaces.tex'
+  - id: LaTeX(build;execute;job-1;test-name with spaces.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=job-1 'test-name with
+      spaces.tex'
+  - id: LaTeX(build;execute;job-2;test-name with spaces.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 'test-name with spaces.tex'
+log: []

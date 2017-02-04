@@ -13,15 +13,14 @@ export default class Biber extends Rule {
   }
 
   async addInputFileActions (file: File): Promise<void> {
-    switch (file.type) {
-      case 'ParsedLaTeXLog':
-        if (file.value && file.value.messages.some((message: Message) => /run Biber/.test(message.text))) {
-          this.addAction(file)
-        }
-        break
-      default:
-        await super.addInputFileActions(file)
-        break
+    if (this.constructor.commands.has(this.command) &&
+      this.constructor.phases.has(this.phase) &&
+      file.type === 'ParsedLaTeXLog') {
+      if (file.value && file.value.messages.some((message: Message) => /run Biber/.test(message.text))) {
+        this.addAction(file)
+      }
+    } else {
+      await super.addInputFileActions(file)
     }
   }
 

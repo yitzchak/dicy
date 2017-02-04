@@ -97,10 +97,10 @@ IndexStyleFile:
   fileName: !!js/regexp /\.ist$/i
   hash: true
 AcronymControlFile:
-  fileName: !!js/regexp /\.alo$/i
+  fileName: !!js/regexp /\.acn$/i
   hash: true
 AcronymListing:
-  fileName: !!js/regexp /\.als$/i
+  fileName: !!js/regexp /\.acr$/i
   hash: true
 GlossaryControlFile:
   fileName: !!js/regexp /\.glo$/i

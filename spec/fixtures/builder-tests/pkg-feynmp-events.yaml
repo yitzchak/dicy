@@ -1,1 +1,10 @@
-messages: []
+command:
+  - id: LaTeX(build;execute;;pkg-feynmp.tex)
+    command: pdflatex -interaction=batchmode -recorder pkg-feynmp.tex
+  - id: LaTeX(build;execute;;pkg-feynmp.tex)
+    command: pdflatex -interaction=batchmode -recorder pkg-feynmp.tex
+  - id: MetaPost(build;execute;;pkg-feynmp-mpost.mp)
+    command: mpost pkg-feynmp-mpost.mp
+  - id: LaTeX(build;execute;;pkg-feynmp.tex)
+    command: pdflatex -interaction=batchmode -recorder pkg-feynmp.tex
+log: []

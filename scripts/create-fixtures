@@ -18,3 +18,11 @@ cp output/biber.fls LaTeXFileListing.fls
 cp output/biber.log LaTeXLog.log
 
 rm -rf output
+
+cd ../builder-tests
+
+for file in *.tex; do
+  echo "Creating event archive for $file"
+  ouroboros build --save-events=command,log "$file" &>/dev/null
+  rm -rf *-cache.yaml output job-* bibtex-* biber-* *.1 *.log *.mp *.t1 *.aux *.fls *.pdf *.ps *.dvi
+done

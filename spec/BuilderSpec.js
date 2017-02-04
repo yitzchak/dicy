@@ -25,23 +25,39 @@ describe('Builder', () => {
   describe('proper behavior of build command', () => {
     for (const name of tests) {
       it(`verifies that ${name} support works`, async (done) => {
+        let events = { }
+        const log = []
+        const command = []
+        const action = []
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
+
+        // Initialize the builder and listen for messages
         builder = await Builder.create(filePath)
+        builder
+          .on('log', message => { log.push(message) })
+          .on('action', event => { action.push(event) })
+          .on('command', event => { command.push(event) })
+
+        // Load the event archive
         const eventFilePath = builder.resolvePath('-events.yaml', {
           absolute: true,
           useJobName: false,
           useOutputDirectory: false
         })
-        const messages = []
-        let events = { messages: [] }
         if (await fs.exists(eventFilePath)) {
           const contents = await fs.readFile(eventFilePath, { encoding: 'utf-8' })
           events = yaml.safeLoad(contents)
         }
-        builder.buildState.on('message', message => { messages.push(message) })
+
+        // Run the builder
         expect(await builder.run('build')).toBeTruthy()
+
+        // Check the received messages
+        if ('action' in events) expect(action).toEqual(events.action)
+        if ('command' in events) expect(command).toEqual(events.command)
         // $FlowIgnore
-        expect(messages).toEqualMessages(events.messages)
+        if ('log' in events) expect(log).toEqualMessages(events.log)
+
         done()
       }, ASYNC_TIMEOUT)
     }

@@ -1,1 +1,38 @@
-messages: []
+command:
+  - id: LaTeX(build;execute;job-1;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=job-1
+      pkg-glossaries.tex
+  - id: LaTeX(build;execute;job-2;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-glossaries.tex
+  - id: LaTeX(build;execute;job-1;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=job-1
+      pkg-glossaries.tex
+  - id: LaTeX(build;execute;job-2;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-glossaries.tex
+  - id: MakeGlossaries(build;execute;job-1;job-1.glo)
+    command: makeglossaries job-1
+  - id: LaTeX(build;execute;job-1;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=job-1
+      pkg-glossaries.tex
+  - id: MakeGlossaries(build;execute;job-2;output/job-2.glo)
+    command: makeglossaries -d output job-2
+  - id: LaTeX(build;execute;job-2;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-glossaries.tex
+  - id: LaTeX(build;execute;job-1;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -jobname=job-1
+      pkg-glossaries.tex
+  - id: LaTeX(build;execute;job-2;pkg-glossaries.tex)
+    command: >-
+      pdflatex -interaction=batchmode -recorder -output-directory=output
+      -jobname=job-2 pkg-glossaries.tex
+log: []
