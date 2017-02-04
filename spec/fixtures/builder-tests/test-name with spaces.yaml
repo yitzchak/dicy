@@ -2,32 +2,4 @@ jobs:
   job-1: {}
   job-2:
     outputDirectory: output
-meta:
-  evaluations:
-    - LoadCache(load;initialize;)
-    - ParseOptionsFile(load;execute;)
-    - ParseLaTeXMagic(load;execute;;test-name with spaces.tex)
-    - ApplyOptions(load;execute;)
-    - AssignJobNames(load;finalize;job-1)
-    - AssignJobNames(load;finalize;job-2)
-    - CreateOutputTree(build;initialize;job-1)
-    - CreateOutputTree(build;initialize;job-2)
-    - LaTeX(build;execute;job-1;test-name with spaces.tex)
-    - LaTeX(build;execute;job-2;test-name with spaces.tex)
-    - ParseLaTeXAuxilary(build;execute;job-1;job-1.aux)
-    - ParseLaTeXFileListing(build;execute;job-1;job-1.fls)
-    - ParseLaTeXLog(build;execute;job-1;job-1.log)
-    - LaTeX(build;execute;job-1;test-name with spaces.tex)
-    - ParseLaTeXAuxilary(build;execute;job-2;output/job-2.aux)
-    - ParseLaTeXFileListing(build;execute;job-2;output/job-2.fls)
-    - ParseLaTeXLog(build;execute;job-2;output/job-2.log)
-    - LaTeX(build;execute;job-2;test-name with spaces.tex)
-    - ParseLaTeXFileListing(build;execute;job-1;job-1.fls)
-    - ParseLaTeXLog(build;execute;job-1;job-1.log)
-    - LaTeX(build;execute;job-1;test-name with spaces.tex)
-    - ParseLaTeXFileListing(build;execute;job-2;output/job-2.fls)
-    - ParseLaTeXLog(build;execute;job-2;output/job-2.log)
-    - LaTeX(build;execute;job-2;test-name with spaces.tex)
-    - SaveCache(build;finalize;)
-    - ReportLogMessages(build;finalize;job-1;job-1.log-ParsedLaTeXLog)
-    - ReportLogMessages(build;finalize;job-2;output/job-2.log-ParsedLaTeXLog)
+reportLogMessages: true

@@ -6,11 +6,10 @@ import yaml from 'js-yaml'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, FileCache, Phase } from '../types'
+import type { Command, FileCache } from '../types'
 
 export default class SaveCache extends Rule {
-  static phases: Set<Phase> = new Set(['finalize'])
-  static commands: Set<Command> = new Set(['build'])
+  static commands: Set<Command> = new Set(['save'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
 
@@ -29,8 +28,7 @@ export default class SaveCache extends Rule {
       filePath: this.filePath,
       options: this.options,
       files: {},
-      rules: {},
-      evaluations: []
+      rules: {}
     }
 
     for (const file: File of this.buildState.files.values()) {
@@ -55,8 +53,6 @@ export default class SaveCache extends Rule {
         outputs: Array.from(rule.outputs.keys())
       }
     }
-
-    state.evaluations = this.buildState.evaluations
 
     const serialized = yaml.safeDump(state, { skipInvalid: true })
     await fs.writeFile(this.cacheFilePath, serialized)

@@ -125,7 +125,6 @@ export default class Rule extends BuildStateConsumer {
     this.actions.clear()
     await this.updateOutputs()
     this.success = success
-    this.buildState.evaluations.push(this.id)
 
     return success
   }

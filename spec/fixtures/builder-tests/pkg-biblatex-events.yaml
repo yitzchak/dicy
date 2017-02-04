@@ -1,0 +1,41 @@
+messages:
+  - severity: warning
+    name: pdfTeX
+    type: Package biblatex
+    text: |-
+      Using fall-back BibTeX(8) backend:
+      functionality may be reduced/unavailable.
+    log:
+      file: bibtex-1.log
+      start: 216
+      end: 217
+  - severity: warning
+    name: pdfTeX
+    type: Package biblatex
+    text: |-
+      Using fall-back BibTeX(8) backend:
+      functionality may be reduced/unavailable.
+    log:
+      file: output/bibtex-2.log
+      start: 216
+      end: 217
+  - severity: warning
+    name: pdfTeX
+    type: Package biblatex
+    text: |-
+      Using fall-back BibTeX(8) backend:
+      functionality may be reduced/unavailable.
+    log:
+      file: bibtex-1.log
+      start: 216
+      end: 217
+  - severity: warning
+    name: pdfTeX
+    type: Package biblatex
+    text: |-
+      Using fall-back BibTeX(8) backend:
+      functionality may be reduced/unavailable.
+    log:
+      file: output/bibtex-2.log
+      start: 216
+      end: 217

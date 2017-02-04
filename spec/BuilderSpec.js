@@ -3,29 +3,17 @@
 import 'babel-polyfill'
 import path from 'path'
 import fs from 'fs-promise'
+import yaml from 'js-yaml'
 
 import { Builder } from '../src/main'
 import { cloneFixtures, customMatchers } from './helpers'
-
-import type { Message } from '../src/types'
 
 const ASYNC_TIMEOUT = 40000
 
 describe('Builder', () => {
   let builder: Builder
-  let messages: Array<Message>
   let fixturesPath: string
   let tests: Array<string> = fs.readdirSync(path.join(__dirname, 'fixtures', 'builder-tests')).filter(name => /\.(tex|Rnw)$/i.test(name))
-
-  async function initializeBuilder (filePath: string) {
-    const options = {
-      ignoreCache: true,
-      severity: 'error',
-      reportLogMessages: true
-    }
-    messages = []
-    builder = await Builder.create(path.resolve(fixturesPath, filePath), options, message => { messages.push(message) })
-  }
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()
@@ -37,14 +25,23 @@ describe('Builder', () => {
   describe('proper behavior of build command', () => {
     for (const name of tests) {
       it(`verifies that ${name} support works`, async (done) => {
-        await initializeBuilder(path.join('builder-tests', name))
-        const meta = builder.buildState.options.meta || {}
+        const filePath = path.resolve(fixturesPath, 'builder-tests', name)
+        builder = await Builder.create(filePath)
+        const eventFilePath = builder.resolvePath('-events.yaml', {
+          absolute: true,
+          useJobName: false,
+          useOutputDirectory: false
+        })
+        const messages = []
+        let events = { messages: [] }
+        if (await fs.exists(eventFilePath)) {
+          const contents = await fs.readFile(eventFilePath, { encoding: 'utf-8' })
+          events = yaml.safeLoad(contents)
+        }
+        builder.buildState.on('message', message => { messages.push(message) })
         expect(await builder.run('build')).toBeTruthy()
         // $FlowIgnore
-        expect(messages).toEqualMessages(meta.messages || [])
-        if (meta.evaluations) {
-          expect(builder.buildState.evaluations).toEqual(meta.evaluations)
-        }
+        expect(messages).toEqualMessages(events.messages)
         done()
       }, ASYNC_TIMEOUT)
     }

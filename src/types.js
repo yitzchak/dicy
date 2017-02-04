@@ -53,7 +53,7 @@ export type Message = {
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 
-export type Command = 'build' | 'load' | 'report'
+export type Command = 'build' | 'load' | 'report' | 'save'
 
 export type Log = (message: Message) => void
 
@@ -64,4 +64,8 @@ export type Option = {
   values?: Array<any>,
   aliases?: Array<string>,
   commands: Array<string>
+}
+
+export type Test = {
+  messages: Array<Message>
 }

@@ -19,7 +19,10 @@ export default class ApplyOptions extends Rule {
 
   async run () {
     for (const file: File of this.inputs.values()) {
-      if (file.value) Object.assign(this.buildState.options, file.value)
+      if (file.value) {
+        delete file.value.test
+        Object.assign(this.buildState.options, file.value)
+      }
     }
     return true
   }

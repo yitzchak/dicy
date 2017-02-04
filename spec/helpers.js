@@ -39,27 +39,27 @@ export const customMatchers = {
   toEqualMessages (util: Object, customEqualityTesters: Object) {
     return {
       compare: function (actual: Array<Message>, expected: Array<Message>) {
-        const actualFlags: Array<Object> = actual.map(message => {
-          return { message, found: false }
-        })
-        const expectedFlags: Array<Object> = expected.map(message => {
-          return { message, found: false }
-        })
+        const actualFound = []
+        const actualMissing = []
+        const expectedMissing = []
+        const expectedFound = []
 
-        for (const actualFlag of actualFlags) {
-          for (const expectedFlag of expectedFlags) {
-            if (_.isMatch(actualFlag.message, expectedFlag.message)) {
-              expectedFlag.found = true
-              actualFlag.found = true
+        for (let i = 0, j = 0; i < actual.length; i++) {
+          let found = false
+          for (; j < expected.length; j++) {
+            if (_.isMatch(actual[i], expected[j])) {
+              actualFound.push(actual[i])
+              expectedFound.push(expected[j])
+              found = true
               break
+            } else {
+              expected.push(expected[j])
             }
           }
+          if (!found) actualMissing.push(actual[i])
         }
 
-        const pass = actualFlags.every(flag => flag.found) && expectedFlags.every(flag => flag.found)
-        const actualFound = actualFlags.filter(flag => flag.found).map(flag => flag.message)
-        const actualMissing = actualFlags.filter(flag => !flag.found).map(flag => flag.message)
-        const expectedMissing = expectedFlags.filter(flag => !flag.found).map(flag => flag.message)
+        const pass = actualMissing.length === 0 && expectedMissing.length === 0
         const message = pass
           ? constructMessage(actualFound, expectedMissing)
           : constructMessage(actualMissing, [])

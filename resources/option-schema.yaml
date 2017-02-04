@@ -49,6 +49,14 @@ outputFormat:
   defaultValue: pdf
   commands:
     - build
+reportLogMessages:
+  aliases:
+    - r
+  description: display filtered log messages
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
 severity:
   aliases:
     - s
@@ -74,14 +82,6 @@ shellEscape:
     - build
 synctex:
   description: generate SyncTeX annotations
-  type: boolean
-  defaultValue: false
-  commands:
-    - build
-reportLogMessages:
-  aliases:
-    - r
-  description: display filtered log messages
   type: boolean
   defaultValue: false
   commands:

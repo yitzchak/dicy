@@ -6,6 +6,8 @@ import _ from 'lodash'
 import chalk from 'chalk'
 import path from 'path'
 import program from 'commander'
+import fs from 'fs-promise'
+import yaml from 'js-yaml'
 
 import { Builder } from './main'
 
@@ -27,10 +29,13 @@ function cloneOptions (options) {
 }
 
 const command = async (inputs, env) => {
-  const options = cloneOptions(env.opts())
+  const { saveEvents, ...options } = cloneOptions(env.opts())
 
   for (const filePath of inputs) {
-    const builder = await Builder.create(path.resolve(filePath), options, (message) => {
+    const messages = []
+    const builder = await Builder.create(path.resolve(filePath), options)
+    builder.buildState.on('message', message => {
+      if (saveEvents) messages.push(message)
       const nameText = message.name ? `[${message.name}] ` : ''
       const typeText = message.type ? `${message.type}: ` : ''
       const text = `${nameText}${typeText}${message.text.replace('\n', ' ')}`
@@ -50,6 +55,19 @@ const command = async (inputs, env) => {
       }
     })
     await builder.run(env.name())
+    await builder.run('save')
+
+    if (saveEvents) {
+      const eventFilePath = builder.resolvePath('-events.yaml', {
+        absolute: true,
+        useJobName: false,
+        useOutputDirectory: false
+      })
+      const events = { messages }
+
+      const serialized = yaml.safeDump(events, { skipInvalid: true })
+      await fs.writeFile(eventFilePath, serialized)
+    }
   }
 }
 
@@ -86,6 +104,9 @@ Builder.getOptionDefinitions().then(definitions => {
           break
       }
     }
+
+    pc = pc.option('--save-events', 'Save received events for test usage.')
+
     return pc
   }
 

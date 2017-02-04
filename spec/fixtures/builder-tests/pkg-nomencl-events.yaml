@@ -1,0 +1,73 @@
+messages:
+  - severity: error
+    name: makeindex
+    text: Unknown specifier lethead_prefix.
+    type: Input style
+    log:
+      file: job-1.nlg
+      start: 3
+      end: 4
+    source:
+      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
+      start: .nan
+      end: .nan
+  - severity: error
+    name: makeindex
+    text: Unknown specifier lethead_suffix.
+    type: Input style
+    log:
+      file: job-1.nlg
+      start: 5
+      end: 6
+    source:
+      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
+      start: .nan
+      end: .nan
+  - severity: error
+    name: makeindex
+    text: Unknown specifier lethead_flag.
+    type: Input style
+    log:
+      file: job-1.nlg
+      start: 7
+      end: 8
+    source:
+      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
+      start: .nan
+      end: .nan
+  - severity: error
+    name: makeindex
+    text: Unknown specifier lethead_prefix.
+    type: Input style
+    log:
+      file: output/job-2.nlg
+      start: 3
+      end: 4
+    source:
+      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
+      start: .nan
+      end: .nan
+  - severity: error
+    name: makeindex
+    text: Unknown specifier lethead_suffix.
+    type: Input style
+    log:
+      file: output/job-2.nlg
+      start: 5
+      end: 6
+    source:
+      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
+      start: .nan
+      end: .nan
+  - severity: error
+    name: makeindex
+    text: Unknown specifier lethead_flag.
+    type: Input style
+    log:
+      file: output/job-2.nlg
+      start: 7
+      end: 8
+    source:
+      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
+      start: .nan
+      end: .nan

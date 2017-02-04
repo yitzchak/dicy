@@ -1,28 +1,28 @@
 /* @flow */
 
+import EventEmitter from 'events'
 import path from 'path'
 import File from './File'
 import Rule from './Rule'
-import type { Command, Log, Message, Option, Phase } from './types'
 
-export default class BuildState {
+import type { Command, Option, Phase } from './types'
+
+export default class BuildState extends EventEmitter {
   filePath: string
   rootPath: string
   command: Command
   phase: Phase
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
-  evaluations: Array<string> = []
   options: Object = {}
   optionSchema: Map<string, Option> = new Map()
   cache: Object
-  log: Log
   distances: Map<string, number> = new Map()
 
-  constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}, log: Log = (message: Message): void => {}) {
+  constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}) {
+    super()
     this.filePath = path.basename(filePath)
     this.rootPath = path.dirname(filePath)
-    this.log = log
     for (const name in schema) {
       const option = schema[name]
       this.optionSchema.set(name, option)
@@ -31,8 +31,8 @@ export default class BuildState {
     Object.assign(this.options, options)
   }
 
-  static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}, log: Log = (message: Message): void => {}) {
-    const buildState = new BuildState(filePath, options, schema, log)
+  static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}) {
+    const buildState = new BuildState(filePath, options, schema)
 
     await buildState.getFile(filePath)
 
