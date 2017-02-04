@@ -43,12 +43,32 @@ export default class BuildStateConsumer {
     return this.buildState.rootPath
   }
 
+  get files (): Iterator<File> {
+    return this.buildState.files.values()
+  }
+
+  get rules (): Iterator<Rule> {
+    return this.buildState.rules.values()
+  }
+
   get phase (): Phase {
     return this.buildState.phase
   }
 
+  set phase (value: Phase) {
+    this.buildState.phase = value
+  }
+
   get command (): Command {
     return this.buildState.command
+  }
+
+  set command (value: Command) {
+    this.buildState.command = value
+  }
+
+  async addRule (rule: Rule): Promise<void> {
+    await this.buildState.addRule(rule)
   }
 
   normalizePath (filePath: string) {
@@ -102,8 +122,16 @@ export default class BuildStateConsumer {
     this.emit('log', message)
   }
 
+  calculateDistances (): void {
+    this.buildState.calculateDistances()
+  }
+
   getDistance (x: Rule, y: Rule): ?number {
     return this.buildState.getDistance(x, y)
+  }
+
+  isConnected (x: Rule, y: Rule): boolean {
+    return this.buildState.isConnected(x, y)
   }
 
   // EventEmmitter proxy

@@ -38,7 +38,7 @@ export default class Builder extends BuildStateConsumer {
       for (const jobName of jobNames) {
         const rule = await ruleClass.analyzePhase(this.buildState, jobName)
         if (rule) {
-          await this.buildState.addRule(rule)
+          await this.addRule(rule)
         }
       }
     }
@@ -46,7 +46,7 @@ export default class Builder extends BuildStateConsumer {
 
   async analyzeFiles () {
     while (true) {
-      const file: ?File = Array.from(this.buildState.files.values()).find(file => !file.analyzed)
+      const file: ?File = Array.from(this.files).find(file => !file.analyzed)
 
       if (!file) break
 
@@ -55,7 +55,7 @@ export default class Builder extends BuildStateConsumer {
         for (const jobName of jobNames) {
           const rule = await ruleClass.analyzeFile(this.buildState, jobName, file)
           if (rule) {
-            await this.buildState.addRule(rule)
+            await this.addRule(rule)
           }
         }
       }
@@ -63,7 +63,7 @@ export default class Builder extends BuildStateConsumer {
       file.analyzed = true
     }
 
-    this.buildState.calculateDistances()
+    this.calculateDistances()
   }
 
   async evaluateRule (rule: Rule) {
@@ -75,13 +75,13 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async evaluate () {
-    const rules: Array<Rule> = Array.from(this.buildState.rules.values()).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(this.buildState.phase))
+    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(this.phase))
     const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
       let notUsed = true
       for (const ruleGroup of ruleGroups) {
-        if (this.buildState.distances.has(`${ruleGroup[0].id} ${rule.id}`) || this.buildState.distances.has(`${rule.id} ${ruleGroup[0].id}`)) {
+        if (this.isConnected(ruleGroup[0], rule)) {
           ruleGroup.push(rule)
           notUsed = false
           break
@@ -115,7 +115,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async checkUpdates () {
-    for (const file of this.buildState.files.values()) {
+    for (const file of this.files) {
       for (const rule of file.rules.values()) {
         await rule.addInputFileActions(file)
       }
@@ -128,13 +128,13 @@ export default class Builder extends BuildStateConsumer {
       await this.runPhase(phase, command)
     }
 
-    return Array.from(this.buildState.rules.values()).every(rule => rule.success)
+    return Array.from(this.rules).every(rule => rule.success)
   }
 
   async runPhase (phase: Phase, command: Command): Promise<void> {
-    this.buildState.command = command
-    this.buildState.phase = phase
-    for (const file of this.buildState.files.values()) {
+    this.command = command
+    this.phase = phase
+    for (const file of this.files) {
       file.hasBeenUpdated = file.hasBeenUpdatedCache
       file.analyzed = false
     }
@@ -142,8 +142,8 @@ export default class Builder extends BuildStateConsumer {
 
     await this.analyzePhase()
 
-    while (evaluationCount < 20 && (Array.from(this.buildState.files.values()).some(file => !file.analyzed) ||
-      Array.from(this.buildState.rules.values()).some(rule => rule.needsEvaluation))) {
+    while (evaluationCount < 20 && (Array.from(this.files).some(file => !file.analyzed) ||
+      Array.from(this.rules).some(rule => rule.needsEvaluation))) {
       await this.analyzeFiles()
       await this.evaluate()
       evaluationCount++

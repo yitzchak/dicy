@@ -170,4 +170,8 @@ export default class BuildState extends EventEmitter {
   getDistance (x: Rule, y: Rule): ?number {
     return this.distances.get(`${x.id} ${y.id}`)
   }
+
+  isConnected (x: Rule, y: Rule): boolean {
+    return this.distances.has(`${x.id} ${y.id}`) || this.distances.has(`${y.id} ${x.id}`)
+  }
 }

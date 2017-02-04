@@ -31,7 +31,7 @@ export default class SaveCache extends Rule {
       rules: {}
     }
 
-    for (const file: File of this.buildState.files.values()) {
+    for (const file: File of this.files) {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
         hash: file.hash,
@@ -46,7 +46,7 @@ export default class SaveCache extends Rule {
       state.files[file.normalizedFilePath] = fileCache
     }
 
-    for (const rule of this.buildState.rules.values()) {
+    for (const rule of this.rules) {
       state.rules[rule.id] = {
         timeStamp: rule.timeStamp,
         inputs: Array.from(rule.inputs.keys()),

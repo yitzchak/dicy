@@ -70,7 +70,7 @@ export default class LaTeX extends Rule {
 
     if (this.options.outputDirectory) {
       const paths = [
-        path.resolve(this.buildState.rootPath, this.options.outputDirectory),
+        path.resolve(this.rootPath, this.options.outputDirectory),
         ''
       ]
 
