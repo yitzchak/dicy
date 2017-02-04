@@ -47,7 +47,7 @@ export const customMatchers = {
         for (let i = 0, j = 0; i < actual.length; i++) {
           let found = false
           for (; j < expected.length; j++) {
-            if (_.isMatch(actual[i], expected[j])) {
+            if (_.isMatchWith(actual[i], expected[j], (objValue, srcValue, key) => key === 'file' ? true : undefined)) {
               actualFound.push(actual[i])
               expectedFound.push(expected[j])
               found = true
