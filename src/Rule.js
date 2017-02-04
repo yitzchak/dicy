@@ -163,7 +163,10 @@ export default class Rule extends BuildStateConsumer {
     if (!file) {
       file = await this.getFile(filePath)
       if (!file) return
-      this.outputs.set(filePath, file)
+      if (!this.outputs.has(filePath)) {
+        this.outputs.set(filePath, file)
+        this.emit('file', { type: 'output-added', rule: this.id, file: filePath })
+      }
     }
 
     return file
@@ -182,7 +185,9 @@ export default class Rule extends BuildStateConsumer {
 
   async updateOutputs () {
     for (const file: File of this.outputs.values()) {
-      await file.update()
+      if (await file.update()) {
+        this.emit('file', { type: 'changed', file })
+      }
     }
   }
 
@@ -193,9 +198,12 @@ export default class Rule extends BuildStateConsumer {
     if (!file) {
       file = await this.getFile(filePath)
       if (!file) return
-      // $FlowIgnore
-      await file.addRule(this)
-      this.inputs.set(filePath, file)
+      if (!this.inputs.has(filePath)) {
+        // $FlowIgnore
+        await file.addRule(this)
+        this.inputs.set(filePath, file)
+        this.emit('file', { type: 'input-added', rule: this.id, file: filePath })
+      }
     }
 
     return file

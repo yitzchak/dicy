@@ -66,6 +66,9 @@ const command = async (inputs, env) => {
         if (saveEvents.includes('command')) events.command.push({ id, command })
         console.log(`[${id}] Executing \`${command}\``)
       })
+      .on('file', event => {
+        if (saveEvents.includes('file')) events.file.push(event)
+      })
     await builder.run(env.name())
     await builder.run('save')
 
