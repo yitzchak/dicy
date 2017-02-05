@@ -2,10 +2,11 @@
 
 import Rule from '../Rule'
 
-import type { Message } from '../types'
+import type { Command, Message } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['BibTeXLog'])
+  static commands: Set<Command> = new Set(['build', 'report'])
 
   async initialize () {
     this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBibTeXLog`)

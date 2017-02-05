@@ -98,6 +98,15 @@ export default class BuildStateConsumer {
     return file
   }
 
+  async getFiles (filePaths: Array<string>): Promise<Array<File>> {
+    const files: Array<File> = []
+    for (const filePath of filePaths) {
+      const file = await this.getFile(filePath)
+      if (file) files.push(file)
+    }
+    return files
+  }
+
   error (text: string) {
     this.log({ severity: 'error', text })
   }
@@ -132,6 +141,11 @@ export default class BuildStateConsumer {
 
   isConnected (x: Rule, y: Rule): boolean {
     return this.buildState.isConnected(x, y)
+  }
+
+  async getResolvedFile (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
+    const filePath = this.resolvePath(ext, options)
+    return await this.getFile(filePath)
   }
 
   // EventEmmitter proxy

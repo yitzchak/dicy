@@ -12,8 +12,10 @@ export default class RestoreCache extends Rule {
   static ignoreJobName: boolean = true
 
   async run () {
-    for (const filePath in this.buildState.cache.files) {
-      await this.getOutput(filePath)
+    if (this.buildState.cache && this.buildState.cache.files) {
+      for (const filePath in this.buildState.cache.files) {
+        await this.getOutput(filePath)
+      }
     }
     return true
   }

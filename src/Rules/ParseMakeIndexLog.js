@@ -2,12 +2,13 @@
 
 import Rule from '../Rule'
 
-import type { Message } from '../types'
+import type { Command, Message } from '../types'
 
 const MESSAGE_PATTERN = /^\s+--\s*(.*)$/
 
 export default class ParseMakeIndexLog extends Rule {
   static fileTypes: Set<string> = new Set(['MakeIndexLog'])
+  static commands: Set<Command> = new Set(['build', 'report'])
 
   async initialize () {
     this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedMakeIndexLog`)
