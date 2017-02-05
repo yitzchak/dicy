@@ -72,7 +72,7 @@ const command = async (inputs, env) => {
     await builder.run(env.name())
     await builder.run('save')
 
-    if (saveEvents) {
+    if (saveEvents.length !== 0) {
       const eventFilePath = builder.resolvePath('-events.yaml', {
         absolute: true,
         useJobName: false,

@@ -84,6 +84,7 @@ export default class LaTeX extends Rule {
   constructCommand () {
     const args = [
       this.options.engine,
+      '-file-line-error',
       '-interaction=batchmode',
       '-recorder'
     ]

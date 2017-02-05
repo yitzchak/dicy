@@ -42,26 +42,34 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
-      names: ['file', 'line', 'type', 'text'],
-      patterns: [/^(?:(.*):(\d+):|!)(?: (.+) Error:)? (.+?)\.?$/],
+      names: ['type', 'text'],
+      patterns: [/^! (.+) Error: (.+?)\.?$/],
       evaluate: (reference, groups) => {
-        const message: Message = {
+        messages.push({
           severity: 'error',
           name,
           type: groups.type,
           text: groups.text,
           log: reference
-        }
-
-        if (groups.file) {
-          const line: number = parseInt(groups.line, 10)
-          message.source = {
+        })
+      }
+    }, {
+      names: ['file', 'line', 'type', 'text'],
+      patterns: [/^(.*):(\d+): (.+) Error: (.+?)\.?$/],
+      evaluate: (reference, groups) => {
+        const line: number = parseInt(groups.line, 10)
+        messages.push({
+          severity: 'error',
+          name,
+          type: groups.type,
+          text: groups.text,
+          log: reference,
+          source: {
             file: groups.file,
             start: line,
             end: line
           }
-          messages.push(message)
-        }
+        })
       }
     }, {
       names: ['type', 'severity', 'text', 'line'],
