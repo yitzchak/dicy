@@ -119,7 +119,7 @@ export default class BuildStateConsumer {
     if ((severity === 'info' && message.severity === 'trace') ||
       (severity === 'warning' && (message.severity === 'trace' || message.severity === 'info')) ||
       (severity === 'error' && message.severity !== 'error')) return
-    this.emit('log', message)
+    this.emit('log', { type: 'log', ...message })
   }
 
   calculateDistances (): void {

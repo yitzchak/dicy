@@ -9,14 +9,14 @@ import BuildStateConsumer from './BuildStateConsumer'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Log, Message, Option, Phase } from './types'
+import type { Command, Option, Phase } from './types'
 
 export default class Builder extends BuildStateConsumer {
   ruleClasses: Array<Class<Rule>> = []
 
-  static async create (filePath: string, options: Object = {}, log: Log = (message: Message): void => {}) {
+  static async create (filePath: string, options: Object = {}) {
     const schema = await Builder.getOptionDefinitions()
-    const buildState = await BuildState.create(filePath, options, schema, log)
+    const buildState = await BuildState.create(filePath, options, schema)
     const builder = new Builder(buildState)
 
     await builder.initialize()
@@ -29,7 +29,6 @@ export default class Builder extends BuildStateConsumer {
     const entries: Array<string> = await fs.readdir(ruleClassPath)
     this.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
-    await this.run('load')
   }
 
   async analyzePhase () {
@@ -123,9 +122,11 @@ export default class Builder extends BuildStateConsumer {
     }
   }
 
-  async run (command: Command): Promise<boolean> {
-    for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
-      await this.runPhase(phase, command)
+  async run (...commands: Array<Command>): Promise<boolean> {
+    for (const command of commands) {
+      for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
+        await this.runPhase(phase, command)
+      }
     }
 
     return Array.from(this.rules).every(rule => rule.success)

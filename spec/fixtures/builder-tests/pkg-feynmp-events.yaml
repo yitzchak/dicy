@@ -1,10 +1,16 @@
-command:
-  - id: LaTeX(build;execute;;pkg-feynmp.tex)
-    command: pdflatex -interaction=batchmode -recorder pkg-feynmp.tex
-  - id: LaTeX(build;execute;;pkg-feynmp.tex)
-    command: pdflatex -interaction=batchmode -recorder pkg-feynmp.tex
-  - id: MetaPost(build;execute;;pkg-feynmp-mpost.mp)
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LaTeX(build;execute;;pkg-feynmp.tex)
+    command: pdflatex -file-line-error -interaction=batchmode -recorder pkg-feynmp.tex
+  - type: command
+    rule: LaTeX(build;execute;;pkg-feynmp.tex)
+    command: pdflatex -file-line-error -interaction=batchmode -recorder pkg-feynmp.tex
+  - type: command
+    rule: MetaPost(build;execute;;pkg-feynmp-mpost.mp)
     command: mpost pkg-feynmp-mpost.mp
-  - id: LaTeX(build;execute;;pkg-feynmp.tex)
-    command: pdflatex -interaction=batchmode -recorder pkg-feynmp.tex
-log: []
+  - type: command
+    rule: LaTeX(build;execute;;pkg-feynmp.tex)
+    command: pdflatex -file-line-error -interaction=batchmode -recorder pkg-feynmp.tex

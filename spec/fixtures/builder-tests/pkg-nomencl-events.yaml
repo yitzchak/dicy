@@ -1,39 +1,60 @@
-command:
-  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
-    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
-  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-nomencl.tex)
     command: >-
-      pdflatex -interaction=batchmode -recorder -output-directory=output
-      -jobname=job-2 pkg-nomencl.tex
-  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
-    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
-  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-nomencl.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-nomencl.tex)
     command: >-
-      pdflatex -interaction=batchmode -recorder -output-directory=output
-      -jobname=job-2 pkg-nomencl.tex
-  - id: MakeIndex(build;execute;job-1;job-1.nlo)
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-nomencl.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-nomencl.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-nomencl.tex
+  - type: command
+    rule: MakeIndex(build;execute;job-1;job-1.nlo)
     command: makeindex -t job-1.nlg -o job-1.nls -s nomencl.ist job-1.nlo
-  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
-    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
-  - id: MakeIndex(build;execute;job-2;output/job-2.nlo)
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-nomencl.tex
+  - type: command
+    rule: MakeIndex(build;execute;job-2;output/job-2.nlo)
     command: >-
       makeindex -t output/job-2.nlg -o output/job-2.nls -s nomencl.ist
       output/job-2.nlo
-  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-nomencl.tex)
     command: >-
-      pdflatex -interaction=batchmode -recorder -output-directory=output
-      -jobname=job-2 pkg-nomencl.tex
-  - id: LaTeX(build;execute;job-1;pkg-nomencl.tex)
-    command: pdflatex -interaction=batchmode -recorder -jobname=job-1 pkg-nomencl.tex
-  - id: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-nomencl.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-nomencl.tex)
     command: >-
-      pdflatex -interaction=batchmode -recorder -output-directory=output
-      -jobname=job-2 pkg-nomencl.tex
-log:
-  - severity: error
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-nomencl.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-nomencl.tex
+  - type: log
+    severity: error
     name: makeindex
     text: Unknown specifier lethead_prefix.
-    type: Input style
+    category: Input style
     log:
       file: job-1.nlg
       start: 3
@@ -42,10 +63,11 @@ log:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
       start: .nan
       end: .nan
-  - severity: error
+  - type: log
+    severity: error
     name: makeindex
     text: Unknown specifier lethead_suffix.
-    type: Input style
+    category: Input style
     log:
       file: job-1.nlg
       start: 5
@@ -54,10 +76,11 @@ log:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
       start: .nan
       end: .nan
-  - severity: error
+  - type: log
+    severity: error
     name: makeindex
     text: Unknown specifier lethead_flag.
-    type: Input style
+    category: Input style
     log:
       file: job-1.nlg
       start: 7
@@ -66,10 +89,11 @@ log:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
       start: .nan
       end: .nan
-  - severity: error
+  - type: log
+    severity: error
     name: makeindex
     text: Unknown specifier lethead_prefix.
-    type: Input style
+    category: Input style
     log:
       file: output/job-2.nlg
       start: 3
@@ -78,10 +102,11 @@ log:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
       start: .nan
       end: .nan
-  - severity: error
+  - type: log
+    severity: error
     name: makeindex
     text: Unknown specifier lethead_suffix.
-    type: Input style
+    category: Input style
     log:
       file: output/job-2.nlg
       start: 5
@@ -90,10 +115,11 @@ log:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
       start: .nan
       end: .nan
-  - severity: error
+  - type: log
+    severity: error
     name: makeindex
     text: Unknown specifier lethead_flag.
-    type: Input style
+    category: Input style
     log:
       file: output/job-2.nlg
       start: 7

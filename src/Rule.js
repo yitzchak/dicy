@@ -141,7 +141,8 @@ export default class Rule extends BuildStateConsumer {
     const command = commandJoin(this.constructCommand())
 
     this.emit('command', {
-      id: this.id,
+      type: 'command',
+      rule: this.id,
       command
     })
     const { stdout, stderr, error } = await execute(command, options)
@@ -165,7 +166,7 @@ export default class Rule extends BuildStateConsumer {
       if (!file) return
       if (!this.outputs.has(filePath)) {
         this.outputs.set(filePath, file)
-        this.emit('file', { type: 'output-added', rule: this.id, file: filePath })
+        this.emit('outputAdded', { type: 'outputAdded', rule: this.id, file: filePath })
       }
     }
 
@@ -186,7 +187,7 @@ export default class Rule extends BuildStateConsumer {
   async updateOutputs () {
     for (const file: File of this.outputs.values()) {
       if (await file.update()) {
-        this.emit('file', { type: 'changed', file })
+        this.emit('fileChanged', { type: 'fileChanged', file })
       }
     }
   }
@@ -202,7 +203,7 @@ export default class Rule extends BuildStateConsumer {
         // $FlowIgnore
         await file.addRule(this)
         this.inputs.set(filePath, file)
-        this.emit('file', { type: 'input-added', rule: this.id, file: filePath })
+        this.emit('inputAdded', { type: 'inputAdded', rule: this.id, file: filePath })
       }
     }
 
@@ -266,8 +267,9 @@ export default class Rule extends BuildStateConsumer {
   actionTrace (action: Action) {
     const files: ?Set<File> = this.actions.get(action)
     this.emit('action', {
+      type: 'action',
       action,
-      id: this.id,
+      rule: this.id,
       triggers: files ? Array.from(files).map(file => file.normalizedFilePath) : []
     })
   }

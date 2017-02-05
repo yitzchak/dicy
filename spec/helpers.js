@@ -5,7 +5,7 @@ import fs from 'fs-promise'
 import path from 'path'
 import temp from 'temp'
 
-import type { Message } from '../src/types'
+import type { Event } from '../src/types'
 
 export async function cloneFixtures () {
   const tempPath = await fs.realpath(temp.mkdirSync('ouroboros'))
@@ -14,55 +14,67 @@ export async function cloneFixtures () {
   return tempPath
 }
 
-function formatMessage (message: Message) {
-  const parts = []
+function formatMessage (event: Event) {
+  switch (event.type) {
+    case 'command':
+      return `  [${event.rule}] Executing command \`${event.command}\``
+    case 'action':
+      const triggerText = event.triggers.length === 0 ? '' : ` triggered by ${event.triggers.join(', ')}`
+      return `  [${event.rule}] Evaluating ${event.action}${triggerText}`
+    case 'log':
+      const parts = []
 
-  if (message.name) parts.push(`[${message.name}]`)
-  if (message.type) parts.push(`${message.type}:`)
-  parts.push(message.text)
+      if (event.name) parts.push(`[${event.name}]`)
+      if (event.category) parts.push(`${event.category}:`)
+      parts.push(event.text)
 
-  return '  ' + parts.join(' ')
+      return `  ${parts.join(' ')}`
+  }
 }
 
-function constructMessage (found, missing) {
+function constructMessage (found: Array<Event>, missing: Array<Event>) {
   const lines = []
   if (found.length !== 0) {
-    lines.push('Did not expect the following messages:', ...found.map(formatMessage))
+    lines.push('Did not expect the following events:', ...found.map(formatMessage))
   }
   if (missing.length !== 0) {
-    lines.push('Expected the following messages:', ...missing.map(formatMessage))
+    lines.push('Expected the following events:', ...missing.map(formatMessage))
   }
   return lines.join('\n')
 }
 
-export const customMatchers = {
-  toEqualMessages (util: Object, customEqualityTesters: Object) {
-    return {
-      compare: function (actual: Array<Message>, expected: Array<Message>) {
-        const actualFound = []
-        const actualMissing = []
-        const expectedMissing = []
-        const expectedFound = []
+function compareFilePaths (x: string, y: string): boolean {
+  return x === y || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
+}
 
-        for (let i = 0, j = 0; i < actual.length; i++) {
-          let found = false
-          for (; j < expected.length; j++) {
-            if (_.isMatchWith(actual[i], expected[j], (objValue, srcValue, key) => key === 'file' ? true : undefined)) {
-              actualFound.push(actual[i])
-              expectedFound.push(expected[j])
-              found = true
-              break
-            } else {
-              expected.push(expected[j])
-            }
+export const customMatchers = {
+  toReceiveEvents (util: Object, customEqualityTesters: Object) {
+    return {
+      compare: function (receivedEvents: Array<Event>, expectedEvents: Array<Event>) {
+        let receivedFound = []
+        let receivedMissing = []
+        let expectedFound = []
+        let expectedMissing = []
+        let fromIndex = 0
+
+        for (const received of receivedEvents) {
+          let expectedIndex = _.findIndex(expectedEvents,
+            expected => _.isMatchWith(received, expected, (x, y, key) => key === 'file' ? compareFilePaths(x, y) : undefined),
+            fromIndex)
+          if (expectedIndex === -1) {
+            receivedMissing.push(received)
+          } else {
+            receivedFound.push(received)
+            expectedFound.push(expectedEvents[expectedIndex])
+            expectedMissing = expectedMissing.concat(expectedEvents.slice(fromIndex, expectedIndex))
+            fromIndex = expectedIndex + 1
           }
-          if (!found) actualMissing.push(actual[i])
         }
 
-        const pass = actualMissing.length === 0 && expectedMissing.length === 0
+        const pass = receivedMissing.length === 0 && expectedMissing.length === 0
         const message = pass
-          ? constructMessage(actualFound, expectedMissing)
-          : constructMessage(actualMissing, [])
+          ? constructMessage(receivedFound, expectedMissing)
+          : constructMessage(receivedMissing, [])
 
         return { pass, message }
       }

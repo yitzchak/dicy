@@ -39,7 +39,7 @@ export default class ParseMakeIndexLog extends Rule {
         })
       }
     }, {
-      names: ['type', 'file', 'line', 'text'],
+      names: ['category', 'file', 'line', 'text'],
       patterns: [
         /^[*!]+ (Input (?:index|style)) error \(file = (.+), line = (\d+)\):$/,
         MESSAGE_PATTERN
@@ -50,7 +50,7 @@ export default class ParseMakeIndexLog extends Rule {
           severity: 'error',
           name: 'makeindex',
           text: groups.text,
-          type: groups.type,
+          category: groups.category,
           log: reference,
           source: {
             file: groups.file,

@@ -42,26 +42,26 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
-      names: ['type', 'text'],
+      names: ['category', 'text'],
       patterns: [/^! (.+) Error: (.+?)\.?$/],
       evaluate: (reference, groups) => {
         messages.push({
           severity: 'error',
           name,
-          type: groups.type,
+          category: groups.category,
           text: groups.text,
           log: reference
         })
       }
     }, {
-      names: ['file', 'line', 'type', 'text'],
+      names: ['file', 'line', 'category', 'text'],
       patterns: [/^(.*):(\d+): (.+) Error: (.+?)\.?$/],
       evaluate: (reference, groups) => {
         const line: number = parseInt(groups.line, 10)
         messages.push({
           severity: 'error',
           name,
-          type: groups.type,
+          category: groups.category,
           text: groups.text,
           log: reference,
           source: {
@@ -72,13 +72,13 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
-      names: ['type', 'severity', 'text', 'line'],
+      names: ['category', 'severity', 'text', 'line'],
       patterns: [/^(.*) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/],
       evaluate: (reference, groups) => {
         const message: Message = {
           severity: groups.severity === 'Info' ? 'info' : 'warning',
           name,
-          type: groups.type,
+          category: groups.category,
           text: groups.text,
           log: reference
         }
@@ -99,7 +99,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^\(([^()]+)\) +(.*)$/],
       evaluate: (reference, groups) => {
         const message: Message = messages[messages.length - 1]
-        if (message && message.type && message.type.endsWith(groups.package)) {
+        if (message && message.category && message.category.endsWith(groups.package)) {
           message.text = `${message.text}\n${groups.text}`
           if (message.log) message.log.end = reference.start
         }

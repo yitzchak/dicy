@@ -114,10 +114,10 @@ export default class BuildState extends EventEmitter {
         // guarantees that even if the file is recreated with the same timeStamp
         // and hash it will still trigger dependent rules.
         if (this.cache) delete this.cache.files[filePath]
-        this.emit('file', { type: 'removed', file: filePath })
+        this.emit('fileRemoved', { type: 'fileRemoved', file: filePath })
         return
       }
-      this.emit('file', { type: 'added', file: filePath })
+      this.emit('fileAdded', { type: 'fileAdded', file: filePath })
       this.files.set(filePath, file)
     }
 

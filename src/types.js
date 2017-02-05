@@ -46,16 +46,66 @@ export type Message = {
   severity: Severity,
   text: string,
   name?: string,
-  type?: string,
+  category?: string,
   source?: Reference,
   log?: Reference
 }
 
+export type LogEvent = {
+  type: 'log',
+  severity: Severity,
+  text: string,
+  name?: string,
+  category?: string,
+  source?: Reference,
+  log?: Reference
+}
+
+export type ActionEvent = {
+  type: 'action',
+  rule: string,
+  action: string,
+  triggers: Array<string>
+}
+
+export type CommandEvent = {
+  type: 'command',
+  rule: string,
+  command: string
+}
+
+export type FileChangedEvent = {
+  type: 'fileChanged',
+  file: string
+}
+
+export type FileAddedEvent = {
+  type: 'fileAdded',
+  file: string
+}
+
+export type FileRemovedEvent = {
+  type: 'fileRemoved',
+  file: string
+}
+
+export type InputAddedEvent = {
+  type: 'inputAdded',
+  rule: string,
+  file: string
+}
+
+export type OutputAddedEvent = {
+  type: 'outputAdded',
+  rule: string,
+  file: string
+}
+
+export type Event = LogEvent | ActionEvent | CommandEvent | FileAddedEvent | FileChangedEvent | FileChangedEvent | InputAddedEvent | OutputAddedEvent
+
 export type Phase = 'initialize' | 'execute' | 'finalize'
 
 export type Command = 'build' | 'load' | 'report' | 'save'
-
-export type Log = (message: Message) => void
 
 export type Option = {
   type: 'string' | 'strings' | 'number' | 'numbers' | 'boolean',
@@ -64,8 +114,4 @@ export type Option = {
   values?: Array<any>,
   aliases?: Array<string>,
   commands: Array<string>
-}
-
-export type Test = {
-  messages: Array<Message>
 }

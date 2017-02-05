@@ -32,15 +32,14 @@ const command = async (inputs, env) => {
   const { saveEvents = [], verbose = false, ...options } = cloneOptions(env.opts())
 
   for (const filePath of inputs) {
-    const events = _.fromPairs(saveEvents.map(type => [type, []]))
+    const events = []
     const builder = await Builder.create(path.resolve(filePath), options)
     builder
-      .on('log', message => {
-        if (saveEvents.includes('log')) events.log.push(message)
-        const nameText = message.name ? `[${message.name}] ` : ''
-        const typeText = message.type ? `${message.type}: ` : ''
-        const text = `${nameText}${typeText}${message.text.replace('\n', ' ')}`
-        switch (message.severity) {
+      .on('log', event => {
+        const nameText = event.name ? `[${event.name}] ` : ''
+        const typeText = event.type ? `${event.type}: ` : ''
+        const text = `${nameText}${typeText}${event.text.replace('\n', ' ')}`
+        switch (event.severity) {
           case 'error':
             console.error(chalk.red(text))
             break
@@ -55,22 +54,18 @@ const command = async (inputs, env) => {
             break
         }
       })
-      .on('action', ({ action, id, triggers }) => {
-        if (saveEvents.includes('action')) events.action.push({ action, id, triggers })
+      .on('action', event => {
         if (verbose) {
-          const triggerText = triggers.length !== 0 ? ` triggered by updates to ${triggers}` : ''
-          console.log(`[${id}] Evaluating ${action} action${triggerText}`)
+          const triggerText = event.triggers.length !== 0 ? ` triggered by updates to ${event.triggers}` : ''
+          console.log(`[${event.rule}] Evaluating ${event.action} action${triggerText}`)
         }
       })
-      .on('command', ({ id, command }) => {
-        if (saveEvents.includes('command')) events.command.push({ id, command })
-        console.log(`[${id}] Executing \`${command}\``)
-      })
-      .on('file', event => {
-        if (saveEvents.includes('file')) events.file.push(event)
-      })
-    await builder.run(env.name())
-    await builder.run('save')
+
+    for (const type of saveEvents) {
+      builder.on(type, event => { events.push(event) })
+    }
+
+    await builder.run('load', env.name(), 'save')
 
     if (saveEvents.length !== 0) {
       const eventFilePath = builder.resolvePath('-events.yaml', {
@@ -78,7 +73,7 @@ const command = async (inputs, env) => {
         useJobName: false,
         useOutputDirectory: false
       })
-      const serialized = yaml.safeDump(events, { skipInvalid: true })
+      const serialized = yaml.safeDump({ types: saveEvents, events }, { skipInvalid: true })
       await fs.writeFile(eventFilePath, serialized)
     }
   }
