@@ -6,6 +6,7 @@ import Rule from '../Rule'
 
 export default class MetaPost extends Rule {
   static fileTypes: Set<string> = new Set(['MetaPost'])
+  static description: string = 'Runs metapost on produced mp files.'
 
   constructCommand () {
     return ['mpost', path.basename(this.firstParameter.normalizedFilePath)]

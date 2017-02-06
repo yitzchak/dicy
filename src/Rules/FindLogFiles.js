@@ -16,9 +16,10 @@ function glob (pattern, options) {
 }
 
 export default class FindLogFiles extends Rule {
-  static commands: Set<Command> = new Set(['report'])
+  static commands: Set<Command> = new Set(['build', 'report'])
   static phases: Set<Phase> = new Set(['execute'])
   static alwaysEvaluate: boolean = true
+  static description: string = 'Find preexisting log files.'
 
   async run () {
     const filePattern = this.resolvePath('.@(log|*lg)')

@@ -10,6 +10,7 @@ export default class RestoreCache extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
+  static description: string = 'Restores file information from the cache for the report command.'
 
   async run () {
     if (this.buildState.cache && this.buildState.cache.files) {

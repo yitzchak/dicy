@@ -4,8 +4,9 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-export default class DviToPdf extends Rule {
+export default class PdfToPs extends Rule {
   static fileTypes: Set<string> = new Set(['PortableDocumentFormat'])
+  static description: string = 'Converts PDF to PS using pdf2ps. Enabled by the `pdfProducer` option.'
 
   static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
     return buildState.options.outputFormat === 'ps' &&

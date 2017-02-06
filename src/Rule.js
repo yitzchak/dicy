@@ -24,6 +24,7 @@ export default class Rule extends BuildStateConsumer {
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = false
   static ignoreJobName: boolean = false
+  static description: string = ''
 
   id: string
   parameters: Array<File> = []

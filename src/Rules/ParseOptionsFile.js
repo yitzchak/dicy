@@ -10,6 +10,7 @@ import type { Command } from '../types'
 
 export default class ParseOptionsFile extends Rule {
   static commands: Set<Command> = new Set(['load'])
+  static description: string = 'Parses the YAML option file.'
 
   input: ?File
   output: ?File

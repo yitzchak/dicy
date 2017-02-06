@@ -7,6 +7,7 @@ import Rule from '../Rule'
 
 export default class Asymptote extends Rule {
   static fileTypes: Set<string> = new Set(['Asymptote'])
+  static description: string = 'Run Asymptote on any generated .asy files.'
 
   async initialize () {
     await this.getResolvedInput(`.log-ParsedAsymptoteLog`)

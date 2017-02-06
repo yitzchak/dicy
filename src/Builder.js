@@ -9,7 +9,7 @@ import BuildStateConsumer from './BuildStateConsumer'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Option, Phase } from './types'
+import type { Command, Option, Phase, RuleInfo } from './types'
 
 export default class Builder extends BuildStateConsumer {
   ruleClasses: Array<Class<Rule>> = []
@@ -63,6 +63,12 @@ export default class Builder extends BuildStateConsumer {
     }
 
     this.calculateDistances()
+  }
+
+  getAvailableRules (command: ?Command): Array<RuleInfo> {
+    return this.ruleClasses
+      .filter(rule => !command || rule.commands.has(command))
+      .map(rule => ({ name: rule.name, description: rule.description }))
   }
 
   async evaluateRule (rule: Rule) {

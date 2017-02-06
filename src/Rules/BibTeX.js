@@ -10,6 +10,7 @@ import type { Message } from '../types'
 
 export default class BibTeX extends Rule {
   static fileTypes: Set<string> = new Set(['ParsedLaTeXAuxilary'])
+  static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
   input: ?File
 

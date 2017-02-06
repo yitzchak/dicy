@@ -7,6 +7,7 @@ import type { Command, Message } from '../types'
 export default class ParseBibTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['BibTeXLog'])
   static commands: Set<Command> = new Set(['build', 'report'])
+  static description: string = 'Parses any bibtex produced logs.'
 
   async initialize () {
     this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBibTeXLog`)

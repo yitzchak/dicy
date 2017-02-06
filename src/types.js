@@ -8,6 +8,11 @@ export type ResolvePathOptions = {
 
 export type Action = 'run' | 'updateDependencies'
 
+export type RuleInfo = {
+  name: string,
+  description: string
+}
+
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,

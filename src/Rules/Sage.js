@@ -6,6 +6,7 @@ import Rule from '../Rule'
 
 export default class Sage extends Rule {
   static fileTypes: Set<string> = new Set(['Sage'])
+  static description: string = 'Supports SageTeX by rulling Sage when needed.'
 
   constructCommand () {
     return ['sage', path.basename(this.firstParameter.normalizedFilePath)]

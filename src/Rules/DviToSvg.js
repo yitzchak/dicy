@@ -6,6 +6,7 @@ import Rule from '../Rule'
 
 export default class DviToSvg extends Rule {
   static fileTypes: Set<string> = new Set(['DeviceIndependentFile'])
+  static description: string = 'Converts DVI to SVG using dvisvgm.'
 
   static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
     return buildState.options.outputFormat === 'svg' &&

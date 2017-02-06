@@ -7,9 +7,12 @@ import chalk from 'chalk'
 import path from 'path'
 import program from 'commander'
 import fs from 'fs-promise'
+import cliui from 'cliui'
 import yaml from 'js-yaml'
 
 import { Builder } from './main'
+
+const ui = cliui({ width: 80 })
 
 function parseArray (val) {
   return val.split(/\s*,\s*/)
@@ -130,6 +133,17 @@ Builder.getOptionDefinitions().then(definitions => {
     .alias('r')
     .description('Report the results from a previous build'))
     .action(command)
+
+  program
+    .command('rules')
+    .description('List available rules')
+    .option('--command <command>', 'List only rules that apply to a specific command.', null)
+    .action(async (env) => {
+      const { command } = cloneOptions(env.opts())
+      const builder = await Builder.create('foo.tex')
+      ui.div(builder.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
+      console.log(ui.toString())
+    })
 
   program
     .parse(process.argv)

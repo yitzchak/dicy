@@ -11,6 +11,7 @@ export default class LoadCache extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
   static commands: Set<Command> = new Set(['load'])
   static alwaysEvaluate: boolean = true
+  static description: string = 'Loads the file/rule cache from a previous build.'
 
   cacheFilePath: string
 

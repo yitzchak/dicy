@@ -7,6 +7,7 @@ import type { Command, Message } from '../types'
 export default class ParseLaTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXLog'])
   static commands: Set<Command> = new Set(['build', 'report'])
+  static description: string = 'Parses the logs produced by all latex variants.'
 
   async initialize () {
     this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)

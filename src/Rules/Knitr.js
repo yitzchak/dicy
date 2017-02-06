@@ -8,6 +8,7 @@ function escapePath (filePath) {
 
 export default class Knitr extends Rule {
   static fileTypes: Set<string> = new Set(['Knitr'])
+  static description: string = 'Runs knitr on Rnw files.'
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs(['.tex', '-concordance.tex'], { useJobName: false, useOutputDirectory: false })

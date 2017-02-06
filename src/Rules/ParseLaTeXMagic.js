@@ -8,6 +8,7 @@ import type { Command } from '../types'
 export default class ParseLaTeXMagic extends Rule {
   static commands: Set<Command> = new Set(['load'])
   static fileTypes: Set<string> = new Set(['LaTeX', 'Knitr'])
+  static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
 
   output: ?File
 
