@@ -17,7 +17,7 @@ function glob (pattern, options) {
 
 export default class FindLogFiles extends Rule {
   static commands: Set<Command> = new Set(['build', 'report'])
-  static phases: Set<Phase> = new Set(['execute'])
+  static phases: Set<Phase> = new Set(['initialize'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Find preexisting log files.'
 

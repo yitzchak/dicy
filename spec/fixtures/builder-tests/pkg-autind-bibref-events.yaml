@@ -13,24 +13,8 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-2 pkg-autind-bibref.tex
   - type: command
-    rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
-      pkg-autind-bibref.tex
-  - type: command
-    rule: LaTeX(build;execute;job-2;pkg-autind-bibref.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 pkg-autind-bibref.tex
-  - type: command
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
-  - type: command
-    rule: MakeIndex(build;execute;job-1;job-1.bdx)
-    command: makeindex -t job-1.brlg -o job-1.bnd -s bibref.ist job-1.bdx
-  - type: command
-    rule: MakeIndex(build;execute;job-1;job-1.adx)
-    command: makeindex -t job-1.alg -o job-1.and job-1.adx
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
     command: >-
@@ -39,6 +23,17 @@ events:
   - type: command
     rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
     command: bibtex output/job-2.aux
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-autind-bibref.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-autind-bibref.tex
+  - type: command
+    rule: MakeIndex(build;execute;job-1;job-1.bdx)
+    command: makeindex -t job-1.brlg -o job-1.bnd -s bibref.ist job-1.bdx
+  - type: command
+    rule: MakeIndex(build;execute;job-1;job-1.adx)
+    command: makeindex -t job-1.alg -o job-1.and job-1.adx
   - type: command
     rule: MakeIndex(build;execute;job-2;output/job-2.bdx)
     command: >-
@@ -48,16 +43,8 @@ events:
     rule: MakeIndex(build;execute;job-2;output/job-2.adx)
     command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
   - type: command
-    rule: LaTeX(build;execute;job-2;pkg-autind-bibref.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 pkg-autind-bibref.tex
-  - type: command
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
-  - type: command
-    rule: MakeIndex(build;execute;job-1;job-1.adx)
-    command: makeindex -t job-1.alg -o job-1.and job-1.adx
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
     command: >-
@@ -67,30 +54,27 @@ events:
     rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
     command: bibtex output/job-2.aux
   - type: command
-    rule: MakeIndex(build;execute;job-2;output/job-2.adx)
-    command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
-  - type: command
     rule: LaTeX(build;execute;job-2;pkg-autind-bibref.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-2 pkg-autind-bibref.tex
   - type: command
+    rule: MakeIndex(build;execute;job-1;job-1.adx)
+    command: makeindex -t job-1.alg -o job-1.and job-1.adx
+  - type: command
+    rule: MakeIndex(build;execute;job-2;output/job-2.adx)
+    command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
+  - type: command
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
   - type: command
-    rule: MakeIndex(build;execute;job-1;job-1.adx)
-    command: makeindex -t job-1.alg -o job-1.and job-1.adx
+    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/job-2.aux
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       pkg-autind-bibref.tex
-  - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
-  - type: command
-    rule: MakeIndex(build;execute;job-2;output/job-2.adx)
-    command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-autind-bibref.tex)
     command: >-

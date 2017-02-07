@@ -96,21 +96,29 @@ export default class Builder extends BuildStateConsumer {
     }
 
     for (const ruleGroup of ruleGroups) {
-      ruleGroup.sort((x: Rule, y: Rule) => {
-        const xx: number = this.getDistance(x, x) || Number.MAX_SAFE_INTEGER
-        const yy: number = this.getDistance(y, y) || Number.MAX_SAFE_INTEGER
-        const xy: ?number = this.getDistance(x, y)
-        const yx: ?number = this.getDistance(y, x)
-        if (xx === yy) {
-          if (typeof xy === 'number' && typeof yx === 'number') return xy - yx
-          if (xy === yx) return 0
-          return typeof xy === 'number' ? -1 : 1
-        } else {
-          return yy - xx
-        }
-      })
+      let candidateRules = []
+      let dependents = []
+      let minimumCount = Number.MAX_SAFE_INTEGER
 
-      for (const rule of ruleGroup) {
+      for (const x of ruleGroup) {
+        const inputCount = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
+        if (inputCount === 0) {
+          candidateRules.push(x)
+        } else if (inputCount === minimumCount) {
+          dependents.push(x)
+        } else if (inputCount < minimumCount) {
+          dependents = [x]
+          minimumCount = inputCount
+        }
+      }
+
+      if (candidateRules.length === 0) {
+        candidateRules = dependents
+      }
+
+      candidateRules.sort((x, y) => x.inputs.size - y.inputs.size)
+
+      for (const rule of candidateRules) {
         await this.checkUpdates()
         await this.evaluateRule(rule)
       }
