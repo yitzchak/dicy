@@ -21,6 +21,9 @@ EncapsulatedPostScript:
   fileName: !!js/regexp /\.eps$/i
   hash: true
   hashSkip: !!js/regexp /^\%%/
+GraphViz:
+  fileName: !!js/regexp /\.dot$/i
+  hash: true
 ScalableVectorGraphics:
   fileName: !!js/regexp /\.svg$/i
 LaTeXAuxilary:

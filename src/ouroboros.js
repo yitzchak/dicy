@@ -134,6 +134,12 @@ Builder.getOptionDefinitions().then(definitions => {
     .description('Report the results from a previous build'))
     .action(command)
 
+  loadOptions(program
+    .command('graph [inputs...]')
+    .alias('g')
+    .description('Create a dependency graph from a previous build'))
+    .action(command)
+
   program
     .command('rules')
     .description('List available rules')

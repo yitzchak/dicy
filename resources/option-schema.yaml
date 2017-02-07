@@ -4,6 +4,12 @@ engine:
   defaultValue: pdflatex
   commands:
     - build
+graphDependencies:
+  description: Graph dependencies
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
 ignoreRules:
   description: ignore specific rules when processing
   type: strings
@@ -49,6 +55,7 @@ outputFormat:
   defaultValue: pdf
   commands:
     - build
+    - graph
 reportLogMessages:
   aliases:
     - r
