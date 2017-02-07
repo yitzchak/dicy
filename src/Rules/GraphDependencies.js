@@ -8,7 +8,7 @@ import Rule from '../Rule'
 import type { Command, Phase } from '../types'
 
 export default class GraphDependencies extends Rule {
-  static commands: Set<Command> = new Set(['build'])
+  static commands: Set<Command> = new Set([])
   static phases: Set<Phase> = new Set(['finalize'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Creates a GraphViz dependency graph.'
