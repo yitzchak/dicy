@@ -143,6 +143,10 @@ export default class BuildStateConsumer {
     return this.buildState.isConnected(x, y)
   }
 
+  isChild (x: Rule, y: Rule): boolean {
+    return this.buildState.isChild(x, y)
+  }
+
   async getResolvedFile (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
     const filePath = this.resolvePath(ext, options)
     return await this.getFile(filePath)

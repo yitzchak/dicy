@@ -26,13 +26,13 @@ events:
     rule: MakeGlossaries(build;execute;job-1;job-1.glo)
     command: makeglossaries job-1
   - type: command
+    rule: MakeGlossaries(build;execute;job-2;output/job-2.glo)
+    command: makeglossaries -d output job-2
+  - type: command
     rule: LaTeX(build;execute;job-1;pkg-glossaries.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       pkg-glossaries.tex
-  - type: command
-    rule: MakeGlossaries(build;execute;job-2;output/job-2.glo)
-    command: makeglossaries -d output job-2
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-glossaries.tex)
     command: >-

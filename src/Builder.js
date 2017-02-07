@@ -96,14 +96,14 @@ export default class Builder extends BuildStateConsumer {
     }
 
     for (const ruleGroup of ruleGroups) {
-      const independents = []
+      let candidateRules = []
       let dependents = []
       let minimumCount = Number.MAX_SAFE_INTEGER
 
       for (const x of ruleGroup) {
-        const inputCount = ruleGroup.reduce((count, y) => this.getDistance(y, x) === 1 ? count + 1 : count, 0)
+        const inputCount = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
         if (inputCount === 0) {
-          independents.push(x)
+          candidateRules.push(x)
         } else if (inputCount === minimumCount) {
           dependents.push(x)
         } else if (inputCount < minimumCount) {
@@ -112,7 +112,13 @@ export default class Builder extends BuildStateConsumer {
         }
       }
 
-      for (const rule of independents.concat(dependents)) {
+      if (candidateRules.length === 0) {
+        candidateRules = dependents
+      }
+
+      candidateRules.sort((x, y) => x.inputs.size - y.inputs.size)
+
+      for (const rule of candidateRules) {
         await this.checkUpdates()
         await this.evaluateRule(rule)
       }
