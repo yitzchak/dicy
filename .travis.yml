@@ -13,6 +13,7 @@ addons:
     - texlive-latex-extra
     - texlive-bibtex-extra
     - texlive-metapost
+    - texlive-xetex
     - biber
     - feynmf
     - python-pygments
