@@ -1,10 +1,6 @@
 \documentclass{article}
 
-\usepackage{xstring}
-
-\IfStrEq*{\jobname}{job-1}
-  {\usepackage{minted}}
-  {\usepackage[outputdir=output]{minted}}
+\usepackage{minted}
 
 \begin{document}
 \section{Scheme Sample - The Euclidean Algorithm}

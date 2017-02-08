@@ -1,6 +1,2 @@
-jobs:
-  job-1: {}
-  job-2:
-    outputDirectory: output
 reportLogMessages: true
 shellEscape: enable
