@@ -4,6 +4,8 @@ import Rule from '../Rule'
 
 import type { Command, Message } from '../types'
 
+const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
+
 export default class ParseLaTeXLog extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXLog'])
   static commands: Set<Command> = new Set(['build', 'report'])
@@ -117,7 +119,7 @@ export default class ParseLaTeXLog extends Rule {
           log: reference
         })
       }
-    }])
+    }], line => WRAPPED_LINE_PATTERN.test(line))
 
     parsedFile.value = { messages }
 
