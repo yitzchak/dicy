@@ -3,4 +3,4 @@ jobs:
   job-2:
     outputDirectory: output
 reportLogMessages: true
-shellEscape: true
+shellEscape: enable
