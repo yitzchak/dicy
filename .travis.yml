@@ -8,16 +8,17 @@ node_js:
 addons:
   apt:
     packages:
-    - texlive-latex-base
-    - texlive-latex-recommended
-    - texlive-latex-extra
-    - texlive-bibtex-extra
-    - texlive-metapost
-    - texlive-xetex
+    - asymptote
     - biber
     - feynmf
-    - python-pygments
     - latex-xcolor
-    - asymptote
+    - python-pygments
+    - r-recommended
+    - texlive-bibtex-extra
+    - texlive-latex-base
+    - texlive-latex-extra
+    - texlive-latex-recommended
+    - texlive-metapost
+    - texlive-xetex
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update && brew tap caskroom/cask && brew cask install mactex; fi;
+  - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
