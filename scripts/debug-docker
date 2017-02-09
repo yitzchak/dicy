@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sudo docker run -it docker-ouroboros /bin/bash

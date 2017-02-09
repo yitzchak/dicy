@@ -11,7 +11,7 @@ env:
 addons:
   apt:
     sources:
-      - r-packages-precise    
+      - r-packages-trusty    
     packages:
       - asymptote
       - biber
