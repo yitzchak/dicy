@@ -8,12 +8,15 @@ clone_depth: 1
 environment:
   global:
     MIKTEX_HOME: '%PROGRAMFILES%\\MiKTeX 2.9'
+    R_LIBS_USER: '%USERPROFILE%\\R\\library'
 
 install:
   - cinst miktex
+  - cinst R.Project --allow-empty-checksums 
   - refreshenv
-  - pdflatex --help
   - initexmf --set-config-value=[MPM]AutoInstall=0
+  - mkdir -p "${R_LIBS_USER}"
+  - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
   - ps: Install-Product node 7
   - npm install
 
