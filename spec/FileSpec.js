@@ -32,13 +32,6 @@ describe('File', () => {
     done()
   })
 
-  it('verifies that physical files must exist to be created and is the right type', async (done) => {
-    const file = await createFile('pkg-asymptote.tex')
-    expect(file).toBeDefined()
-    if (file) expect(file.type).toEqual('LaTeX')
-    done()
-  })
-
   it('verifies that plain TeX files are not classified as LaTeX files', async (done) => {
     const file = await createFile('plain.tex')
     expect(file).toBeDefined()

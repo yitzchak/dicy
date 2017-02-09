@@ -54,7 +54,7 @@ export default class File {
       let lineNumber = 1
       const checkForMatches = (finalCheck: boolean = false) => {
         while (lines.length > 0) {
-          if (!finalCheck && lines.length < bufferSize) return
+          if (!finalCheck && lines.length < bufferSize) break
           let matched = false
           for (const parser: Parser of parsers) {
             if (parser.patterns.length > lines.length) continue
