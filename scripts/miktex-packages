@@ -4,6 +4,7 @@ fancyvrb
 feynmf
 fvextra
 glossaries
+ifplatform
 lineno
 logreq
 mfirstuc
