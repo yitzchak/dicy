@@ -5,20 +5,26 @@ branches:
 language: node_js
 node_js:
   - node
+env:
+  global:
+    - R_LIBS_USER=${HOME}/R/library
 addons:
   apt:
+    sources:
+      - r-packages-precise    
     packages:
-    - asymptote
-    - biber
-    - feynmf
-    - latex-xcolor
-    - python-pygments
-    - r-recommended
-    - texlive-bibtex-extra
-    - texlive-latex-base
-    - texlive-latex-extra
-    - texlive-latex-recommended
-    - texlive-metapost
-    - texlive-xetex
+      - asymptote
+      - biber
+      - feynmf
+      - latex-xcolor
+      - python-pygments
+      - r-recommended
+      - texlive-bibtex-extra
+      - texlive-latex-base
+      - texlive-latex-extra
+      - texlive-latex-recommended
+      - texlive-metapost
+      - texlive-xetex
 before_install:
+  - mkdir -p "${R_LIBS_USER}"
   - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
