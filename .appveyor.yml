@@ -8,11 +8,13 @@ clone_depth: 1
 environment:
   global:
     MIKTEX_HOME: '%PROGRAMFILES%\\MiKTeX 2.9'
+    R_HOME: '%PROGRAMFILES%\R'
     R_LIBS_USER: '%USERPROFILE%\\R\\library'
+    PATH: '%PATH%;%R_HOME%\\bin'
 
 install:
   - cinst miktex
-  - cinst R.Project --allow-empty-checksums 
+  - cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
   - refreshenv
   - initexmf --set-config-value=[MPM]AutoInstall=0
   - mkdir -p "${R_LIBS_USER}"
