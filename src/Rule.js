@@ -139,14 +139,14 @@ export default class Rule extends BuildStateConsumer {
   async run (): Promise<boolean> {
     let success: boolean = true
     const options = this.constructProcessOptions()
-    const command = this.constructCommand()
+    const command = commandJoin(this.constructCommand())
 
     this.emit('command', {
       type: 'command',
       rule: this.id,
       command
     })
-    const { stdout, stderr, error } = await execute(commandJoin(command), options)
+    const { stdout, stderr, error } = await execute(command, options)
     if (error) {
       this.error(error.toString())
       success = false

@@ -1,7 +1,6 @@
 /* @flow */
 
 import _ from 'lodash'
-import commandJoin from 'command-join'
 import fs from 'fs-promise'
 import path from 'path'
 import temp from 'temp'
@@ -18,7 +17,7 @@ export async function cloneFixtures () {
 function formatMessage (event: Event) {
   switch (event.type) {
     case 'command':
-      return `  [${event.rule}] Executing command \`${commandJoin(event.command)}\``
+      return `  [${event.rule}] Executing command \`${event.command}\``
     case 'action':
       const triggerText = event.triggers.length === 0 ? '' : ` triggered by ${event.triggers.join(', ')}`
       return `  [${event.rule}] Evaluating ${event.action}${triggerText}`
@@ -48,6 +47,10 @@ function compareFilePaths (x: string, y: string): boolean {
   return x === y || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
 }
 
+function stringCompare (x: string, y: string): boolean {
+  return x.replace(/[/\\'"]/, '') === y.replace(/[/\\'"]/, '')
+}
+
 export const customMatchers = {
   toReceiveEvents (util: Object, customEqualityTesters: Object) {
     return {
@@ -60,7 +63,11 @@ export const customMatchers = {
 
         for (const received of receivedEvents) {
           let expectedIndex = _.findIndex(expectedEvents,
-            expected => _.isMatchWith(received, expected, (x, y, key) => key === 'file' ? compareFilePaths(x, y) : undefined),
+            expected => _.isMatchWith(received, expected, (x, y, key) => key === 'file'
+              ? compareFilePaths(x, y)
+              : ((typeof x === 'string' && typeof y === 'string')
+                ? stringCompare(x, y)
+                : undefined)),
             fromIndex)
           if (expectedIndex === -1) {
             receivedMissing.push(received)

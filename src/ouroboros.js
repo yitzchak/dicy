@@ -4,7 +4,6 @@
 import 'babel-polyfill'
 import _ from 'lodash'
 import chalk from 'chalk'
-import commandJoin from 'command-join'
 import path from 'path'
 import program from 'commander'
 import fs from 'fs-promise'
@@ -65,7 +64,7 @@ const command = async (inputs, env) => {
         }
       })
       .on('command', event => {
-        console.log(`[${event.rule}] Executing \`${commandJoin(event.command)}\``)
+        console.log(`[${event.rule}] Executing \`${event.command}\``)
       })
 
     for (const type of saveEvents) {

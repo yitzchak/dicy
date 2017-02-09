@@ -76,7 +76,7 @@ export type ActionEvent = {
 export type CommandEvent = {
   type: 'command',
   rule: string,
-  command: Array<string>
+  command: string
 }
 
 export type FileChangedEvent = {

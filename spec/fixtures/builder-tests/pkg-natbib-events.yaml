@@ -4,78 +4,43 @@ types:
 events:
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-natbib.tex)
-    command:
-      - pdflatex
-      - '-file-line-error'
-      - '-interaction=batchmode'
-      - '-recorder'
-      - '-jobname=job-1'
-      - pkg-natbib.tex
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-natbib.tex
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-natbib.tex)
-    command:
-      - pdflatex
-      - '-file-line-error'
-      - '-interaction=batchmode'
-      - '-recorder'
-      - '-output-directory=output'
-      - '-jobname=job-2'
-      - pkg-natbib.tex
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-natbib.tex
   - type: command
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
-    command:
-      - bibtex
-      - job-1.aux
+    command: bibtex job-1.aux
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-natbib.tex)
-    command:
-      - pdflatex
-      - '-file-line-error'
-      - '-interaction=batchmode'
-      - '-recorder'
-      - '-jobname=job-1'
-      - pkg-natbib.tex
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-natbib.tex
   - type: command
     rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
-    command:
-      - bibtex
-      - output/job-2.aux
+    command: bibtex output/job-2.aux
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-natbib.tex)
-    command:
-      - pdflatex
-      - '-file-line-error'
-      - '-interaction=batchmode'
-      - '-recorder'
-      - '-output-directory=output'
-      - '-jobname=job-2'
-      - pkg-natbib.tex
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-natbib.tex
   - type: command
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
-    command:
-      - bibtex
-      - job-1.aux
+    command: bibtex job-1.aux
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-natbib.tex)
-    command:
-      - pdflatex
-      - '-file-line-error'
-      - '-interaction=batchmode'
-      - '-recorder'
-      - '-jobname=job-1'
-      - pkg-natbib.tex
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-natbib.tex
   - type: command
     rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
-    command:
-      - bibtex
-      - output/job-2.aux
+    command: bibtex output/job-2.aux
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-natbib.tex)
-    command:
-      - pdflatex
-      - '-file-line-error'
-      - '-interaction=batchmode'
-      - '-recorder'
-      - '-output-directory=output'
-      - '-jobname=job-2'
-      - pkg-natbib.tex
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-natbib.tex
