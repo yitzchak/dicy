@@ -1,6 +1,7 @@
 /* @flow */
 
 import _ from 'lodash'
+import commandJoin from 'command-join'
 import fs from 'fs-promise'
 import path from 'path'
 import temp from 'temp'
@@ -17,7 +18,7 @@ export async function cloneFixtures () {
 function formatMessage (event: Event) {
   switch (event.type) {
     case 'command':
-      return `  [${event.rule}] Executing command \`${event.command}\``
+      return `  [${event.rule}] Executing command \`${commandJoin(event.command)}\``
     case 'action':
       const triggerText = event.triggers.length === 0 ? '' : ` triggered by ${event.triggers.join(', ')}`
       return `  [${event.rule}] Evaluating ${event.action}${triggerText}`

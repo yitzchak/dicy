@@ -4,16 +4,28 @@ types:
 events:
   - type: command
     rule: LaTeX(build;execute;;pkg-minted.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -shell-escape
-      pkg-minted.tex
+    command:
+      - pdflatex
+      - '-file-line-error'
+      - '-interaction=batchmode'
+      - '-recorder'
+      - '-shell-escape'
+      - pkg-minted.tex
   - type: command
     rule: LaTeX(build;execute;;pkg-minted.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -shell-escape
-      pkg-minted.tex
+    command:
+      - pdflatex
+      - '-file-line-error'
+      - '-interaction=batchmode'
+      - '-recorder'
+      - '-shell-escape'
+      - pkg-minted.tex
   - type: command
     rule: LaTeX(build;execute;;pkg-minted.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -shell-escape
-      pkg-minted.tex
+    command:
+      - pdflatex
+      - '-file-line-error'
+      - '-interaction=batchmode'
+      - '-recorder'
+      - '-shell-escape'
+      - pkg-minted.tex
