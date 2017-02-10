@@ -19,7 +19,7 @@ environment:
 
 install:
   - set PATH=%PATH%;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
-  - cinst miktex
+  - cinst miktex ghostscript
   - cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
   - curl -fsS -o asymptote-setup.exe http://heanet.dl.sourceforge.net/project/asymptote/2.38/asymptote-2.38-setup.exe
   - asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
