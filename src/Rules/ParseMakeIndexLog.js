@@ -47,7 +47,7 @@ export default class ParseMakeIndexLog extends Rule {
         MESSAGE_PATTERN
       ],
       evaluate: (reference, groups) => {
-        const line = parseInt(groups.inputLine, 10)
+        const line = parseInt(groups.line, 10)
         messages.push({
           severity: 'error',
           name: 'makeindex',

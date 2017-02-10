@@ -44,7 +44,7 @@ function constructMessage (found: Array<Event>, missing: Array<Event>) {
 }
 
 function compareFilePaths (x: string, y: string): boolean {
-  return x === y || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
+  return path.normalize(x) === path.normalize(y) || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
 }
 
 function stringCompare (x: string, y: string): boolean {
