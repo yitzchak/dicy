@@ -8,3 +8,4 @@ jobs:
     outputDirectory: output
     synctex: true
 reportLogMessages: true
+severity: error

@@ -1,0 +1,17 @@
+\documentclass{article}
+
+\usepackage{multibib}
+
+\newcites{other}{Other References}
+
+\begin{document}
+
+This may be useful \cite{quux}, but this is definately not \citeother{wibble}.
+
+\bibliographystyle{plain}
+\bibliography{foo}
+
+\bibliographystyleother{alpha}
+\bibliographyother{foo}
+
+\end{document}
