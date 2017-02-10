@@ -1,13 +1,15 @@
-amsref
+amsrefs
 biblatex
 datatool
 etoolbox
 fancyvrb
 feynmf
 fp
+framed
 fvextra
 glossaries
 ifplatform
+index
 lineno
 logreq
 mfirstuc
@@ -20,7 +22,6 @@ supertabular
 textcase
 upquote
 url
+xcolor
 xfor
 xstring
-framed
-index
