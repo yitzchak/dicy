@@ -53,7 +53,7 @@ export default class BibTeX extends Rule {
     }
 
     if (this.options.outputDirectory) {
-      options.env = Object.assign({}, process.env, { BIBINPUTS: ['.', this.options.outputDirectory}].join(path.delimeter) })
+      options.env = Object.assign({}, process.env, { BIBINPUTS: ['.', this.options.outputDirectory].join(path.delimeter) })
     }
 
     return options
