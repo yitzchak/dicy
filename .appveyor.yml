@@ -15,6 +15,7 @@ environment:
     PYTHON: C:\Python36
     R_HOME: '%PROGRAMFILES%\\R'
     R_LIBS_USER: '%USERPROFILE%\\R\\library'
+    TEXINPUTS: %ASYMPTOTE_HOME%
 
 install:
   - set PATH=%PATH%;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
@@ -24,9 +25,8 @@ install:
   - asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
   - pip3 install Pygments
   - initexmf --set-config-value=[MPM]AutoInstall=0
-  - initexmf "--user-roots=%ASYMPTOTE_HOME%" --update-fndb
   - mpm --install-some=scripts\miktex-packages
-  - mkdir -p "${R_LIBS_USER}"
+  - mkdir -p "%R_LIBS_USER%"
   - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
   - ps: Install-Product node 7 x64
   - npm install
