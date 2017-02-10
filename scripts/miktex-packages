@@ -1,7 +1,10 @@
+amsref
 biblatex
+datatool
 etoolbox
 fancyvrb
 feynmf
+fp
 fvextra
 glossaries
 ifplatform
@@ -12,8 +15,12 @@ minted
 mptopdf
 natbib
 nomencl
+substr
+supertabular
 textcase
 upquote
 url
 xfor
 xstring
+framed
+index
