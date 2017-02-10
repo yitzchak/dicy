@@ -4,7 +4,7 @@ branches:
 
 platform:
   - x64
- 
+
 skip_tags: true
 clone_depth: 1
 
@@ -15,7 +15,6 @@ environment:
     PYTHON: C:\Python36
     R_HOME: '%PROGRAMFILES%\\R'
     R_LIBS_USER: '%USERPROFILE%\\R\\library'
-    TEXINPUTS: '%ASYMPTOTE_HOME%'
 
 install:
   - set PATH=%PATH%;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
@@ -23,9 +22,12 @@ install:
   - cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
   - curl -fsS -o asymptote-setup.exe http://heanet.dl.sourceforge.net/project/asymptote/2.38/asymptote-2.38-setup.exe
   - asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
+  - mkdir /p %MIKTEX_HOME%\tex\latex\asymptote
+  - copy %ASYMPTOTE_HOME%\*.sty %MIKTEX_HOME%\tex\latex\asymptote
   - pip3 install Pygments
   - initexmf --set-config-value=[MPM]AutoInstall=0
   - mpm --install-some=scripts\miktex-packages
+  - initexmf --admin --update-fndb
   - mkdir -p "%R_LIBS_USER%"
   - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
   - ps: Install-Product node 7 x64

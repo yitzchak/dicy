@@ -2,6 +2,7 @@ amsrefs
 biblatex
 datatool
 etoolbox
+everypage
 fancyvrb
 feynmf
 fp
