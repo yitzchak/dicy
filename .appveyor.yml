@@ -15,7 +15,7 @@ environment:
     PYTHON: C:\Python36
     R_HOME: '%PROGRAMFILES%\\R'
     R_LIBS_USER: '%USERPROFILE%\\R\\library'
-    TEXINPUTS: %ASYMPTOTE_HOME%
+    TEXINPUTS: '%ASYMPTOTE_HOME%'
 
 install:
   - set PATH=%PATH%;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
