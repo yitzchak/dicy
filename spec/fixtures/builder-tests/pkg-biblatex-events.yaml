@@ -1,25 +1,3 @@
 types:
   - log
-events:
-  - type: log
-    severity: warning
-    name: pdfTeX
-    category: Package biblatex
-    text: |-
-      Using fall-back BibTeX(8) backend:
-      functionality may be reduced/unavailable.
-    log:
-      file: bibtex-1.log
-      start: 217
-      end: 218
-  - type: log
-    severity: warning
-    name: pdfTeX
-    category: Package biblatex
-    text: |-
-      Using fall-back BibTeX(8) backend:
-      functionality may be reduced/unavailable.
-    log:
-      file: output/bibtex-2.log
-      start: 217
-      end: 218
+events: []
