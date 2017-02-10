@@ -28,7 +28,7 @@ install:
   - mpm --install-some=scripts\miktex-packages
   - mkdir -p "${R_LIBS_USER}"
   - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
-  - ps: Install-Product node 7
+  - ps: Install-Product node 7 x64
   - npm install
 
 test_script:
