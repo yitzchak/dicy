@@ -48,7 +48,7 @@ function compareFilePaths (x: string, y: string): boolean {
 }
 
 function stringCompare (x: string, y: string): boolean {
-  return x.replace(/[/\\'"]/, '') === y.replace(/[/\\'"]/, '')
+  return x.replace(/[/\\'"^]/g, '') === y.replace(/[/\\'"^]/g, '')
 }
 
 export const customMatchers = {
