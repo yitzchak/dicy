@@ -22,13 +22,13 @@ install:
   - cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
   - curl -fsS -o asymptote-setup.exe http://heanet.dl.sourceforge.net/project/asymptote/2.38/asymptote-2.38-setup.exe
   - asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
-  - mkdir /p %MIKTEX_HOME%\tex\latex\asymptote
+  - mkdir %MIKTEX_HOME%\tex\latex\asymptote
   - copy %ASYMPTOTE_HOME%\*.sty %MIKTEX_HOME%\tex\latex\asymptote
   - pip3 install Pygments
   - initexmf --set-config-value=[MPM]AutoInstall=0
   - mpm --install-some=scripts\miktex-packages
   - initexmf --admin --update-fndb
-  - mkdir -p "%R_LIBS_USER%"
+  - mkdir "%R_LIBS_USER%"
   - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
   - ps: Install-Product node 7 x64
   - npm install
