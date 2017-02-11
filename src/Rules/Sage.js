@@ -21,10 +21,8 @@ export default class Sage extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    const { dir, name } = path.parse(this.firstParameter.normalizedFilePath)
-    for (const ext of ['.sout', '.sage.cmd', 'scmd']) {
-      await this.getOutput(path.format({ dir, name, ext }))
-    }
+    await this.getRelatedOutputs(['.sout', '.sage.cmd', '.scmd'])
     return true
   }
+
 }

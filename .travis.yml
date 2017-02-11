@@ -26,6 +26,7 @@ addons:
       - biber
       - feynmf
       - latex-xcolor
+      - lhs2tex
       - python-pygments
       - r-recommended
       - texlive-bibtex-extra

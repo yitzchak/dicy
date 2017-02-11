@@ -21,8 +21,7 @@ export default class MetaPost extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    const { dir, name } = path.parse(this.firstParameter.normalizedFilePath)
-    await this.getOutput(path.format({ dir, name, ext: '.1' }))
+    await this.getRelatedOutput('.1')
     return true
   }
 }

@@ -96,6 +96,9 @@ ListOfFigures:
 ListOfTables:
   fileName: !!js/regexp /\.lot$/i
   hash: true
+LiterateHaskell:
+  fileName: !!js/regexp /\.lhs$/i
+  hash: true
 MakeIndexLog:
   contents: !!js/regexp /^This is makeindex,/
   fileName: !!js/regexp /\..+lg$/i
@@ -137,6 +140,9 @@ PortableDocumentFormat:
   fileName: !!js/regexp /\.pdf$/i
   hash: true
   hashSkip: !!js/regexp /^\/(CreationDate|ModDate|ID)/
+PTB:
+  fileName: !!js/regexp /\.ptb$/
+  hash: true
 Sage:
   fileName: !!js/regexp /\.sage$/i
   hash: true

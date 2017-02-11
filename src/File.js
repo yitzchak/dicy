@@ -120,6 +120,11 @@ export default class File {
     })
   }
 
+  getRelatedPath (ext: string) {
+    const { dir, name } = path.parse(this.normalizedFilePath)
+    return path.format({ dir, name, ext })
+  }
+
   get hasBeenUpdated (): boolean {
     return this._hasBeenUpdated
   }
