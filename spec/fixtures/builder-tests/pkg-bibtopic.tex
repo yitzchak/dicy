@@ -1,0 +1,29 @@
+\documentclass{article}
+
+\usepackage{bibtopic}
+
+\begin{document}
+
+\bibliographystyle{alpha}
+
+Some random citations: \cite{Angle:2003},
+\cite{Kilroy:1942} and \cite{Butron:1891}.
+
+\begin{btSect}{foo}
+ \section{References from foo}
+ \btPrintCited
+\end{btSect}
+
+\begin{btSect}[plain]{bar}
+ \section{References from bar}
+ \btPrintCited
+ \section{Articles not cited}
+ \btPrintNotCited
+\end{btSect}
+
+\begin{btSect}[plain]{foo,bar}
+ \section{All References}
+ \btPrintAll
+\end{btSect}
+
+\end{document}
