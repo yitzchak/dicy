@@ -25,7 +25,7 @@ describe('Builder', () => {
 
   describe('proper behavior of build command', () => {
     for (const name of tests) {
-      it(`verifies that ${name} support works`, async (done) => {
+      const spec = it(`verifies that ${name} support works`, async (done) => {
         let expected = { types: [], events: [] }
         let events = []
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
@@ -54,9 +54,9 @@ describe('Builder', () => {
           try {
             await childProcess.exec(command)
           } catch (error) {
-            done()
             // $FlowIgnore
-            pending(`Skipping test of ${name} since \`${command}\` failed.`)
+            spec.pend(`Skipped test of ${name} since required programs not available (\`${command}\` was not successful).`)
+            done()
             return
           }
         }

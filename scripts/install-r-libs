@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
+  mkdir -p "${R_LIBS_USER}"
+  Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
+fi
