@@ -56,6 +56,7 @@ describe('Builder', () => {
           } catch (error) {
             // $FlowIgnore
             pending(`Skipping test of ${name} since \`${command}\` failed.`)
+            done()
             return
           }
         }
