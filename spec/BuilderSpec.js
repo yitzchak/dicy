@@ -14,7 +14,7 @@ const ASYNC_TIMEOUT = 40000
 describe('Builder', () => {
   let builder: Builder
   let fixturesPath: string
-  let tests: Array<string> = fs.readdirSync(path.join(__dirname, 'fixtures', 'builder-tests')).filter(name => /\.(tex|Rnw)$/i.test(name))
+  let tests: Array<string> = fs.readdirSync(path.join(__dirname, 'fixtures', 'builder-tests')).filter(name => /\.(lhs|tex|Rnw)$/i.test(name))
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()
