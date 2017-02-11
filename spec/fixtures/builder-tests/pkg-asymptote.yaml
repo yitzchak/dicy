@@ -8,3 +8,5 @@ jobs:
     engine: latex
 reportLogMessages: true
 severity: error
+check:
+  - asy -version

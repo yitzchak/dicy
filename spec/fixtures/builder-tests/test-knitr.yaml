@@ -9,3 +9,5 @@ jobs:
     synctex: true
 reportLogMessages: true
 severity: error
+check:
+  - Rscript -e "library(knitr);library(patchSynctex)"

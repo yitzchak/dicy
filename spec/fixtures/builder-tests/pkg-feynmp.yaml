@@ -1,2 +1,4 @@
 reportLogMessages: true
 severity: error
+check:
+  - mpost -version

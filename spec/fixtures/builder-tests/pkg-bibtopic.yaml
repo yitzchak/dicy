@@ -2,3 +2,5 @@
 # fixed name btaux.aux for it's master file.
 reportLogMessages: true
 severity: error
+check:
+  - bibtex -version
