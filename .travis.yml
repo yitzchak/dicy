@@ -8,10 +8,13 @@ node_js:
 env:
   global:
     - R_LIBS_USER=${HOME}/R/library
+cache:
+  directories:
+    - ${R_LIBS_USER}
 addons:
   apt:
     sources:
-      - r-packages-trusty    
+      - r-packages-trusty
     packages:
       - asymptote
       - biber
@@ -26,5 +29,4 @@ addons:
       - texlive-metapost
       - texlive-xetex
 before_install:
-  - mkdir -p "${R_LIBS_USER}"
-  - Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
+  - if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then mkdir -p "${R_LIBS_USER}"; Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"; fi

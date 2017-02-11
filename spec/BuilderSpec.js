@@ -54,9 +54,9 @@ describe('Builder', () => {
           try {
             await childProcess.exec(command)
           } catch (error) {
+            done()
             // $FlowIgnore
             pending(`Skipping test of ${name} since \`${command}\` failed.`)
-            done()
             return
           }
         }
