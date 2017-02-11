@@ -3,6 +3,7 @@
 import 'babel-polyfill'
 import path from 'path'
 import fs from 'fs-promise'
+import childProcess from 'mz/child_process'
 import yaml from 'js-yaml'
 
 import { Builder } from '../src/main'
@@ -47,7 +48,21 @@ describe('Builder', () => {
         }
 
         // Run the builder
-        expect(await builder.run('load', 'build', 'save')).toBeTruthy()
+        expect(await builder.run('load')).toBeTruthy()
+
+        for (const command of builder.options.check || []) {
+          try {
+            await childProcess.exec(command)
+          } catch (error) {
+            // $FlowIgnore
+            pending(`Skipping test of ${name} since \`${command}\` failed.`)
+            return
+          }
+        }
+
+        expect(await builder.run('build')).toBeTruthy()
+
+        expect(await builder.run('save')).toBeTruthy()
 
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
