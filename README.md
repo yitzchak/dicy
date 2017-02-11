@@ -1,10 +1,11 @@
 # Ouroboros
-[![Build Status][travis svg]][travis]
 
 An experimental builder for LaTeX...not ready for production use.
 
-[travis]: https://travis-ci.org/yitzchak/ouroboros
-[travis svg]: https://travis-ci.org/yitzchak/ouroboros.svg?branch=master
+[![Build Status][travis svg]][travis]
+[![Windows Build Status][appveyor svg]][appveyor]
+[![Dependency Status][dependency svg]][dependency]
+[![devDependency Status][devDependency svg]][devDependency]
 
 ## Installation
 
@@ -60,3 +61,12 @@ Options:
   --save-events <saveEvents>    List of event types to save for test usage.
   -v, --verbose                 Be verbose in command output.
 ```
+
+[appveyor svg]: https://ci.appveyor.com/api/projects/status/s3unjr8c90bhcd99?svg=true
+[appveyor]: https://ci.appveyor.com/project/yitzchak/ouroboros/branch/master
+[dependency svg]: https://david-dm.org/yitzchak/ouroboros.svg
+[dependency]: https://david-dm.org/yitzchak/ouroboros
+[devDependency svg]: https://david-dm.org/yitzchak/ouroboros/dev-status.svg
+[devDependency]: https://david-dm.org/yitzchak/ouroboros?type=dev
+[travis svg]: https://travis-ci.org/yitzchak/ouroboros.svg?branch=master
+[travis]: https://travis-ci.org/yitzchak/ouroboros
