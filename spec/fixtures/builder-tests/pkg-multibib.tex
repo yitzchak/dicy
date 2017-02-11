@@ -1,0 +1,17 @@
+\documentclass{article}
+
+\usepackage{multibib}
+
+\newcites{other}{Other References}
+
+\begin{document}
+
+This may be useful \cite{Kilroy:1942}, but this is definately not \citeother{Angle:2003}.
+
+\bibliographystyle{plain}
+\bibliography{foo}
+
+\bibliographystyleother{alpha}
+\bibliographyother{foo}
+
+\end{document}

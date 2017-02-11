@@ -46,59 +46,83 @@ export default class File {
     return file
   }
 
-  parse (parsers: Array<Parser>): Promise<void> {
+  parse (parsers: Array<Parser>, isWrapped: string => boolean = line => false): Promise<void> {
     return new Promise((resolve, reject) => {
       const bufferSize = parsers.reduce((current, parser) => Math.max(current, parser.patterns.length), 0)
-      let lines = []
+      type foo = { text: string, count: number }
+      let lines: Array<foo> = []
       let lineNumber = 1
-      const checkForMatches = () => {
-        while (lines.length >= bufferSize) {
+      const checkForMatches = (finalCheck: boolean = false) => {
+        while (lines.length > 0) {
+          if (!finalCheck && lines.length < bufferSize) break
           let matched = false
           for (const parser: Parser of parsers) {
-            const matches = parser.patterns.map((pattern, index) => lines[index].match(pattern))
+            if (parser.patterns.length > lines.length) continue
+            const matches = parser.patterns.map((pattern, index) => lines[index].text.match(pattern))
             matched = matches.every(match => match)
             if (matched) {
+              // $FlowIgnore
               const m = [].concat(...matches.map(match => match.slice(1)))
               const groups: Object = {}
               parser.names.map((name, index) => {
                 if (m[index] !== undefined) groups[name] = m[index]
               })
+              const lineCount = lines.splice(0, parser.patterns.length).reduce((total, line) => total + line.count, 0)
               const reference: Reference = {
                 file: this.normalizedFilePath,
                 start: lineNumber,
-                end: lineNumber + parser.patterns.length - 1
+                end: lineNumber + lineCount - 1
               }
-              lines.splice(0, parser.patterns.length)
-              lineNumber += parser.patterns.length
+              lineNumber += lineCount
               parser.evaluate(reference, groups)
               break
             }
           }
           if (!matched) {
+            lineNumber += lines[0].count
             lines.shift()
-            lineNumber++
           }
         }
       }
 
       if (this.virtual) {
-        lines = this.value ? this.value.toString().split(/\r?\n/) : []
-        checkForMatches()
+        const rawLines = this.value ? this.value.toString().split(/\r?\n/) : []
+        lines = rawLines.map(text => ({ text, count: 1 }))
+        for (let index = lines.length - 1; index > -1; index--) {
+          if (isWrapped(lines[index].text) && index + 1 < lines.length) {
+            lines[index].text += lines[index + 1].text
+            lines[index].count += lines[index + 1].count
+            lines.splice(index + 1, 1)
+          }
+        }
+        checkForMatches(true)
         resolve()
       } else {
+        let current: foo = { text: '', count: 0 }
         const rl = readline.createInterface({
           input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
         })
 
         rl.on('line', line => {
-          lines.push(line)
-          checkForMatches()
+          current.text += line
+          current.count += 1
+          if (!isWrapped(line)) {
+            lines.push(current)
+            current = { text: '', count: 0 }
+            checkForMatches()
+          }
         })
         .on('close', () => {
+          checkForMatches(true)
           resolve()
         })
       }
     })
+  }
+
+  getRelatedPath (ext: string) {
+    const { dir, name } = path.parse(this.normalizedFilePath)
+    return path.format({ dir, name, ext })
   }
 
   get hasBeenUpdated (): boolean {

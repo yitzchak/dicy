@@ -20,7 +20,7 @@ export default class ParseBibTeXLog extends Rule {
 
     await this.firstParameter.parse([{
       names: ['text'],
-      patterns: [/^(A bad cross reference---entry .*)$/],
+      patterns: [/^(I couldn't open database file .*|A bad cross reference---entry .*)$/],
       evaluate: (reference, groups) => {
         messages.push({
           severity: 'error',
@@ -42,7 +42,7 @@ export default class ParseBibTeXLog extends Rule {
       }
     }, {
       names: ['line', 'file'],
-      patterns: [/^--line (\d+) of file (.+)$/],
+      patterns: [/^-+line (\d+) of file (.+)$/],
       evaluate: (reference, groups) => {
         const message = messages[messages.length - 1]
         const line = parseInt(groups.line, 10)
@@ -55,7 +55,7 @@ export default class ParseBibTeXLog extends Rule {
       }
     }, {
       names: ['text', 'line', 'file'],
-      patterns: [/^(.*)---line (\d+) of file (.*)$/],
+      patterns: [/^(.+)---line (\d+) of file (.*)$/],
       evaluate: (reference, groups) => {
         const line = parseInt(groups.line, 10)
         messages.push({

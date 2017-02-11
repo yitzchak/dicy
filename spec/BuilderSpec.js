@@ -3,6 +3,7 @@
 import 'babel-polyfill'
 import path from 'path'
 import fs from 'fs-promise'
+import childProcess from 'mz/child_process'
 import yaml from 'js-yaml'
 
 import { Builder } from '../src/main'
@@ -13,7 +14,7 @@ const ASYNC_TIMEOUT = 40000
 describe('Builder', () => {
   let builder: Builder
   let fixturesPath: string
-  let tests: Array<string> = fs.readdirSync(path.join(__dirname, 'fixtures', 'builder-tests')).filter(name => /\.(tex|Rnw)$/i.test(name))
+  let tests: Array<string> = fs.readdirSync(path.join(__dirname, 'fixtures', 'builder-tests')).filter(name => /\.(lhs|tex|Rnw)$/i.test(name))
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()
@@ -22,9 +23,9 @@ describe('Builder', () => {
     done()
   })
 
-  describe('proper behavior of build command', () => {
+  describe('can successfully build', () => {
     for (const name of tests) {
-      it(`verifies that ${name} support works`, async (done) => {
+      const spec = it(name, async (done) => {
         let expected = { types: [], events: [] }
         let events = []
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
@@ -47,7 +48,22 @@ describe('Builder', () => {
         }
 
         // Run the builder
-        expect(await builder.run('load', 'build', 'save')).toBeTruthy()
+        expect(await builder.run('load')).toBeTruthy()
+
+        for (const command of builder.options.check || []) {
+          try {
+            await childProcess.exec(command)
+          } catch (error) {
+            // $FlowIgnore
+            spec.pend(`Skipped test of ${name} since required program is not available (\`${command}\` was not successful).`)
+            done()
+            return
+          }
+        }
+
+        expect(await builder.run('build')).toBeTruthy()
+
+        expect(await builder.run('save')).toBeTruthy()
 
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)

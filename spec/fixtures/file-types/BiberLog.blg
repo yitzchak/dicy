@@ -1,15 +1,15 @@
 [0] Config.pm:354> INFO - This is Biber 2.7
 [0] Config.pm:357> INFO - Logfile is 'output/biber.blg'
-[25] biber:303> INFO - === Sun Feb  5, 2017, 11:36:20
-[41] Biber.pm:359> INFO - Reading 'output/biber.bcf'
-[117] Biber.pm:835> INFO - Found 1 citekeys in bib section 0
-[129] Biber.pm:3670> INFO - Processing section 0
-[140] Biber.pm:3840> INFO - Looking for bibtex format file 'BibTeXFile.bib' for section 0
-[140] bibtex.pm:1435> INFO - Decoding LaTeX character macros into UTF-8
-[142] bibtex.pm:1292> INFO - Found BibTeX data source 'BibTeXFile.bib'
-[151] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[151] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[151] Biber.pm:3499> INFO - Sorting list 'nty/global/' of type 'entry' with scheme 'nty' and locale 'en-US'
-[151] Biber.pm:3505> INFO - No sort tailoring available for locale 'en-US'
-[153] bbl.pm:608> INFO - Writing 'output/biber.bbl' with encoding 'ascii'
-[153] bbl.pm:712> INFO - Output to output/biber.bbl
+[32] biber:303> INFO - === Sat Feb 11, 2017, 09:19:48
+[53] Biber.pm:359> INFO - Reading 'output/biber.bcf'
+[129] Biber.pm:835> INFO - Found 1 citekeys in bib section 0
+[141] Biber.pm:3670> INFO - Processing section 0
+[155] Biber.pm:3840> INFO - Looking for bibtex format file 'BibTeXFile.bib' for section 0
+[156] bibtex.pm:1435> INFO - Decoding LaTeX character macros into UTF-8
+[158] bibtex.pm:1292> INFO - Found BibTeX data source 'BibTeXFile.bib'
+[168] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[169] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[169] Biber.pm:3499> INFO - Sorting list 'nty/global/' of type 'entry' with scheme 'nty' and locale 'en-US'
+[169] Biber.pm:3505> INFO - No sort tailoring available for locale 'en-US'
+[172] bbl.pm:608> INFO - Writing 'output/biber.bbl' with encoding 'ascii'
+[173] bbl.pm:712> INFO - Output to output/biber.bbl

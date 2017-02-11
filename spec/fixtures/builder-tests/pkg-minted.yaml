@@ -1,4 +1,5 @@
 reportLogMessages: true
 severity: error
+shellEscape: enable
 check:
-  - mpost -version
+  - pygmentize -V

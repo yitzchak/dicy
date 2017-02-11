@@ -6,3 +6,7 @@ jobs:
   biber-2:
     outputDirectory: output
 reportLogMessages: true
+severity: error
+check:
+  - bibtex -version
+  - biber -version

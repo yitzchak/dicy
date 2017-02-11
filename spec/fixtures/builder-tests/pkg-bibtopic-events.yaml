@@ -1,0 +1,48 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LaTeX(build;execute;;pkg-bibtopic.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-bibtopic.tex
+  - type: command
+    rule: LaTeX(build;execute;;pkg-bibtopic.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-bibtopic.tex
+  - type: command
+    rule: BibTeX(build;execute;;pkg-bibtopic1.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-bibtopic1.aux
+  - type: command
+    rule: BibTeX(build;execute;;btaux.aux-ParsedLaTeXAuxilary)
+    command: bibtex btaux.aux
+  - type: command
+    rule: BibTeX(build;execute;;pkg-bibtopic2.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-bibtopic2.aux
+  - type: command
+    rule: BibTeX(build;execute;;pkg-bibtopic3.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-bibtopic3.aux
+  - type: command
+    rule: LaTeX(build;execute;;pkg-bibtopic.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-bibtopic.tex
+  - type: command
+    rule: BibTeX(build;execute;;pkg-bibtopic1.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-bibtopic1.aux
+  - type: command
+    rule: BibTeX(build;execute;;pkg-bibtopic2.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-bibtopic2.aux
+  - type: command
+    rule: BibTeX(build;execute;;btaux.aux-ParsedLaTeXAuxilary)
+    command: bibtex btaux.aux
+  - type: command
+    rule: BibTeX(build;execute;;pkg-bibtopic3.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-bibtopic3.aux
+  - type: command
+    rule: LaTeX(build;execute;;pkg-bibtopic.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-bibtopic.tex

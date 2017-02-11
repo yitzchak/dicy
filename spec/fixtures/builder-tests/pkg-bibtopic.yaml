@@ -1,0 +1,6 @@
+# We don't test multiple job names in the same test because bibtopic uses the
+# fixed name btaux.aux for it's master file.
+reportLogMessages: true
+severity: error
+check:
+  - bibtex -version

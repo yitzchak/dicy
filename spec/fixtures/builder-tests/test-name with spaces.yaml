@@ -3,3 +3,4 @@ jobs:
   job-2:
     outputDirectory: output
 reportLogMessages: true
+severity: error

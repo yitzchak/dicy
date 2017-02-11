@@ -16,19 +16,19 @@ export default class MakeIndex extends Rule {
     const ext = path.extname(this.firstParameter.normalizedFilePath)
     const firstChar = ext[1]
 
-    this.logPath = this.resolvePath(`.${firstChar === 'b' ? 'br' : firstChar}lg`)
+    this.logPath = this.firstParameter.getRelatedPath(`.${firstChar === 'b' ? 'br' : firstChar}lg`)
 
     switch (this.firstParameter.type) {
       case 'NomenclatureControlFile':
         this.stylePath = 'nomencl.ist'
-        this.outputPath = this.resolvePath('.nls')
+        this.outputPath = this.firstParameter.getRelatedPath('.nls')
         break
       case 'BibRefControlFile':
         this.stylePath = 'bibref.ist'
-        this.outputPath = this.resolvePath('.bnd')
+        this.outputPath = this.firstParameter.getRelatedPath('.bnd')
         break
       default:
-        this.outputPath = this.resolvePath(`.${firstChar}nd`)
+        this.outputPath = this.firstParameter.getRelatedPath(`.${firstChar}nd`)
         break
     }
   }

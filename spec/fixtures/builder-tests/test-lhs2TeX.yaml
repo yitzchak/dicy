@@ -4,3 +4,5 @@ jobs:
     outputDirectory: output
 reportLogMessages: true
 severity: error
+check:
+  - lhs2TeX -V

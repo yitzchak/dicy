@@ -11,7 +11,7 @@ import type { Action, Command, Phase, ResolvePathOptions } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
-    if (process.platform !== 'win32') command = command.replace('$', '\\$')
+    // if (process.platform !== 'win32') command = command.replace('$', '\\$')
     childProcess.exec(command, options, (error, stdout, stderr) => {
       resolve({ error, stdout, stderr })
     })
@@ -254,6 +254,35 @@ export default class Rule extends BuildStateConsumer {
     return files
   }
 
+  async getRelatedInput (ext: string): Promise<?File> {
+    return await this.getInput(this.firstParameter.getRelatedPath(ext))
+  }
+
+  async getRelatedInputs (exts: Array<string>): Promise<Array<File>> {
+    const files = []
+
+    for (const ext of exts) {
+      const file = await this.getRelatedInput(ext)
+      if (file) files.push(file)
+    }
+
+    return files
+  }
+
+  async getRelatedOutput (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
+    return await this.getOutput(this.firstParameter.getRelatedPath(ext))
+  }
+
+  async getRelatedOutputs (exts: Array<string>): Promise<Array<File>> {
+    const files = []
+
+    for (const ext of exts) {
+      const file = await this.getRelatedOutput(ext)
+      if (file) files.push(file)
+    }
+
+    return files
+  }
   constructProcessOptions (): Object {
     return {
       cwd: this.rootPath,

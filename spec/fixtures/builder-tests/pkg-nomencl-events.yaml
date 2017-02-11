@@ -61,8 +61,8 @@ events:
       end: 4
     source:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: .nan
-      end: .nan
+      start: 70
+      end: 70
   - type: log
     severity: error
     name: makeindex
@@ -74,8 +74,8 @@ events:
       end: 6
     source:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: .nan
-      end: .nan
+      start: 71
+      end: 71
   - type: log
     severity: error
     name: makeindex
@@ -87,8 +87,8 @@ events:
       end: 8
     source:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: .nan
-      end: .nan
+      start: 72
+      end: 72
   - type: log
     severity: error
     name: makeindex
@@ -100,8 +100,8 @@ events:
       end: 4
     source:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: .nan
-      end: .nan
+      start: 70
+      end: 70
   - type: log
     severity: error
     name: makeindex
@@ -113,8 +113,8 @@ events:
       end: 6
     source:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: .nan
-      end: .nan
+      start: 71
+      end: 71
   - type: log
     severity: error
     name: makeindex
@@ -126,5 +126,5 @@ events:
       end: 8
     source:
       file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: .nan
-      end: .nan
+      start: 72
+      end: 72

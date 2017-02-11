@@ -6,3 +6,7 @@ jobs:
     engine: xelatex
   job-4:
     engine: latex
+reportLogMessages: true
+severity: error
+check:
+  - asy -version

@@ -44,7 +44,11 @@ function constructMessage (found: Array<Event>, missing: Array<Event>) {
 }
 
 function compareFilePaths (x: string, y: string): boolean {
-  return x === y || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
+  return path.normalize(x) === path.normalize(y) || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
+}
+
+function stringCompare (x: string, y: string): boolean {
+  return x.replace(/[/\\'"^]/g, '') === y.replace(/[/\\'"^]/g, '')
 }
 
 export const customMatchers = {
@@ -59,7 +63,11 @@ export const customMatchers = {
 
         for (const received of receivedEvents) {
           let expectedIndex = _.findIndex(expectedEvents,
-            expected => _.isMatchWith(received, expected, (x, y, key) => key === 'file' ? compareFilePaths(x, y) : undefined),
+            expected => _.isMatchWith(received, expected, (x, y, key) => key === 'file'
+              ? compareFilePaths(x, y)
+              : ((typeof x === 'string' && typeof y === 'string')
+                ? stringCompare(x, y)
+                : undefined)),
             fromIndex)
           if (expectedIndex === -1) {
             receivedMissing.push(received)

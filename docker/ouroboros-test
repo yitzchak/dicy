@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+cd ~
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+git clone https://github.com/yitzchak/ouroboros.git
+cd ouroboros
+git checkout ${1:-master}
+nvm install node
+npm install
+if [ -z ${2+x} ]; then
+  npm test
+else
+  eval $2
+fi
+
