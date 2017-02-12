@@ -21,7 +21,11 @@ export default class MetaPost extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getRelatedOutput('.1')
+    await this.getResolvedOutput('.1', {
+      fileReference: this.firstParameter,
+      useJobName: false,
+      useOutputDirectory: false
+    })
     return true
   }
 }

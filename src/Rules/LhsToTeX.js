@@ -7,11 +7,20 @@ export default class LhsToTeX extends Rule {
   static description: string = 'Runs lhs2TeX on lhs files.'
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getRelatedOutput('.tex')
+    await this.getResolvedOutput('.tex', {
+      referenceFile: this.firstParameter,
+      useJobName: false,
+      useOutputDirectory: false
+    })
     return true
   }
 
   constructCommand () {
-    return ['lhs2TeX', '-o', this.firstParameter.getRelatedPath('.tex'), this.firstParameter.normalizedFilePath]
+    const outputPath = this.resolvePath('.tex', {
+      referenceFile: this.firstParameter,
+      useJobName: false,
+      useOutputDirectory: false
+    })
+    return ['lhs2TeX', '-o', outputPath, this.firstParameter.normalizedFilePath]
   }
 }

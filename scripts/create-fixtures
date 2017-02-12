@@ -21,7 +21,7 @@ rm -rf output
 
 cd ../builder-tests
 
-for file in {*.tex,*.Rnw}; do
+for file in {*.tex,*.lhs,*.Rnw}; do
   echo "Creating event archive for $file"
   ouroboros build --save-events=command,log "$file" &>/dev/null
   rm -rf *-cache.yaml output job-* bibtex-* biber-* *.1 *.log *.mp *.t1 *.aux *.fls *.pdf *.ps *.dvi _minted-* test-knitr*.tex test-lhs2TeX.tex figure other.* *.bbl *.blg sage-plots-for-*

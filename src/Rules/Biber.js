@@ -30,7 +30,11 @@ export default class Biber extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getRelatedOutputs(['.bbl', '.blg'])
+    await this.getResolvedOutputs(['.bbl', '.blg'], {
+      fileReference: this.firstParameter,
+      useJobName: false,
+      useOutputDirectory: false
+    })
     return true
   }
 }

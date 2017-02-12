@@ -1,9 +1,12 @@
 /* @flow */
 
+import File from './File'
+
 export type ResolvePathOptions = {
   absolute?: boolean,
   useJobName?: boolean,
-  useOutputDirectory?: boolean
+  useOutputDirectory?: boolean,
+  referenceFile?: File
 }
 
 export type Action = 'run' | 'updateDependencies'

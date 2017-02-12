@@ -75,8 +75,8 @@ export default class BuildStateConsumer {
     return this.buildState.normalizePath(filePath)
   }
 
-  resolvePath (ext: string, { absolute = false, useJobName = true, useOutputDirectory = true }: ResolvePathOptions = {}) {
-    let { dir, name } = path.parse(this.filePath)
+  resolvePath (ext: string, { absolute = false, useJobName = true, useOutputDirectory = true, referenceFile }: ResolvePathOptions = {}) {
+    let { dir, name } = path.parse(referenceFile ? referenceFile.normalizedFilePath : this.filePath)
 
     if (useJobName) name = this.jobName || this.options.jobName || name
 

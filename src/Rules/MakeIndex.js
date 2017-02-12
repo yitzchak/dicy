@@ -4,6 +4,8 @@ import path from 'path'
 
 import Rule from '../Rule'
 
+import type { ResolvePathOptions } from '../types'
+
 export default class MakeIndex extends Rule {
   static fileTypes: Set<string> = new Set(['IndexControlFile', 'BibRefControlFile', 'NomenclatureControlFile'])
   static description: string = 'Runs makeindex on any index files.'
@@ -15,20 +17,25 @@ export default class MakeIndex extends Rule {
   async initialize () {
     const ext = path.extname(this.firstParameter.normalizedFilePath)
     const firstChar = ext[1]
+    const resolvePathOptions: ResolvePathOptions = {
+      referenceFile: this.firstParameter,
+      useJobName: false,
+      useOutputDirectory: false
+    }
 
-    this.logPath = this.firstParameter.getRelatedPath(`.${firstChar === 'b' ? 'br' : firstChar}lg`)
+    this.logPath = this.resolvePath(`.${firstChar === 'b' ? 'br' : firstChar}lg`, resolvePathOptions)
 
     switch (this.firstParameter.type) {
       case 'NomenclatureControlFile':
         this.stylePath = 'nomencl.ist'
-        this.outputPath = this.firstParameter.getRelatedPath('.nls')
+        this.outputPath = this.resolvePath('.nls', resolvePathOptions)
         break
       case 'BibRefControlFile':
         this.stylePath = 'bibref.ist'
-        this.outputPath = this.firstParameter.getRelatedPath('.bnd')
+        this.outputPath = this.resolvePath('.bnd', resolvePathOptions)
         break
       default:
-        this.outputPath = this.firstParameter.getRelatedPath(`.${firstChar}nd`)
+        this.outputPath = this.resolvePath(`.${firstChar}nd`, resolvePathOptions)
         break
     }
   }
