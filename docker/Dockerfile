@@ -9,9 +9,9 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 RUN apt-get -y install build-essential libssl-dev curl git
 RUN apt-get -y install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-metapost texlive-xetex biber feynmf latex-xcolor
-RUN apt-get -y install python-pygments asymptote r-recommended
+RUN apt-get -y install python-pygments asymptote r-recommended lhs2tex
 RUN apt-get -y install sagemath-upstream-binary
-RUN cp -r /usr/lib/sagemath/local/share/texmf/tex /usr/local/share/texmf
+RUN cp -rv /usr/lib/sagemath/local/share/texmf/tex /usr/local/share/texmf
 RUN mktexlsr
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
 RUN mkdir -p ~/R/library
