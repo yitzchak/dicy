@@ -159,8 +159,10 @@ export default class Builder extends BuildStateConsumer {
 
     while (evaluationCount < 20 && (Array.from(this.files).some(file => !file.analyzed) ||
       Array.from(this.rules).some(rule => rule.needsEvaluation))) {
-      await this.analyzeFiles()
-      await this.evaluate(evaluationCount % 2 === 0 ? 'updateDependencies' : 'run')
+      for (const action of ['updateDependencies', 'run']) {
+        await this.analyzeFiles()
+        await this.evaluate(action)
+      }
       evaluationCount++
     }
   }
