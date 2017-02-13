@@ -153,17 +153,16 @@ export default class Builder extends BuildStateConsumer {
       file.hasBeenUpdated = file.hasBeenUpdatedCache
       file.analyzed = false
     }
-    let evaluationCount = 0
 
     await this.analyzePhase()
 
-    while (evaluationCount < 20 && (Array.from(this.files).some(file => !file.analyzed) ||
-      Array.from(this.rules).some(rule => rule.needsEvaluation))) {
+    for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
       for (const action of ['updateDependencies', 'run']) {
         await this.analyzeFiles()
         await this.evaluate(action)
       }
-      evaluationCount++
+      if (Array.from(this.files).every(file => file.analyzed) &&
+        Array.from(this.rules).every(rule => !rule.needsEvaluation)) break
     }
   }
 

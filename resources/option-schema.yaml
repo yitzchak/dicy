@@ -37,6 +37,13 @@ jobNames:
   type: strings
   commands:
     - build
+phaseCycles:
+  description: maximum number of evaluation cycles in each phase
+  type: number
+  defaultValue: 20
+  commands:
+    - build
+    - report
 outputDirectory:
   description: name of directory for output files
   type: string
