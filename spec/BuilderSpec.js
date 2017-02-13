@@ -55,7 +55,7 @@ describe('Builder', () => {
             await childProcess.exec(command)
           } catch (error) {
             // $FlowIgnore
-            spec.pend(`Skipped test of ${name} since required program is not available (\`${command}\` was not successful).`)
+            spec.pend(`Skipped test since required program is not available (\`${command}\` was not successful).`)
             done()
             return
           }

@@ -81,8 +81,8 @@ export const customMatchers = {
 
         const pass = receivedMissing.length === 0 && expectedMissing.length === 0
         const message = pass
-          ? constructMessage(receivedFound, expectedMissing)
-          : constructMessage(receivedMissing, [])
+          ? constructMessage(receivedFound, expectedFound)
+          : constructMessage(receivedMissing, expectedMissing)
 
         return { pass, message }
       }
