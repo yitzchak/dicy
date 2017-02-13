@@ -9,7 +9,7 @@ import BuildStateConsumer from './BuildStateConsumer'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Option, Phase, RuleInfo } from './types'
+import type { Action, Command, Option, Phase, RuleInfo } from './types'
 
 export default class Builder extends BuildStateConsumer {
   ruleClasses: Array<Class<Rule>> = []
@@ -71,15 +71,15 @@ export default class Builder extends BuildStateConsumer {
       .map(rule => ({ name: rule.name, description: rule.description }))
   }
 
-  async evaluateRule (rule: Rule) {
+  async evaluateRule (rule: Rule, action: Action) {
     if (rule.success) {
-      await rule.evaluate()
+      await rule.evaluate(action)
     } else {
       this.info(`Skipping rule ${rule.id} because of previous failure.`)
     }
   }
 
-  async evaluate () {
+  async evaluate (action: Action) {
     const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(this.phase))
     const ruleGroups: Array<Array<Rule>> = []
 
@@ -120,7 +120,7 @@ export default class Builder extends BuildStateConsumer {
 
       for (const rule of candidateRules) {
         await this.checkUpdates()
-        await this.evaluateRule(rule)
+        await this.evaluateRule(rule, action)
       }
     }
 
@@ -160,7 +160,7 @@ export default class Builder extends BuildStateConsumer {
     while (evaluationCount < 20 && (Array.from(this.files).some(file => !file.analyzed) ||
       Array.from(this.rules).some(rule => rule.needsEvaluation))) {
       await this.analyzeFiles()
-      await this.evaluate()
+      await this.evaluate(evaluationCount % 2 === 0 ? 'updateDependencies' : 'run')
       evaluationCount++
     }
   }

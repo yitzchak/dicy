@@ -39,16 +39,6 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-4 -synctex=1 test-knitr.tex
   - type: command
-    rule: PatchSyncTeX(build;execute;job-3;test-knitr-concordance.tex)
-    command: >-
-      Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''job-3'\'')'
-  - type: command
-    rule: PatchSyncTeX(build;execute;job-4;test-knitr-concordance.tex)
-    command: >-
-      Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''output/job-4'\'')'
-  - type: command
     rule: LaTeX(build;execute;job-1;test-knitr.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
@@ -69,16 +59,6 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-4 -synctex=1 test-knitr.tex
   - type: command
-    rule: PatchSyncTeX(build;execute;job-3;test-knitr-concordance.tex)
-    command: >-
-      Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''job-3'\'')'
-  - type: command
-    rule: PatchSyncTeX(build;execute;job-4;test-knitr-concordance.tex)
-    command: >-
-      Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''output/job-4'\'')'
-  - type: command
     rule: LaTeX(build;execute;job-1;test-knitr.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
@@ -98,13 +78,3 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-4 -synctex=1 test-knitr.tex
-  - type: command
-    rule: PatchSyncTeX(build;execute;job-3;test-knitr-concordance.tex)
-    command: >-
-      Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''job-3'\'')'
-  - type: command
-    rule: PatchSyncTeX(build;execute;job-4;test-knitr-concordance.tex)
-    command: >-
-      Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''output/job-4'\'')'

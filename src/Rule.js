@@ -109,27 +109,20 @@ export default class Rule extends BuildStateConsumer {
 
   async preEvaluate (): Promise<void> {}
 
-  async evaluate (): Promise<boolean> {
-    let success = true
-
-    this.timeStamp = new Date()
+  async evaluate (action: Action): Promise<boolean> {
     await this.preEvaluate()
 
-    if (this.actions.has('updateDependencies')) {
-      this.actionTrace('updateDependencies')
-      success = await this.updateDependencies() && success
-    }
+    if (!this.actions.has(action)) return true
 
-    if (this.actions.has('run')) {
-      this.actionTrace('run')
-      success = await this.run() && success
-    }
-
-    this.actions.clear()
+    this.actionTrace(action)
+    this.timeStamp = new Date()
+    this.success = (action === 'updateDependencies')
+      ? await this.updateDependencies()
+      : await this.run()
+    this.actions.delete(action)
     await this.updateOutputs()
-    this.success = success
 
-    return success
+    return this.success
   }
 
   async updateDependencies (): Promise<boolean> {
