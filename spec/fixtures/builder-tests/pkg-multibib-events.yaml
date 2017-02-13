@@ -16,21 +16,13 @@ events:
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
   - type: command
+    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/job-2.aux
+  - type: command
     rule: LaTeX(build;execute;job-1;pkg-multibib.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       pkg-multibib.tex
-  - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
-  - type: command
-    rule: LaTeX(build;execute;job-2;pkg-multibib.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 pkg-multibib.tex
-  - type: command
-    rule: BibTeX(build;execute;job-1;other.aux-ParsedLaTeXAuxilary)
-    command: bibtex other.aux
   - type: command
     rule: BibTeX(build;execute;job-2;other.aux-ParsedLaTeXAuxilary)
     command: bibtex other.aux
@@ -38,11 +30,11 @@ events:
     rule: BibTeX(build;execute;job-2;output/other.aux-ParsedLaTeXAuxilary)
     command: bibtex output/other.aux
   - type: command
+    rule: BibTeX(build;execute;job-1;other.aux-ParsedLaTeXAuxilary)
+    command: bibtex other.aux
+  - type: command
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
-  - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-multibib.tex)
     command: >-
@@ -64,6 +56,9 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-2 pkg-multibib.tex
+  - type: command
+    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/job-2.aux
   - type: command
     rule: BibTeX(build;execute;job-2;output/other.aux-ParsedLaTeXAuxilary)
     command: bibtex output/other.aux
