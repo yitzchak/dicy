@@ -29,13 +29,12 @@ export default class BibTeX extends Rule {
   }
 
   async addInputFileActions (file: File): Promise<void> {
-    if (!this.constructor.commands.has(this.command) || !this.constructor.phases.has(this.phase)) {
-      return
-    }
-
     switch (file.type) {
       case 'ParsedLaTeXLog':
-        if (file.value && file.value.messages.some((message: Message) => /run BibTeX/.test(message.text))) {
+        const { name } = path.parse(this.firstParameter.normalizedFilePath)
+        if (this.constructor.commands.has(this.command) &&
+          this.constructor.phases.has(this.phase) && file.value &&
+          file.value.messages.some((message: Message) => message.text.includes('run BibTeX') && message.text.includes(name))) {
           this.addAction(file)
         }
         break

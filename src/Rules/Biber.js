@@ -1,5 +1,7 @@
 /* @flow */
 
+import path from 'path'
+
 import File from '../File'
 import Rule from '../Rule'
 
@@ -14,14 +16,18 @@ export default class Biber extends Rule {
   }
 
   async addInputFileActions (file: File): Promise<void> {
-    if (this.constructor.commands.has(this.command) &&
-      this.constructor.phases.has(this.phase) &&
-      file.type === 'ParsedLaTeXLog') {
-      if (file.value && file.value.messages.some((message: Message) => /run Biber/.test(message.text))) {
-        this.addAction(file)
-      }
-    } else {
-      await super.addInputFileActions(file)
+    switch (file.type) {
+      case 'ParsedLaTeXLog':
+        const { name } = path.parse(this.firstParameter.normalizedFilePath)
+        if (this.constructor.commands.has(this.command) &&
+          this.constructor.phases.has(this.phase) && file.value &&
+          file.value.messages.some((message: Message) => message.text.includes('run Biber') && message.text.includes(name))) {
+          this.addAction(file)
+        }
+        break
+      default:
+        await super.addInputFileActions(file)
+        break
     }
   }
 
