@@ -14,8 +14,16 @@ import { Builder } from './main'
 
 const ui = cliui({ width: 80 })
 
-function parseArray (val) {
-  return val.split(/\s*,\s*/)
+function parseStrings (value) {
+  return value.split(/\s*,\s*/)
+}
+
+function parseNumber (value) {
+  return parseInt(value, 10)
+}
+
+function parseNumbers (value) {
+  return parseStrings(value).map(x => parseNumber(x))
 }
 
 function cloneOptions (options) {
@@ -111,7 +119,13 @@ Builder.getOptionDefinitions().then(definitions => {
           }
           break
         case 'strings':
-          pc = pc.option(flags, option.description, parseArray, option.defaultValue)
+          pc = pc.option(flags, option.description, parseStrings, option.defaultValue)
+          break
+        case 'number':
+          pc = pc.option(flags, option.description, parseNumber, option.defaultValue)
+          break
+        case 'numbers':
+          pc = pc.option(flags, option.description, parseNumbers, option.defaultValue)
           break
         case 'boolean':
           pc = pc.option(flags, option.description)
@@ -119,7 +133,7 @@ Builder.getOptionDefinitions().then(definitions => {
       }
     }
 
-    pc = pc.option('--save-events <saveEvents>', 'List of event types to save for test usage.', parseArray, [])
+    pc = pc.option('--save-events <saveEvents>', 'List of event types to save for test usage.', parseStrings, [])
     pc = pc.option('-v, --verbose', 'Be verbose in command output.')
 
     return pc
