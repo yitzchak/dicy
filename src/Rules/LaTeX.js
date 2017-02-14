@@ -2,6 +2,7 @@
 
 import path from 'path'
 
+import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
@@ -13,6 +14,11 @@ const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No fi
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
   static description: string = 'Runs the required latex variant.'
+
+  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
+    return await super.appliesToFile(buildState, jobName, file) &&
+      (file.normalizedFilePath === buildState.filePath || file.subType !== 'subfiles')
+  }
 
   async initialize () {
     await this.getResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])

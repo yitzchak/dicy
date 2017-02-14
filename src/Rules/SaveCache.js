@@ -44,6 +44,10 @@ export default class SaveCache extends Rule {
         fileCache.type = file.type
       }
 
+      if (file.subType) {
+        fileCache.subType = file.subType
+      }
+
       state.files[file.normalizedFilePath] = fileCache
     }
 
