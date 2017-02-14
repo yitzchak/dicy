@@ -19,9 +19,7 @@ export type RuleInfo = {
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,
-  hash?: boolean,
-  hashSkip?: RegExp,
-  virtual?: boolean
+  hashSkip?: RegExp
 }
 
 export type FileCache = {

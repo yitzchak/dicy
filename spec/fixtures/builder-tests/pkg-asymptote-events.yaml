@@ -80,6 +80,3 @@ events:
     command: >-
       latex -file-line-error -interaction=batchmode -recorder -jobname=job-4
       pkg-asymptote.tex
-  - type: command
-    rule: DviToPdf(build;execute;job-4;job-4.dvi)
-    command: xdvipdfmx -o job-4.pdf job-4.dvi

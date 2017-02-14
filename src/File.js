@@ -20,7 +20,6 @@ export default class File {
   subType: ?string
   timeStamp: Date
   virtual: boolean = false
-  useHash: boolean = false
   hash: string
   rules: Set<Rule> = new Set()
   jobNames: Set<string> = new Set()
@@ -153,17 +152,19 @@ export default class File {
     }
 
     for (const [type, properties] of File.fileTypes.entries()) {
-      if (await this.isFileType(type, properties)) {
-        this.type = type
-        this.virtual = !!properties.virtual
-        this.useHash = !!properties.hash
-        break
-      }
+      if (await this.isFileType(type, properties)) break
     }
   }
 
   isFileType (name: string, fileType: FileType): Promise<boolean> {
-    if (fileType.virtual) return Promise.resolve(this.filePath.endsWith(`-${name}`))
+    if (!fileType.fileName && !fileType.contents) {
+      const isMatch = this.filePath.endsWith(`-${name}`)
+      if (isMatch) {
+        this.type = name
+        this.virtual = true
+      }
+      return Promise.resolve(isMatch)
+    }
 
     return new Promise((resolve, reject) => {
       if (fileType.fileName && !fileType.fileName.test(this.filePath)) {
@@ -182,6 +183,7 @@ export default class File {
               const [value, subType] = line.match(fileType.contents) || []
               if (value) {
                 match = true
+                this.type = name
                 this.subType = subType
                 rl.close()
               }
@@ -192,6 +194,7 @@ export default class File {
           } else resolve(false)
         })
       } else {
+        this.type = name
         resolve(true)
       }
     })
@@ -210,7 +213,7 @@ export default class File {
   }
 
   updateHash (): Promise<boolean> {
-    if (this.virtual || !this.useHash) return Promise.resolve(true)
+    if (this.virtual || path.isAbsolute(this.normalizedFilePath)) return Promise.resolve(true)
 
     return new Promise((resolve, reject) => {
       const fileType = File.fileTypes.get(this.type)
