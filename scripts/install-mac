@@ -11,8 +11,8 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   brew tap homebrew/science
   brew install r
   
-  echo Installing MacTeX
+  echo Installing MacTeX...
   wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg -O "/tmp/BasicTeX.pkg"
-  sudo installer -pkg "/tmp/BasicTeX.pkg" -target /; rm /tmp/BasicTeX.pkg
-  export PATH=/usr/texbin:$PATH;
+  sudo installer -pkg "/tmp/BasicTeX.pkg" -target /
+  export PATH=/usr/texbin:$PATH
 fi
