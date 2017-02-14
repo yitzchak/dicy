@@ -1,11 +1,14 @@
 amsrefs
 biblatex
 bibtopic
+currfile
 datatool
 etoolbox
 everypage
 fancyvrb
 feynmf
+filehook
+filemod
 fp
 framed
 fvextra
@@ -13,6 +16,7 @@ glossaries
 ifplatform
 index
 lineno
+lipsum
 logreq
 mfirstuc
 minted
@@ -20,6 +24,8 @@ mptopdf
 multibib
 natbib
 nomencl
+standalone
+subfiles
 substr
 supertabular
 textcase

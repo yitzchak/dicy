@@ -2,6 +2,7 @@
 
 import path from 'path'
 
+import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
@@ -9,10 +10,16 @@ import type { Message } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No file )/i
+const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
   static description: string = 'Runs the required latex variant.'
+
+  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
+    return await super.appliesToFile(buildState, jobName, file) &&
+      (file.normalizedFilePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
+  }
 
   async initialize () {
     await this.getResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])

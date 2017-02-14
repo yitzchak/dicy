@@ -27,7 +27,8 @@ export type FileType = {
 export type FileCache = {
   timeStamp: Date,
   hash: string,
-  type?: string
+  type?: string,
+  subType?: string
 }
 
 export type RuleCache = {

@@ -1,0 +1,34 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-standalone-sub.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-standalone-sub.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-standalone-sub.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-standalone-sub.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-standalone-sub.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-standalone-sub.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-standalone-sub.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-standalone-sub.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-standalone-sub.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      pkg-standalone-sub.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-standalone-sub.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 pkg-standalone-sub.tex

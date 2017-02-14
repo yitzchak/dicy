@@ -17,6 +17,7 @@ export default class File {
   filePath: string
   normalizedFilePath: string
   type: string
+  subType: ?string
   timeStamp: Date
   virtual: boolean = false
   useHash: boolean = false
@@ -178,8 +179,10 @@ export default class File {
             let match = false
 
             rl.on('line', line => {
-              if (fileType.contents && fileType.contents.test(line)) {
+              const [value, subType] = line.match(fileType.contents) || []
+              if (value) {
                 match = true
+                this.subType = subType
                 rl.close()
               }
             })

@@ -61,7 +61,8 @@ export default class Rule extends BuildStateConsumer {
   static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
     return this.commands.has(buildState.command) &&
       this.phases.has(buildState.phase) &&
-      this.fileTypes.has(file.type)
+      this.fileTypes.has(file.type) &&
+      Array.from(file.rules.values()).every(rule => rule.constructor.name !== this.name || rule.jobName !== jobName)
   }
 
   constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {

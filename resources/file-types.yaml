@@ -72,7 +72,7 @@ KnitrConcordance:
   fileName: !!js/regexp /-concordance\.tex$/i
   hash: true
 LaTeX:
-  contents: !!js/regexp /^\\documentclass/m
+  contents: !!js/regexp /^\\documentclass(?:\[[^\]]*\])?\{([^}]*)\}/m
   fileName: !!js/regexp /\.tex$/i
   hash: true
 LaTeXAuxilary:
@@ -84,7 +84,7 @@ LaTeXFileListing:
   fileName: !!js/regexp /\.fls$/i
   hash: true
 LaTeXLog:
-  contents: !!js/regexp /^This is (pdf|e-u?p|u?p|Lua|Xe)?TeX,/
+  contents: !!js/regexp /^This is (?:pdf|e-u?p|u?p|Lua|Xe)?TeX,/
   fileName: !!js/regexp /\.log$/i
   hash: true
   hashSkip: !!js/regexp /^This is/
@@ -152,6 +152,10 @@ SageOutput:
   hash: true
 ScalableVectorGraphics:
   fileName: !!js/regexp /\.svg$/i
+  hash: true
+StandalonePreambles:
+  fileName: !!js/regexp /\.sta$/i
+  hash: true
 StateCache:
   fileName: !!js/regexp /-cache\.yaml$/i
 TableOfContents:
