@@ -71,6 +71,10 @@ Knitr:
 KnitrConcordance:
   fileName: !!js/regexp /-concordance\.tex$/i
   hash: true
+LaTeXSubFile:
+  contents: !!js/regexp /^\\documentclass\[[^]]*\]\{subfiles\}/m
+  fileName: !!js/regexp /\.tex$/i
+  hash: true
 LaTeX:
   contents: !!js/regexp /^\\documentclass/m
   fileName: !!js/regexp /\.tex$/i
