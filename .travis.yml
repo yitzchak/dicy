@@ -9,6 +9,10 @@ language: node_js
 node_js:
   - node
 
+os:
+  - linux
+  - osx
+
 env:
   global:
     - R_LIBS_USER=${HOME}/R/library
@@ -37,4 +41,5 @@ addons:
       - texlive-xetex
 
 before_install:
+  - ./scripts/install-mac
   - ./scripts/install-r-libs
