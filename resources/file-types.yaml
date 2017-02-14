@@ -152,6 +152,10 @@ SageOutput:
   hash: true
 ScalableVectorGraphics:
   fileName: !!js/regexp /\.svg$/i
+  hash: true
+StandalonePreambles:
+  fileName: !!js/regexp /\.sta$/i
+  hash: true
 StateCache:
   fileName: !!js/regexp /-cache\.yaml$/i
 TableOfContents:

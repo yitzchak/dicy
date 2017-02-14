@@ -20,6 +20,8 @@ mptopdf
 multibib
 natbib
 nomencl
+standalone
+subfiles
 substr
 supertabular
 textcase

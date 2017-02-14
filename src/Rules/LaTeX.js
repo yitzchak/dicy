@@ -10,6 +10,7 @@ import type { Message } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No file )/i
+const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
@@ -17,7 +18,7 @@ export default class LaTeX extends Rule {
 
   static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(buildState, jobName, file) &&
-      (file.normalizedFilePath === buildState.filePath || file.subType !== 'subfiles')
+      (file.normalizedFilePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
   }
 
   async initialize () {
