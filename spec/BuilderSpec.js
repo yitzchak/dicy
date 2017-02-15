@@ -47,6 +47,11 @@ describe('Builder', () => {
           }
         }
 
+        builder.on('action', event => {
+          const triggerText = event.triggers.length !== 0 ? ` triggered by updates to ${event.triggers}` : ''
+          console.log(`[${event.rule}] Evaluating ${event.action} action${triggerText}`)
+        })
+
         // Run the builder
         expect(await builder.run('load')).toBeTruthy()
 
@@ -67,16 +72,6 @@ describe('Builder', () => {
 
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
-
-        // $FlowIgnore
-        for (const file of builder.buildState.files.values()) {
-          if (file.type === 'LaTeXLog') {
-            console.log(file.normalizedFilePath)
-            console.log('--------------------------------------------------------------------------')
-            console.log(await fs.readFile(file.filePath, { encoding: 'utf-8' }))
-            console.log('--------------------------------------------------------------------------')
-          }
-        }
 
         done()
       }, ASYNC_TIMEOUT)

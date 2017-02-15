@@ -34,6 +34,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     filemod \
     framed \
     fvextra \
+    gincltex \
     glossaries \
     ifplatform \
     lipsum \
