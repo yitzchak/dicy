@@ -41,6 +41,5 @@ addons:
       - texlive-xetex
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/usr/texbin:$PATH; fi
   - ./scripts/install-mac
   - ./scripts/install-r-libs

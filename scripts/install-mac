@@ -3,16 +3,19 @@
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Updating homebrew...
   brew update
-  
+
   echo Installing GhostScript...
   brew install ghostscript
-  
+
   echo Installing R...
   brew tap homebrew/science
   brew install r
-  
+
   echo Installing MacTeX...
   wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg
   sudo installer -pkg BasicTeX.pkg -target /
   export PATH=/usr/texbin:$PATH
+
+  echo $PATH
+  ls /usr/texbin
 fi
