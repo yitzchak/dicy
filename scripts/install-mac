@@ -16,4 +16,8 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   sudo installer -pkg BasicTeX.pkg -target /
   export PATH=/Library/TeX/texbin:$PATH
   ls /Library/TeX/texbin
+  
+  echo Installing TeX packages...
+  sudo tlmgr update --self
+  sudo tlmgr install asymptote
 fi
