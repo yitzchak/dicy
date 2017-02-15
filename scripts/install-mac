@@ -10,6 +10,9 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing R...
   brew tap homebrew/science
   brew install r
+  
+  echo Installing Pygments...
+  pip install Pygments
 
   echo Installing MacTeX...
   wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg
