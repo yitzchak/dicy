@@ -18,7 +18,36 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   
   echo Installing TeX packages...
   sudo tlmgr update --self
-  sudo tlmgr install amsrefs asymptote biblatex bibtopic everypage lipsum makeglos makeindex natbib multibib nomencl standalone subfiles
+  sudo tlmgr install \
+    amsrefs \
+    asymptote \
+    biber \
+    biblatex \
+    bibtopic \
+    currfile \
+    datatool \
+    everypage \
+    filehook \
+    filemod \
+    framed \
+    fvextra \
+    glossaries \
+    ifplatform \
+    lipsum \
+    logreq \
+    makeglos \
+    makeindex \
+    mfirstuc \
+    minted \
+    natbib \
+    multibib \
+    nomencl \
+    standalone \
+    subfiles \
+    substr \
+    supertabular \
+    xfor \
+    xstring    
   sudo tlmgr info --only-installed
   ls /Library/TeX/texbin
 fi
