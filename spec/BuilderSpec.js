@@ -73,7 +73,7 @@ describe('Builder', () => {
           if (file.type === 'LaTeXLog') {
             console.log(file.normalizedFilePath)
             console.log('--------------------------------------------------------------------------')
-            console.log(await fs.readFile(file.filePath), { encoding: 'utf-8' })
+            console.log(await fs.readFile(file.filePath, { encoding: 'utf-8' }))
             console.log('--------------------------------------------------------------------------')
           }
         }
