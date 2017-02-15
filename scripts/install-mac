@@ -14,8 +14,5 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing MacTeX...
   wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg
   sudo installer -pkg BasicTeX.pkg -target /
-  export PATH=/usr/texbin:$PATH
-
-  echo $PATH
-  ls /usr/texbin
+  export PATH=/Library/TeX/texbin:$PATH
 fi
