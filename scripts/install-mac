@@ -12,7 +12,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   brew install r
   
   echo Installing MacTeX...
-  wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg -O "/tmp/BasicTeX.pkg"
-  sudo installer -pkg "/tmp/BasicTeX.pkg" -target /
-  export PATH=/usr/local/texlive/2016basic/bin/universal-darwin:$PATH
+  wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg
+  sudo installer -pkg BasicTeX.pkg -target /
+  export PATH=/usr/texbin:$PATH
 fi
