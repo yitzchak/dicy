@@ -68,6 +68,18 @@ describe('Builder', () => {
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
 
+        // $FlowIgnore
+        if (spec.status() === 'failure') {
+          for (const file of builder.buildState.files.values()) {
+            if (file.type === 'LaTeXLog') {
+              console.log(file.normalizedFilePath)
+              console.log('--------------------------------------------------------------------------')
+              console.log(await fs.readFile(file.filePath), { encoding: 'utf-8' })
+              console.log('--------------------------------------------------------------------------')
+            }
+          }
+        }
+
         done()
       }, ASYNC_TIMEOUT)
     }
