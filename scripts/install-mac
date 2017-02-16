@@ -28,6 +28,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     biber \
     biblatex \
     bibtopic \
+    collectbox \
     currfile \
     datatool \
     everypage \
