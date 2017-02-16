@@ -83,6 +83,7 @@ export default class Rule extends BuildStateConsumer {
     if (this.constructor.commands.has(this.command) &&
       this.constructor.phases.has(this.phase) &&
       file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
+      console.log(this.constructor.name)
       this.addAction(file, action)
     }
   }

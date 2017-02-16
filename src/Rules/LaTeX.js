@@ -43,7 +43,6 @@ export default class LaTeX extends Rule {
         }
         break
       default:
-        console.log('bar')
         await super.addInputFileActions(file)
         break
     }
