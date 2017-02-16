@@ -38,10 +38,12 @@ export default class LaTeX extends Rule {
         break
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
+          console.log('foo')
           this.addAction(file)
         }
         break
       default:
+        console.log('bar')
         await super.addInputFileActions(file)
         break
     }
