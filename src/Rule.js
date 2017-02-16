@@ -79,13 +79,18 @@ export default class Rule extends BuildStateConsumer {
 
   async initialize () {}
 
-  async addInputFileActions (file: File, action: Action = 'run'): Promise<void> {
+  async addFileActions (file: File): Promise<void> {
     if (this.constructor.commands.has(this.command) &&
       this.constructor.phases.has(this.phase) &&
       file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
-      console.log(this.constructor.name)
-      this.addAction(file, action)
+      for (const action of await this.getFileActions(file)) {
+        this.addAction(file, action)
+      }
     }
+  }
+
+  async getFileActions (file: File): Promise<Array<Action>> {
+    return ['run']
   }
 
   addAction (file: ?File, action: Action = 'run'): void {

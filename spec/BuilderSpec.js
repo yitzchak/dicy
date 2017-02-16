@@ -47,11 +47,6 @@ describe('Builder', () => {
           }
         }
 
-        builder.on('action', event => {
-          const triggerText = event.triggers.length !== 0 ? ` triggered by updates to ${event.triggers}` : ''
-          console.log(`[${event.rule}] Evaluating ${event.action} action${triggerText}`)
-        })
-
         // Run the builder
         expect(await builder.run('load')).toBeTruthy()
 

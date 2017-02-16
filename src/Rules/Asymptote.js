@@ -5,6 +5,8 @@ import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 
+import type { Action } from '../types'
+
 export default class Asymptote extends Rule {
   static fileTypes: Set<string> = new Set(['Asymptote'])
   static description: string = 'Run Asymptote on any generated .asy files.'
@@ -13,16 +15,16 @@ export default class Asymptote extends Rule {
     await this.getResolvedInput(`.log-ParsedAsymptoteLog`)
   }
 
-  async addInputFileActions (file: File): Promise<void> {
-    if (this.constructor.commands.has(this.command) &&
-      this.constructor.phases.has(this.phase) &&
-      file.type === 'ParsedAsymptoteLog') {
-      if (file.hasBeenUpdated) {
-        this.addAction(file, 'updateDependencies')
-      }
-    } else {
-      await super.addInputFileActions(file)
-    }
+  async getFileActions (file: File): Promise<Array<Action>> {
+    return [file.type === 'ParsedAsymptoteLog' ? 'updateDependencies' : 'run']
+  }
+
+  async addFileActions (file: File): Promise<void> {
+    if (!this.constructor.commands.has(this.command) ||
+      !this.constructor.phases.has(this.phase) ||
+      !file.hasBeenUpdated || this.timeStamp >= file.timeStamp) return
+
+    this.addAction(file, file.type === 'ParsedAsymptoteLog' ? 'updateDependencies' : 'run')
   }
 
   async updateDependencies (): Promise<boolean> {

@@ -6,7 +6,7 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Message } from '../types'
+import type { Action, Message } from '../types'
 
 export default class BibTeX extends Rule {
   static fileTypes: Set<string> = new Set(['ParsedLaTeXAuxilary'])
@@ -28,22 +28,19 @@ export default class BibTeX extends Rule {
     })
   }
 
-  async addInputFileActions (file: File): Promise<void> {
+  async getFileActions (file: File): Promise<Array<Action>> {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.normalizedFilePath)
-        if (this.constructor.commands.has(this.command) &&
-          this.constructor.phases.has(this.phase) && file.value &&
+        if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => message.text.includes('run BibTeX') && message.text.includes(name))) {
-          this.addAction(file)
+          return ['run']
         }
         break
-      case 'ParsedLaTeXAuxilary':
-        break
       default:
-        await super.addInputFileActions(file)
-        break
+        return ['run']
     }
+    return []
   }
 
   async preEvaluate () {

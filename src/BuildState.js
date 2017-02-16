@@ -75,7 +75,7 @@ export default class BuildState extends EventEmitter {
         rule.addAction()
       }
       for (const input of rule.inputs.values()) {
-        await rule.addInputFileActions(input)
+        await rule.addFileActions(input)
       }
     } else {
       rule.addAction()

@@ -28,13 +28,3 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-2 test-lhs2TeX.tex
-  - type: command
-    rule: LaTeX(build;execute;job-1;test-lhs2TeX.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
-      test-lhs2TeX.tex
-  - type: command
-    rule: LaTeX(build;execute;job-2;test-lhs2TeX.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 test-lhs2TeX.tex
