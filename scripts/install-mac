@@ -17,10 +17,10 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing MacTeX...
   wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg
   sudo installer -pkg BasicTeX.pkg -target /
-  export PATH=/Library/TeX/texbin:$PATH
   
   echo Installing TeX packages...
   sudo tlmgr update --self
+  sudo tlmgr update --all
   sudo tlmgr install \
     amsrefs \
     asymptote \
@@ -50,8 +50,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     subfiles \
     substr \
     supertabular \
+    svn-prov \
     xfor \
     xstring    
-  sudo tlmgr info --only-installed
-  ls /Library/TeX/texbin
 fi
