@@ -94,6 +94,7 @@ export default class Rule extends BuildStateConsumer {
   }
 
   addAction (file: ?File, action: Action = 'run'): void {
+    this.timeStamp = new Date()
     const files: ?Set<File> = this.actions.get(action)
     if (!files) {
       this.actions.set(action, new Set(file ? [file] : []))
@@ -122,7 +123,6 @@ export default class Rule extends BuildStateConsumer {
     if (!this.actions.has(action)) return true
 
     this.actionTrace(action)
-    this.timeStamp = new Date()
     this.success = (action === 'updateDependencies')
       ? await this.updateDependencies()
       : await this.run()
