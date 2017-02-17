@@ -67,7 +67,7 @@ export default class BuildState extends EventEmitter {
       const outputs = await rule.getOutputs(cachedRule.outputs)
       if (outputs.length === cachedRule.outputs.length) {
         // All outputs still exist so we used the cached timeStamp.
-        rule.timeStamp = cachedRule.timeStamp
+        rule.timeStamps = cachedRule.timeStamps
         if (rule.constructor.alwaysEvaluate) rule.addAction()
       } else {
         // At least one of the outputs is missing so we force evaluation of the

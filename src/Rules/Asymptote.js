@@ -19,14 +19,6 @@ export default class Asymptote extends Rule {
     return [file.type === 'ParsedAsymptoteLog' ? 'updateDependencies' : 'run']
   }
 
-  async addFileActions (file: File): Promise<void> {
-    if (!this.constructor.commands.has(this.command) ||
-      !this.constructor.phases.has(this.phase) ||
-      !file.hasBeenUpdated || this.timeStamp >= file.timeStamp) return
-
-    this.addAction(file, file.type === 'ParsedAsymptoteLog' ? 'updateDependencies' : 'run')
-  }
-
   async updateDependencies (): Promise<boolean> {
     const files = this.actions.get('updateDependencies')
 

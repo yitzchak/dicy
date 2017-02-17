@@ -53,7 +53,7 @@ export default class SaveCache extends Rule {
 
     for (const rule of this.rules) {
       state.rules[rule.id] = {
-        timeStamp: rule.timeStamp,
+        timeStamps: rule.timeStamps,
         inputs: Array.from(rule.inputs.keys()),
         outputs: Array.from(rule.outputs.keys())
       }

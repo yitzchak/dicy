@@ -9,7 +9,7 @@ import yaml from 'js-yaml'
 import { Builder } from '../src/main'
 import { cloneFixtures, customMatchers } from './helpers'
 
-const ASYNC_TIMEOUT = 45000
+const ASYNC_TIMEOUT = 50000
 
 describe('Builder', () => {
   let builder: Builder

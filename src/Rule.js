@@ -7,7 +7,7 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Action, Command, Phase, ResolvePathOptions } from './types'
+import type { Action, ActionTimeStamps, Command, Phase, ResolvePathOptions } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
@@ -30,8 +30,9 @@ export default class Rule extends BuildStateConsumer {
   parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
-  timeStamp: number
+  // timeStamp: number
   actions: Map<Action, Set<File>> = new Map()
+  timeStamps: ActionTimeStamps = {}
   success: boolean = true
 
   static async analyzePhase (buildState: BuildState, jobName: ?string) {
@@ -84,7 +85,10 @@ export default class Rule extends BuildStateConsumer {
       this.constructor.phases.has(this.phase) &&
       file.hasBeenUpdated) {
       for (const action of await this.getFileActions(file)) {
-        this.addAction(file, action)
+        const timeStamp: ?Date = this.timeStamps[action]
+        if (!timeStamp || timeStamp < file.timeStamp) {
+          this.addAction(file, action)
+        }
       }
     }
   }
@@ -94,7 +98,6 @@ export default class Rule extends BuildStateConsumer {
   }
 
   addAction (file: ?File, action: Action = 'run'): void {
-    this.timeStamp = new Date()
     const files: ?Set<File> = this.actions.get(action)
     if (!files) {
       this.actions.set(action, new Set(file ? [file] : []))
@@ -126,6 +129,9 @@ export default class Rule extends BuildStateConsumer {
     this.success = (action === 'updateDependencies')
       ? await this.updateDependencies()
       : await this.run()
+    const files = this.actions.get(action)
+    const timeStamps = files ? Array.from(files.values()).map(file => file.timeStamp) : []
+    this.timeStamps[action] = timeStamps.reduce((c, t) => t > c ? t : c, new Date(0))
     this.actions.delete(action)
     await this.updateOutputs()
 
