@@ -82,7 +82,7 @@ export default class Rule extends BuildStateConsumer {
   async addFileActions (file: File): Promise<void> {
     if (this.constructor.commands.has(this.command) &&
       this.constructor.phases.has(this.phase) &&
-      file.hasBeenUpdated && this.timeStamp < file.timeStamp) {
+      file.hasBeenUpdated) {
       for (const action of await this.getFileActions(file)) {
         this.addAction(file, action)
       }
