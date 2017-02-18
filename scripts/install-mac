@@ -7,17 +7,22 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing GhostScript...
   brew install ghostscript
 
+  echo Installing lhs2TeX...
+  brew cask install haskell-platform
+  stack update
+  sudo cabal install lhs2tex
+
   echo Installing R...
   brew tap homebrew/science
   brew install r
-  
+
   echo Installing Pygments...
   pip install Pygments
 
   echo Installing MacTeX...
   wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg
   sudo installer -pkg BasicTeX.pkg -target /
-  
+
   echo Installing TeX packages...
   sudo tlmgr update --self
   sudo tlmgr update --all
@@ -46,10 +51,11 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     multibib \
     nomencl \
     standalone \
+    stmaryrd \
     subfiles \
     substr \
     supertabular \
     svn-prov \
     xfor \
-    xstring    
+    xstring
 fi

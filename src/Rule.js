@@ -7,7 +7,7 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Action, ActionTimeStamps, Command, Phase, ResolvePathOptions } from './types'
+import type { Action, Command, Phase, ResolvePathOptions } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
@@ -30,9 +30,7 @@ export default class Rule extends BuildStateConsumer {
   parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
-  // timeStamp: number
   actions: Map<Action, Set<File>> = new Map()
-  timeStamps: ActionTimeStamps = {}
   success: boolean = true
 
   static async analyzePhase (buildState: BuildState, jobName: ?string) {
@@ -134,9 +132,6 @@ export default class Rule extends BuildStateConsumer {
     this.success = (action === 'updateDependencies')
       ? await this.updateDependencies()
       : await this.run()
-    const files = this.actions.get(action)
-    const timeStamps = files ? Array.from(files.values()).map(file => file.timeStamp) : []
-    this.timeStamps[action] = timeStamps.reduce((c, t) => !c || t > c ? t : c, null) || new Date()
     this.actions.delete(action)
     await this.updateOutputs()
 
