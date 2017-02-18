@@ -11,11 +11,6 @@ export type ResolvePathOptions = {
 
 export type Action = 'run' | 'updateDependencies'
 
-export type ActionTimeStamps = {
-  run?: Date,
-  updateDependencies?: Date
-}
-
 export type RuleInfo = {
   name: string,
   description: string

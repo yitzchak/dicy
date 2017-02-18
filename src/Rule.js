@@ -7,7 +7,7 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Action, ActionTimeStamps, Command, Phase, ResolvePathOptions } from './types'
+import type { Action, Command, Phase, ResolvePathOptions } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
@@ -30,9 +30,7 @@ export default class Rule extends BuildStateConsumer {
   parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
-  // timeStamp: number
   actions: Map<Action, Set<File>> = new Map()
-  timeStamps: ActionTimeStamps = {}
   success: boolean = true
 
   static async analyzePhase (buildState: BuildState, jobName: ?string) {
@@ -84,9 +82,10 @@ export default class Rule extends BuildStateConsumer {
     if (this.constructor.commands.has(this.command) &&
       this.constructor.phases.has(this.phase) &&
       file.hasBeenUpdated) {
+      const timeStamp: ?Date = this.timeStamp
+      const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
       for (const action of await this.getFileActions(file)) {
-        const timeStamp: ?Date = this.timeStamps[action]
-        if (!timeStamp || timeStamp < file.timeStamp) {
+        if (action === 'updateDependencies' || ruleNeedsUpdate) {
           this.addAction(file, action)
         }
       }
@@ -118,6 +117,10 @@ export default class Rule extends BuildStateConsumer {
     return this.actions.size !== 0
   }
 
+  get timeStamp (): ?Date {
+    return Array.from(this.outputs.values()).reduce((c, t) => !c || t.timeStamp > c ? t.timeStamp : c, null)
+  }
+
   async preEvaluate (): Promise<void> {}
 
   async evaluate (action: Action): Promise<boolean> {
@@ -129,9 +132,6 @@ export default class Rule extends BuildStateConsumer {
     this.success = (action === 'updateDependencies')
       ? await this.updateDependencies()
       : await this.run()
-    const files = this.actions.get(action)
-    const timeStamps = files ? Array.from(files.values()).map(file => file.timeStamp) : []
-    this.timeStamps[action] = timeStamps.reduce((c, t) => !c || t > c ? t : c, null) || new Date()
     this.actions.delete(action)
     await this.updateOutputs()
 
