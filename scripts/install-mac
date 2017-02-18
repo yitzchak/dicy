@@ -43,6 +43,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     gincltex \
     glossaries \
     ifplatform \
+    lazylist \
     lipsum \
     logreq \
     makeglos \
