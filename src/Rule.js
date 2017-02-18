@@ -84,9 +84,10 @@ export default class Rule extends BuildStateConsumer {
     if (this.constructor.commands.has(this.command) &&
       this.constructor.phases.has(this.phase) &&
       file.hasBeenUpdated) {
+      const timeStamp: ?Date = this.timeStamp
+      const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
       for (const action of await this.getFileActions(file)) {
-        const timeStamp: ?Date = this.timeStamps[action]
-        if (!timeStamp || timeStamp < file.timeStamp) {
+        if (action === 'updateDependencies' || ruleNeedsUpdate) {
           this.addAction(file, action)
         }
       }
@@ -116,6 +117,10 @@ export default class Rule extends BuildStateConsumer {
 
   get needsEvaluation (): boolean {
     return this.actions.size !== 0
+  }
+
+  get timeStamp (): ?Date {
+    return Array.from(this.outputs.values()).reduce((c, t) => !c || t.timeStamp > c ? t.timeStamp : c, null)
   }
 
   async preEvaluate (): Promise<void> {}
