@@ -13,6 +13,7 @@ export default class BibTeX extends Rule {
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
   input: ?File
+  hasRun: boolean
 
   static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
     if (!await super.appliesToFile(buildState, jobName, file)) return false
@@ -29,6 +30,8 @@ export default class BibTeX extends Rule {
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
+    if (this.hasRun) return []
+
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.normalizedFilePath)
@@ -40,6 +43,7 @@ export default class BibTeX extends Rule {
       default:
         return ['run']
     }
+
     return []
   }
 
@@ -64,6 +68,7 @@ export default class BibTeX extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
+    this.hasRun = true
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 

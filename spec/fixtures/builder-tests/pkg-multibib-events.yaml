@@ -19,16 +19,10 @@ events:
     rule: BibTeX(build;execute;;other.aux-ParsedLaTeXAuxilary)
     command: bibtex other.aux
   - type: command
-    rule: BibTeX(build;execute;;pkg-multibib.aux-ParsedLaTeXAuxilary)
-    command: bibtex pkg-multibib.aux
-  - type: command
     rule: LaTeX(build;execute;;pkg-multibib.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-multibib.tex
-  - type: command
-    rule: BibTeX(build;execute;;other.aux-ParsedLaTeXAuxilary)
-    command: bibtex other.aux
   - type: command
     rule: LaTeX(build;execute;;pkg-multibib.tex)
     command: >-

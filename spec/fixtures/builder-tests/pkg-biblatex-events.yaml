@@ -55,16 +55,10 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=biber-2 pkg-biblatex.tex
   - type: command
-    rule: BibTeX(build;execute;bibtex-1;bibtex-1.aux-ParsedLaTeXAuxilary)
-    command: bibtex bibtex-1.aux
-  - type: command
     rule: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -jobname=bibtex-1 pkg-biblatex.tex
-  - type: command
-    rule: BibTeX(build;execute;bibtex-2;output/bibtex-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/bibtex-2.aux
   - type: command
     rule: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
     command: >-
@@ -81,16 +75,10 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=biber-2 pkg-biblatex.tex
   - type: command
-    rule: BibTeX(build;execute;bibtex-1;bibtex-1.aux-ParsedLaTeXAuxilary)
-    command: bibtex bibtex-1.aux
-  - type: command
     rule: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -jobname=bibtex-1 pkg-biblatex.tex
-  - type: command
-    rule: BibTeX(build;execute;bibtex-2;output/bibtex-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/bibtex-2.aux
   - type: command
     rule: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
     command: >-
