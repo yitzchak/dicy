@@ -6,7 +6,7 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Message } from '../types'
+import type { Action, Command, Message, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No file )/i
@@ -16,8 +16,8 @@ export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
   static description: string = 'Runs the required latex variant.'
 
-  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(buildState, jobName, file) &&
+  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return await super.appliesToFile(buildState, command, phase, jobName, file) &&
       (file.normalizedFilePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
   }
 

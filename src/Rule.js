@@ -27,47 +27,51 @@ export default class Rule extends BuildStateConsumer {
   static description: string = ''
 
   id: string
+  command: Command
+  phase: Phase
   parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   actions: Map<Action, Set<File>> = new Map()
   success: boolean = true
 
-  static async analyzePhase (buildState: BuildState, jobName: ?string) {
-    if (await this.appliesToPhase(buildState, jobName)) {
-      const rule = new this(buildState, jobName)
+  static async analyzePhase (buildState: BuildState, command: Command, phase: Phase, jobName: ?string) {
+    if (await this.appliesToPhase(buildState, command, phase, jobName)) {
+      const rule = new this(buildState, command, phase, jobName)
       await rule.initialize()
       if (rule.alwaysEvaluate) rule.addAction()
       return rule
     }
   }
 
-  static async appliesToPhase (buildState: BuildState, jobName: ?string): Promise<boolean> {
-    return this.commands.has(buildState.command) &&
-      this.phases.has(buildState.phase) &&
+  static async appliesToPhase (buildState: BuildState, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
+    return this.commands.has(command) &&
+      this.phases.has(phase) &&
       this.fileTypes.size === 0
   }
 
-  static async analyzeFile (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
-    if (await this.appliesToFile(buildState, jobName, file)) {
-      const rule = new this(buildState, jobName, file)
+  static async analyzeFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<?Rule> {
+    if (await this.appliesToFile(buildState, command, phase, jobName, file)) {
+      const rule = new this(buildState, command, phase, jobName, file)
       await rule.initialize()
       if (rule.alwaysEvaluate) rule.addAction(file)
       return rule
     }
   }
 
-  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
-    return this.commands.has(buildState.command) &&
-      this.phases.has(buildState.phase) &&
+  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return this.commands.has(command) &&
+      this.phases.has(phase) &&
       this.fileTypes.has(file.type) &&
       Array.from(file.rules.values()).every(rule => rule.constructor.name !== this.name || rule.jobName !== jobName)
   }
 
-  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
+  constructor (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {
     super(buildState, jobName)
     this.parameters = parameters
-    this.id = buildState.getRuleId(this.constructor.name, jobName, ...parameters)
+    this.command = command
+    this.phase = phase
+    this.id = buildState.getRuleId(this.constructor.name, command, phase, jobName, ...parameters)
     for (const file: File of parameters) {
       if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.normalizedFilePath, file)
@@ -78,10 +82,8 @@ export default class Rule extends BuildStateConsumer {
 
   async initialize () {}
 
-  async addFileActions (file: File): Promise<void> {
-    if (this.constructor.commands.has(this.command) &&
-      this.constructor.phases.has(this.phase) &&
-      file.hasBeenUpdated) {
+  async addFileActions (file: File, command: ?Command, phase: ?Phase): Promise<void> {
+    if ((!command || command === this.command) && (!phase || phase === this.phase) && file.hasBeenUpdated) {
       const timeStamp: ?Date = this.timeStamp
       const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
       for (const action of await this.getFileActions(file)) {

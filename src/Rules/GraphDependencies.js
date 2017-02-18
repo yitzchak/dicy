@@ -23,9 +23,9 @@ export default class GraphDependencies extends Rule {
   static ignoreJobName: boolean = true
   static description: string = 'Creates a GraphViz dependency graph.'
 
-  static async appliesToPhase (buildState: BuildState, jobName: ?string): Promise<boolean> {
+  static async appliesToPhase (buildState: BuildState, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
     return (buildState.command === 'graph' || buildState.options.graphDependencies) &&
-      await super.appliesToPhase(buildState, jobName)
+      await super.appliesToPhase(buildState, command, phase, jobName)
   }
 
   async run () {

@@ -19,9 +19,9 @@ export default class ReportLogMessages extends Rule {
   static alwaysEvaluate: boolean = true
   static description: string = 'Reports log messages from any parsed log files.'
 
-  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
+  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return (buildState.command === 'report' || buildState.options.reportLogMessages) &&
-      await super.appliesToFile(buildState, jobName, file)
+      await super.appliesToFile(buildState, command, phase, jobName, file)
   }
 
   async run () {

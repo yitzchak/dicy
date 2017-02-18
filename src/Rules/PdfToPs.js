@@ -4,13 +4,15 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
+import type { Command, Phase } from '../types'
+
 export default class PdfToPs extends Rule {
   static fileTypes: Set<string> = new Set(['PortableDocumentFormat'])
   static description: string = 'Converts PDF to PS using pdf2ps. Enabled by the `pdfProducer` option.'
 
-  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
+  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return buildState.options.outputFormat === 'ps' &&
-      await super.appliesToFile(buildState, jobName, file)
+      await super.appliesToFile(buildState, command, phase, jobName, file)
   }
 
   constructCommand () {

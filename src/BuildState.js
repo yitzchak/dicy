@@ -5,19 +5,18 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Option, Phase } from './types'
+import type { Command, Phase, Option } from './types'
 
 export default class BuildState extends EventEmitter {
   filePath: string
   rootPath: string
-  command: Command
-  phase: Phase
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
   optionSchema: Map<string, Option> = new Map()
   cache: Object
   distances: Map<string, number> = new Map()
+  ruleClasses: Array<Class<Rule>> = []
 
   constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}) {
     super()
@@ -81,16 +80,16 @@ export default class BuildState extends EventEmitter {
     }
   }
 
-  getRuleId (name: string, jobName: ?string, ...parameters: Array<File | string>): string {
+  getRuleId (name: string, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File | string>): string {
     const items = parameters.map(item => (typeof item === 'string') ? this.normalizePath(item) : item.normalizedFilePath)
     items.unshift(jobName || '')
-    items.unshift(this.phase || '')
-    items.unshift(this.command || '')
+    items.unshift(phase || '')
+    items.unshift(command || '')
     return `${name}(${items.join(';')})`
   }
 
-  getRule (name: string, jobName: ?string, ...parameters: Array<File | string>): ?Rule {
-    const id = this.getRuleId(name, jobName, ...parameters)
+  getRule (name: string, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File | string>): ?Rule {
+    const id = this.getRuleId(name, command, phase, jobName, ...parameters)
     return this.rules.get(id)
   }
 

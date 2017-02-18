@@ -146,6 +146,12 @@ Builder.getOptionDefinitions().then(definitions => {
     .action(command)
 
   loadOptions(program
+    .command('clean [inputs...]')
+    .alias('c')
+    .description('Clean up after a previous build'))
+    .action(command)
+
+  loadOptions(program
     .command('report [inputs...]')
     .alias('r')
     .description('Report the results from a previous build'))

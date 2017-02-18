@@ -6,7 +6,7 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Message } from '../types'
+import type { Action, Command, Message, Phase } from '../types'
 
 export default class BibTeX extends Rule {
   static fileTypes: Set<string> = new Set(['ParsedLaTeXAuxilary'])
@@ -15,8 +15,8 @@ export default class BibTeX extends Rule {
   input: ?File
   hasRun: boolean
 
-  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
-    if (!await super.appliesToFile(buildState, jobName, file)) return false
+  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    if (!await super.appliesToFile(buildState, command, phase, jobName, file)) return false
     return !!file.value && !!file.value.bibdata
   }
 

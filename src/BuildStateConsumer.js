@@ -6,7 +6,7 @@ import BuildState from './BuildState'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Message, Phase, ResolvePathOptions } from './types'
+import type { Message, ResolvePathOptions } from './types'
 
 export default class BuildStateConsumer {
   buildState: BuildState
@@ -35,6 +35,10 @@ export default class BuildStateConsumer {
     })
   }
 
+  get ruleClasses (): Array<Class<Rule>> {
+    return this.buildState.ruleClasses
+  }
+
   get filePath (): string {
     return this.buildState.filePath
   }
@@ -49,22 +53,6 @@ export default class BuildStateConsumer {
 
   get rules (): Iterator<Rule> {
     return this.buildState.rules.values()
-  }
-
-  get phase (): Phase {
-    return this.buildState.phase
-  }
-
-  set phase (value: Phase) {
-    this.buildState.phase = value
-  }
-
-  get command (): Command {
-    return this.buildState.command
-  }
-
-  set command (value: Command) {
-    this.buildState.command = value
   }
 
   async addRule (rule: Rule): Promise<void> {
