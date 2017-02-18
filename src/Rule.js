@@ -131,7 +131,7 @@ export default class Rule extends BuildStateConsumer {
       : await this.run()
     const files = this.actions.get(action)
     const timeStamps = files ? Array.from(files.values()).map(file => file.timeStamp) : []
-    this.timeStamps[action] = timeStamps.reduce((c, t) => t > c ? t : c, new Date(0))
+    this.timeStamps[action] = timeStamps.reduce((c, t) => !c || t > c ? t : c, null) || new Date()
     this.actions.delete(action)
     await this.updateOutputs()
 
