@@ -5,7 +5,7 @@ import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Message } from '../types'
+import type { Action, Message } from '../types'
 
 export default class Biber extends Rule {
   static fileTypes: Set<string> = new Set(['BiberControlFile'])
@@ -15,20 +15,19 @@ export default class Biber extends Rule {
     await this.getResolvedInputs(['.log-ParsedLaTeXLog'])
   }
 
-  async addInputFileActions (file: File): Promise<void> {
+  async getFileActions (file: File): Promise<Array<Action>> {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.normalizedFilePath)
-        if (this.constructor.commands.has(this.command) &&
-          this.constructor.phases.has(this.phase) && file.value &&
+        if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => message.text.includes('run Biber') && message.text.includes(name))) {
-          this.addAction(file)
+          return ['run']
         }
         break
       default:
-        await super.addInputFileActions(file)
-        break
+        return ['run']
     }
+    return []
   }
 
   constructCommand () {

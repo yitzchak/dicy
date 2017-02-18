@@ -9,6 +9,10 @@ language: node_js
 node_js:
   - node
 
+os:
+  - linux
+  - osx
+
 env:
   global:
     - R_LIBS_USER=${HOME}/R/library
@@ -37,4 +41,6 @@ addons:
       - texlive-xetex
 
 before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:$PATH; fi
+  - ./scripts/install-mac
   - ./scripts/install-r-libs

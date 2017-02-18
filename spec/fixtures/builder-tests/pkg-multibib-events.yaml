@@ -3,67 +3,28 @@ types:
   - log
 events:
   - type: command
-    rule: LaTeX(build;execute;job-1;pkg-multibib.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
-      pkg-multibib.tex
-  - type: command
-    rule: LaTeX(build;execute;job-2;pkg-multibib.tex)
+    rule: LaTeX(build;execute;;pkg-multibib.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 pkg-multibib.tex
-  - type: command
-    rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
-    command: bibtex job-1.aux
-  - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
-  - type: command
-    rule: LaTeX(build;execute;job-1;pkg-multibib.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       pkg-multibib.tex
   - type: command
-    rule: BibTeX(build;execute;job-2;other.aux-ParsedLaTeXAuxilary)
-    command: bibtex other.aux
+    rule: BibTeX(build;execute;;pkg-multibib.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-multibib.aux
   - type: command
-    rule: BibTeX(build;execute;job-2;output/other.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/other.aux
-  - type: command
-    rule: BibTeX(build;execute;job-1;other.aux-ParsedLaTeXAuxilary)
-    command: bibtex other.aux
-  - type: command
-    rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
-    command: bibtex job-1.aux
-  - type: command
-    rule: LaTeX(build;execute;job-1;pkg-multibib.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
-      pkg-multibib.tex
-  - type: command
-    rule: BibTeX(build;execute;job-1;other.aux-ParsedLaTeXAuxilary)
-    command: bibtex other.aux
-  - type: command
-    rule: BibTeX(build;execute;job-2;other.aux-ParsedLaTeXAuxilary)
-    command: bibtex other.aux
-  - type: command
-    rule: LaTeX(build;execute;job-1;pkg-multibib.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
-      pkg-multibib.tex
-  - type: command
-    rule: LaTeX(build;execute;job-2;pkg-multibib.tex)
+    rule: LaTeX(build;execute;;pkg-multibib.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 pkg-multibib.tex
+      pkg-multibib.tex
   - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
+    rule: BibTeX(build;execute;;other.aux-ParsedLaTeXAuxilary)
+    command: bibtex other.aux
   - type: command
-    rule: BibTeX(build;execute;job-2;output/other.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/other.aux
-  - type: command
-    rule: LaTeX(build;execute;job-2;pkg-multibib.tex)
+    rule: LaTeX(build;execute;;pkg-multibib.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 pkg-multibib.tex
+      pkg-multibib.tex
+  - type: command
+    rule: LaTeX(build;execute;;pkg-multibib.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-multibib.tex

@@ -18,11 +18,6 @@ events:
       xelatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
       pkg-asymptote.tex
   - type: command
-    rule: LaTeX(build;execute;job-4;pkg-asymptote.tex)
-    command: >-
-      latex -file-line-error -interaction=batchmode -recorder -jobname=job-4
-      pkg-asymptote.tex
-  - type: command
     rule: Asymptote(build;execute;job-1;job-1-1.asy)
     command: asy -offscreen -vv job-1-1.asy
   - type: command
@@ -47,20 +42,6 @@ events:
       xelatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
       pkg-asymptote.tex
   - type: command
-    rule: DviToPdf(build;execute;job-4;job-4.dvi)
-    command: xdvipdfmx -o job-4.pdf job-4.dvi
-  - type: command
-    rule: Asymptote(build;execute;job-4;job-4-1.asy)
-    command: asy -offscreen -vv job-4-1.asy
-  - type: command
-    rule: LaTeX(build;execute;job-4;pkg-asymptote.tex)
-    command: >-
-      latex -file-line-error -interaction=batchmode -recorder -jobname=job-4
-      pkg-asymptote.tex
-  - type: command
-    rule: DviToPdf(build;execute;job-4;job-4.dvi)
-    command: xdvipdfmx -o job-4.pdf job-4.dvi
-  - type: command
     rule: LaTeX(build;execute;job-1;pkg-asymptote.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
@@ -74,9 +55,4 @@ events:
     rule: LaTeX(build;execute;job-3;pkg-asymptote.tex)
     command: >-
       xelatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
-      pkg-asymptote.tex
-  - type: command
-    rule: LaTeX(build;execute;job-4;pkg-asymptote.tex)
-    command: >-
-      latex -file-line-error -interaction=batchmode -recorder -jobname=job-4
       pkg-asymptote.tex

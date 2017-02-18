@@ -130,7 +130,7 @@ export default class Builder extends BuildStateConsumer {
   async checkUpdates () {
     for (const file of this.files) {
       for (const rule of file.rules.values()) {
-        await rule.addInputFileActions(file)
+        await rule.addFileActions(file)
       }
       file.hasBeenUpdated = false
     }

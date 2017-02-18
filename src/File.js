@@ -136,8 +136,8 @@ export default class File {
   set value (value: ?any) {
     if (!_.isEqual(value, this._value)) {
       this.hasBeenUpdated = true
+      this.timeStamp = new Date()
     }
-    this.timeStamp = new Date()
     this._value = value
   }
 

@@ -6,7 +6,7 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Message } from '../types'
+import type { Action, Message } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No file )/i
@@ -25,26 +25,20 @@ export default class LaTeX extends Rule {
     await this.getResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
   }
 
-  async addInputFileActions (file: File): Promise<void> {
-    if (!this.constructor.commands.has(this.command) || !this.constructor.phases.has(this.phase)) {
-      return
-    }
-
+  async getFileActions (file: File): Promise<Array<Action>> {
     switch (file.type) {
       case 'ParsedLaTeXFileListing':
-        if (file.hasBeenUpdated) {
-          this.addAction(file, 'updateDependencies')
-        }
-        break
+        return ['updateDependencies']
       case 'ParsedLaTeXLog':
-        if (file.value && file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
-          this.addAction(file)
+        if (file.value && file.value.messages &&
+          file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
+          return ['run']
         }
         break
       default:
-        await super.addInputFileActions(file)
-        break
+        return ['run']
     }
+    return []
   }
 
   async updateDependencies (): Promise<boolean> {
@@ -56,7 +50,7 @@ export default class LaTeX extends Rule {
           const { inputs, outputs } = file.value
           if (inputs) {
             for (const input of await this.getInputs(inputs)) {
-              await this.addInputFileActions(input)
+              await this.addFileActions(input)
             }
           }
           if (outputs) await this.getOutputs(outputs)

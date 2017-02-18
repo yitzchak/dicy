@@ -6,13 +6,14 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Message } from '../types'
+import type { Action, Message } from '../types'
 
 export default class BibTeX extends Rule {
   static fileTypes: Set<string> = new Set(['ParsedLaTeXAuxilary'])
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
   input: ?File
+  hasRun: boolean
 
   static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
     if (!await super.appliesToFile(buildState, jobName, file)) return false
@@ -28,22 +29,22 @@ export default class BibTeX extends Rule {
     })
   }
 
-  async addInputFileActions (file: File): Promise<void> {
+  async getFileActions (file: File): Promise<Array<Action>> {
+    if (this.hasRun) return []
+
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.normalizedFilePath)
-        if (this.constructor.commands.has(this.command) &&
-          this.constructor.phases.has(this.phase) && file.value &&
+        if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => message.text.includes('run BibTeX') && message.text.includes(name))) {
-          this.addAction(file)
+          return ['run']
         }
         break
-      case 'ParsedLaTeXAuxilary':
-        break
       default:
-        await super.addInputFileActions(file)
-        break
+        return ['run']
     }
+
+    return []
   }
 
   async preEvaluate () {
@@ -67,6 +68,7 @@ export default class BibTeX extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
+    this.hasRun = true
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 

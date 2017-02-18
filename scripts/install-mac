@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+  echo Updating homebrew...
+  brew update
+
+  echo Installing GhostScript...
+  brew install ghostscript
+
+  echo Installing R...
+  brew tap homebrew/science
+  brew install r
+  
+  echo Installing Pygments...
+  pip install Pygments
+
+  echo Installing MacTeX...
+  wget http://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg
+  sudo installer -pkg BasicTeX.pkg -target /
+  
+  echo Installing TeX packages...
+  sudo tlmgr update --self
+  sudo tlmgr update --all
+  sudo tlmgr install \
+    adjustbox \
+    amsrefs \
+    asymptote \
+    biber \
+    biblatex \
+    bibtopic \
+    collectbox \
+    currfile \
+    datatool \
+    everypage \
+    filemod \
+    framed \
+    fvextra \
+    gincltex \
+    glossaries \
+    ifplatform \
+    lipsum \
+    logreq \
+    makeglos \
+    mfirstuc \
+    minted \
+    multibib \
+    nomencl \
+    standalone \
+    subfiles \
+    substr \
+    supertabular \
+    svn-prov \
+    xfor \
+    xstring    
+fi
