@@ -50,6 +50,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     minted \
     multibib \
     nomencl \
+    polytable \
     standalone \
     stmaryrd \
     subfiles \
