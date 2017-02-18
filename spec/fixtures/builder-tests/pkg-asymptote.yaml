@@ -4,8 +4,6 @@ jobs:
     outputDirectory: output
   job-3:
     engine: xelatex
-  job-4:
-    engine: latex
 reportLogMessages: true
 severity: error
 check:
