@@ -74,6 +74,9 @@ const command = async (inputs, env) => {
       .on('command', event => {
         console.log(`[${event.rule}] Executing \`${event.command}\``)
       })
+      .on('fileDeleted', event => {
+        console.log(`Deleting \`${event.filePath}\``)
+      })
 
     for (const type of saveEvents) {
       builder.on(type, event => { events.push(event) })

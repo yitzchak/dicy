@@ -200,8 +200,16 @@ export default class File {
     })
   }
 
+  async delete (): Promise<void> {
+    if (!this.virtual) await fs.unlink(this.filePath)
+  }
+
   addRule (rule: Rule): void {
     this.rules.add(rule)
+  }
+
+  removeRule (rule: Rule): void {
+    this.rules.delete(rule)
   }
 
   async updateTimeStamp (): Promise<boolean> {

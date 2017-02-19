@@ -230,6 +230,23 @@ export default class Rule extends BuildStateConsumer {
     return files
   }
 
+  async removeFile (file: File): Promise<boolean> {
+    this.inputs.delete(file.normalizedFilePath)
+    this.outputs.delete(file.normalizedFilePath)
+
+    if (this.parameters.includes(file)) {
+      for (const input of this.inputs.values()) {
+        // $FlowIgnore
+        input.removeRule(this)
+      }
+      return true
+    }
+
+    // $FlowIgnore
+    file.removeRule(this)
+    return false
+  }
+
   async getResolvedInput (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
     const filePath = this.resolvePath(ext, options)
     return await this.getInput(filePath)

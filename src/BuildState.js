@@ -5,7 +5,7 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Phase, Option } from './types'
+import type { Command, FileCache, RuleCache, Phase, Option } from './types'
 
 export default class BuildState extends EventEmitter {
   filePath: string
@@ -14,7 +14,6 @@ export default class BuildState extends EventEmitter {
   rules: Map<string, Rule> = new Map()
   options: Object = {}
   optionSchema: Map<string, Option> = new Map()
-  cache: Object
   distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
 
@@ -59,24 +58,34 @@ export default class BuildState extends EventEmitter {
 
   async addRule (rule: Rule): Promise<void> {
     this.rules.set(rule.id, rule)
-    // Look for the rule in the cache
-    if (this.cache && this.cache.rules[rule.id]) {
-      const cachedRule = this.cache.rules[rule.id]
-      await rule.getInputs(cachedRule.inputs)
-      const outputs = await rule.getOutputs(cachedRule.outputs)
-      if (outputs.length === cachedRule.outputs.length) {
-        // All outputs still exist so we used the cached timeStamp.
-        if (rule.constructor.alwaysEvaluate) rule.addAction()
-      } else {
-        // At least one of the outputs is missing so we force evaluation of the
-        // rule.
+    rule.addAction()
+  }
+
+  async addCachedRule (cache: RuleCache): Promise<void> {
+    const id = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, ...cache.parameters)
+    if (this.rules.has(id)) return
+
+    const RuleClass = this.ruleClasses.find(ruleClass => ruleClass.name === cache.name)
+    if (RuleClass) {
+      const parameters = []
+      for (const filePath of cache.parameters) {
+        const parameter = await this.getFile(filePath)
+        if (!parameter) break
+        parameters.push(parameter)
+      }
+      // $FlowIgnore
+      const rule = new RuleClass(this, cache.command, cache.phase, cache.jobName, ...parameters)
+      await rule.initialize()
+      this.rules.set(rule.id, rule)
+      await rule.getInputs(cache.inputs)
+      const outputs = await rule.getOutputs(cache.outputs)
+      if (rule.constructor.alwaysEvaluate || outputs.length !== cache.outputs.length) {
+        // At least one of the outputs is missing or the rule should always run.
         rule.addAction()
       }
       for (const input of rule.inputs.values()) {
         await rule.addFileActions(input)
       }
-    } else {
-      rule.addAction()
     }
   }
 
@@ -93,25 +102,13 @@ export default class BuildState extends EventEmitter {
     return this.rules.get(id)
   }
 
-  async getFile (filePath: string): Promise<?File> {
+  async getFile (filePath: string, { timeStamp, hash, value }: FileCache = {}): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.files.get(filePath)
 
     if (!file) {
-      let timeStamp, hash, value
-
-      // Check for the file in the cache
-      if (this.cache && this.cache.files[filePath]) {
-        timeStamp = this.cache.files[filePath].timeStamp
-        hash = this.cache.files[filePath].hash
-        value = this.cache.files[filePath].value
-      }
       file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash, value)
       if (!file) {
-        // the file no longer exists so we remove it from the cache. This
-        // guarantees that even if the file is recreated with the same timeStamp
-        // and hash it will still trigger dependent rules.
-        if (this.cache) delete this.cache.files[filePath]
         this.emit('fileRemoved', { type: 'fileRemoved', file: filePath })
         return
       }
@@ -120,6 +117,26 @@ export default class BuildState extends EventEmitter {
     }
 
     return file
+  }
+
+  async deleteFile (file: File) {
+    const invalidRules = []
+
+    for (const rule of this.rules.values()) {
+      if (await rule.removeFile(file)) {
+        // This file is one of the parameters of the rule so we need to remove
+        // the rule.
+        invalidRules.push(rule)
+      }
+    }
+
+    for (const rule of invalidRules) {
+      this.rules.delete(rule.id)
+    }
+
+    await file.delete()
+    this.files.delete(file.normalizedFilePath)
+    this.emit('fileDeleted', { type: 'fileDeleted', file: file.normalizedFilePath })
   }
 
   setOptions (options: Object) {

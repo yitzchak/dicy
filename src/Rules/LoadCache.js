@@ -5,7 +5,7 @@ import yaml from 'js-yaml'
 
 import Rule from '../Rule'
 
-import type { Command, Phase } from '../types'
+import type { Command, Phase, RuleCache, Cache } from '../types'
 
 export default class LoadCache extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
@@ -30,7 +30,21 @@ export default class LoadCache extends Rule {
   async run () {
     // $FlowIgnore
     const contents = await fs.readFile(this.cacheFilePath, { encoding: 'utf-8' })
-    this.buildState.cache = yaml.safeLoad(contents)
+    const cache: ?Cache = yaml.safeLoad(contents)
+
+    if (!cache) return true
+
+    if (cache.files) {
+      for (const filePath in cache.files) {
+        await this.buildState.getFile(filePath, cache.files[filePath])
+      }
+    }
+
+    if (cache.rules) {
+      for (const rule: RuleCache of cache.rules) {
+        this.buildState.addCachedRule(rule)
+      }
+    }
 
     return true
   }

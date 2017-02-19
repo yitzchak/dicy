@@ -26,13 +26,26 @@ export type FileCache = {
   timeStamp: Date,
   hash: string,
   type?: string,
-  subType?: string
+  subType?: string,
+  value?: any,
+  jobNames?: Array<string>
 }
 
 export type RuleCache = {
-  timeStamp: Date,
+  name: string,
+  command: Command,
+  phase: Phase,
+  jobName?: string,
+  parameters: Array<string>,
   inputs: Array<string>,
   outputs: Array<string>
+}
+
+export type Cache = {
+  filePath: string,
+  options: Object,
+  files: { [filePath: string]: FileCache },
+  rules: Array<RuleCache>
 }
 
 export type Parser = {
@@ -91,6 +104,11 @@ export type FileAddedEvent = {
   file: string
 }
 
+export type FileDeletedEvent = {
+  type: 'fileDeleted',
+  file: string
+}
+
 export type FileRemovedEvent = {
   type: 'fileRemoved',
   file: string
@@ -108,7 +126,9 @@ export type OutputAddedEvent = {
   file: string
 }
 
-export type Event = LogEvent | ActionEvent | CommandEvent | FileAddedEvent | FileChangedEvent | FileChangedEvent | InputAddedEvent | OutputAddedEvent
+export type Event = LogEvent | ActionEvent | CommandEvent | FileAddedEvent |
+  FileDeletedEvent | FileRemovedEvent | FileChangedEvent | InputAddedEvent |
+  OutputAddedEvent
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 

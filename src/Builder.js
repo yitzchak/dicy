@@ -78,7 +78,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   async evaluate (command: Command, phase: Phase, action: Action) {
-    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(phase))
+    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.command === command && rule.phase === phase)
     const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
