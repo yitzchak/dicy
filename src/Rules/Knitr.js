@@ -12,7 +12,7 @@ export default class Knitr extends Rule {
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs(['.tex', '-concordance.tex'], {
-      fileReference: this.firstParameter,
+      referenceFile: this.firstParameter,
       useJobName: false,
       useOutputDirectory: false
     })

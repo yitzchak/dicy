@@ -36,7 +36,7 @@ export default class Biber extends Rule {
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs(['.bbl', '.blg'], {
-      fileReference: this.firstParameter,
+      referenceFile: this.firstParameter,
       useJobName: false,
       useOutputDirectory: false
     })

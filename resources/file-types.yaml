@@ -61,7 +61,7 @@ LaTeXClass:
 LaTeXFileListing:
   fileName: !!js/regexp /\.fls$/i
 LaTeXLog:
-  contents: !!js/regexp /^This is (?:pdf|e-u?p|u?p|Lua|Xe)?TeX,/
+  contents: !!js/regexp /^This is ((?:pdf|e-u?p|u?p|Lua|Xe)?TeX),/
   fileName: !!js/regexp /\.log$/i
   hashSkip: !!js/regexp /^This is/
 LaTeXStyle:
@@ -77,6 +77,10 @@ MakeIndexLog:
   fileName: !!js/regexp /\..+lg$/i
 MetaPost:
   fileName: !!js/regexp /\.mp$/i
+MetaPostLog:
+  contents: !!js/regexp /^This is MetaPost,/
+  fileName: !!js/regexp /\.log$/i
+  hashSkip: !!js/regexp /^This is/
 MetaPostOutput:
   fileName: !!js/regexp /\.1$/i
 NomenclatureControlFile:

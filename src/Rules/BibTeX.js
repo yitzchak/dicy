@@ -73,7 +73,7 @@ export default class BibTeX extends Rule {
     let match
 
     await this.getResolvedOutputs(['.bbl', '.blg'], {
-      fileReference: this.firstParameter,
+      referenceFile: this.firstParameter,
       useJobName: false,
       useOutputDirectory: false
     })

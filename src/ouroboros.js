@@ -75,7 +75,7 @@ const command = async (inputs, env) => {
         console.log(`[${event.rule}] Executing \`${event.command}\``)
       })
       .on('fileDeleted', event => {
-        console.log(`Deleting \`${event.filePath}\``)
+        console.log(`Deleting \`${event.file}\``)
       })
 
     for (const type of saveEvents) {

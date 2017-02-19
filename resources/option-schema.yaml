@@ -2,7 +2,15 @@ cleanPatterns:
   description: Patterns to use when executing a clean command.
   type: strings
   defaultValue:
-    - '**/*.*'
+    - '!(**/*.dvi|**/*.pdf|**/*.ps|**/*.svg|**/*.synctex|**/*.synctex.gz|**/*.tex|**/*.xdv)'
+  commands:
+    - clean
+deepClean:
+  aliases:
+    - d
+  description: Remove all generated files and the cache.
+  type: boolean
+  defaultValue: false
   commands:
     - clean
 engine:
@@ -10,12 +18,6 @@ engine:
     'LaTeX engine, e.g. latex, pdflatex or uplatex [default: pdflatex]'
   type: string
   defaultValue: pdflatex
-  commands:
-    - build
-graphDependencies:
-  description: Graph dependencies
-  type: boolean
-  defaultValue: false
   commands:
     - build
 ignoreRules:

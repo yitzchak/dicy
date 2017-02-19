@@ -6,7 +6,7 @@ import Rule from '../Rule'
 
 export default class MetaPost extends Rule {
   static fileTypes: Set<string> = new Set(['MetaPost'])
-  static description: string = 'Runs metapost on produced mp files.'
+  static description: string = 'Runs MetaPost on produced MetaPost files.'
 
   constructCommand () {
     return ['mpost', path.basename(this.firstParameter.normalizedFilePath)]
@@ -21,8 +21,8 @@ export default class MetaPost extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutput('.1', {
-      fileReference: this.firstParameter,
+    await this.getResolvedOutputs(['.1', '.log', '.t1'], {
+      referenceFile: this.firstParameter,
       useJobName: false,
       useOutputDirectory: false
     })

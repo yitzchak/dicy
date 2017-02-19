@@ -4,33 +4,21 @@ import _ from 'lodash'
 import fs from 'fs-promise'
 // import path from 'path'
 
-import BuildState from '../BuildState'
 import Rule from '../Rule'
 
-import type { Command, Phase } from '../types'
+import type { Command } from '../types'
 
 const COMMAND_PHASE_JOB_NAME_PATTERN = /\(([^;)]*);([^;)]*);([^;)]*);?/
 
-function getParameters (rule) {
-  const [, command, phase, jobName] = rule.id ? rule.id.match(COMMAND_PHASE_JOB_NAME_PATTERN) || ['', '', '', ''] : ['', '', '', '']
-  return { command, phase, jobName }
-}
-
 export default class GraphDependencies extends Rule {
-  static commands: Set<Command> = new Set(['build', 'graph'])
-  static phases: Set<Phase> = new Set(['finalize'])
+  static commands: Set<Command> = new Set(['graph'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
   static description: string = 'Creates a GraphViz dependency graph.'
 
-  static async appliesToPhase (buildState: BuildState, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
-    return (buildState.command === 'graph' || buildState.options.graphDependencies) &&
-      await super.appliesToPhase(buildState, command, phase, jobName)
-  }
-
   async run () {
     let lines = []
-    const rulesByCommand = _.groupBy(Array.from(this.buildState.rules.values()), rule => getParameters(rule).command)
+    const rulesByCommand = _.groupBy(Array.from(this.buildState.rules.values()), rule => rule.command)
     let level = 0
 
     function addLine (line) {
@@ -56,7 +44,7 @@ export default class GraphDependencies extends Rule {
 
     for (const command in rulesByCommand) {
       startGraph(command, `${command} command`)
-      const rulesByPhase = _.groupBy(rulesByCommand[command], rule => getParameters(rule).phase)
+      const rulesByPhase = _.groupBy(rulesByCommand[command], rule => rule.phase)
       for (const phase in rulesByPhase) {
         switch (phase) {
           case 'execute':
@@ -67,9 +55,9 @@ export default class GraphDependencies extends Rule {
             break
         }
         startGraph(`${command};${phase}`, `${phase} phase`)
-        const rulesByJobName = _.groupBy(rulesByPhase[phase], rule => getParameters(rule).jobName)
+        const rulesByJobName = _.groupBy(rulesByPhase[phase], rule => rule.jobName)
         for (const jobName in rulesByJobName) {
-          if (jobName) {
+          if (jobName !== 'undefined') {
             startGraph(`${command};${phase};${jobName}`, `\\"${jobName}\\" job`)
           }
           const rules = rulesByJobName[jobName]
@@ -89,7 +77,7 @@ export default class GraphDependencies extends Rule {
             }
             addLine(`"${rules[i].id}" [shape=box,label="${rules[i].id.replace(COMMAND_PHASE_JOB_NAME_PATTERN, '(')}"];`)
           }
-          if (jobName) endGraph()
+          if (jobName !== 'undefined') endGraph()
         }
         endGraph()
       }
