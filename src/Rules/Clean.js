@@ -22,7 +22,7 @@ export default class Clean extends Rule {
     const candidatefiles: Set<File> = new Set()
     const files: Set<File> = new Set()
 
-    for (const filePath of await fastGlob(filePatterns, { cwd: this.rootPath })) {
+    for (const filePath of await fastGlob(filePatterns, { cwd: this.rootPath, bashNative: [] })) {
       const file = await this.getFile(filePath)
       if (file) files.add(file)
     }

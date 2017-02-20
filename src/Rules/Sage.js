@@ -29,7 +29,7 @@ export default class Sage extends Rule {
       useOutputDirectory: false
     })
     const plotPath = path.resolve(this.options.outputDirectory || '', `sage-plots-for-${path.basename(this.firstParameter.normalizedFilePath, '.sagetex.sage')}.tex`, '*')
-    await this.getOutputs(await fastGlob(plotPath, { onlyFile: true }))
+    await this.getOutputs(await fastGlob(plotPath, { onlyFile: true, bashNative: [] }))
     return true
   }
 
