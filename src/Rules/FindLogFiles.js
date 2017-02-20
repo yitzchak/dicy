@@ -14,7 +14,7 @@ export default class FindLogFiles extends Rule {
 
   async run () {
     const filePattern = this.resolvePath('.@(log|*lg)')
-    await this.getFiles(await fastGlob(filePattern), { cwd: this.rootPath, bashNative: [] })
+    await this.getFiles(await fastGlob(filePattern, { cwd: this.rootPath, bashNative: [] }))
     return true
   }
 }
