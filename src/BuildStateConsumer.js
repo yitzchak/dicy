@@ -1,17 +1,20 @@
 /* @flow */
 
+import fastGlob from 'fast-glob'
+import placeholders from 'placeholders'
 import path from 'path'
 
 import BuildState from './BuildState'
 import File from './File'
 import Rule from './Rule'
 
-import type { Message, ResolvePathOptions } from './types'
+import type { Message, ExpandPathOptions, ResolvePathOptions } from './types'
 
 export default class BuildStateConsumer {
   buildState: BuildState
   options: Object
   jobName: ?string
+  expand: Function
 
   constructor (buildState: BuildState, jobName: ?string) {
     this.jobName = jobName
@@ -33,6 +36,8 @@ export default class BuildStateConsumer {
         return target[key]
       }
     })
+
+    this.expand = placeholders()
   }
 
   get ruleClasses (): Array<Class<Rule>> {
@@ -61,6 +66,24 @@ export default class BuildStateConsumer {
 
   normalizePath (filePath: string) {
     return this.buildState.normalizePath(filePath)
+  }
+
+  expandPath ({ absolute = false, pattern = ':dir/:output/:job:ext', filePath, ...properties }: ExpandPathOptions): string {
+    const { base, dir, name, ext } = path.parse(filePath || this.filePath)
+    Object.assign({
+      output: this.options.outputDirectory || '.',
+      job: this.jobName || this.options.jobName || name,
+      dir,
+      base,
+      name,
+      ext
+    }, properties)
+    const expanded = this.expand(pattern, properties)
+    return path.normalize(absolute ? path.resolve(this.rootPath, expanded) : expanded)
+  }
+
+  async globPath (options: ExpandPathOptions): Promise<Array<string>> {
+    return await fastGlob(this.expandPath(options), { cwd: this.rootPath })
   }
 
   resolvePath (ext: string, { absolute = false, useJobName = true, useOutputDirectory = true, referenceFile }: ResolvePathOptions = {}) {

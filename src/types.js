@@ -16,6 +16,16 @@ export type RuleInfo = {
   description: string
 }
 
+export type ExpandPathOptions = {
+  job?: string,
+  dir?: string,
+  name?: string,
+  ext?: string,
+  pattern?: string,
+  filePath?: string,
+  absolute?: boolean
+}
+
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,
