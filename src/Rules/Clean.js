@@ -26,7 +26,7 @@ export default class Clean extends Rule {
     for (const file of files.values()) {
       if (!file.virtual &&
         (deepClean || cleanPatterns.some(pattern => pattern(file.normalizedFilePath)))) {
-        await this.buildState.deleteFile(file)
+        await this.buildState.deleteFile(file, this.jobName)
       }
     }
 

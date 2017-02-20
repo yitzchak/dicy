@@ -119,14 +119,16 @@ export default class BuildState extends EventEmitter {
     return file
   }
 
-  async deleteFile (file: File) {
+  async deleteFile (file: File, jobName: ?string) {
     const invalidRules = []
 
     for (const rule of this.rules.values()) {
-      if (await rule.removeFile(file)) {
-        // This file is one of the parameters of the rule so we need to remove
-        // the rule.
-        invalidRules.push(rule)
+      if (rule.jobName === jobName) {
+        if (await rule.removeFile(file)) {
+          // This file is one of the parameters of the rule so we need to remove
+          // the rule.
+          invalidRules.push(rule)
+        }
       }
     }
 
@@ -134,9 +136,12 @@ export default class BuildState extends EventEmitter {
       this.rules.delete(rule.id)
     }
 
-    await file.delete()
-    this.files.delete(file.normalizedFilePath)
-    this.emit('fileDeleted', { type: 'fileDeleted', file: file.normalizedFilePath })
+    if (jobName) file.jobNames.delete(jobName)
+    if (file.jobNames.size === 0) {
+      await file.delete()
+      this.files.delete(file.normalizedFilePath)
+      this.emit('fileDeleted', { type: 'fileDeleted', file: file.normalizedFilePath })
+    }
   }
 
   setOptions (options: Object) {
