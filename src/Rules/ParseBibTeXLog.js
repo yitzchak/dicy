@@ -9,13 +9,10 @@ export default class ParseBibTeXLog extends Rule {
   static commands: Set<Command> = new Set(['build', 'report'])
   static description: string = 'Parses any bibtex produced logs.'
 
-  async initialize () {
-    await this.getResolvedOutput(':dir/:base-ParsedBibTeXLog', this.firstParameter)
-  }
-
   async run () {
-    const parsedFile = await this.getResolvedOutput(':dir/:base-ParsedBibTeXLog', this.firstParameter)
-    if (!parsedFile) return false
+    const output = await this.getResolvedOutput(':dir/:base-ParsedBibTeXLog', this.firstParameter)
+    if (!output) return false
+
     const messages: Array<Message> = []
 
     await this.firstParameter.parse([{
@@ -72,7 +69,7 @@ export default class ParseBibTeXLog extends Rule {
       }
     }])
 
-    parsedFile.value = { messages }
+    output.value = { messages }
 
     return true
   }

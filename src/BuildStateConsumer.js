@@ -82,8 +82,8 @@ export default class BuildStateConsumer {
     return path.normalize(this.expand(filePath, properties))
   }
 
-  async globPath (filePath: string, reference?: File | string): Promise<Array<string>> {
-    return await fastGlob(this.resolvePath(filePath, reference), { cwd: this.rootPath })
+  async globPath (pattern: string, reference?: File | string): Promise<Array<string>> {
+    return await fastGlob(this.resolvePath(pattern, reference), { cwd: this.rootPath })
   }
 
   async getFile (filePath: string): Promise<?File> {
@@ -95,6 +95,15 @@ export default class BuildStateConsumer {
   async getFiles (filePaths: Array<string>): Promise<Array<File>> {
     const files: Array<File> = []
     for (const filePath of filePaths) {
+      const file = await this.getFile(filePath)
+      if (file) files.push(file)
+    }
+    return files
+  }
+
+  async getGlobbedFiles (pattern: string, reference?: File | string): Promise<Array<File>> {
+    const files = []
+    for (const filePath of await this.globPath(pattern, reference)) {
       const file = await this.getFile(filePath)
       if (file) files.push(file)
     }

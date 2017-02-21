@@ -1,22 +1,16 @@
 /* @flow */
 
 import Rule from '../Rule'
-import File from '../File'
 
 import type { Command } from '../types'
 
 export default class ParseLaTeXMagic extends Rule {
   static commands: Set<Command> = new Set(['load'])
-  static fileTypes: Set<string> = new Set(['LaTeX', 'LiterateHaskell', 'Knitr'])
+  static fileTypes: Set<string> = new Set(['Knitr', 'LaTeX', 'LiterateHaskell'])
   static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
 
-  output: ?File
-
-  async initialize () {
-    this.output = await this.getResolvedOutput(':dir/:base-ParsedLaTeXMagic', this.firstParameter)
-  }
-
   async run () {
+    const output = await this.getResolvedOutput(':dir/:base-ParsedLaTeXMagic', this.firstParameter)
     const magic = {}
 
     await this.firstParameter.parse([{
@@ -31,7 +25,7 @@ export default class ParseLaTeXMagic extends Rule {
       }
     }])
 
-    if (this.output) this.output.value = magic
+    if (output) output.value = magic
 
     return true
   }

@@ -16,8 +16,8 @@ export default class BibTeX extends Rule {
   hasRun: boolean
 
   static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    if (!await super.appliesToFile(buildState, command, phase, jobName, file)) return false
-    return !!file.value && !!file.value.bibdata
+    return await super.appliesToFile(buildState, command, phase, jobName, file) &&
+      !!file.value && !!file.value.bibdata
   }
 
   async initialize () {
