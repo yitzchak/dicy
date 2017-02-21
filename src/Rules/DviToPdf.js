@@ -19,7 +19,7 @@ export default class DviToPdf extends Rule {
     return [
       'xdvipdfmx',
       '-o',
-      this.resolvePath('.pdf'),
+      this.expandPath(':dir/:name.pdf', this.firstParameter),
       this.firstParameter.normalizedFilePath
     ]
   }

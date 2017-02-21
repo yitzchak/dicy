@@ -85,11 +85,7 @@ const command = async (inputs, env) => {
     await builder.run('load', env.name(), 'save')
 
     if (saveEvents.length !== 0) {
-      const eventFilePath = builder.resolvePath('-events.yaml', {
-        absolute: true,
-        useJobName: false,
-        useOutputDirectory: false
-      })
+      const eventFilePath = builder.expandPath(':dir/:name-events.yaml')
       const serialized = yaml.safeDump({ types: saveEvents, events }, { skipInvalid: true })
       await fs.writeFile(eventFilePath, serialized)
     }

@@ -8,7 +8,7 @@ import BuildState from './BuildState'
 import File from './File'
 import Rule from './Rule'
 
-import type { Message, ExpandPathOptions, ResolvePathOptions } from './types'
+import type { Message, ResolvePathOptions } from './types'
 
 export default class BuildStateConsumer {
   buildState: BuildState
@@ -68,22 +68,22 @@ export default class BuildStateConsumer {
     return this.buildState.normalizePath(filePath)
   }
 
-  expandPath ({ absolute = false, pattern = ':dir/:output/:job:ext', filePath, ...properties }: ExpandPathOptions): string {
-    const { base, dir, name, ext } = path.parse(filePath || this.filePath)
-    Object.assign({
-      output: this.options.outputDirectory || '.',
+  expandPath (filePath: string, reference?: File | string): string {
+    const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.normalizedFilePath : (reference || this.filePath))
+    const properties = {
+      outdir: this.options.outputDirectory || '.',
+      outext: this.options.outputFormat,
       job: this.jobName || this.options.jobName || name,
-      dir,
+      dir: dir || '.',
       base,
       name,
       ext
-    }, properties)
-    const expanded = this.expand(pattern, properties)
-    return path.normalize(absolute ? path.resolve(this.rootPath, expanded) : expanded)
+    }
+    return path.normalize(this.expand(filePath, properties))
   }
 
-  async globPath (options: ExpandPathOptions): Promise<Array<string>> {
-    return await fastGlob(this.expandPath(options), { cwd: this.rootPath })
+  async globPath (filePath: string, reference?: File | string): Promise<Array<string>> {
+    return await fastGlob(this.expandPath(filePath, reference), { cwd: this.rootPath })
   }
 
   resolvePath (ext: string, { absolute = false, useJobName = true, useOutputDirectory = true, referenceFile }: ResolvePathOptions = {}) {
@@ -156,6 +156,10 @@ export default class BuildStateConsumer {
 
   isChild (x: Rule, y: Rule): boolean {
     return this.buildState.isChild(x, y)
+  }
+
+  async getExpandedFile (filePath: string, reference?: File | string): Promise<?File> {
+    return await this.getFile(this.expandPath(filePath, reference))
   }
 
   async getResolvedFile (ext: string, options: ResolvePathOptions = {}): Promise<?File> {

@@ -16,11 +16,7 @@ export default class LhsToTeX extends Rule {
   }
 
   constructCommand () {
-    const outputPath = this.resolvePath('.tex', {
-      referenceFile: this.firstParameter,
-      useJobName: false,
-      useOutputDirectory: false
-    })
+    const outputPath = this.expandPath(':dir/:name.tex', this.firstParameter)
     return ['lhs2TeX', '-o', outputPath, this.firstParameter.normalizedFilePath]
   }
 }

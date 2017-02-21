@@ -19,7 +19,7 @@ export default class DviToPs extends Rule {
     return [
       'dvips',
       '-o',
-      this.resolvePath('.ps'),
+      this.expandPath(':dir/:name.ps', this.firstParameter),
       this.firstParameter.normalizedFilePath
     ]
   }

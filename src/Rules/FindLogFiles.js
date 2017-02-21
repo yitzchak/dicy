@@ -13,7 +13,7 @@ export default class FindLogFiles extends Rule {
   static description: string = 'Find preexisting log files.'
 
   async run () {
-    const filePattern = this.resolvePath('.@(log|*lg)')
+    const filePattern = this.expandPath(':outdir/:job.@(log|*lg)')
     await this.getFiles(await fastGlob(filePattern, { cwd: this.rootPath, bashNative: [] }))
     return true
   }

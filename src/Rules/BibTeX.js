@@ -21,12 +21,8 @@ export default class BibTeX extends Rule {
   }
 
   async initialize () {
-    await this.getResolvedInput('.log-ParsedLaTeXLog')
-    this.input = await this.getResolvedInput('.aux', {
-      referenceFile: this.firstParameter,
-      useJobName: false,
-      useOutputDirectory: false
-    })
+    await this.getExpandedInput(':outdir/:job.log-ParsedLaTeXLog')
+    this.input = await this.getExpandedInput(':dir/:name.aux', this.firstParameter)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {

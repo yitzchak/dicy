@@ -12,7 +12,7 @@ export default class Asymptote extends Rule {
   static description: string = 'Run Asymptote on any generated .asy files.'
 
   async initialize () {
-    await this.getResolvedInput(`.log-ParsedAsymptoteLog`)
+    await this.getExpandedInput(':dir/:name.log-ParsedAsymptoteLog', this.firstParameter)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {

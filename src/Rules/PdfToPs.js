@@ -19,7 +19,7 @@ export default class PdfToPs extends Rule {
     return [
       'pdf2ps',
       this.firstParameter.normalizedFilePath,
-      this.resolvePath('.ps')
+      this.expandPath(':dir/:name.ps', this.firstParameter)
     ]
   }
 

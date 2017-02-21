@@ -247,6 +247,22 @@ export default class Rule extends BuildStateConsumer {
     return false
   }
 
+  async getExpandedInput (filePath: string, reference?: File | string): Promise<?File> {
+    const expanded = this.expandPath(filePath, reference)
+    return await this.getInput(expanded)
+  }
+
+  async getExpandedInputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
+    const files = []
+
+    for (const filePath of filePaths) {
+      const file = await this.getExpandedInput(filePath, reference)
+      if (file) files.push(file)
+    }
+
+    return files
+  }
+
   async getResolvedInput (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
     const filePath = this.resolvePath(ext, options)
     return await this.getInput(filePath)

@@ -16,7 +16,7 @@ export default class ParseOptionsFile extends Rule {
   output: ?File
 
   async initialize () {
-    this.input = await this.getResolvedInput('.yaml', { useJobName: false, useOutputDirectory: false })
+    this.input = await this.getExpandedInput(':name.yaml')
     this.output = await this.getResolvedOutput('.yaml-ParsedYAML', { useJobName: false, useOutputDirectory: false })
   }
 

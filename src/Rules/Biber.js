@@ -12,7 +12,7 @@ export default class Biber extends Rule {
   static description: string = 'Runs Biber to process bibliography files (bib) when need is detected.'
 
   async initialize () {
-    await this.getResolvedInputs(['.log-ParsedLaTeXLog'])
+    await this.getExpandedInput(':outdir/:job.log-ParsedLaTeXLog')
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {

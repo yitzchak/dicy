@@ -16,11 +16,7 @@ export default class LoadCache extends Rule {
   cacheFilePath: string
 
   async initialize () {
-    this.cacheFilePath = this.resolvePath('-cache.yaml', {
-      absolute: true,
-      useJobName: false,
-      useOutputDirectory: false
-    })
+    this.cacheFilePath = this.expandPath(':dir/:name-cache.yaml')
   }
 
   async preEvaluate () {

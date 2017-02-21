@@ -9,7 +9,7 @@ export default class MakeGlossaries extends Rule {
   static description: string = 'Runs makeglossaries on any glossary files generated.'
 
   async initialize (): Promise<void> {
-    await this.getResolvedInputs(['.acn', '.ist'])
+    await this.getExpandedInputs([':dir/:name.acn', ':dir/:name.ist'], this.firstParameter)
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
