@@ -16,7 +16,7 @@ export type RuleInfo = {
   description: string
 }
 
-export type ExpandPathOptions = {
+export type resolvePathOptions = {
   job?: string,
   dir?: string,
   name?: string,

@@ -7,11 +7,11 @@ export default class ParseLaTeXAuxilary extends Rule {
   static description: string = 'Parses the aux files produced by all variants of latex.'
 
   async initialize () {
-    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParseLaTeXAuxilary`)
+    await this.getResolvedOutput(':dir/:base-ParseLaTeXAuxilary', this.firstParameter)
   }
 
   async run () {
-    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXAuxilary`)
+    const parsedFile = await this.getResolvedOutput(':dir/:base-ParseLaTeXAuxilary', this.firstParameter)
     if (!parsedFile) return false
     const results = {}
 

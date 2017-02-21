@@ -7,7 +7,7 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Action, Command, Phase, ResolvePathOptions } from './types'
+import type { Action, Command, Phase } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
@@ -247,48 +247,32 @@ export default class Rule extends BuildStateConsumer {
     return false
   }
 
-  async getExpandedInput (filePath: string, reference?: File | string): Promise<?File> {
-    const expanded = this.expandPath(filePath, reference)
+  async getResolvedInput (filePath: string, reference?: File | string): Promise<?File> {
+    const expanded = this.resolvePath(filePath, reference)
     return await this.getInput(expanded)
   }
 
-  async getExpandedInputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
+  async getResolvedInputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getExpandedInput(filePath, reference)
+      const file = await this.getResolvedInput(filePath, reference)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getResolvedInput (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
-    const filePath = this.resolvePath(ext, options)
-    return await this.getInput(filePath)
+  async getResolvedOutput (filePath: string, reference?: File | string): Promise<?File> {
+    const expanded = this.resolvePath(filePath, reference)
+    return await this.getOutput(expanded)
   }
 
-  async getResolvedInputs (exts: Array<string>, options: ResolvePathOptions = {}): Promise<Array<File>> {
+  async getResolvedOutputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
     const files = []
 
-    for (const ext of exts) {
-      const file = await this.getResolvedInput(ext, options)
-      if (file) files.push(file)
-    }
-
-    return files
-  }
-
-  async getResolvedOutput (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
-    const filePath = this.resolvePath(ext, options)
-    return await this.getOutput(filePath)
-  }
-
-  async getResolvedOutputs (exts: Array<string>, options: ResolvePathOptions = {}): Promise<Array<File>> {
-    const files = []
-
-    for (const ext of exts) {
-      const file = await this.getResolvedOutput(ext, options)
+    for (const filePath of filePaths) {
+      const file = await this.getResolvedOutput(filePath, reference)
       if (file) files.push(file)
     }
 

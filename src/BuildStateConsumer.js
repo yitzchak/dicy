@@ -8,7 +8,7 @@ import BuildState from './BuildState'
 import File from './File'
 import Rule from './Rule'
 
-import type { Message, ResolvePathOptions } from './types'
+import type { Message } from './types'
 
 export default class BuildStateConsumer {
   buildState: BuildState
@@ -68,13 +68,13 @@ export default class BuildStateConsumer {
     return this.buildState.normalizePath(filePath)
   }
 
-  expandPath (filePath: string, reference?: File | string): string {
+  resolvePath (filePath: string, reference?: File | string): string {
     const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.normalizedFilePath : (reference || this.filePath))
     const properties = {
       outdir: this.options.outputDirectory || '.',
       outext: this.options.outputFormat,
       job: this.jobName || this.options.jobName || name,
-      dir: dir || '.',
+      dir: (reference instanceof File ? dir : this.rootPath) || '.',
       base,
       name,
       ext
@@ -83,24 +83,7 @@ export default class BuildStateConsumer {
   }
 
   async globPath (filePath: string, reference?: File | string): Promise<Array<string>> {
-    return await fastGlob(this.expandPath(filePath, reference), { cwd: this.rootPath })
-  }
-
-  resolvePath (ext: string, { absolute = false, useJobName = true, useOutputDirectory = true, referenceFile }: ResolvePathOptions = {}) {
-    let { dir, name } = path.parse(referenceFile ? referenceFile.normalizedFilePath : this.filePath)
-
-    if (useJobName) name = this.jobName || this.options.jobName || name
-
-    const outputDirectory = this.options.outputDirectory
-    if (useOutputDirectory && outputDirectory) {
-      dir = path.join(dir, outputDirectory)
-    }
-
-    if (absolute) {
-      dir = path.resolve(this.rootPath, dir)
-    }
-
-    return path.format({ dir, name, ext })
+    return await fastGlob(this.resolvePath(filePath, reference), { cwd: this.rootPath })
   }
 
   async getFile (filePath: string): Promise<?File> {
@@ -158,13 +141,8 @@ export default class BuildStateConsumer {
     return this.buildState.isChild(x, y)
   }
 
-  async getExpandedFile (filePath: string, reference?: File | string): Promise<?File> {
-    return await this.getFile(this.expandPath(filePath, reference))
-  }
-
-  async getResolvedFile (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
-    const filePath = this.resolvePath(ext, options)
-    return await this.getFile(filePath)
+  async getResolvedFile (filePath: string, reference?: File | string): Promise<?File> {
+    return await this.getFile(this.resolvePath(filePath, reference))
   }
 
   // EventEmmitter proxy

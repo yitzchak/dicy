@@ -19,13 +19,13 @@ export default class DviToPs extends Rule {
     return [
       'dvips',
       '-o',
-      this.expandPath(':dir/:name.ps', this.firstParameter),
+      this.resolvePath(':dir/:name.ps', this.firstParameter),
       this.firstParameter.normalizedFilePath
     ]
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['.ps'])
+    await this.getResolvedOutput(':dir/:name.ps', this.firstParameter)
     return true
   }
 }

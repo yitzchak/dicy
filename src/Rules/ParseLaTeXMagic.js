@@ -13,7 +13,7 @@ export default class ParseLaTeXMagic extends Rule {
   output: ?File
 
   async initialize () {
-    this.output = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXMagic`)
+    this.output = await this.getResolvedOutput(':dir/:base-ParsedLaTeXMagic', this.firstParameter)
   }
 
   async run () {

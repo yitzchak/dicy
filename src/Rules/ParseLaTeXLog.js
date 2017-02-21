@@ -12,11 +12,11 @@ export default class ParseLaTeXLog extends Rule {
   static description: string = 'Parses the logs produced by all latex variants.'
 
   async initialize () {
-    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
+    await this.getResolvedOutput(':dir/:base-ParsedLaTeXLog', this.firstParameter)
   }
 
   async run () {
-    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
+    const parsedFile = await this.getResolvedOutput(':dir/:base-ParsedLaTeXLog', this.firstParameter)
     if (!parsedFile) return false
     const messages: Array<Message> = []
     let name: string
