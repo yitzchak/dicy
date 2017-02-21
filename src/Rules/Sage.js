@@ -1,6 +1,5 @@
 /* @flow */
 
-import fastGlob from 'fast-glob'
 import path from 'path'
 
 import Rule from '../Rule'
@@ -23,9 +22,7 @@ export default class Sage extends Rule {
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs([':dir/:name.sout', ':dir/:name.sage.cmd', ':dir/:name.scmd', ':dir/:base.py'], this.firstParameter)
-    const plotPath = path.resolve(this.options.outputDirectory || '', `sage-plots-for-${path.basename(this.firstParameter.normalizedFilePath, '.sagetex.sage')}.tex`, '*')
-    await this.getOutputs(await fastGlob(plotPath, { cwd: this.rootPath, bashNative: [] }))
+    await this.getGlobbedOutputs(':dir/sage-plots-for-:name.tex/*', this.firstParameter)
     return true
   }
-
 }

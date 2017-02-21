@@ -37,7 +37,7 @@ export default class BuildStateConsumer {
       }
     })
 
-    this.expand = placeholders()
+    this.expand = placeholders({ regex: /:(\w+)/ })
   }
 
   get ruleClasses (): Array<Class<Rule>> {
@@ -72,7 +72,7 @@ export default class BuildStateConsumer {
     const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.normalizedFilePath : (reference || this.filePath))
     const properties = {
       outdir: this.options.outputDirectory || '.',
-      outext: this.options.outputFormat,
+      outext: `.${this.options.outputFormat}`,
       job: this.jobName || this.options.jobName || name,
       dir: (reference instanceof File ? dir : this.rootPath) || '.',
       base,

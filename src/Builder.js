@@ -158,7 +158,7 @@ export default class Builder extends BuildStateConsumer {
         await this.evaluate(command, phase, action)
       }
       if (Array.from(this.files).every(file => file.analyzed) &&
-        Array.from(this.rules).every(rule => !rule.needsEvaluation)) break
+        Array.from(this.rules).every(rule => rule.command !== command || rule.phase !== phase || !rule.needsEvaluation)) break
     }
   }
 

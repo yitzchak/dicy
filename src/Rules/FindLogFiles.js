@@ -1,7 +1,5 @@
 /* @flow */
 
-import fastGlob from 'fast-glob'
-
 import Rule from '../Rule'
 
 import type { Command, Phase } from '../types'
@@ -13,8 +11,7 @@ export default class FindLogFiles extends Rule {
   static description: string = 'Find preexisting log files.'
 
   async run () {
-    const filePattern = this.resolvePath(':outdir/:job.@(log|*lg)')
-    await this.getFiles(await fastGlob(filePattern, { cwd: this.rootPath, bashNative: [] }))
+    await this.getGlobbedFiles(':outdir/:job.@(log|*lg)')
     return true
   }
 }

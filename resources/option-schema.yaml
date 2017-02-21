@@ -2,7 +2,7 @@ cleanPatterns:
   description: Patterns to use when executing a clean command.
   type: strings
   defaultValue:
-    - '!(**/*.dvi|**/*.pdf|**/*.ps|**/*.svg|**/*.synctex|**/*.synctex.gz|**/*.tex|**/*.xdv)'
+    - ':outdir/:job!(:outext|.synctex.gz|.tex)'
   commands:
     - clean
 deepClean:

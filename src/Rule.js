@@ -279,6 +279,24 @@ export default class Rule extends BuildStateConsumer {
     return files
   }
 
+  async getGlobbedInputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+    const files = []
+    for (const filePath of await this.globPath(pattern, reference)) {
+      const file = await this.getInput(filePath)
+      if (file) files.push(file)
+    }
+    return files
+  }
+
+  async getGlobbedOutputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+    const files = []
+    for (const filePath of await this.globPath(pattern, reference)) {
+      const file = await this.getOutput(filePath)
+      if (file) files.push(file)
+    }
+    return files
+  }
+
   constructProcessOptions (): Object {
     return {
       cwd: this.rootPath,

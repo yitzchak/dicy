@@ -1,7 +1,5 @@
 /* @flow */
 
-import _ from 'lodash'
-import fastGlob from 'fast-glob'
 import micromatch from 'micromatch'
 
 import File from '../File'
@@ -16,27 +14,34 @@ export default class Clean extends Rule {
 
   async run () {
     const deepClean: boolean = this.options.deepClean
-    const [filePatterns, generatedPatterns] = _.partition(this.options.cleanPatterns, pattern => /^[/\\]/)
-
-    const cleanPatterns: Array<Function> = generatedPatterns.map(pattern => micromatch.matcher(pattern))
-    const candidatefiles: Set<File> = new Set()
+    const generatedFiles: Set<File> = new Set()
     const files: Set<File> = new Set()
-
-    for (const filePath of await fastGlob(filePatterns, { cwd: this.rootPath, bashNative: [] })) {
-      const file = await this.getFile(filePath)
-      if (file) files.add(file)
-    }
 
     for (const rule of this.rules) {
       if (rule.jobName === this.jobName) {
-        for (const file of rule.outputs.values()) candidatefiles.add(file)
+        for (const file of rule.outputs.values()) {
+          if (file.virtual) continue
+          if (deepClean) {
+            files.add(file)
+          } else {
+            generatedFiles.add(file)
+          }
+        }
       }
     }
 
-    for (const file of candidatefiles.values()) {
-      if (!file.virtual &&
-        (deepClean || cleanPatterns.some(pattern => pattern(file.normalizedFilePath)))) {
-        files.add(file)
+    for (const pattern of this.options.cleanPatterns) {
+      if (/^[/\\]/.test(pattern)) {
+        for (const file of await this.getGlobbedFiles(pattern.substring(1))) {
+          files.add(file)
+        }
+      } else if (!deepClean && generatedFiles.size !== 0) {
+        const isMatch = micromatch.matcher(this.resolvePath(pattern), { dot: true })
+        for (const file of generatedFiles.values()) {
+          if (isMatch(file.normalizedFilePath)) {
+            files.add(file)
+          }
+        }
       }
     }
 
