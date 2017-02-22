@@ -41,26 +41,6 @@ export default class LaTeX extends Rule {
     return []
   }
 
-  async updateDependencies (): Promise<boolean> {
-    const files = this.actions.get('updateDependencies')
-
-    if (files) {
-      for (const file of files.values()) {
-        if (file.value) {
-          const { inputs, outputs } = file.value
-          if (inputs) {
-            for (const input of await this.getInputs(inputs)) {
-              await this.addFileActions(input)
-            }
-          }
-          if (outputs) await this.getOutputs(outputs)
-        }
-      }
-    }
-
-    return true
-  }
-
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedInput(':outdir/:job.aux')
     await this.getResolvedOutputs([':outdir/:job.aux', ':outdir/:job.fls', ':outdir/:job.log', ':outdir/:job.synctex.gz'])
