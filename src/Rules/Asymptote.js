@@ -25,8 +25,8 @@ export default class Asymptote extends Rule {
     if (files) {
       for (const file of files.values()) {
         if (file.value) {
-          const { outputs } = file.value
-          if (outputs) await this.getOutputs(outputs)
+          if (file.value.inputs) await this.getInputs(file.value.inputs)
+          if (file.value.outputs) await this.getOutputs(file.value.outputs)
         }
       }
     }
@@ -56,6 +56,7 @@ export default class Asymptote extends Rule {
     for (const ext of ['_0.pdf', '_0.eps']) {
       await this.getOutput(path.format({ dir, name, ext }))
     }
+    await this.getResolvedOutput(':dir/:name.pre', this.firstParameter)
     const output = await this.getResolvedOutput(':dir/:name.log-AsymptoteLog', this.firstParameter)
     if (output) output.value = `${stdout}\n${stderr}`
     return true
