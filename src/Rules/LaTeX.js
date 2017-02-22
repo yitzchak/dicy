@@ -32,7 +32,7 @@ export default class LaTeX extends Rule {
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
-          return ['run']
+          return ['updateDependencies', 'run']
         }
         break
       default:
