@@ -23,8 +23,3 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-multibib.tex
-  - type: command
-    rule: LaTeX(build;execute;;pkg-multibib.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder
-      pkg-multibib.tex
