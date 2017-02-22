@@ -9,7 +9,7 @@ export default class Sage extends Rule {
   static description: string = 'Supports SageTeX by running Sage when needed.'
 
   constructCommand () {
-    return ['sage', path.basename(this.firstParameter.normalizedFilePath)]
+    return ['sage', path.basename(this.firstParameter.filePath)]
   }
 
   constructProcessOptions (): Object {

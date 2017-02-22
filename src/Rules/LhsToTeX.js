@@ -13,6 +13,6 @@ export default class LhsToTeX extends Rule {
 
   constructCommand () {
     const outputPath = this.resolvePath(':dir/:name.tex', this.firstParameter)
-    return ['lhs2TeX', '-o', outputPath, this.firstParameter.normalizedFilePath]
+    return ['lhs2TeX', '-o', outputPath, this.firstParameter.filePath]
   }
 }

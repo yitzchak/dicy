@@ -39,7 +39,7 @@ export default class Asymptote extends Rule {
       'asy',
       '-offscreen',
       '-vv',
-      path.basename(this.firstParameter.normalizedFilePath)
+      path.basename(this.firstParameter.filePath)
     ]
   }
 
@@ -52,7 +52,7 @@ export default class Asymptote extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    const { dir, name } = path.parse(this.firstParameter.normalizedFilePath)
+    const { dir, name } = path.parse(this.firstParameter.filePath)
     for (const ext of ['_0.pdf', '_0.eps']) {
       await this.getOutput(path.format({ dir, name, ext }))
     }

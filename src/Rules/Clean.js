@@ -38,7 +38,7 @@ export default class Clean extends Rule {
       } else if (!deepClean && generatedFiles.size !== 0) {
         const isMatch = micromatch.matcher(this.resolvePath(pattern), { dot: true })
         for (const file of generatedFiles.values()) {
-          if (isMatch(file.normalizedFilePath)) {
+          if (isMatch(file.filePath)) {
             files.add(file)
           }
         }

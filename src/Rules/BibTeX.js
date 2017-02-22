@@ -30,7 +30,7 @@ export default class BibTeX extends Rule {
 
     switch (file.type) {
       case 'ParsedLaTeXLog':
-        const { name } = path.parse(this.firstParameter.normalizedFilePath)
+        const { name } = path.parse(this.firstParameter.filePath)
         if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => message.text.includes('run BibTeX') && message.text.includes(name))) {
           return ['run']
@@ -60,7 +60,7 @@ export default class BibTeX extends Rule {
   }
 
   constructCommand () {
-    return ['bibtex', this.input ? this.input.normalizedFilePath : '']
+    return ['bibtex', this.input ? this.input.filePath : '']
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

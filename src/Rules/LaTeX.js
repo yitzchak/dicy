@@ -18,7 +18,7 @@ export default class LaTeX extends Rule {
 
   static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(buildState, command, phase, jobName, file) &&
-      (file.normalizedFilePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
+      (file.filePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
   }
 
   async initialize () {
@@ -128,7 +128,7 @@ export default class LaTeX extends Rule {
       }
     }
 
-    args.push(`${this.firstParameter.normalizedFilePath}`)
+    args.push(`${this.firstParameter.filePath}`)
 
     return args
   }

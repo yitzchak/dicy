@@ -44,7 +44,7 @@ export default class SaveCache extends Rule {
         fileCache.subType = file.subType
       }
 
-      cache.files[file.normalizedFilePath] = fileCache
+      cache.files[file.filePath] = fileCache
     }
 
     for (const rule of this.rules) {
@@ -52,7 +52,7 @@ export default class SaveCache extends Rule {
         name: rule.constructor.name,
         command: rule.command,
         phase: rule.phase,
-        parameters: rule.parameters.map(file => file.normalizedFilePath),
+        parameters: rule.parameters.map(file => file.filePath),
         inputs: Array.from(rule.inputs.keys()),
         outputs: Array.from(rule.outputs.keys())
       }

@@ -74,7 +74,7 @@ export default class Rule extends BuildStateConsumer {
     this.id = buildState.getRuleId(this.constructor.name, command, phase, jobName, ...parameters)
     for (const file: File of parameters) {
       if (jobName) file.jobNames.add(jobName)
-      this.inputs.set(file.normalizedFilePath, file)
+      this.inputs.set(file.filePath, file)
       // $FlowIgnore
       file.addRule(this)
     }
@@ -231,8 +231,8 @@ export default class Rule extends BuildStateConsumer {
   }
 
   async removeFile (file: File): Promise<boolean> {
-    this.inputs.delete(file.normalizedFilePath)
-    this.outputs.delete(file.normalizedFilePath)
+    this.inputs.delete(file.filePath)
+    this.outputs.delete(file.filePath)
 
     if (this.parameters.includes(file)) {
       for (const input of this.inputs.values()) {
@@ -314,7 +314,7 @@ export default class Rule extends BuildStateConsumer {
       type: 'action',
       action,
       rule: this.id,
-      triggers: files ? Array.from(files).map(file => file.normalizedFilePath) : []
+      triggers: files ? Array.from(files).map(file => file.filePath) : []
     })
   }
 }
