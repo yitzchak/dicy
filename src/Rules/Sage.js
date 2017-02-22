@@ -22,7 +22,7 @@ export default class Sage extends Rule {
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedOutputs([':dir/:name.sout', ':dir/:name.sage.cmd', ':dir/:name.scmd', ':dir/:base.py'], this.firstParameter)
-    await this.getGlobbedOutputs(':dir/sage-plots-for-:name.tex/*', this.firstParameter)
+    await this.getGlobbedOutputs(':dir/sage-plots-for-:job.tex/*', this.firstParameter)
     return true
   }
 }
