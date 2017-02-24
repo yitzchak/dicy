@@ -18,7 +18,7 @@ export default class ParseOptionsFile extends Rule {
     if (!input || !output) return true
 
     // $FlowIgnore
-    const contents = await fs.readFile(input.filePath, { encoding: 'utf-8' })
+    const contents = await fs.readFile(input.realFilePath, { encoding: 'utf-8' })
     output.value = yaml.safeLoad(contents)
 
     return true

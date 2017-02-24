@@ -18,7 +18,7 @@ export default class PdfToPs extends Rule {
   constructCommand () {
     return [
       'pdf2ps',
-      this.firstParameter.normalizedFilePath,
+      this.firstParameter.filePath,
       this.resolvePath(':dir/:name.ps', this.firstParameter)
     ]
   }

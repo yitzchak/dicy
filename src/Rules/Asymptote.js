@@ -19,27 +19,12 @@ export default class Asymptote extends Rule {
     return [file.type === 'ParsedAsymptoteLog' ? 'updateDependencies' : 'run']
   }
 
-  async updateDependencies (): Promise<boolean> {
-    const files = this.actions.get('updateDependencies')
-
-    if (files) {
-      for (const file of files.values()) {
-        if (file.value) {
-          const { outputs } = file.value
-          if (outputs) await this.getOutputs(outputs)
-        }
-      }
-    }
-
-    return true
-  }
-
   constructCommand () {
     return [
       'asy',
       '-offscreen',
       '-vv',
-      path.basename(this.firstParameter.normalizedFilePath)
+      path.basename(this.firstParameter.filePath)
     ]
   }
 
@@ -52,10 +37,11 @@ export default class Asymptote extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    const { dir, name } = path.parse(this.firstParameter.normalizedFilePath)
+    const { dir, name } = path.parse(this.firstParameter.filePath)
     for (const ext of ['_0.pdf', '_0.eps']) {
       await this.getOutput(path.format({ dir, name, ext }))
     }
+    await this.getResolvedOutput(':dir/:name.pre', this.firstParameter)
     const output = await this.getResolvedOutput(':dir/:name.log-AsymptoteLog', this.firstParameter)
     if (output) output.value = `${stdout}\n${stderr}`
     return true

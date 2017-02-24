@@ -19,8 +19,9 @@ export default class BuildState extends EventEmitter {
 
   constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}) {
     super()
-    this.filePath = path.basename(filePath)
-    this.rootPath = path.dirname(filePath)
+    const resolveFilePath = path.resolve(filePath)
+    this.filePath = path.basename(resolveFilePath)
+    this.rootPath = path.dirname(resolveFilePath)
     for (const name in schema) {
       const option = schema[name]
       this.optionSchema.set(name, option)
@@ -90,7 +91,7 @@ export default class BuildState extends EventEmitter {
   }
 
   getRuleId (name: string, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File | string>): string {
-    const items = parameters.map(item => (typeof item === 'string') ? this.normalizePath(item) : item.normalizedFilePath)
+    const items = parameters.map(item => (typeof item === 'string') ? this.normalizePath(item) : item.filePath)
     items.unshift(jobName || '')
     items.unshift(phase || '')
     items.unshift(command || '')
@@ -139,8 +140,8 @@ export default class BuildState extends EventEmitter {
     if (jobName) file.jobNames.delete(jobName)
     if (file.jobNames.size === 0) {
       await file.delete()
-      this.files.delete(file.normalizedFilePath)
-      this.emit('fileDeleted', { type: 'fileDeleted', file: file.normalizedFilePath })
+      this.files.delete(file.filePath)
+      this.emit('fileDeleted', { type: 'fileDeleted', file: file.filePath })
     }
   }
 

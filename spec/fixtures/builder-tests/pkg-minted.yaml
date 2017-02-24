@@ -1,3 +1,5 @@
+cleanPatterns:
+  - /_minted-:job/*
 reportLogMessages: true
 severity: error
 shellEscape: enable

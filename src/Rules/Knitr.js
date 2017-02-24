@@ -16,7 +16,7 @@ export default class Knitr extends Rule {
   }
 
   constructCommand () {
-    const filePath = escapePath(this.firstParameter.normalizedFilePath)
+    const filePath = escapePath(this.firstParameter.filePath)
     const lines = ['library(knitr)']
 
     if (this.options.synctex) lines.push('opts_knit$set(concordance=TRUE)')

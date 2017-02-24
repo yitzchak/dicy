@@ -18,7 +18,7 @@ export default class LaTeX extends Rule {
 
   static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(buildState, command, phase, jobName, file) &&
-      (file.normalizedFilePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
+      (file.filePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
   }
 
   async initialize () {
@@ -32,33 +32,13 @@ export default class LaTeX extends Rule {
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
-          return ['run']
+          return ['updateDependencies', 'run']
         }
         break
       default:
         return ['run']
     }
     return []
-  }
-
-  async updateDependencies (): Promise<boolean> {
-    const files = this.actions.get('updateDependencies')
-
-    if (files) {
-      for (const file of files.values()) {
-        if (file.value) {
-          const { inputs, outputs } = file.value
-          if (inputs) {
-            for (const input of await this.getInputs(inputs)) {
-              await this.addFileActions(input)
-            }
-          }
-          if (outputs) await this.getOutputs(outputs)
-        }
-      }
-    }
-
-    return true
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
@@ -128,7 +108,7 @@ export default class LaTeX extends Rule {
       }
     }
 
-    args.push(`${this.firstParameter.normalizedFilePath}`)
+    args.push(`${this.firstParameter.filePath}`)
 
     return args
   }

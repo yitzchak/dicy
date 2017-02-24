@@ -16,6 +16,7 @@ export default class ParseLaTeXLog extends Rule {
     if (!output) return false
 
     const messages: Array<Message> = []
+    const outputs: Array<string> = []
     let name: string
     let filePath: string
 
@@ -116,9 +117,15 @@ export default class ParseLaTeXLog extends Rule {
           log: reference
         })
       }
+    }, {
+      names: ['filePath'],
+      patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
+      evaluate: (reference, groups) => {
+        outputs.push(groups.filePath)
+      }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 
-    output.value = { messages }
+    output.value = { outputs, messages }
 
     return true
   }

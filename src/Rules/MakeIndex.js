@@ -13,7 +13,7 @@ export default class MakeIndex extends Rule {
   logPath: string
 
   async initialize () {
-    const ext = path.extname(this.firstParameter.normalizedFilePath)
+    const ext = path.extname(this.firstParameter.filePath)
     const firstChar = ext[1]
 
     this.logPath = this.resolvePath(`:dir/:name.${firstChar === 'b' ? 'br' : firstChar}lg`, this.firstParameter)
@@ -46,7 +46,7 @@ export default class MakeIndex extends Rule {
     ]
 
     if (this.stylePath) args.push('-s', this.stylePath)
-    args.push(this.firstParameter.normalizedFilePath)
+    args.push(this.firstParameter.filePath)
 
     return args
   }

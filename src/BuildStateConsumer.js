@@ -69,7 +69,7 @@ export default class BuildStateConsumer {
   }
 
   resolvePath (filePath: string, reference?: File | string): string {
-    const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.normalizedFilePath : (reference || this.filePath))
+    const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.filePath : (reference || this.filePath))
     const properties = {
       outdir: this.options.outputDirectory || '.',
       outext: `.${this.options.outputFormat}`,

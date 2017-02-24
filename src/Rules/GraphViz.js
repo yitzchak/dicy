@@ -12,14 +12,14 @@ export default class GraphViz extends Rule {
   static description: string = 'Runs GraphViz on dependency graphs.'
 
   constructCommand () {
-    const { dir, name } = path.parse(this.firstParameter.normalizedFilePath)
+    const { dir, name } = path.parse(this.firstParameter.filePath)
 
     return [
       'fdp',
       `-T${this.options.outputFormat}`,
       '-o',
       path.format({ dir, name, ext: `.${this.options.outputFormat}` }),
-      this.firstParameter.normalizedFilePath
+      this.firstParameter.filePath
     ]
   }
 }

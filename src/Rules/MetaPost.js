@@ -9,7 +9,7 @@ export default class MetaPost extends Rule {
   static description: string = 'Runs MetaPost on produced MetaPost files.'
 
   constructCommand () {
-    return ['mpost', path.basename(this.firstParameter.normalizedFilePath)]
+    return ['mpost', path.basename(this.firstParameter.filePath)]
   }
 
   constructProcessOptions (): Object {
