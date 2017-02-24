@@ -38,7 +38,7 @@ export default class LoadCache extends Rule {
 
     if (cache.rules) {
       for (const rule: RuleCache of cache.rules) {
-        this.buildState.addCachedRule(rule)
+        await this.buildState.addCachedRule(rule)
       }
     }
 
