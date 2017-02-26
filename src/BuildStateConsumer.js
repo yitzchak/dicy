@@ -1,17 +1,20 @@
 /* @flow */
 
+import fastGlob from 'fast-glob'
+import placeholders from 'placeholders'
 import path from 'path'
 
 import BuildState from './BuildState'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, Message, Phase, ResolvePathOptions } from './types'
+import type { Message } from './types'
 
 export default class BuildStateConsumer {
   buildState: BuildState
   options: Object
   jobName: ?string
+  expand: Function
 
   constructor (buildState: BuildState, jobName: ?string) {
     this.jobName = jobName
@@ -33,6 +36,12 @@ export default class BuildStateConsumer {
         return target[key]
       }
     })
+
+    this.expand = placeholders({ regex: /:(\w+)/ })
+  }
+
+  get ruleClasses (): Array<Class<Rule>> {
+    return this.buildState.ruleClasses
   }
 
   get filePath (): string {
@@ -51,22 +60,6 @@ export default class BuildStateConsumer {
     return this.buildState.rules.values()
   }
 
-  get phase (): Phase {
-    return this.buildState.phase
-  }
-
-  set phase (value: Phase) {
-    this.buildState.phase = value
-  }
-
-  get command (): Command {
-    return this.buildState.command
-  }
-
-  set command (value: Command) {
-    this.buildState.command = value
-  }
-
   async addRule (rule: Rule): Promise<void> {
     await this.buildState.addRule(rule)
   }
@@ -75,21 +68,29 @@ export default class BuildStateConsumer {
     return this.buildState.normalizePath(filePath)
   }
 
-  resolvePath (ext: string, { absolute = false, useJobName = true, useOutputDirectory = true, referenceFile }: ResolvePathOptions = {}) {
-    let { dir, name } = path.parse(referenceFile ? referenceFile.normalizedFilePath : this.filePath)
-
-    if (useJobName) name = this.jobName || this.options.jobName || name
-
-    const outputDirectory = this.options.outputDirectory
-    if (useOutputDirectory && outputDirectory) {
-      dir = path.join(dir, outputDirectory)
+  resolvePath (filePath: string, reference?: File | string): string {
+    const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.filePath : (reference || this.filePath))
+    const properties = {
+      outdir: this.options.outputDirectory || '.',
+      outext: `.${this.options.outputFormat}`,
+      job: this.jobName || this.options.jobName || name,
+      dir: (reference instanceof File ? dir : this.rootPath) || '.',
+      base,
+      name,
+      ext
     }
+    return path.normalize(this.expand(filePath, properties))
+  }
 
-    if (absolute) {
-      dir = path.resolve(this.rootPath, dir)
-    }
+  async globPath (pattern: string, reference?: File | string): Promise<Array<string>> {
+    try {
+      return await fastGlob(this.resolvePath(pattern, reference), {
+        cwd: this.rootPath,
+        bashNative: []
+      })
+    } catch (error) {}
 
-    return path.format({ dir, name, ext })
+    return []
   }
 
   async getFile (filePath: string): Promise<?File> {
@@ -101,6 +102,15 @@ export default class BuildStateConsumer {
   async getFiles (filePaths: Array<string>): Promise<Array<File>> {
     const files: Array<File> = []
     for (const filePath of filePaths) {
+      const file = await this.getFile(filePath)
+      if (file) files.push(file)
+    }
+    return files
+  }
+
+  async getGlobbedFiles (pattern: string, reference?: File | string): Promise<Array<File>> {
+    const files = []
+    for (const filePath of await this.globPath(pattern, reference)) {
       const file = await this.getFile(filePath)
       if (file) files.push(file)
     }
@@ -147,9 +157,8 @@ export default class BuildStateConsumer {
     return this.buildState.isChild(x, y)
   }
 
-  async getResolvedFile (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
-    const filePath = this.resolvePath(ext, options)
-    return await this.getFile(filePath)
+  async getResolvedFile (filePath: string, reference?: File | string): Promise<?File> {
+    return await this.getFile(this.resolvePath(filePath, reference))
   }
 
   // EventEmmitter proxy

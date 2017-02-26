@@ -6,13 +6,10 @@ export default class ParseLaTeXAuxilary extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeXAuxilary'])
   static description: string = 'Parses the aux files produced by all variants of latex.'
 
-  async initialize () {
-    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParseLaTeXAuxilary`)
-  }
-
   async run () {
-    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXAuxilary`)
-    if (!parsedFile) return false
+    const output = await this.getResolvedOutput(':dir/:base-ParsedLaTeXAuxilary', this.firstParameter)
+    if (!output) return false
+
     const results = {}
 
     await this.firstParameter.parse([{
@@ -23,7 +20,7 @@ export default class ParseLaTeXAuxilary extends Rule {
       }
     }])
 
-    parsedFile.value = results
+    output.value = results
 
     return true
   }

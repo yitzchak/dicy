@@ -11,16 +11,12 @@ export default class Knitr extends Rule {
   static description: string = 'Runs knitr on Rnw files.'
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['.tex', '-concordance.tex'], {
-      fileReference: this.firstParameter,
-      useJobName: false,
-      useOutputDirectory: false
-    })
+    await this.getResolvedOutputs([':dir/:name.tex', ':dir/:name-concordance.tex'], this.firstParameter)
     return true
   }
 
   constructCommand () {
-    const filePath = escapePath(this.firstParameter.normalizedFilePath)
+    const filePath = escapePath(this.firstParameter.filePath)
     const lines = ['library(knitr)']
 
     if (this.options.synctex) lines.push('opts_knit$set(concordance=TRUE)')

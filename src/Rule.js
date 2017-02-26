@@ -7,11 +7,10 @@ import BuildState from './BuildState'
 import File from './File'
 import BuildStateConsumer from './BuildStateConsumer'
 
-import type { Action, Command, Phase, ResolvePathOptions } from './types'
+import type { Action, Command, Phase } from './types'
 
 function execute (command: string, options: Object): Promise<Object> {
   return new Promise((resolve, reject) => {
-    // if (process.platform !== 'win32') command = command.replace('$', '\\$')
     childProcess.exec(command, options, (error, stdout, stderr) => {
       resolve({ error, stdout, stderr })
     })
@@ -27,50 +26,54 @@ export default class Rule extends BuildStateConsumer {
   static description: string = ''
 
   id: string
+  command: Command
+  phase: Phase
   parameters: Array<File> = []
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   actions: Map<Action, Set<File>> = new Map()
   success: boolean = true
 
-  static async analyzePhase (buildState: BuildState, jobName: ?string) {
-    if (await this.appliesToPhase(buildState, jobName)) {
-      const rule = new this(buildState, jobName)
+  static async analyzePhase (buildState: BuildState, command: Command, phase: Phase, jobName: ?string) {
+    if (await this.appliesToPhase(buildState, command, phase, jobName)) {
+      const rule = new this(buildState, command, phase, jobName)
       await rule.initialize()
       if (rule.alwaysEvaluate) rule.addAction()
       return rule
     }
   }
 
-  static async appliesToPhase (buildState: BuildState, jobName: ?string): Promise<boolean> {
-    return this.commands.has(buildState.command) &&
-      this.phases.has(buildState.phase) &&
+  static async appliesToPhase (buildState: BuildState, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
+    return this.commands.has(command) &&
+      this.phases.has(phase) &&
       this.fileTypes.size === 0
   }
 
-  static async analyzeFile (buildState: BuildState, jobName: ?string, file: File): Promise<?Rule> {
-    if (await this.appliesToFile(buildState, jobName, file)) {
-      const rule = new this(buildState, jobName, file)
+  static async analyzeFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<?Rule> {
+    if (await this.appliesToFile(buildState, command, phase, jobName, file)) {
+      const rule = new this(buildState, command, phase, jobName, file)
       await rule.initialize()
       if (rule.alwaysEvaluate) rule.addAction(file)
       return rule
     }
   }
 
-  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
-    return this.commands.has(buildState.command) &&
-      this.phases.has(buildState.phase) &&
+  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return this.commands.has(command) &&
+      this.phases.has(phase) &&
       this.fileTypes.has(file.type) &&
       Array.from(file.rules.values()).every(rule => rule.constructor.name !== this.name || rule.jobName !== jobName)
   }
 
-  constructor (buildState: BuildState, jobName: ?string, ...parameters: Array<File>) {
+  constructor (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {
     super(buildState, jobName)
     this.parameters = parameters
-    this.id = buildState.getRuleId(this.constructor.name, jobName, ...parameters)
+    this.command = command
+    this.phase = phase
+    this.id = buildState.getRuleId(this.constructor.name, command, phase, jobName, ...parameters)
     for (const file: File of parameters) {
       if (jobName) file.jobNames.add(jobName)
-      this.inputs.set(file.normalizedFilePath, file)
+      this.inputs.set(file.filePath, file)
       // $FlowIgnore
       file.addRule(this)
     }
@@ -78,10 +81,8 @@ export default class Rule extends BuildStateConsumer {
 
   async initialize () {}
 
-  async addFileActions (file: File): Promise<void> {
-    if (this.constructor.commands.has(this.command) &&
-      this.constructor.phases.has(this.phase) &&
-      file.hasBeenUpdated) {
+  async addFileActions (file: File, command: ?Command, phase: ?Phase): Promise<void> {
+    if ((!command || command === this.command) && (!phase || phase === this.phase) && file.hasBeenUpdated) {
       const timeStamp: ?Date = this.timeStamp
       const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
       for (const action of await this.getFileActions(file)) {
@@ -139,6 +140,17 @@ export default class Rule extends BuildStateConsumer {
   }
 
   async updateDependencies (): Promise<boolean> {
+    const files = this.actions.get('updateDependencies')
+
+    if (files) {
+      for (const file of files.values()) {
+        if (file.value) {
+          if (file.value.inputs) await this.getInputs(file.value.inputs)
+          if (file.value.outputs) await this.getOutputs(file.value.outputs)
+        }
+      }
+    }
+
     return true
   }
 
@@ -228,35 +240,70 @@ export default class Rule extends BuildStateConsumer {
     return files
   }
 
-  async getResolvedInput (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
-    const filePath = this.resolvePath(ext, options)
-    return await this.getInput(filePath)
+  async removeFile (file: File): Promise<boolean> {
+    this.inputs.delete(file.filePath)
+    this.outputs.delete(file.filePath)
+
+    if (this.parameters.includes(file)) {
+      for (const input of this.inputs.values()) {
+        // $FlowIgnore
+        input.removeRule(this)
+      }
+      return true
+    }
+
+    // $FlowIgnore
+    file.removeRule(this)
+    return false
   }
 
-  async getResolvedInputs (exts: Array<string>, options: ResolvePathOptions = {}): Promise<Array<File>> {
+  async getResolvedInput (filePath: string, reference?: File | string): Promise<?File> {
+    const expanded = this.resolvePath(filePath, reference)
+    return await this.getInput(expanded)
+  }
+
+  async getResolvedInputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
     const files = []
 
-    for (const ext of exts) {
-      const file = await this.getResolvedInput(ext, options)
+    for (const filePath of filePaths) {
+      const file = await this.getResolvedInput(filePath, reference)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getResolvedOutput (ext: string, options: ResolvePathOptions = {}): Promise<?File> {
-    const filePath = this.resolvePath(ext, options)
-    return await this.getOutput(filePath)
+  async getResolvedOutput (filePath: string, reference?: File | string): Promise<?File> {
+    const expanded = this.resolvePath(filePath, reference)
+    return await this.getOutput(expanded)
   }
 
-  async getResolvedOutputs (exts: Array<string>, options: ResolvePathOptions = {}): Promise<Array<File>> {
+  async getResolvedOutputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
     const files = []
 
-    for (const ext of exts) {
-      const file = await this.getResolvedOutput(ext, options)
+    for (const filePath of filePaths) {
+      const file = await this.getResolvedOutput(filePath, reference)
       if (file) files.push(file)
     }
 
+    return files
+  }
+
+  async getGlobbedInputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+    const files = []
+    for (const filePath of await this.globPath(pattern, reference)) {
+      const file = await this.getInput(filePath)
+      if (file) files.push(file)
+    }
+    return files
+  }
+
+  async getGlobbedOutputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+    const files = []
+    for (const filePath of await this.globPath(pattern, reference)) {
+      const file = await this.getOutput(filePath)
+      if (file) files.push(file)
+    }
     return files
   }
 
@@ -277,7 +324,7 @@ export default class Rule extends BuildStateConsumer {
       type: 'action',
       action,
       rule: this.id,
-      triggers: files ? Array.from(files).map(file => file.normalizedFilePath) : []
+      triggers: files ? Array.from(files).map(file => file.filePath) : []
     })
   }
 }

@@ -9,7 +9,7 @@ export default class Sage extends Rule {
   static description: string = 'Supports SageTeX by running Sage when needed.'
 
   constructCommand () {
-    return ['sage', path.basename(this.firstParameter.normalizedFilePath)]
+    return ['sage', path.basename(this.firstParameter.filePath)]
   }
 
   constructProcessOptions (): Object {
@@ -21,12 +21,8 @@ export default class Sage extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['.sout', '.sage.cmd', '.scmd'], {
-      fileReference: this.firstParameter,
-      useJobName: false,
-      useOutputDirectory: false
-    })
+    await this.getResolvedOutputs([':dir/:name.sout', ':dir/:name.sage.cmd', ':dir/:name.scmd', ':dir/:base.py'], this.firstParameter)
+    await this.getGlobbedOutputs(':dir/sage-plots-for-:job.tex/*', this.firstParameter)
     return true
   }
-
 }

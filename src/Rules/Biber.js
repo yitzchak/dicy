@@ -12,13 +12,13 @@ export default class Biber extends Rule {
   static description: string = 'Runs Biber to process bibliography files (bib) when need is detected.'
 
   async initialize () {
-    await this.getResolvedInputs(['.log-ParsedLaTeXLog'])
+    await this.getResolvedInput(':outdir/:job.log-ParsedLaTeXLog')
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
     switch (file.type) {
       case 'ParsedLaTeXLog':
-        const { name } = path.parse(this.firstParameter.normalizedFilePath)
+        const { name } = path.parse(this.firstParameter.filePath)
         if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => message.text.includes('run Biber') && message.text.includes(name))) {
           return ['run']
@@ -31,15 +31,11 @@ export default class Biber extends Rule {
   }
 
   constructCommand () {
-    return ['biber', this.firstParameter.normalizedFilePath]
+    return ['biber', this.firstParameter.filePath]
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['.bbl', '.blg'], {
-      fileReference: this.firstParameter,
-      useJobName: false,
-      useOutputDirectory: false
-    })
+    await this.getResolvedOutputs([':dir/:name.bbl', ':dir/:name.blg'], this.firstParameter)
     return true
   }
 }

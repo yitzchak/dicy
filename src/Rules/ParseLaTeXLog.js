@@ -11,14 +11,12 @@ export default class ParseLaTeXLog extends Rule {
   static commands: Set<Command> = new Set(['build', 'report'])
   static description: string = 'Parses the logs produced by all latex variants.'
 
-  async initialize () {
-    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
-  }
-
   async run () {
-    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedLaTeXLog`)
-    if (!parsedFile) return false
+    const output = await this.getResolvedOutput(':dir/:base-ParsedLaTeXLog', this.firstParameter)
+    if (!output) return false
+
     const messages: Array<Message> = []
+    const outputs: Array<string> = []
     let name: string
     let filePath: string
 
@@ -119,9 +117,15 @@ export default class ParseLaTeXLog extends Rule {
           log: reference
         })
       }
+    }, {
+      names: ['filePath'],
+      patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
+      evaluate: (reference, groups) => {
+        outputs.push(groups.filePath)
+      }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 
-    parsedFile.value = { messages }
+    output.value = { outputs, messages }
 
     return true
   }

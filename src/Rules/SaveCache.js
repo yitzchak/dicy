@@ -6,7 +6,7 @@ import yaml from 'js-yaml'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, FileCache } from '../types'
+import type { Command, FileCache, Cache, RuleCache } from '../types'
 
 export default class SaveCache extends Rule {
   static commands: Set<Command> = new Set(['save'])
@@ -17,19 +17,25 @@ export default class SaveCache extends Rule {
   cacheFilePath: string
 
   async initialize () {
-    this.cacheFilePath = this.resolvePath('-cache.yaml', {
-      absolute: true,
-      useJobName: false,
-      useOutputDirectory: false
-    })
+    this.cacheFilePath = this.resolvePath(':dir/:name-cache.yaml')
+  }
+
+  async preEvaluate () {
+    if (await fs.exists(this.cacheFilePath)) return
+
+    for (const rule of this.rules) {
+      if (Array.from(rule.outputs.values()).some(file => !file.virtual)) return
+    }
+
+    this.actions.delete('run')
   }
 
   async run () {
-    const state = {
+    const cache: Cache = {
       filePath: this.filePath,
       options: this.options,
       files: {},
-      rules: {}
+      rules: []
     }
 
     for (const file: File of this.files) {
@@ -48,17 +54,27 @@ export default class SaveCache extends Rule {
         fileCache.subType = file.subType
       }
 
-      state.files[file.normalizedFilePath] = fileCache
+      cache.files[file.filePath] = fileCache
     }
 
     for (const rule of this.rules) {
-      state.rules[rule.id] = {
+      const ruleCache: RuleCache = {
+        name: rule.constructor.name,
+        command: rule.command,
+        phase: rule.phase,
+        parameters: rule.parameters.map(file => file.filePath),
         inputs: Array.from(rule.inputs.keys()),
         outputs: Array.from(rule.outputs.keys())
       }
+
+      if (rule.jobName) {
+        ruleCache.jobName = rule.jobName
+      }
+
+      cache.rules.push(ruleCache)
     }
 
-    const serialized = yaml.safeDump(state, { skipInvalid: true })
+    const serialized = yaml.safeDump(cache, { skipInvalid: true })
     await fs.writeFile(this.cacheFilePath, serialized)
 
     return true

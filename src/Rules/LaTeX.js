@@ -6,7 +6,7 @@ import BuildState from '../BuildState'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Message } from '../types'
+import type { Action, Command, Message, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label(s) may have changed. Rerun|No file )/i
@@ -16,13 +16,13 @@ export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
   static description: string = 'Runs the required latex variant.'
 
-  static async appliesToFile (buildState: BuildState, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(buildState, jobName, file) &&
-      (file.normalizedFilePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
+  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return await super.appliesToFile(buildState, command, phase, jobName, file) &&
+      (file.filePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
   }
 
   async initialize () {
-    await this.getResolvedInputs(['.fls-ParsedLaTeXFileListing', '.log-ParsedLaTeXLog'])
+    await this.getResolvedInputs([':outdir/:job.fls-ParsedLaTeXFileListing', ':outdir/:job.log-ParsedLaTeXLog'])
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -32,7 +32,7 @@ export default class LaTeX extends Rule {
       case 'ParsedLaTeXLog':
         if (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
-          return ['run']
+          return ['updateDependencies', 'run']
         }
         break
       default:
@@ -41,29 +41,9 @@ export default class LaTeX extends Rule {
     return []
   }
 
-  async updateDependencies (): Promise<boolean> {
-    const files = this.actions.get('updateDependencies')
-
-    if (files) {
-      for (const file of files.values()) {
-        if (file.value) {
-          const { inputs, outputs } = file.value
-          if (inputs) {
-            for (const input of await this.getInputs(inputs)) {
-              await this.addFileActions(input)
-            }
-          }
-          if (outputs) await this.getOutputs(outputs)
-        }
-      }
-    }
-
-    return true
-  }
-
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedInputs(['.aux'])
-    await this.getResolvedOutputs(['.aux', '.fls', '.log', '.synctex.gz'])
+    await this.getResolvedInput(':outdir/:job.aux')
+    await this.getResolvedOutputs([':outdir/:job.aux', ':outdir/:job.fls', ':outdir/:job.log', ':outdir/:job.synctex.gz'])
     return true
   }
 
@@ -128,7 +108,7 @@ export default class LaTeX extends Rule {
       }
     }
 
-    args.push(`${this.firstParameter.normalizedFilePath}`)
+    args.push(`${this.firstParameter.filePath}`)
 
     return args
   }

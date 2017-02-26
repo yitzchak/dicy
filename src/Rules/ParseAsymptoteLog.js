@@ -10,13 +10,10 @@ export default class ParseAsymptoteLog extends Rule {
   static fileTypes: Set<string> = new Set(['AsymptoteLog'])
   static description: string = 'Parses the console output of Asymptote.'
 
-  async initialize () {
-    await this.getResolvedOutput(`.log-ParsedAsymptoteLog`)
-  }
-
   async run () {
-    const parsedFile = await this.getResolvedOutput(`.log-ParsedAsymptoteLog`)
-    if (!parsedFile) return false
+    const output = await this.getResolvedOutput(':dir/:name.log-ParsedAsymptoteLog', this.firstParameter)
+    if (!output) return false
+
     const rootPath = this.options.outputDirectory
       ? path.resolve(this.rootPath, this.options.outputDirectory)
       : this.rootPath
@@ -34,11 +31,13 @@ export default class ParseAsymptoteLog extends Rule {
       names: ['type', 'filePath'],
       patterns: [/^(Including|Loading) \S+ from (.*)$/],
       evaluate: (reference, groups) => {
-        inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+        if (!path.isAbsolute(groups.filePath)) {
+          inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+        }
       }
     }])
 
-    parsedFile.value = { messages, inputs, outputs }
+    output.value = { messages, inputs, outputs }
 
     return true
   }

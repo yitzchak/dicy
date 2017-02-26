@@ -12,8 +12,6 @@ import Rule from './Rule'
 import type { Action, Command, Option, Phase, RuleInfo } from './types'
 
 export default class Builder extends BuildStateConsumer {
-  ruleClasses: Array<Class<Rule>> = []
-
   static async create (filePath: string, options: Object = {}) {
     const schema = await Builder.getOptionDefinitions()
     const buildState = await BuildState.create(filePath, options, schema)
@@ -27,15 +25,15 @@ export default class Builder extends BuildStateConsumer {
   async initialize () {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
     const entries: Array<string> = await fs.readdir(ruleClassPath)
-    this.ruleClasses = entries
+    this.buildState.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
   }
 
-  async analyzePhase () {
+  async analyzePhase (command: Command, phase: Phase) {
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
       for (const jobName of jobNames) {
-        const rule = await ruleClass.analyzePhase(this.buildState, jobName)
+        const rule = await ruleClass.analyzePhase(this.buildState, command, phase, jobName)
         if (rule) {
           await this.addRule(rule)
         }
@@ -43,7 +41,7 @@ export default class Builder extends BuildStateConsumer {
     }
   }
 
-  async analyzeFiles () {
+  async analyzeFiles (command: Command, phase: Phase) {
     while (true) {
       const file: ?File = Array.from(this.files).find(file => !file.analyzed)
 
@@ -52,7 +50,7 @@ export default class Builder extends BuildStateConsumer {
       for (const ruleClass: Class<Rule> of this.ruleClasses) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          const rule = await ruleClass.analyzeFile(this.buildState, jobName, file)
+          const rule = await ruleClass.analyzeFile(this.buildState, command, phase, jobName, file)
           if (rule) {
             await this.addRule(rule)
           }
@@ -79,8 +77,8 @@ export default class Builder extends BuildStateConsumer {
     }
   }
 
-  async evaluate (action: Action) {
-    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.constructor.phases.has(this.phase))
+  async evaluate (command: Command, phase: Phase, action: Action) {
+    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.command === command && rule.phase === phase)
     const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
@@ -119,18 +117,18 @@ export default class Builder extends BuildStateConsumer {
       candidateRules.sort((x, y) => x.inputs.size - y.inputs.size)
 
       for (const rule of candidateRules) {
-        await this.checkUpdates()
+        await this.checkUpdates(command, phase)
         await this.evaluateRule(rule, action)
       }
     }
 
-    await this.checkUpdates()
+    await this.checkUpdates(command, phase)
   }
 
-  async checkUpdates () {
+  async checkUpdates (command: Command, phase: Phase) {
     for (const file of this.files) {
       for (const rule of file.rules.values()) {
-        await rule.addFileActions(file)
+        await rule.addFileActions(file, command, phase)
       }
       file.hasBeenUpdated = false
     }
@@ -139,30 +137,28 @@ export default class Builder extends BuildStateConsumer {
   async run (...commands: Array<Command>): Promise<boolean> {
     for (const command of commands) {
       for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
-        await this.runPhase(phase, command)
+        await this.runPhase(command, phase)
       }
     }
 
     return Array.from(this.rules).every(rule => rule.success)
   }
 
-  async runPhase (phase: Phase, command: Command): Promise<void> {
-    this.command = command
-    this.phase = phase
+  async runPhase (command: Command, phase: Phase): Promise<void> {
     for (const file of this.files) {
       file.hasBeenUpdated = file.hasBeenUpdatedCache
       file.analyzed = false
     }
 
-    await this.analyzePhase()
+    await this.analyzePhase(command, phase)
 
     for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
       for (const action of ['updateDependencies', 'run']) {
-        await this.analyzeFiles()
-        await this.evaluate(action)
+        await this.analyzeFiles(command, phase)
+        await this.evaluate(command, phase, action)
       }
       if (Array.from(this.files).every(file => file.analyzed) &&
-        Array.from(this.rules).every(rule => !rule.needsEvaluation)) break
+        Array.from(this.rules).every(rule => rule.command !== command || rule.phase !== phase || !rule.needsEvaluation)) break
     }
   }
 

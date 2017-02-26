@@ -9,13 +9,10 @@ export default class ParseBiberLog extends Rule {
   static commands: Set<Command> = new Set(['build', 'report'])
   static description: string = 'Parses any biber produced logs.'
 
-  async initialize () {
-    this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
-  }
-
   async run () {
-    const parsedFile = await this.getOutput(`${this.firstParameter.normalizedFilePath}-ParsedBiberLog`)
-    if (!parsedFile) return false
+    const output = await this.getResolvedOutput(':dir/:base-ParsedBiberLog', this.firstParameter)
+    if (!output) return false
+
     const messages: Array<Message> = []
 
     await this.firstParameter.parse([{
@@ -43,7 +40,7 @@ export default class ParseBiberLog extends Rule {
       }
     }])
 
-    parsedFile.value = { messages }
+    output.value = { messages }
 
     return true
   }

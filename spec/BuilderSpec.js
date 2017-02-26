@@ -34,11 +34,7 @@ describe('Builder', () => {
         builder = await Builder.create(filePath)
 
         // Load the event archive
-        const eventFilePath = builder.resolvePath('-events.yaml', {
-          absolute: true,
-          useJobName: false,
-          useOutputDirectory: false
-        })
+        const eventFilePath = builder.resolvePath(':dir/:name-events.yaml')
         if (await fs.exists(eventFilePath)) {
           const contents = await fs.readFile(eventFilePath, { encoding: 'utf-8' })
           expected = yaml.safeLoad(contents)

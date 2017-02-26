@@ -14,8 +14,8 @@ import type { FileType, Parser, Reference } from './types'
 export default class File {
   static fileTypes: Map<string, FileType>
 
+  realFilePath: string
   filePath: string
-  normalizedFilePath: string
   type: string
   subType: ?string
   timeStamp: Date
@@ -28,19 +28,19 @@ export default class File {
   hasBeenUpdatedCache: boolean = false
   _value: ?any
 
-  constructor (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string, value: ?any) {
+  constructor (realFilePath: string, filePath: string, timeStamp: ?Date, hash: ?string, value: ?any) {
+    this.realFilePath = realFilePath
     this.filePath = filePath
-    this.normalizedFilePath = normalizedFilePath
     if (timeStamp) this.timeStamp = timeStamp
     if (hash) this.hash = hash
     if (value) this._value = value
   }
 
-  static async create (filePath: string, normalizedFilePath: string, timeStamp: ?Date, hash: ?string, value: ?any): Promise<?File> {
-    const file: File = new File(filePath, normalizedFilePath, timeStamp, hash, value)
+  static async create (realFilePath: string, filePath: string, timeStamp: ?Date, hash: ?string, value: ?any): Promise<?File> {
+    const file: File = new File(realFilePath, filePath, timeStamp, hash, value)
 
     await file.findType()
-    if (!file.virtual && !await fs.exists(filePath)) return
+    if (!file.virtual && !await fs.exists(realFilePath)) return
     file.hasBeenUpdated = await file.updateTimeStamp() && await file.updateHash()
 
     return file
@@ -69,7 +69,7 @@ export default class File {
               })
               const lineCount = lines.splice(0, parser.patterns.length).reduce((total, line) => total + line.count, 0)
               const reference: Reference = {
-                file: this.normalizedFilePath,
+                file: this.filePath,
                 start: lineNumber,
                 end: lineNumber + lineCount - 1
               }
@@ -100,7 +100,7 @@ export default class File {
       } else {
         let current: foo = { text: '', count: 0 }
         const rl = readline.createInterface({
-          input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
+          input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
 
         rl.on('line', line => {
@@ -158,7 +158,7 @@ export default class File {
 
   isFileType (name: string, fileType: FileType): Promise<boolean> {
     if (!fileType.fileName && !fileType.contents) {
-      const isMatch = this.filePath.endsWith(`-${name}`)
+      const isMatch = this.realFilePath.endsWith(`-${name}`)
       if (isMatch) {
         this.type = name
         this.virtual = true
@@ -167,15 +167,15 @@ export default class File {
     }
 
     return new Promise((resolve, reject) => {
-      if (fileType.fileName && !fileType.fileName.test(this.filePath)) {
+      if (fileType.fileName && !fileType.fileName.test(this.realFilePath)) {
         return resolve(false)
       }
 
       if (fileType.contents) {
-        fs.exists(this.filePath).then(exists => {
+        fs.exists(this.realFilePath).then(exists => {
           if (exists) {
             const rl = readline.createInterface({
-              input: fs.createReadStream(this.filePath)
+              input: fs.createReadStream(this.realFilePath)
             })
             let match = false
 
@@ -200,20 +200,28 @@ export default class File {
     })
   }
 
+  async delete (): Promise<void> {
+    if (!this.virtual) await fs.unlink(this.realFilePath)
+  }
+
   addRule (rule: Rule): void {
     this.rules.add(rule)
   }
 
+  removeRule (rule: Rule): void {
+    this.rules.delete(rule)
+  }
+
   async updateTimeStamp (): Promise<boolean> {
     if (this.virtual) return false
-    const stats = await fs.stat(this.filePath)
+    const stats = await fs.stat(this.realFilePath)
     const oldTimeStamp = this.timeStamp
     this.timeStamp = stats.mtime
     return oldTimeStamp !== this.timeStamp
   }
 
   updateHash (): Promise<boolean> {
-    if (this.virtual || path.isAbsolute(this.normalizedFilePath)) return Promise.resolve(true)
+    if (this.virtual || path.isAbsolute(this.filePath)) return Promise.resolve(true)
 
     return new Promise((resolve, reject) => {
       const fileType = File.fileTypes.get(this.type)
@@ -226,14 +234,14 @@ export default class File {
 
       if (fileType && fileType.hashSkip) {
         const rl = readline.createInterface({
-          input: fs.createReadStream(this.filePath, { encoding: 'utf-8' })
+          input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
         rl.on('line', line => {
           if (!fileType.hashSkip || !fileType.hashSkip.test(line)) hash.update(line)
         })
         .on('close', finish)
       } else {
-        fs.createReadStream(this.filePath)
+        fs.createReadStream(this.realFilePath)
           .on('data', data => hash.update(data))
           .on('end', finish)
       }

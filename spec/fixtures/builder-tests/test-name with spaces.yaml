@@ -1,6 +1,12 @@
 jobs:
-  job-1: {}
-  job-2:
+  job 1: {}
+  job 2:
     outputDirectory: output
+  job 3:
+    engine: latex
+  job 4:
+    engine: xelatex
+  job 5:
+    engine: lualatex
 reportLogMessages: true
 severity: error

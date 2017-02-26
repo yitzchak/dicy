@@ -1,13 +1,24 @@
-engine:
-  description: 'LaTeX engine, e.g. latex, pdflatex or uplatex [default: pdflatex]'
-  type: string
-  defaultValue: pdflatex
+cleanPatterns:
+  description: Patterns to use when executing a clean command.
+  type: strings
+  defaultValue:
+    - ':outdir/:job!(:outext|.synctex.gz|.tex)'
+    - '/:outdir/_minted-:job/*'
   commands:
-    - build
-graphDependencies:
-  description: Graph dependencies
+    - clean
+deepClean:
+  aliases:
+    - d
+  description: Remove all generated files and the cache.
   type: boolean
   defaultValue: false
+  commands:
+    - clean
+engine:
+  description: >-
+    'LaTeX engine, e.g. latex, pdflatex or uplatex [default: pdflatex]'
+  type: string
+  defaultValue: pdflatex
   commands:
     - build
 ignoreRules:
@@ -32,17 +43,20 @@ jobName:
   type: string
   commands:
     - build
+    - clean
 jobNames:
   description: job names used for latex
   type: strings
   commands:
     - build
+    - clean
 phaseCycles:
   description: maximum number of evaluation cycles in each phase
   type: number
   defaultValue: 20
   commands:
     - build
+    - clean
     - report
 outputDirectory:
   description: name of directory for output files
@@ -84,6 +98,7 @@ severity:
     - error
   commands:
     - build
+    - clean
     - report
 shellEscape:
   description: enable shell escape (write18) [disable, restricted, enable]
