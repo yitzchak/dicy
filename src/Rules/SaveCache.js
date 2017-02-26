@@ -20,6 +20,16 @@ export default class SaveCache extends Rule {
     this.cacheFilePath = this.resolvePath(':dir/:name-cache.yaml')
   }
 
+  async preEvaluate () {
+    if (await fs.exists(this.cacheFilePath)) return
+
+    for (const rule of this.rules) {
+      if (Array.from(rule.outputs.values()).some(file => !file.virtual)) return
+    }
+
+    this.actions.delete('run')
+  }
+
   async run () {
     const cache: Cache = {
       filePath: this.filePath,

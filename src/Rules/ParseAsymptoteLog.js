@@ -31,7 +31,9 @@ export default class ParseAsymptoteLog extends Rule {
       names: ['type', 'filePath'],
       patterns: [/^(Including|Loading) \S+ from (.*)$/],
       evaluate: (reference, groups) => {
-        inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+        if (!path.isAbsolute(groups.filePath)) {
+          inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+        }
       }
     }])
 

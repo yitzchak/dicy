@@ -83,10 +83,14 @@ export default class BuildStateConsumer {
   }
 
   async globPath (pattern: string, reference?: File | string): Promise<Array<string>> {
-    return await fastGlob(this.resolvePath(pattern, reference), {
-      cwd: this.rootPath,
-      bashNative: []
-    })
+    try {
+      return await fastGlob(this.resolvePath(pattern, reference), {
+        cwd: this.rootPath,
+        bashNative: []
+      })
+    } catch (error) {}
+
+    return []
   }
 
   async getFile (filePath: string): Promise<?File> {

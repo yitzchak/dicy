@@ -3,6 +3,7 @@ cleanPatterns:
   type: strings
   defaultValue:
     - ':outdir/:job!(:outext|.synctex.gz|.tex)'
+    - '/:outdir/_minted-:job/*'
   commands:
     - clean
 deepClean:

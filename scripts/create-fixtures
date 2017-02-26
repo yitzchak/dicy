@@ -25,5 +25,5 @@ for file in {*.tex,*.lhs,*.Rnw}; do
   echo "Creating event archive for $file"
   ouroboros build --save-events=command,log "$file" &>/dev/null
   ouroboros clean --deep-clean "$file" &>/dev/null
-  rm -rf *-cache.yaml sage-plots-for-* figure output _minted-*
+  # rm -rf *-cache.yaml sage-plots-for-* figure output _minted-*
 done

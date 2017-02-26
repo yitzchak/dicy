@@ -1,3 +1,5 @@
+cleanPatterns:
+  - /figure
 jobs:
   job-1: {}
   job-2:
