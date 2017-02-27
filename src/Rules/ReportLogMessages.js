@@ -1,10 +1,8 @@
 /* @flow */
 
-import BuildState from '../BuildState'
-import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Message, Phase } from '../types'
+import type { Command, Message } from '../types'
 
 export default class ReportLogMessages extends Rule {
   static fileTypes: Set<string> = new Set([
@@ -14,15 +12,9 @@ export default class ReportLogMessages extends Rule {
     'ParsedLaTeXLog',
     'ParsedMakeIndexLog'
   ])
-  static commands: Set<Command> = new Set(['build', 'report'])
-  static phases: Set<Phase> = new Set(['finalize'])
+  static commands: Set<Command> = new Set(['log'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Reports log messages from any parsed log files.'
-
-  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return (buildState.command === 'report' || buildState.options.reportLogMessages) &&
-      await super.appliesToFile(buildState, command, phase, jobName, file)
-  }
 
   async run () {
     if (this.firstParameter.value) {

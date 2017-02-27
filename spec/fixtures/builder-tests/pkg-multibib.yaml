@@ -1,4 +1,4 @@
-reportLogMessages: true
+deepClean: true
 severity: error
 check:
   - bibtex -version

@@ -5,7 +5,7 @@ jobs:
   biber-1: {}
   biber-2:
     outputDirectory: output
-reportLogMessages: true
+deepClean: true
 severity: error
 check:
   - bibtex -version

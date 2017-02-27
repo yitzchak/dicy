@@ -142,7 +142,7 @@ export type Event = LogEvent | ActionEvent | CommandEvent | FileAddedEvent |
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 
-export type Command = 'build' | 'clean' | 'graph' | 'load' | 'report' | 'save'
+export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save'
 
 export type Option = {
   type: 'string' | 'strings' | 'number' | 'numbers' | 'boolean',

@@ -40,7 +40,10 @@ function cloneOptions (options) {
 }
 
 const command = async (inputs, env) => {
+  const commands = env.name().split(',')
   const { saveEvents = [], verbose = false, ...options } = cloneOptions(env.opts())
+  commands.unshift('load')
+  commands.push('save')
 
   for (const filePath of inputs) {
     const events = []
@@ -82,7 +85,7 @@ const command = async (inputs, env) => {
       builder.on(type, event => { events.push(event) })
     }
 
-    await builder.run('load', env.name(), 'save')
+    await builder.run(...commands)
 
     if (saveEvents.length !== 0) {
       const eventFilePath = builder.resolvePath(':dir/:name-events.yaml')
@@ -100,8 +103,9 @@ Builder.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const name in definitions) {
       const option = definitions[name]
+      const commands = pc.name().split(',')
 
-      if (!option.commands.includes(pc.name())) continue
+      if (!option.commands.some(command => commands.includes(command))) continue
 
       const prefix = (option.type === 'boolean' && option.defaultValue) ? 'no-' : ''
       const flagList = [].concat(option.aliases || [], name)
@@ -141,25 +145,43 @@ Builder.getOptionDefinitions().then(definitions => {
   loadOptions(program
     .command('build [inputs...]')
     .alias('b')
-    .description('Build the inputs'))
+    .description('Build the inputs.'))
     .action(command)
 
   loadOptions(program
     .command('clean [inputs...]')
     .alias('c')
-    .description('Clean up after a previous build'))
+    .description('Clean up after a previous build.'))
     .action(command)
 
   loadOptions(program
-    .command('report [inputs...]')
-    .alias('r')
-    .description('Report the results from a previous build'))
+    .command('log [inputs...]')
+    .alias('l')
+    .description('Report messages from any logs.'))
     .action(command)
 
   loadOptions(program
     .command('graph [inputs...]')
     .alias('g')
-    .description('Create a dependency graph from a previous build'))
+    .description('Create a dependency graph from a previous build.'))
+    .action(command)
+
+  loadOptions(program
+    .command('build,clean [inputs...]')
+    .alias('bc')
+    .description('Build the inputs and then clean up.'))
+    .action(command)
+
+  loadOptions(program
+    .command('build,log [inputs...]')
+    .alias('bl')
+    .description('Build the inputs and report messages from any logs.'))
+    .action(command)
+
+  loadOptions(program
+    .command('build,log,clean [inputs...]')
+    .alias('blc')
+    .description('Build the inputs, report messages from any logs, and then clean up.'))
     .action(command)
 
   program

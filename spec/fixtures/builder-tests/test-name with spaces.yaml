@@ -8,5 +8,5 @@ jobs:
     engine: xelatex
   job 5:
     engine: lualatex
-reportLogMessages: true
+deepClean: true
 severity: error

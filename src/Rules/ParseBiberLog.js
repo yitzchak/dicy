@@ -6,7 +6,7 @@ import type { Command, Message } from '../types'
 
 export default class ParseBiberLog extends Rule {
   static fileTypes: Set<string> = new Set(['BiberLog'])
-  static commands: Set<Command> = new Set(['build', 'report'])
+  static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses any biber produced logs.'
 
   async run () {

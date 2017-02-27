@@ -9,7 +9,7 @@ jobs:
   job-4:
     outputDirectory: output
     synctex: true
-reportLogMessages: true
+deepClean: true
 severity: error
 check:
   - Rscript -e "library(knitr);library(patchSynctex)"

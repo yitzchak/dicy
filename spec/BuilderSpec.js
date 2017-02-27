@@ -57,9 +57,7 @@ describe('Builder', () => {
           }
         }
 
-        expect(await builder.run('build')).toBeTruthy()
-
-        expect(await builder.run('save')).toBeTruthy()
+        expect(await builder.run('build', 'log', 'save')).toBeTruthy()
 
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)

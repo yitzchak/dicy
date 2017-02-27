@@ -77,14 +77,6 @@ outputFormat:
   commands:
     - build
     - graph
-reportLogMessages:
-  aliases:
-    - r
-  description: display filtered log messages
-  type: boolean
-  defaultValue: false
-  commands:
-    - build
 severity:
   aliases:
     - s
