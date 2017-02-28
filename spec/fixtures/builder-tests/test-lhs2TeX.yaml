@@ -1,8 +1,0 @@
-jobs:
-  job-1: {}
-  job-2:
-    outputDirectory: output
-deepClean: true
-severity: error
-check:
-  - lhs2TeX -V

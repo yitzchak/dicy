@@ -1,3 +1,9 @@
+%!TeX jobNames = job-1, job-2, job-3, job-4
+%!TeX job-2:outputDirectory = output
+%!TeX job-3:synctex = yes
+%!TeX job-4:outputDirectory = output
+%!TeX job-4:synctex = yes
+%!TeX check = Rscript -e "library(knitr);library(patchSynctex)"
 \documentclass{article}
 
 \usepackage{parskip}

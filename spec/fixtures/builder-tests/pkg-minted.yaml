@@ -1,5 +1,0 @@
-deepClean: true
-severity: error
-shellEscape: enable
-check:
-  - pygmentize -V

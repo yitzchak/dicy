@@ -1,4 +1,2 @@
 deepClean: true
 severity: error
-check:
-  - mpost -version

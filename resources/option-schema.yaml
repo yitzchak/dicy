@@ -1,3 +1,7 @@
+check:
+  description: Commands to check.
+  type: strings
+  commands: []
 cleanPatterns:
   description: Patterns to use when executing a clean command.
   type: strings

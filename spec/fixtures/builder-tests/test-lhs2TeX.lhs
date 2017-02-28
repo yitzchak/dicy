@@ -1,3 +1,6 @@
+%!TeX jobNames = job-1, job-2
+%!TeX job-2:outputDirectory = output
+%!TeX check = lhs2TeX -V
 \documentclass{article}
 
 %include polycode.fmt
