@@ -4,7 +4,8 @@ import Rule from '../Rule'
 
 import type { Command } from '../types'
 
-const TRUE_PATTERN = /^(true|yes)$/i
+const TRUE_PATTERN = /^(true|yes|enabled?)$/i
+const ITEM_SEPARATOR_PATTERN = /\s*,\s*/
 
 export default class ParseLaTeXMagic extends Rule {
   static commands: Set<Command> = new Set(['load'])
@@ -25,13 +26,13 @@ export default class ParseLaTeXMagic extends Rule {
         if (schema) {
           switch (schema.type) {
             case 'strings':
-              value = value.split(/\s*,\s*/)
+              value = value.split(ITEM_SEPARATOR_PATTERN)
               break
             case 'number':
               value = parseInt(value, 10)
               break
             case 'numbers':
-              value = value.split(/\s*,\s*/).map(x => parseInt(x, 10))
+              value = value.split(ITEM_SEPARATOR_PATTERN).map(x => parseInt(x, 10))
               break
             case 'boolean':
               value = TRUE_PATTERN.test(value)
@@ -47,8 +48,7 @@ export default class ParseLaTeXMagic extends Rule {
           if (groups.jobName in magic.jobs) {
             jobMagic = magic.jobs[groups.jobName]
           } else {
-            jobMagic = {}
-            magic.jobs[groups.jobName] = jobMagic
+            magic.jobs[groups.jobName] = jobMagic = {}
           }
         }
 
