@@ -21,7 +21,7 @@ export default class MetaPost extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs([':dir/:name.1', ':dir/:name.log', ':dir/:name.t1'], this.firstParameter)
+    await this.getResolvedOutputs(['$dir/$name.1', '$dir/$name.log', '$dir/$name.t1'], this.firstParameter)
     return true
   }
 }

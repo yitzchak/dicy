@@ -12,7 +12,7 @@ export default class ApplyOptions extends Rule {
   static description: string = 'Apply options from YAML file and any LaTeX magic comments found in source file.'
 
   async initialize () {
-    await this.getResolvedInputs(['latex.yaml-ParsedYAML', ':name.yaml-ParsedYAML', ':base-ParsedLaTeXMagic'])
+    await this.getResolvedInputs(['latex.yaml-ParsedYAML', '$name.yaml-ParsedYAML', '$base-ParsedLaTeXMagic'])
   }
 
   async run () {

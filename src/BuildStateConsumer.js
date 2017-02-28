@@ -1,7 +1,6 @@
 /* @flow */
 
 import fastGlob from 'fast-glob'
-import placeholders from 'placeholders'
 import path from 'path'
 
 import BuildState from './BuildState'
@@ -10,11 +9,12 @@ import Rule from './Rule'
 
 import type { Message } from './types'
 
+const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
+
 export default class BuildStateConsumer {
   buildState: BuildState
   options: Object
   jobName: ?string
-  expand: Function
 
   constructor (buildState: BuildState, jobName: ?string) {
     this.jobName = jobName
@@ -36,8 +36,6 @@ export default class BuildStateConsumer {
         return target[key]
       }
     })
-
-    this.expand = placeholders({ regex: /:(\w+)/ })
   }
 
   get ruleClasses (): Array<Class<Rule>> {
@@ -79,7 +77,7 @@ export default class BuildStateConsumer {
       name,
       ext
     }
-    return path.normalize(this.expand(filePath, properties))
+    return path.normalize(filePath.replace(VARIABLE_PATTERN, (match, name) => properties[name]))
   }
 
   async globPath (pattern: string, reference?: File | string): Promise<Array<string>> {

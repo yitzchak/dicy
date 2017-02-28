@@ -12,7 +12,7 @@ export default class ParseLaTeXLog extends Rule {
   static description: string = 'Parses the logs produced by all latex variants.'
 
   async run () {
-    const output = await this.getResolvedOutput(':dir/:base-ParsedLaTeXLog', this.firstParameter)
+    const output = await this.getResolvedOutput('$dir/$base-ParsedLaTeXLog', this.firstParameter)
     if (!output) return false
 
     const messages: Array<Message> = []

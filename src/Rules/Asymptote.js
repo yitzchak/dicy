@@ -12,7 +12,7 @@ export default class Asymptote extends Rule {
   static description: string = 'Run Asymptote on any generated .asy files.'
 
   async initialize () {
-    await this.getResolvedInput(':dir/:name.log-ParsedAsymptoteLog', this.firstParameter)
+    await this.getResolvedInput('$dir/$name.log-ParsedAsymptoteLog', this.firstParameter)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -41,8 +41,8 @@ export default class Asymptote extends Rule {
     for (const ext of ['_0.pdf', '_0.eps']) {
       await this.getOutput(path.format({ dir, name, ext }))
     }
-    await this.getResolvedOutput(':dir/:name.pre', this.firstParameter)
-    const output = await this.getResolvedOutput(':dir/:name.log-AsymptoteLog', this.firstParameter)
+    await this.getResolvedOutput('$dir/$name.pre', this.firstParameter)
+    const output = await this.getResolvedOutput('$dir/$name.log-AsymptoteLog', this.firstParameter)
     if (output) output.value = `${stdout}\n${stderr}`
     return true
   }

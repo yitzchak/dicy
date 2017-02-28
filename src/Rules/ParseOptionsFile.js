@@ -12,7 +12,7 @@ export default class ParseOptionsFile extends Rule {
   static description: string = 'Parses the YAML option file.'
 
   async initialize () {
-    await this.getResolvedInputs(['latex.yaml', ':name.yaml'])
+    await this.getResolvedInputs(['latex.yaml', '$name.yaml'])
   }
 
   async preEvaluate () {
@@ -21,7 +21,7 @@ export default class ParseOptionsFile extends Rule {
 
   async run () {
     for (const input of this.inputs.values()) {
-      const output = await this.getResolvedOutput(':dir/:base-ParsedYAML', input)
+      const output = await this.getResolvedOutput('$dir/$base-ParsedYAML', input)
       if (output) {
         // $FlowIgnore
         const contents = await fs.readFile(input.realFilePath, { encoding: 'utf-8' })

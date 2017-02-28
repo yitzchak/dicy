@@ -6,8 +6,8 @@ cleanPatterns:
   description: Patterns to use when executing a clean command.
   type: strings
   defaultValue:
-    - ':outdir/:job!(:outext|.synctex.gz|.tex)'
-    - '/:outdir/_minted-:job/*'
+    - '$outdir/$job!(:outext|.synctex.gz|.tex)'
+    - '/$outdir/_minted-$job/*'
   commands:
     - clean
 deepClean:

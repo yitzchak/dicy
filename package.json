@@ -32,7 +32,6 @@
     "lodash": "^4.17.4",
     "micromatch": "^2.3.11",
     "mz": "^2.6.0",
-    "placeholders": "^0.3.0",
     "temp": "^0.8.3"
   },
   "devDependencies": {
