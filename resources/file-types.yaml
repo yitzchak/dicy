@@ -101,6 +101,9 @@ ParsedYAML: {}
 PortableDocumentFormat:
   fileName: !!js/regexp /\.pdf$/i
   hashSkip: !!js/regexp /^\/(CreationDate|ModDate|ID)/
+PostScript:
+  fileName: !!js/regexp /\.ps$/i
+  hashSkip: !!js/regexp /^\%%/
 PTB:
   fileName: !!js/regexp /\.ptb$/
 Sage:
