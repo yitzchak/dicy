@@ -2,6 +2,10 @@
 
 import File from './File'
 
+export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save'
+
+export type Phase = 'initialize' | 'execute' | 'finalize'
+
 export type ResolvePathOptions = {
   absolute?: boolean,
   useJobName?: boolean,
@@ -58,16 +62,16 @@ export type Cache = {
   rules: Array<RuleCache>
 }
 
-export type Parser = {
-  names: Array<string>,
-  patterns: Array<RegExp>,
-  evaluate: (reference: Reference, groups: Object) => void
-}
-
 export type Reference = {
   file: string,
   start: ?number,
   end: ?number
+}
+
+export type Parser = {
+  names: Array<string>,
+  patterns: Array<RegExp>,
+  evaluate: (reference: Reference, groups: Object) => void
 }
 
 export type Severity = 'trace' | 'info' | 'warning' | 'error'
@@ -139,10 +143,6 @@ export type OutputAddedEvent = {
 export type Event = LogEvent | ActionEvent | CommandEvent | FileAddedEvent |
   FileDeletedEvent | FileRemovedEvent | FileChangedEvent | InputAddedEvent |
   OutputAddedEvent
-
-export type Phase = 'initialize' | 'execute' | 'finalize'
-
-export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save'
 
 export type Option = {
   type: 'string' | 'strings' | 'number' | 'numbers' | 'boolean',
