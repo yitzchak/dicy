@@ -2,6 +2,8 @@
   "name": "ouroboros",
   "version": "0.0.0",
   "description": "A circular dependency builder designed with LaTeX in mind.",
+  "keywords": ["latex", "knitr", "sage", "biblatex"],
+  "bugs": "https://github.com/yitzchak/ouroboros/issues",
   "main": "lib/main.js",
   "scripts": {
     "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
@@ -18,6 +20,11 @@
     "url": "https://github.com/yitzchak/ouroboros.git"
   },
   "author": "Tarn Burton <twburton@gmail.com>",
+  "contributors": [],
+  "homepage": "https://yitzchak.github.io/ouroboros/",
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "license": "MIT",
   "dependencies": {
     "any-shell-escape": "^0.1.1",
