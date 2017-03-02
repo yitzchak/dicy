@@ -3,12 +3,18 @@
 import 'babel-polyfill'
 import path from 'path'
 import readdir from 'readdir-enhanced'
-import childProcess from 'mz/child_process'
+import childProcess from 'child_process'
 
 import { Builder, File } from '../src/main'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
+
+function doCheck (command: string): Promise<boolean> {
+  return new Promise(resolve => {
+    childProcess.exec(command, error => resolve(!error))
+  })
+}
 
 describe('Builder', () => {
   let builder: Builder
@@ -46,9 +52,7 @@ describe('Builder', () => {
         expect(await builder.run('load')).toBeTruthy()
 
         for (const command of builder.options.check || []) {
-          try {
-            await childProcess.exec(command)
-          } catch (error) {
+          if (!await doCheck(command)) {
             // $FlowIgnore
             spec.pend(`Skipped test since required program is not available (\`${command}\` was not successful).`)
             done()

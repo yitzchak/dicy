@@ -3,7 +3,6 @@
 import _ from 'lodash'
 import crypto from 'crypto'
 import fs from 'fs-extra'
-import fsp from 'fs-promise'
 import path from 'path'
 import readline from 'readline'
 import yaml from 'js-yaml'
@@ -101,7 +100,7 @@ export default class File {
       } else {
         let current: foo = { text: '', count: 0 }
         const rl = readline.createInterface({
-          input: fsp.createReadStream(this.realFilePath, { encoding: 'utf-8' })
+          input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
 
         rl.on('line', line => {
@@ -176,7 +175,7 @@ export default class File {
         File.canRead(this.realFilePath).then(canRead => {
           if (canRead) {
             const rl = readline.createInterface({
-              input: fsp.createReadStream(this.realFilePath)
+              input: fs.createReadStream(this.realFilePath)
             })
             let match = false
 
@@ -202,7 +201,7 @@ export default class File {
   }
 
   async delete (): Promise<void> {
-    if (!this.virtual) await fsp.unlink(this.realFilePath)
+    if (!this.virtual) await File.remove(this.realFilePath)
   }
 
   addRule (rule: Rule): void {
@@ -215,9 +214,8 @@ export default class File {
 
   async updateTimeStamp (): Promise<boolean> {
     if (this.virtual) return false
-    const stats = await fsp.stat(this.realFilePath)
     const oldTimeStamp = this.timeStamp
-    this.timeStamp = stats.mtime
+    this.timeStamp = await File.getModifiedTime(this.realFilePath)
     return oldTimeStamp !== this.timeStamp
   }
 
@@ -235,14 +233,14 @@ export default class File {
 
       if (fileType && fileType.hashSkip) {
         const rl = readline.createInterface({
-          input: fsp.createReadStream(this.realFilePath, { encoding: 'utf-8' })
+          input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
         rl.on('line', line => {
           if (!fileType.hashSkip || !fileType.hashSkip.test(line)) hash.update(line)
         })
         .on('close', finish)
       } else {
-        fsp.createReadStream(this.realFilePath)
+        fs.createReadStream(this.realFilePath)
           .on('data', data => hash.update(data))
           .on('end', finish)
       }
@@ -317,6 +315,12 @@ export default class File {
   static canRead (filePath: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       fs.access(filePath, fs.constants.R_OK, error => resolve(!error))
+    })
+  }
+
+  static getModifiedTime (filePath: string): Promise<Date> {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (error, stat) => resolve(error ? new Date() : stat.mtime))
     })
   }
 

@@ -28,11 +28,9 @@
     "commander": "^2.9.0",
     "fast-glob": "^1.0.0",
     "fs-extra": "^2.0.0",
-    "fs-promise": "^2.0.0",
     "js-yaml": "^3.8.1",
     "lodash": "^4.17.4",
     "micromatch": "^2.3.11",
-    "mz": "^2.6.0",
     "readdir-enhanced": "^1.4.5",
     "temp": "^0.8.3"
   },
@@ -42,6 +40,7 @@
     "babel-plugin-syntax-async-generators": "^6.13.0",
     "babel-plugin-transform-class-properties": "^6.23.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-strict-mode": "^6.22.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-latest": "^6.22.0",
     "babel-register": "^6.23.0",
@@ -62,6 +61,7 @@
     ],
     "plugins": [
       "transform-class-properties",
+      "transform-strict-mode",
       "syntax-async-generators",
       "transform-object-rest-spread"
     ]
