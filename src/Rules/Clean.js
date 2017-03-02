@@ -1,9 +1,9 @@
 /* @flow */
 
 import fastGlob from 'fast-glob'
-import fs from 'fs-promise'
 import micromatch from 'micromatch'
 import path from 'path'
+import readdir from 'readdir-enhanced'
 
 import File from '../File'
 import Rule from '../Rule'
@@ -42,11 +42,10 @@ export default class Clean extends Rule {
       if (/^[/\\]/.test(pattern)) {
         for (const matchedFilePath of await this.globPath(pattern.substring(1))) {
           const filePath = path.resolve(this.rootPath, matchedFilePath)
-          const stat = await fs.stat(filePath)
-          if (stat.isFile()) {
+          if (await File.isFile(filePath)) {
             const file = await this.getFile(matchedFilePath)
             if (file) files.add(file)
-          } else if (stat.isDirectory()) {
+          } else if (await File.isDirectory(filePath)) {
             directories.add(filePath)
           }
         }
@@ -65,7 +64,7 @@ export default class Clean extends Rule {
     }
 
     for (const filePath of directories) {
-      await fs.remove(path.resolve(this.rootPath, filePath))
+      await File.remove(path.resolve(this.rootPath, filePath))
       this.emit('fileDeleted', { type: 'fileDeleted', file: filePath })
     }
 
@@ -74,9 +73,9 @@ export default class Clean extends Rule {
 
     for (const filePath of candidateDirectories) {
       const realFilePath = path.resolve(this.rootPath, filePath)
-      const contents = await fs.readdir(realFilePath)
+      const contents = await readdir.async(realFilePath)
       if (contents.length === 0) {
-        await fs.remove(realFilePath)
+        await File.remove(realFilePath)
         this.emit('fileDeleted', { type: 'fileDeleted', file: filePath })
       }
     }

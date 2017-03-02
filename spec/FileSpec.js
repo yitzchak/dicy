@@ -1,8 +1,8 @@
 /* @flow */
 
 import 'babel-polyfill'
-import fs from 'fs-promise'
 import path from 'path'
+import readdir from 'readdir-enhanced'
 
 import { cloneFixtures } from './helpers'
 import File from '../src/File'
@@ -48,7 +48,7 @@ describe('File', () => {
 
   it('verifies that the detected file types are correct', async (done) => {
     const rootPath = path.join(fixturesPath, 'file-types')
-    for (const fileName of await fs.readdir(rootPath)) {
+    for (const fileName of await readdir.async(rootPath)) {
       const [, type] = fileName.match(/^([^.-]+)/)
       const file = await createFile(path.join('file-types', fileName))
       expect(file).toBeDefined()

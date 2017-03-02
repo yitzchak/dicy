@@ -6,11 +6,9 @@ import _ from 'lodash'
 import chalk from 'chalk'
 import path from 'path'
 import program from 'commander'
-import fs from 'fs-promise'
 import cliui from 'cliui'
-import yaml from 'js-yaml'
 
-import { Builder } from './main'
+import { Builder, File } from './main'
 
 const ui = cliui({ width: 80 })
 
@@ -89,8 +87,7 @@ const command = async (inputs, env) => {
 
     if (saveEvents.length !== 0) {
       const eventFilePath = builder.resolvePath('$dir/$name-events.yaml')
-      const serialized = yaml.safeDump({ types: saveEvents, events }, { skipInvalid: true })
-      await fs.writeFile(eventFilePath, serialized)
+      await File.safeDump(eventFilePath, { types: saveEvents, events })
     }
   }
 }

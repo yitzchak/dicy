@@ -2,11 +2,10 @@
 
 import 'babel-polyfill'
 import path from 'path'
-import fs from 'fs-promise'
+import readdir from 'readdir-enhanced'
 import childProcess from 'mz/child_process'
-import yaml from 'js-yaml'
 
-import { Builder } from '../src/main'
+import { Builder, File } from '../src/main'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
@@ -14,7 +13,8 @@ const ASYNC_TIMEOUT = 50000
 describe('Builder', () => {
   let builder: Builder
   let fixturesPath: string
-  let tests: Array<string> = fs.readdirSync(path.join(__dirname, 'fixtures', 'builder-tests')).filter(name => /\.(lhs|tex|Rnw)$/i.test(name))
+  const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
+  let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw)$/i })
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()
@@ -35,9 +35,8 @@ describe('Builder', () => {
 
         // Load the event archive
         const eventFilePath = builder.resolvePath(':dir/:name-events.yaml')
-        if (await fs.exists(eventFilePath)) {
-          const contents = await fs.readFile(eventFilePath, { encoding: 'utf-8' })
-          expected = yaml.safeLoad(contents)
+        if (await File.canRead(eventFilePath)) {
+          expected = await File.safeLoad(eventFilePath)
           for (const type of expected.types) {
             builder.on(type, event => { events.push(event) })
           }

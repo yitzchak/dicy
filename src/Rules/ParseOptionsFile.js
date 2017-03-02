@@ -1,8 +1,5 @@
 /* @flow */
 
-import fs from 'fs-promise'
-import yaml from 'js-yaml'
-
 import Rule from '../Rule'
 
 import type { Command } from '../types'
@@ -23,9 +20,7 @@ export default class ParseOptionsFile extends Rule {
     for (const input of this.inputs.values()) {
       const output = await this.getResolvedOutput('$dir/$base-ParsedYAML', input)
       if (output) {
-        // $FlowIgnore
-        const contents = await fs.readFile(input.realFilePath, { encoding: 'utf-8' })
-        output.value = yaml.safeLoad(contents)
+        output.value = await input.safeLoad()
       }
     }
 

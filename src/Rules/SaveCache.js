@@ -1,8 +1,5 @@
 /* @flow */
 
-import fs from 'fs-promise'
-import yaml from 'js-yaml'
-
 import File from '../File'
 import Rule from '../Rule'
 
@@ -21,7 +18,7 @@ export default class SaveCache extends Rule {
   }
 
   async preEvaluate () {
-    if (await fs.exists(this.cacheFilePath)) return
+    if (await File.canRead(this.cacheFilePath)) return
 
     for (const rule of this.rules) {
       if (Array.from(rule.outputs.values()).some(file => !file.virtual)) return
@@ -74,8 +71,7 @@ export default class SaveCache extends Rule {
       cache.rules.push(ruleCache)
     }
 
-    const serialized = yaml.safeDump(cache, { skipInvalid: true })
-    await fs.writeFile(this.cacheFilePath, serialized)
+    await File.safeDump(this.cacheFilePath, cache)
 
     return true
   }

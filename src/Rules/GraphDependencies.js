@@ -1,9 +1,8 @@
 /* @flow */
 
 import _ from 'lodash'
-import fs from 'fs-promise'
-// import path from 'path'
 
+import File from '../File'
 import Rule from '../Rule'
 
 import type { Command } from '../types'
@@ -87,7 +86,7 @@ export default class GraphDependencies extends Rule {
     endGraph()
 
     const filePath = this.resolvePath('$name-graph.dot')
-    await fs.writeFile(filePath, lines.join('\n'))
+    await File.write(filePath, lines.join('\n'))
     await this.getOutput(filePath)
 
     return true
