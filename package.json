@@ -10,7 +10,8 @@
     "compile": "babel -d lib/ src/",
     "ouroboros": "node lib/ouroboros.js",
     "lint": "eslint --color src spec",
-    "flow-typed": "flow-typed update"
+    "flow-typed": "flow-typed update",
+    "preinstall": "babel -d lib/ src/"
   },
   "bin": {
     "ouroboros": "lib/ouroboros.js"
