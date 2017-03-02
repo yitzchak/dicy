@@ -1,8 +1,7 @@
 /* @flow */
 
-import fs from 'fs-promise'
 import path from 'path'
-import yaml from 'js-yaml'
+import readdir from 'readdir-enhanced'
 
 import BuildState from './BuildState'
 import BuildStateConsumer from './BuildStateConsumer'
@@ -24,7 +23,7 @@ export default class Builder extends BuildStateConsumer {
 
   async initialize () {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
-    const entries: Array<string> = await fs.readdir(ruleClassPath)
+    const entries: Array<string> = await readdir.async(ruleClassPath)
     this.buildState.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
   }
@@ -163,7 +162,7 @@ export default class Builder extends BuildStateConsumer {
   }
 
   static async getOptionDefinitions (): Promise<{ [name: string]: Option }> {
-    const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'option-schema.yaml'), { encoding: 'utf-8' })
-    return yaml.load(contents)
+    const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
+    return File.load(filePath)
   }
 }

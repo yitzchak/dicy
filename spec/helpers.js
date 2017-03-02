@@ -1,16 +1,17 @@
 /* @flow */
 
 import _ from 'lodash'
-import fs from 'fs-promise'
+import fs from 'fs-extra'
 import path from 'path'
 import temp from 'temp'
 
+import { File } from '../src/main'
 import type { Event } from '../src/types'
 
 export async function cloneFixtures () {
-  const tempPath = await fs.realpath(temp.mkdirSync('ouroboros'))
+  const tempPath = fs.realpathSync(temp.mkdirSync('ouroboros'))
   let fixturesPath = path.resolve(__dirname, 'fixtures')
-  await fs.copy(fixturesPath, tempPath)
+  await File.copy(fixturesPath, tempPath)
   return tempPath
 }
 

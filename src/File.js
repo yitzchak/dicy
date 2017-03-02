@@ -2,7 +2,7 @@
 
 import _ from 'lodash'
 import crypto from 'crypto'
-import fs from 'fs-promise'
+import fs from 'fs-extra'
 import path from 'path'
 import readline from 'readline'
 import yaml from 'js-yaml'
@@ -40,7 +40,7 @@ export default class File {
     const file: File = new File(realFilePath, filePath, timeStamp, hash, value)
 
     await file.findType()
-    if (!file.virtual && !await fs.exists(realFilePath)) return
+    if (!file.virtual && !await File.canRead(realFilePath)) return
     file.hasBeenUpdated = await file.updateTimeStamp() && await file.updateHash()
 
     return file
@@ -143,8 +143,8 @@ export default class File {
 
   async findType (): Promise<void> {
     if (!File.fileTypes) {
-      const contents = await fs.readFile(path.resolve(__dirname, '..', 'resources', 'file-types.yaml'), { encoding: 'utf-8' })
-      const value = yaml.load(contents)
+      const fileTypesPath = path.resolve(__dirname, '..', 'resources', 'file-types.yaml')
+      const value = await File.load(fileTypesPath)
       File.fileTypes = new Map()
       for (const name in value) {
         File.fileTypes.set(name, value[name])
@@ -172,8 +172,8 @@ export default class File {
       }
 
       if (fileType.contents) {
-        fs.exists(this.realFilePath).then(exists => {
-          if (exists) {
+        File.canRead(this.realFilePath).then(canRead => {
+          if (canRead) {
             const rl = readline.createInterface({
               input: fs.createReadStream(this.realFilePath)
             })
@@ -201,7 +201,7 @@ export default class File {
   }
 
   async delete (): Promise<void> {
-    if (!this.virtual) await fs.unlink(this.realFilePath)
+    if (!this.virtual) await File.remove(this.realFilePath)
   }
 
   addRule (rule: Rule): void {
@@ -214,9 +214,8 @@ export default class File {
 
   async updateTimeStamp (): Promise<boolean> {
     if (this.virtual) return false
-    const stats = await fs.stat(this.realFilePath)
     const oldTimeStamp = this.timeStamp
-    this.timeStamp = stats.mtime
+    this.timeStamp = await File.getModifiedTime(this.realFilePath)
     return oldTimeStamp !== this.timeStamp
   }
 
@@ -251,5 +250,107 @@ export default class File {
   async update (): Promise<void> {
     const updated = await this.updateTimeStamp() && await this.updateHash()
     this.hasBeenUpdated = this.hasBeenUpdated || updated
+  }
+
+  static read (filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, { encoding: 'utf-8' }, (error, data) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  read (): Promise<string> {
+    return File.read(this.realFilePath)
+  }
+
+  static async load (filePath: string): Promise<Object> {
+    const contents = await File.read(filePath)
+    return yaml.load(contents)
+  }
+
+  load (): Promise<Object> {
+    return File.load(this.realFilePath)
+  }
+
+  static async safeLoad (filePath: string): Promise<Object> {
+    const contents = await File.read(filePath)
+    return yaml.safeLoad(contents)
+  }
+
+  safeLoad (): Promise<Object> {
+    return File.safeLoad(this.realFilePath)
+  }
+
+  static write (filePath: string, value: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(filePath, value, { encoding: 'utf-8' }, (error) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
+  }
+
+  write (value: string): Promise<void> {
+    return File.write(this.realFilePath, value)
+  }
+
+  static async dump (filePath: string, value: Object): Promise<void> {
+    const contents = yaml.dump(value, { skipInvalid: true })
+    await fs.writeFile(filePath, contents)
+  }
+
+  static async safeDump (filePath: string, value: Object): Promise<void> {
+    const contents = yaml.safeDump(value, { skipInvalid: true })
+    await fs.writeFile(filePath, contents)
+  }
+
+  static canRead (filePath: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      fs.access(filePath, fs.constants.R_OK, error => resolve(!error))
+    })
+  }
+
+  static getModifiedTime (filePath: string): Promise<Date> {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (error, stat) => resolve(error ? new Date() : stat.mtime))
+    })
+  }
+
+  static isFile (filePath: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (error, stat) => resolve(!error && stat.isFile()))
+    })
+  }
+
+  static isDirectory (filePath: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (error, stat) => resolve(!error && stat.isDirectory()))
+    })
+  }
+
+  static remove (filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.remove(filePath, error => error ? reject(error) : resolve())
+    })
+  }
+
+  static ensureDir (filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.ensureDir(filePath, error => error ? reject(error) : resolve())
+    })
+  }
+
+  static copy (from: string, to: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.copy(from, to, error => error ? reject(error) : resolve())
+    })
   }
 }

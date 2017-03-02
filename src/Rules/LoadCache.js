@@ -1,8 +1,6 @@
 /* @flow */
 
-import fs from 'fs-promise'
-import yaml from 'js-yaml'
-
+import File from '../File'
 import Rule from '../Rule'
 
 import type { Command, Phase, RuleCache, Cache } from '../types'
@@ -20,13 +18,11 @@ export default class LoadCache extends Rule {
   }
 
   async preEvaluate () {
-    if (this.options.ignoreCache || !await fs.exists(this.cacheFilePath)) this.actions.delete('run')
+    if (this.options.ignoreCache || !await File.canRead(this.cacheFilePath)) this.actions.delete('run')
   }
 
   async run () {
-    // $FlowIgnore
-    const contents = await fs.readFile(this.cacheFilePath, { encoding: 'utf-8' })
-    const cache: ?Cache = yaml.safeLoad(contents)
+    const cache: ?Cache = await File.safeLoad(this.cacheFilePath)
 
     if (!cache) return true
 

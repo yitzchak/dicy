@@ -1,8 +1,8 @@
 /* @flow */
 
-import fs from 'fs-promise'
 import path from 'path'
 
+import File from '../File'
 import Rule from '../Rule'
 
 import type { Phase } from '../types'
@@ -14,7 +14,7 @@ export default class CreateOutputTree extends Rule {
 
   async run () {
     if (this.options.outputDirectory) {
-      await fs.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
+      await File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
     }
     return true
   }
