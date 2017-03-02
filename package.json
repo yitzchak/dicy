@@ -11,7 +11,7 @@
     "ouroboros": "node lib/ouroboros.js",
     "lint": "eslint --color src spec",
     "flow-typed": "flow-typed update",
-    "preinstall": "babel -d lib/ src/"
+    "postinstall": "babel -d lib/ src/"
   },
   "bin": {
     "ouroboros": "lib/ouroboros.js"
