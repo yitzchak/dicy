@@ -1,17 +1,17 @@
 /* @flow */
 
 import 'babel-polyfill'
-import { BuildState } from '../src/main'
+import { State } from '../src/main'
 
-describe('BuildState', () => {
-  let buildState: BuildState
+describe('State', () => {
+  let state: State
 
   beforeEach(() => {
-    buildState = new BuildState('foo.tex')
+    state = new State('foo.tex')
   })
 
   it('verifies that getRuleId returns expected id', () => {
-    const result = buildState.getRuleId('quux', 'build', 'execute', 'bar', 'foo.tex')
+    const result = state.getRuleId('quux', 'build', 'execute', 'bar', 'foo.tex')
     const expectedResult = 'quux(build;execute;bar;foo.tex)'
     expect(result).toEqual(expectedResult)
   })

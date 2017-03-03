@@ -3,7 +3,7 @@
 import fastGlob from 'fast-glob'
 import path from 'path'
 
-import BuildState from './BuildState'
+import State from './State'
 import File from './File'
 import Rule from './Rule'
 
@@ -11,15 +11,15 @@ import type { Message } from './types'
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
-export default class BuildStateConsumer {
-  buildState: BuildState
+export default class StateConsumer {
+  state: State
   options: Object
   jobName: ?string
 
-  constructor (buildState: BuildState, jobName: ?string) {
+  constructor (state: State, jobName: ?string) {
     this.jobName = jobName
-    this.buildState = buildState
-    this.options = new Proxy(buildState.options, {
+    this.state = state
+    this.options = new Proxy(state.options, {
       get (target, key) {
         if (key === 'jobNames') {
           if ('jobName' in target) return [target.jobName]
@@ -39,31 +39,31 @@ export default class BuildStateConsumer {
   }
 
   get ruleClasses (): Array<Class<Rule>> {
-    return this.buildState.ruleClasses
+    return this.state.ruleClasses
   }
 
   get filePath (): string {
-    return this.buildState.filePath
+    return this.state.filePath
   }
 
   get rootPath (): string {
-    return this.buildState.rootPath
+    return this.state.rootPath
   }
 
   get files (): Iterator<File> {
-    return this.buildState.files.values()
+    return this.state.files.values()
   }
 
   get rules (): Iterator<Rule> {
-    return this.buildState.rules.values()
+    return this.state.rules.values()
   }
 
   async addRule (rule: Rule): Promise<void> {
-    await this.buildState.addRule(rule)
+    await this.state.addRule(rule)
   }
 
   normalizePath (filePath: string) {
-    return this.buildState.normalizePath(filePath)
+    return this.state.normalizePath(filePath)
   }
 
   resolvePath (filePath: string, reference?: File | string): string {
@@ -92,7 +92,7 @@ export default class BuildStateConsumer {
   }
 
   async getFile (filePath: string): Promise<?File> {
-    const file: ?File = await this.buildState.getFile(filePath)
+    const file: ?File = await this.state.getFile(filePath)
     if (file && this.jobName) file.jobNames.add(this.jobName)
     return file
   }
@@ -140,19 +140,19 @@ export default class BuildStateConsumer {
   }
 
   calculateDistances (): void {
-    this.buildState.calculateDistances()
+    this.state.calculateDistances()
   }
 
   getDistance (x: Rule, y: Rule): ?number {
-    return this.buildState.getDistance(x, y)
+    return this.state.getDistance(x, y)
   }
 
   isConnected (x: Rule, y: Rule): boolean {
-    return this.buildState.isConnected(x, y)
+    return this.state.isConnected(x, y)
   }
 
   isChild (x: Rule, y: Rule): boolean {
-    return this.buildState.isChild(x, y)
+    return this.state.isChild(x, y)
   }
 
   async getResolvedFile (filePath: string, reference?: File | string): Promise<?File> {
@@ -161,54 +161,54 @@ export default class BuildStateConsumer {
 
   // EventEmmitter proxy
   addListener (eventName: string, listener: Function) {
-    return this.buildState.addListener(eventName, listener)
+    return this.state.addListener(eventName, listener)
   }
 
   emit (eventName: string, ...args: Array<any>) {
-    return this.buildState.emit(eventName, ...args)
+    return this.state.emit(eventName, ...args)
   }
 
   eventNames () {
-    return this.buildState.eventNames()
+    return this.state.eventNames()
   }
 
   getMaxListeners () {
-    return this.buildState.eventNames()
+    return this.state.eventNames()
   }
 
   listenerCount (eventName: string) {
-    return this.buildState.listenerCount(eventName)
+    return this.state.listenerCount(eventName)
   }
 
   listeners (eventName: string) {
-    return this.buildState.listeners(eventName)
+    return this.state.listeners(eventName)
   }
 
   on (eventName: string, listener: Function) {
-    return this.buildState.on(eventName, listener)
+    return this.state.on(eventName, listener)
   }
 
   once (eventName: string, listener: Function) {
-    return this.buildState.once(eventName, listener)
+    return this.state.once(eventName, listener)
   }
 
   prependListener (eventName: string, listener: Function) {
-    return this.buildState.prependListener(eventName, listener)
+    return this.state.prependListener(eventName, listener)
   }
 
   prependOnceListener (eventName: string, listener: Function) {
-    return this.buildState.prependOnceListener(eventName, listener)
+    return this.state.prependOnceListener(eventName, listener)
   }
 
   removeAllListeners (eventName: string) {
-    return this.buildState.removeAllListeners(eventName)
+    return this.state.removeAllListeners(eventName)
   }
 
   removeListener (eventName: string, listener: Function) {
-    return this.buildState.removeListener(eventName, listener)
+    return this.state.removeListener(eventName, listener)
   }
 
   setMaxListeners (n: number) {
-    return this.buildState.setMaxListeners(n)
+    return this.state.setMaxListeners(n)
   }
 }

@@ -1,6 +1,6 @@
 /* @flow */
 
-import BuildState from '../BuildState'
+import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
@@ -10,9 +10,9 @@ export default class DviToSvg extends Rule {
   static fileTypes: Set<string> = new Set(['DeviceIndependentFile'])
   static description: string = 'Converts DVI to SVG using dvisvgm.'
 
-  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return buildState.options.outputFormat === 'svg' &&
-      await super.appliesToFile(buildState, command, phase, jobName, file)
+  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return state.options.outputFormat === 'svg' &&
+      await super.appliesToFile(state, command, phase, jobName, file)
   }
 
   constructCommand () {

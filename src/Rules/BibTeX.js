@@ -2,7 +2,7 @@
 
 import path from 'path'
 
-import BuildState from '../BuildState'
+import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
@@ -15,8 +15,8 @@ export default class BibTeX extends Rule {
   input: ?File
   hasRun: boolean
 
-  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(buildState, command, phase, jobName, file) &&
+  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return await super.appliesToFile(state, command, phase, jobName, file) &&
       !!file.value && !!file.value.bibdata
   }
 

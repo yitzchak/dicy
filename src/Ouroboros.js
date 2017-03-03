@@ -3,18 +3,18 @@
 import path from 'path'
 import readdir from 'readdir-enhanced'
 
-import BuildState from './BuildState'
-import BuildStateConsumer from './BuildStateConsumer'
+import State from './State'
+import StateConsumer from './StateConsumer'
 import File from './File'
 import Rule from './Rule'
 
 import type { Action, Command, Option, Phase, RuleInfo } from './types'
 
-export default class Builder extends BuildStateConsumer {
+export default class Ouroboros extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
-    const schema = await Builder.getOptionDefinitions()
-    const buildState = await BuildState.create(filePath, options, schema)
-    const builder = new Builder(buildState)
+    const schema = await Ouroboros.getOptionDefinitions()
+    const state = await State.create(filePath, options, schema)
+    const builder = new Ouroboros(state)
 
     await builder.initialize()
 
@@ -24,7 +24,7 @@ export default class Builder extends BuildStateConsumer {
   async initialize () {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
     const entries: Array<string> = await readdir.async(ruleClassPath)
-    this.buildState.ruleClasses = entries
+    this.state.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
   }
 
@@ -32,7 +32,7 @@ export default class Builder extends BuildStateConsumer {
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
       for (const jobName of jobNames) {
-        const rule = await ruleClass.analyzePhase(this.buildState, command, phase, jobName)
+        const rule = await ruleClass.analyzePhase(this.state, command, phase, jobName)
         if (rule) {
           await this.addRule(rule)
         }
@@ -49,7 +49,7 @@ export default class Builder extends BuildStateConsumer {
       for (const ruleClass: Class<Rule> of this.ruleClasses) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          const rule = await ruleClass.analyzeFile(this.buildState, command, phase, jobName, file)
+          const rule = await ruleClass.analyzeFile(this.state, command, phase, jobName, file)
           if (rule) {
             await this.addRule(rule)
           }

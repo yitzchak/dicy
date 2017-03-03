@@ -1,6 +1,6 @@
 /* @flow */
 
-import BuildState from '../BuildState'
+import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
@@ -10,9 +10,9 @@ export default class PsToPdf extends Rule {
   static fileTypes: Set<string> = new Set(['PostScript'])
   static description: string = 'Converts PS to PDF using ps2pdf.'
 
-  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return buildState.options.outputFormat === 'pdf' &&
-      await super.appliesToFile(buildState, command, phase, jobName, file)
+  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return state.options.outputFormat === 'pdf' &&
+      await super.appliesToFile(state, command, phase, jobName, file)
   }
 
   constructCommand () {

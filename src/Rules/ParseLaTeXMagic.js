@@ -20,7 +20,7 @@ export default class ParseLaTeXMagic extends Rule {
       names: ['jobName', 'name', 'value'],
       patterns: [/^%\s*!T[eE]X\s+(?:([^:]+)\s*:\s*)?(\w+)\s*=\s*(.*)$/],
       evaluate: (reference, groups) => {
-        const schema = this.buildState.optionSchema.get(groups.name)
+        const schema = this.state.optionSchema.get(groups.name)
         let value = groups.value.trim()
 
         if (schema) {

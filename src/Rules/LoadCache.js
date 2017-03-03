@@ -28,13 +28,13 @@ export default class LoadCache extends Rule {
 
     if (cache.files) {
       for (const filePath in cache.files) {
-        await this.buildState.getFile(filePath, cache.files[filePath])
+        await this.state.getFile(filePath, cache.files[filePath])
       }
     }
 
     if (cache.rules) {
       for (const rule: RuleCache of cache.rules) {
-        await this.buildState.addCachedRule(rule)
+        await this.state.addCachedRule(rule)
       }
     }
 

@@ -8,7 +8,7 @@ import path from 'path'
 import program from 'commander'
 import cliui from 'cliui'
 
-import { Builder, File } from './main'
+import { Ouroboros, File } from './main'
 
 const ui = cliui({ width: 80 })
 
@@ -45,8 +45,8 @@ const command = async (inputs, env) => {
 
   for (const filePath of inputs) {
     const events = []
-    const builder = await Builder.create(path.resolve(filePath), options)
-    builder
+    const ouroboros = await Ouroboros.create(path.resolve(filePath), options)
+    ouroboros
       .on('log', event => {
         const nameText = event.name ? `[${event.name}] ` : ''
         const typeText = event.category ? `${event.category}: ` : ''
@@ -80,13 +80,13 @@ const command = async (inputs, env) => {
       })
 
     for (const type of saveEvents) {
-      builder.on(type, event => { events.push(event) })
+      ouroboros.on(type, event => { events.push(event) })
     }
 
-    await builder.run(...commands)
+    await ouroboros.run(...commands)
 
     if (saveEvents.length !== 0) {
-      const eventFilePath = builder.resolvePath('$dir/$name-events.yaml')
+      const eventFilePath = ouroboros.resolvePath('$dir/$name-events.yaml')
       await File.safeDump(eventFilePath, { types: saveEvents, events })
     }
   }
@@ -96,7 +96,7 @@ program
   .version('0.0.0')
   .description('An experimental circular builder for LaTeX')
 
-Builder.getOptionDefinitions().then(definitions => {
+Ouroboros.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const name in definitions) {
       const option = definitions[name]
@@ -187,8 +187,8 @@ Builder.getOptionDefinitions().then(definitions => {
     .option('--command <command>', 'List only rules that apply to a specific command.', null)
     .action(async (env) => {
       const { command } = cloneOptions(env.opts())
-      const builder = await Builder.create('foo.tex')
-      ui.div(builder.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
+      const ouroboros = await Ouroboros.create('foo.tex')
+      ui.div(ouroboros.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
       console.log(ui.toString())
     })
 

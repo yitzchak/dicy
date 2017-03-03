@@ -60,7 +60,7 @@ export default class Clean extends Rule {
     }
 
     for (const file of files.values()) {
-      await this.buildState.deleteFile(file, this.jobName)
+      await this.state.deleteFile(file, this.jobName)
     }
 
     for (const filePath of directories) {

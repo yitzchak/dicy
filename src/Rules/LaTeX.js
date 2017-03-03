@@ -2,7 +2,7 @@
 
 import path from 'path'
 
-import BuildState from '../BuildState'
+import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
@@ -16,9 +16,9 @@ export default class LaTeX extends Rule {
   static fileTypes: Set<string> = new Set(['LaTeX'])
   static description: string = 'Runs the required latex variant.'
 
-  static async appliesToFile (buildState: BuildState, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(buildState, command, phase, jobName, file) &&
-      (file.filePath === buildState.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
+  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return await super.appliesToFile(state, command, phase, jobName, file) &&
+      (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
   }
 
   async initialize () {

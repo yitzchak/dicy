@@ -7,7 +7,7 @@ import Rule from './Rule'
 
 import type { Command, FileCache, RuleCache, Phase, Option } from './types'
 
-export default class BuildState extends EventEmitter {
+export default class State extends EventEmitter {
   filePath: string
   rootPath: string
   files: Map<string, File> = new Map()
@@ -31,11 +31,11 @@ export default class BuildState extends EventEmitter {
   }
 
   static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}) {
-    const buildState = new BuildState(filePath, options, schema)
+    const state = new State(filePath, options, schema)
 
-    await buildState.getFile(filePath)
+    await state.getFile(filePath)
 
-    return buildState
+    return state
   }
 
   normalizePath (filePath: string): string {

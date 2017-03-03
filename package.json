@@ -18,7 +18,7 @@
     "flow-typed": "flow-typed update"
   },
   "bin": {
-    "ouroboros": "lib/ouroboros.js"
+    "ouroboros": "lib/ouroboros-cli.js"
   },
   "repository": {
     "type": "git",
