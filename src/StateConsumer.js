@@ -58,6 +58,21 @@ export default class StateConsumer {
     return this.state.rules.values()
   }
 
+  get targets (): Array<string> {
+    const targets: Set<string> = new Set()
+
+    for (const rule of this.rules) {
+      for (const file of rule.outputs.values()) {
+        const ext = path.extname(file.filePath)
+        if (ext === `.${this.options.outputFormat}` || (ext === '.xdv' && this.options.outputFormat === 'dvi')) {
+          targets.add(file.filePath)
+        }
+      }
+    }
+
+    return Array.from(targets.values())
+  }
+
   async addRule (rule: Rule): Promise<void> {
     await this.state.addRule(rule)
   }
