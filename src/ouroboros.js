@@ -49,7 +49,7 @@ const command = async (inputs, env) => {
     builder
       .on('log', event => {
         const nameText = event.name ? `[${event.name}] ` : ''
-        const typeText = event.type ? `${event.type}: ` : ''
+        const typeText = event.category ? `${event.category}: ` : ''
         const text = `${nameText}${typeText}${event.text.replace('\n', ' ')}`
         switch (event.severity) {
           case 'error':
