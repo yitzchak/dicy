@@ -5,7 +5,7 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, FileCache, RuleCache, Phase, Option } from './types'
+import type { Command, FileCache, RuleCache, Phase, Option, LegacyOption } from './types'
 
 export default class State extends EventEmitter {
   filePath: string
@@ -13,11 +13,12 @@ export default class State extends EventEmitter {
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
-  optionSchema: Map<string, Option> = new Map()
+  optionSchema: Map<string, Option | LegacyOption> = new Map()
   distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
+  cacheTimeStamp: Date
 
-  constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}) {
+  constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option | LegacyOption } = {}) {
     super()
     const resolveFilePath = path.resolve(filePath)
     this.filePath = path.basename(resolveFilePath)
@@ -27,10 +28,10 @@ export default class State extends EventEmitter {
       this.optionSchema.set(name, option)
       if (option.defaultValue) this.options[name] = option.defaultValue
     }
-    Object.assign(this.options, options)
+    this.setOptions(options)
   }
 
-  static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option } = {}) {
+  static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option | LegacyOption } = {}) {
     const state = new State(filePath, options, schema)
 
     await state.getFile(filePath)
@@ -146,7 +147,18 @@ export default class State extends EventEmitter {
   }
 
   setOptions (options: Object) {
-    Object.assign(this.options, options)
+    for (const name in options) {
+      const schema = this.optionSchema.get(name)
+      if (!schema) continue
+
+      const value = options[name]
+
+      if (schema.status === 'legacy') {
+        this.options[schema.name] = schema.valueMap ? schema.valueMap.get(value) : value
+      } else {
+        this.options[name] = value
+      }
+    }
   }
 
   getOption (name: string, jobName: ?string): ?any {

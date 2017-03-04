@@ -100,6 +100,7 @@ Ouroboros.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const name in definitions) {
       const option = definitions[name]
+      if (option.status === 'legacy') continue
       const commands = pc.name().split(',')
 
       if (!option.commands.some(command => commands.includes(command))) continue

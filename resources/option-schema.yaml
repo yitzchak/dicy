@@ -6,7 +6,7 @@ cleanPatterns:
   description: Patterns to use when executing a clean command.
   type: strings
   defaultValue:
-    - '$outdir/$job!(:outext|.synctex.gz|.tex)'
+    - '$outdir/$job!($outext|.synctex.gz|.tex)'
     - '/$outdir/_minted-$job/*'
   commands:
     - clean
@@ -18,6 +18,17 @@ deepClean:
   defaultValue: false
   commands:
     - clean
+enableShellEscape:
+  status: legacy
+  type: boolean
+  name: shellEscape
+  valueMap:
+    false: disabled
+    true: enabled
+enableSynctex:
+  status: legacy
+  type: boolean
+  name: synctex
 engine:
   description: >-
     'LaTeX engine, e.g. latex, pdflatex or uplatex [default: pdflatex]'
@@ -54,6 +65,9 @@ jobNames:
   commands:
     - build
     - clean
+loggingLevel:
+  status: legacy
+  name: severity
 phaseCycles:
   description: maximum number of evaluation cycles in each phase
   type: number

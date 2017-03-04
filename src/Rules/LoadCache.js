@@ -22,6 +22,10 @@ export default class LoadCache extends Rule {
   }
 
   async run () {
+    const timeStamp: Date = await File.getModifiedTime(this.cacheFilePath)
+    if (this.state.cacheTimeStamp && this.state.cacheTimeStamp >= timeStamp) return true
+
+    this.state.cacheTimeStamp = timeStamp
     const cache: ?Cache = await File.safeLoad(this.cacheFilePath)
 
     if (!cache) return true

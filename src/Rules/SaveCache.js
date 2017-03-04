@@ -72,6 +72,7 @@ export default class SaveCache extends Rule {
     }
 
     await File.safeDump(this.cacheFilePath, cache)
+    this.state.cacheTimeStamp = await File.getModifiedTime(this.cacheFilePath)
 
     return true
   }
