@@ -13,12 +13,9 @@
   "scripts": {
     "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
     "compile": "babel -d lib/ src/",
-    "ouroboros": "node lib/ouroboros.js",
     "lint": "eslint --color src spec",
-    "flow-typed": "flow-typed update"
-  },
-  "bin": {
-    "ouroboros": "lib/ouroboros-cli.js"
+    "flow-typed": "flow-typed update",
+    "prepublish": "npm run compile"
   },
   "repository": {
     "type": "git",
@@ -33,12 +30,8 @@
   "license": "MIT",
   "dependencies": {
     "any-shell-escape": "^0.1.1",
-    "babel-polyfill": "^6.23.0",
     "babel-runtime": "^6.23.0",
-    "chalk": "^1.1.3",
-    "cliui": "^3.2.0",
     "command-join": "^2.0.0",
-    "commander": "^2.9.0",
     "fast-glob": "^1.0.0",
     "fs-extra": "^2.0.0",
     "js-yaml": "^3.8.1",
