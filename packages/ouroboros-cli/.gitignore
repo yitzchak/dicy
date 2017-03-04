@@ -1,0 +1,5 @@
+node_modules
+/lib
+output
+npm-debug.log
+*-cache.yaml

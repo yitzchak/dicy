@@ -1,0 +1,105 @@
+{
+  "name": "ouroboros-cli",
+  "version": "0.0.0",
+  "description": "Command line interface to the circular LaTeX builder Ouroboros.",
+  "keywords": [
+    "latex",
+    "knitr",
+    "sage",
+    "biblatex"
+  ],
+  "bugs": "https://github.com/yitzchak/ouroboros-cli/issues",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
+    "compile": "babel -d lib/ src/",
+    "lint": "eslint --color src spec",
+    "flow-typed": "flow-typed update",
+    "prepublish": "npm run compile"
+  },
+  "bin": {
+    "ouroboros": "lib/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yitzchak/ouroboros-cli.git"
+  },
+  "author": "Tarn Burton <twburton@gmail.com>",
+  "contributors": [],
+  "homepage": "https://yitzchak.github.io/ouroboros-cli/",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "chalk": "^1.1.3",
+    "cliui": "^3.2.0",
+    "commander": "^2.9.0",
+    "lodash": "^4.17.4",
+    "ouroboros": "file:../ouroboros"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-syntax-async-generators": "^6.13.0",
+    "babel-plugin-transform-class-properties": "^6.23.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-plugin-transform-strict-mode": "^6.22.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-latest": "^6.22.0",
+    "babel-register": "^6.23.0",
+    "eslint": "^3.16.1",
+    "eslint-config-standard": "^7.0.0",
+    "eslint-plugin-flowtype": "^2.30.0",
+    "eslint-plugin-flowtype-errors": "^3.0.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.0",
+    "flow-bin": "^0.40.0",
+    "flow-typed": "^2.0.0",
+    "jasmine": "^2.5.3"
+  },
+  "babel": {
+    "presets": [
+      "latest",
+      "flow"
+    ],
+    "plugins": [
+      "transform-runtime",
+      "transform-class-properties",
+      "transform-strict-mode",
+      "syntax-async-generators",
+      "transform-object-rest-spread"
+    ]
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": [
+      "standard",
+      "plugin:flowtype/recommended"
+    ],
+    "plugins": [
+      "flowtype",
+      "flowtype-errors"
+    ],
+    "env": {
+      "jasmine": true,
+      "node": true
+    },
+    "rules": {
+      "flowtype-errors/show-errors": 2,
+      "flowtype/delimiter-dangle": [
+        2,
+        "never"
+      ],
+      "flowtype/require-valid-file-annotation": [
+        2,
+        "always",
+        {
+          "annotationStyle": "block"
+        }
+      ]
+    }
+  }
+}
