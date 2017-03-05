@@ -98,18 +98,16 @@ program
 
 Ouroboros.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
-    for (const name in definitions) {
-      const option = definitions[name]
-      if (option.status === 'legacy') continue
+    for (const option of definitions) {
       const commands = pc.name().split(',')
 
       if (!option.commands.some(command => commands.includes(command))) continue
 
       const prefix = (option.type === 'boolean' && option.defaultValue) ? 'no-' : ''
-      const flagList = [].concat(option.aliases || [], name)
+      const flagList = [].concat((option.aliases || []).filter(alias => alias.length === 1), option.name)
         .map(name => name.length === 1 ? `-${name}` : `--${prefix}${_.kebabCase(name)}`)
         .join(', ')
-      const flags = (option.type === 'boolean') ? flagList : `${flagList} <${name}>`
+      const flags = (option.type === 'boolean') ? flagList : `${flagList} <${option.name}>`
 
       switch (option.type) {
         case 'string':
