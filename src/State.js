@@ -121,7 +121,7 @@ export default class State extends EventEmitter {
     return file
   }
 
-  async deleteFile (file: File, jobName: ?string) {
+  async deleteFile (file: File, jobName: ?string, unlink: boolean = true) {
     const invalidRules = []
 
     for (const rule of this.rules.values()) {
@@ -140,7 +140,7 @@ export default class State extends EventEmitter {
 
     if (jobName) file.jobNames.delete(jobName)
     if (file.jobNames.size === 0) {
-      await file.delete()
+      if (unlink) await file.delete()
       this.files.delete(file.filePath)
       this.emit('fileDeleted', { type: 'fileDeleted', file: file.filePath })
     }

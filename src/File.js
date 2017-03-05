@@ -318,6 +318,10 @@ export default class File {
     })
   }
 
+  canRead (): Promise<boolean> {
+    return File.canRead(this.realFilePath)
+  }
+
   static getModifiedTime (filePath: string): Promise<Date> {
     return new Promise((resolve, reject) => {
       fs.stat(filePath, (error, stat) => resolve(error ? new Date() : stat.mtime))

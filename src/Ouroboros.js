@@ -163,6 +163,15 @@ export default class Ouroboros extends StateConsumer {
 
   static async getOptionDefinitions (): Promise<{ [name: string]: Option | LegacyOption }> {
     const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
-    return File.load(filePath)
+    const definitions = await File.load(filePath)
+
+    for (const name in definitions) {
+      const schema = definitions[name]
+      if (schema.valueMap) {
+        schema.valueMap = new Map(schema.valueMap)
+      }
+    }
+
+    return definitions
   }
 }

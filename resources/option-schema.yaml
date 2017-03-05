@@ -22,9 +22,7 @@ enableShellEscape:
   status: legacy
   type: boolean
   name: shellEscape
-  valueMap:
-    false: disabled
-    true: enabled
+  valueMap: [[false, disabled], [true, enabled]]
 enableSynctex:
   status: legacy
   type: boolean
