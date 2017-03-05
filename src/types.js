@@ -145,18 +145,11 @@ export type Event = LogEvent | ActionEvent | CommandEvent | FileAddedEvent |
   OutputAddedEvent
 
 export type Option = {
-  status: 'active',
+  name: string,
   type: 'string' | 'strings' | 'number' | 'numbers' | 'boolean',
   defaultValue?: any,
   description: string,
   values?: Array<any>,
   aliases?: Array<string>,
   commands: Array<string>
-}
-
-export type LegacyOption = {
-  status: 'legacy',
-  type: 'string' | 'strings' | 'number' | 'numbers' | 'boolean',
-  name: string,
-  valueMap?: Map<any, any>
 }

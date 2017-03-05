@@ -84,13 +84,15 @@ export default class LaTeX extends Rule {
     }
 
     switch (this.options.shellEscape) {
-      case 'disable':
+      case false:
+      case 'disabled':
         args.push('-no-shell-escape')
         break
       case 'restricted':
         args.push('-shell-restricted')
         break
-      case 'enable':
+      case true:
+      case 'enabled':
         args.push('-shell-escape')
         break
     }

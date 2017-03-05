@@ -13,7 +13,7 @@ export default class VerifyFileExistance extends Rule {
     const files = []
 
     for (const file of this.files) {
-      if (!await file.canRead()) files.push(file)
+      if (!file.virtual && !await file.canRead()) files.push(file)
     }
 
     for (const jobName of this.options.jobNames) {

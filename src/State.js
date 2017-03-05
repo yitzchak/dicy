@@ -5,7 +5,7 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, FileCache, RuleCache, Phase, Option, LegacyOption } from './types'
+import type { Command, FileCache, RuleCache, Phase, Option } from './types'
 
 export default class State extends EventEmitter {
   filePath: string
@@ -13,25 +13,27 @@ export default class State extends EventEmitter {
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
-  optionSchema: Map<string, Option | LegacyOption> = new Map()
+  optionSchema: Map<string, Option> = new Map()
   distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
 
-  constructor (filePath: string, options: Object = {}, schema: { [name: string]: Option | LegacyOption } = {}) {
+  constructor (filePath: string, options: Object = {}, schema: Array<Option> = []) {
     super()
     const resolveFilePath = path.resolve(filePath)
     this.filePath = path.basename(resolveFilePath)
     this.rootPath = path.dirname(resolveFilePath)
-    for (const name in schema) {
-      const option = schema[name]
-      this.optionSchema.set(name, option)
-      if (option.defaultValue) this.options[name] = option.defaultValue
+    for (const option of schema) {
+      this.optionSchema.set(option.name, option)
+      for (const alias of option.aliases || []) {
+        this.optionSchema.set(alias, option)
+      }
+      if (option.defaultValue) this.options[option.name] = option.defaultValue
     }
     this.setOptions(options)
   }
 
-  static async create (filePath: string, options: Object = {}, schema: { [name: string]: Option | LegacyOption } = {}) {
+  static async create (filePath: string, options: Object = {}, schema: Array<Option> = []) {
     const state = new State(filePath, options, schema)
 
     await state.getFile(filePath)
@@ -151,13 +153,7 @@ export default class State extends EventEmitter {
       const schema = this.optionSchema.get(name)
       if (!schema) continue
 
-      const value = options[name]
-
-      if (schema.status === 'legacy') {
-        this.options[schema.name] = schema.valueMap ? schema.valueMap.get(value) : value
-      } else {
-        this.options[name] = value
-      }
+      this.options[schema.name] = options[name]
     }
   }
 

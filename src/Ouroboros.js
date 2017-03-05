@@ -8,7 +8,7 @@ import StateConsumer from './StateConsumer'
 import File from './File'
 import Rule from './Rule'
 
-import type { Action, Command, Option, Phase, RuleInfo, LegacyOption } from './types'
+import type { Action, Command, Option, Phase, RuleInfo } from './types'
 
 export default class Ouroboros extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
@@ -161,17 +161,15 @@ export default class Ouroboros extends StateConsumer {
     }
   }
 
-  static async getOptionDefinitions (): Promise<{ [name: string]: Option | LegacyOption }> {
+  static async getOptionDefinitions (): Promise<Array<Option>> {
     const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
-    const definitions = await File.load(filePath)
-
-    for (const name in definitions) {
-      const schema = definitions[name]
-      if (schema.valueMap) {
-        schema.valueMap = new Map(schema.valueMap)
-      }
+    const schema = await File.load(filePath)
+    const options = []
+    for (const name in schema) {
+      const option = schema[name]
+      option.name = name
+      options.push(option)
     }
-
-    return definitions
+    return options
   }
 }

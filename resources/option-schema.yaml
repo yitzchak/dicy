@@ -18,16 +18,11 @@ deepClean:
   defaultValue: false
   commands:
     - clean
-enableShellEscape:
-  status: legacy
-  type: boolean
-  name: shellEscape
-  valueMap: [[false, disabled], [true, enabled]]
-enableSynctex:
-  status: legacy
-  type: boolean
-  name: synctex
 engine:
+  aliases:
+    - e
+    - customEngine
+    - program
   description: >-
     'LaTeX engine, e.g. latex, pdflatex or uplatex [default: pdflatex]'
   type: string
@@ -51,6 +46,7 @@ ignoreCache:
     - build
 jobName:
   aliases:
+    - j
     - jobname
   description: job name used for latex
   type: string
@@ -58,14 +54,13 @@ jobName:
     - build
     - clean
 jobNames:
+  aliases:
+    - jobnames
   description: job names used for latex
   type: strings
   commands:
     - build
     - clean
-loggingLevel:
-  status: legacy
-  name: severity
 phaseCycles:
   description: maximum number of evaluation cycles in each phase
   type: number
@@ -75,6 +70,10 @@ phaseCycles:
     - clean
     - report
 outputDirectory:
+  aliases:
+    - o
+    - output
+    - output_directory
   description: name of directory for output files
   type: string
   commands:
@@ -96,6 +95,7 @@ outputFormat:
 severity:
   aliases:
     - s
+    - loggingLevel
   description: severity of messages to display [trace, info, warning (default), error]
   type: string
   defaultValue: warning
@@ -109,15 +109,21 @@ severity:
     - clean
     - report
 shellEscape:
+  aliases:
+    - enableShellEscape
   description: enable shell escape (write18) [disable, restricted, enable]
   type: string
   values:
+    - false
     - disabled
     - restricted
     - enabled
+    - true
   commands:
     - build
 synctex:
+  aliases:
+    - enableSynctex
   description: generate SyncTeX annotations
   type: boolean
   defaultValue: false
