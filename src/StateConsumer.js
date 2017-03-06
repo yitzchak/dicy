@@ -9,7 +9,7 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 
-import type { Message } from './types'
+import type { globOptions, Message } from './types'
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
@@ -97,11 +97,14 @@ export default class StateConsumer {
     return path.normalize(filePath.replace(VARIABLE_PATTERN, (match, name) => properties[name]))
   }
 
-  async globPath (pattern: string, reference?: File | string): Promise<Array<string>> {
+  async globPath (pattern: string, reference?: File | string, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
     try {
       return await fastGlob(this.resolvePath(pattern, reference), {
         cwd: this.rootPath,
-        bashNative: []
+        bashNative: [],
+        onlyFiles: types === 'files',
+        onlyDirs: types === 'directories',
+        ignore: ignorePattern
       })
     } catch (error) {}
 

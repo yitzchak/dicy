@@ -14,7 +14,12 @@ export default class CreateOutputTree extends Rule {
 
   async run () {
     if (this.options.outputDirectory) {
-      await File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory))
+      const directories = await this.globPath('**/*', undefined, {
+        types: 'directories',
+        ignorePattern: `${this.options.outputDirectory}/**`
+      })
+      directories.unshift('.')
+      await Promise.all(directories.map(directory => File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory, directory))))
     }
     return true
   }
