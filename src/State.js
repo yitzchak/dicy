@@ -17,6 +17,7 @@ export default class State extends EventEmitter {
   distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
+  processes: Set<number> = new Set()
 
   constructor (filePath: string, options: Object = {}, schema: Array<Option> = []) {
     super()

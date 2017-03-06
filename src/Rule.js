@@ -1,6 +1,5 @@
 /* @flow */
 
-import childProcess from 'child_process'
 import commandJoin from 'command-join'
 
 import State from './State'
@@ -8,14 +7,6 @@ import File from './File'
 import StateConsumer from './StateConsumer'
 
 import type { Action, Command, Phase } from './types'
-
-function execute (command: string, options: Object): Promise<Object> {
-  return new Promise((resolve, reject) => {
-    childProcess.exec(command, options, (error, stdout, stderr) => {
-      resolve({ error, stdout, stderr })
-    })
-  })
-}
 
 export default class Rule extends StateConsumer {
   static fileTypes: Set<string> = new Set()
@@ -164,7 +155,7 @@ export default class Rule extends StateConsumer {
       rule: this.id,
       command
     })
-    const { stdout, stderr, error } = await execute(command, options)
+    const { stdout, stderr, error } = await this.executeChildProcess(command, options)
     if (error) {
       this.error(error.toString())
       success = false

@@ -1,5 +1,7 @@
 /* @flow */
 
+import childProcess from 'child_process'
+import kill from 'tree-kill'
 import fastGlob from 'fast-glob'
 import path from 'path'
 
@@ -225,5 +227,22 @@ export default class StateConsumer {
 
   setMaxListeners (n: number) {
     return this.state.setMaxListeners(n)
+  }
+
+  executeChildProcess (command: string, options: Object): Promise<Object> {
+    return new Promise((resolve, reject) => {
+      const { pid } = childProcess.exec(command, options, (error, stdout, stderr) => {
+        this.state.processes.delete(pid)
+        resolve({ error, stdout, stderr })
+      })
+      this.state.processes.add(pid)
+    })
+  }
+
+  killChildProcesses () {
+    for (const pid of this.state.processes.values()) {
+      kill(pid)
+    }
+    this.state.processes.clear()
   }
 }
