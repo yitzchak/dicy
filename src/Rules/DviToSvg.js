@@ -19,13 +19,13 @@ export default class DviToSvg extends Rule {
     return [
       'dvisvgm',
       '-o',
-      this.resolvePath('$dir/$name.svg', this.firstParameter),
+      this.resolvePath('$DIR/$NAME.svg', this.firstParameter),
       this.firstParameter.filePath
     ]
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutput('$dir/$name.svg', this.firstParameter)
+    await this.getResolvedOutput('$DIR/$NAME.svg', this.firstParameter)
     return true
   }
 }

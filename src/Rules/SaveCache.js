@@ -14,7 +14,7 @@ export default class SaveCache extends Rule {
   cacheFilePath: string
 
   async initialize () {
-    this.cacheFilePath = this.resolvePath('$dir/$name-cache.yaml')
+    this.cacheFilePath = this.resolvePath('$DIR/$NAME-cache.yaml')
   }
 
   async preEvaluate () {

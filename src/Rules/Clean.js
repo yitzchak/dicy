@@ -22,7 +22,7 @@ export default class Clean extends Rule {
     const directories: Set<string> = new Set()
 
     if (deepClean) {
-      directories.add(this.resolvePath('$name-cache.yaml'))
+      directories.add(this.resolvePath('$NAME-cache.yaml'))
     }
 
     for (const rule of this.rules) {

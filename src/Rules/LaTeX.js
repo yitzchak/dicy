@@ -22,7 +22,7 @@ export default class LaTeX extends Rule {
   }
 
   async initialize () {
-    await this.getResolvedInputs(['$outdir/$job.fls-ParsedLaTeXFileListing', '$outdir/$job.log-ParsedLaTeXLog'])
+    await this.getResolvedInputs(['$OUTDIR/$JOB.fls-ParsedLaTeXFileListing', '$OUTDIR/$JOB.log-ParsedLaTeXLog'])
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -42,8 +42,8 @@ export default class LaTeX extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedInput('$outdir/$job.aux')
-    await this.getResolvedOutputs(['$outdir/$job.aux', '$outdir/$job.fls', '$outdir/$job.log', '$outdir/$job.synctex.gz'])
+    await this.getResolvedInput('$OUTDIR/$JOB.aux')
+    await this.getResolvedOutputs(['$OUTDIR/$JOB.aux', '$OUTDIR/$JOB.fls', '$OUTDIR/$JOB.log', '$OUTDIR/$JOB.synctex.gz'])
     return true
   }
 

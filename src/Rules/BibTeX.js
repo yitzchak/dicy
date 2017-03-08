@@ -21,8 +21,8 @@ export default class BibTeX extends Rule {
   }
 
   async initialize () {
-    await this.getResolvedInput('$outdir/$job.log-ParsedLaTeXLog')
-    this.input = await this.getResolvedInput('$dir/$name.aux', this.firstParameter)
+    await this.getResolvedInput('$OUTDIR/$JOB.log-ParsedLaTeXLog')
+    this.input = await this.getResolvedInput('$DIR/$NAME.aux', this.firstParameter)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -68,7 +68,7 @@ export default class BibTeX extends Rule {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 
-    await this.getResolvedOutputs(['$dir/$name.bbl', '$dir/$name.blg'], this.firstParameter)
+    await this.getResolvedOutputs(['$DIR/$NAME.bbl', '$DIR/$NAME.blg'], this.firstParameter)
 
     while ((match = databasePattern.exec(stdout)) !== null) {
       await this.getInput(path.resolve(this.rootPath, match[1]))

@@ -9,7 +9,7 @@ export default class ParseOptionsFile extends Rule {
   static description: string = 'Parses the YAML option file.'
 
   async initialize () {
-    await this.getResolvedInputs(['latex.yaml', '$name.yaml'])
+    await this.getResolvedInputs(['$HOME/.ouroboros.yaml', 'ouroboros.yaml', '$NAME.yaml'])
   }
 
   async preEvaluate () {
@@ -18,7 +18,7 @@ export default class ParseOptionsFile extends Rule {
 
   async run () {
     for (const input of this.inputs.values()) {
-      const output = await this.getResolvedOutput('$dir/$base-ParsedYAML', input)
+      const output = await this.getResolvedOutput('$DIR/$BASE-ParsedYAML', input)
       if (output) {
         output.value = await input.safeLoad()
       }

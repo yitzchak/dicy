@@ -85,7 +85,7 @@ export default class GraphDependencies extends Rule {
 
     endGraph()
 
-    const filePath = this.resolvePath('$name-graph.dot')
+    const filePath = this.resolvePath('$NAME-graph.dot')
     await File.write(filePath, lines.join('\n'))
     await this.getOutput(filePath)
 
