@@ -13,13 +13,14 @@ export default class State extends EventEmitter {
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: Object = {}
+  defaultOptions: Object = {}
   optionSchema: Map<string, Option> = new Map()
   distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set()
 
-  constructor (filePath: string, options: Object = {}, schema: Array<Option> = []) {
+  constructor (filePath: string, schema: Array<Option> = []) {
     super()
     const resolveFilePath = path.resolve(filePath)
     this.filePath = path.basename(resolveFilePath)
@@ -29,13 +30,13 @@ export default class State extends EventEmitter {
       for (const alias of option.aliases || []) {
         this.optionSchema.set(alias, option)
       }
-      if (option.defaultValue) this.options[option.name] = option.defaultValue
+      if (option.defaultValue) this.defaultOptions[option.name] = option.defaultValue
     }
-    this.setOptions(options)
+    this.assignOptions(this.defaultOptions)
   }
 
-  static async create (filePath: string, options: Object = {}, schema: Array<Option> = []) {
-    const state = new State(filePath, options, schema)
+  static async create (filePath: string, schema: Array<Option> = []) {
+    const state = new State(filePath, schema)
 
     await state.getFile(filePath)
 
@@ -149,13 +150,33 @@ export default class State extends EventEmitter {
     }
   }
 
-  setOptions (options: Object) {
-    for (const name in options) {
-      const schema = this.optionSchema.get(name)
-      if (!schema) continue
-
-      this.options[schema.name] = options[name]
+  assignSubOptions (to: Object, from: Object) {
+    for (const name in from) {
+      if (from.hasOwnProperty(name)) {
+        const value = from[name]
+        if (typeof value !== 'object' || Array.isArray(value)) {
+          const schema = this.optionSchema.get(name)
+          if (schema) {
+            to[schema.name] = value
+          }
+        } else {
+          if (!(name in to)) to[name] = {}
+          this.assignSubOptions(to[name], value)
+        }
+      }
     }
+  }
+
+  assignOptions (options: Object) {
+    this.assignSubOptions(this.options, options)
+  }
+
+  resetOptions () {
+    for (const name of Object.getOwnPropertyNames(this.options)) {
+      delete this.options[name]
+    }
+
+    this.assignOptions(this.defaultOptions)
   }
 
   getOption (name: string, jobName: ?string): ?any {
@@ -163,7 +184,7 @@ export default class State extends EventEmitter {
       if ('jobName' in this.options) return [this.options.jobName]
       if ('jobNames' in this.options) return this.options.jobNames
       if ('jobs' in this.options) return Object.keys(this.options.jobs)
-      return []
+      return [undefined]
     }
 
     if (jobName) {

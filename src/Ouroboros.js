@@ -13,8 +13,11 @@ import type { Action, Command, Option, Phase, RuleInfo } from './types'
 export default class Ouroboros extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
     const schema = await Ouroboros.getOptionDefinitions()
-    const state = await State.create(filePath, options, schema)
+    const state = await State.create(filePath, schema)
     const builder = new Ouroboros(state)
+
+    const instance = await state.getFile('ouroboros-instance.yaml-ParsedYAML')
+    if (instance) instance.value = options
 
     await builder.initialize()
 

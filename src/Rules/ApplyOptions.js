@@ -11,17 +11,21 @@ export default class ApplyOptions extends Rule {
   static ignoreJobName: boolean = true
   static description: string = 'Apply options from YAML file and any LaTeX magic comments found in source file.'
 
-  async initialize () {
-    await this.getResolvedInputs(['latex.yaml-ParsedYAML', '$NAME.yaml-ParsedYAML', '$BASE-ParsedLaTeXMagic'])
-  }
-
   async run () {
-    for (const file: File of this.inputs.values()) {
+    const inputs = await this.getResolvedInputs([
+      '$HOME/.ouroboros.yaml-ParsedYAML',
+      'ouroboros.yaml-ParsedYAML',
+      '$NAME.yaml-ParsedYAML',
+      '$BASE-ParsedLaTeXMagic',
+      'ouroboros-instance.yaml-ParsedYAML'])
+
+    this.state.resetOptions()
+    for (const file: File of inputs) {
       if (file.value) {
-        delete file.value.test
-        Object.assign(this.state.options, file.value)
+        this.state.assignOptions(file.value)
       }
     }
+
     return true
   }
 }

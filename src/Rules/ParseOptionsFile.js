@@ -8,11 +8,8 @@ export default class ParseOptionsFile extends Rule {
   static commands: Set<Command> = new Set(['load'])
   static description: string = 'Parses the YAML option file.'
 
-  async initialize () {
-    await this.getResolvedInputs(['$HOME/.ouroboros.yaml', 'ouroboros.yaml', '$NAME.yaml'])
-  }
-
   async preEvaluate () {
+    await this.getResolvedInputs(['$HOME/.ouroboros.yaml', 'ouroboros.yaml', '$NAME.yaml'])
     if (this.inputs.size === 0) this.actions.delete('run')
   }
 
