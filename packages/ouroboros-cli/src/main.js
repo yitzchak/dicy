@@ -112,19 +112,19 @@ Ouroboros.getOptionDefinitions().then(definitions => {
       switch (option.type) {
         case 'string':
           if (option.values) {
-            pc = pc.option(flags, option.description, new RegExp(`^(${option.values.join('|')})$`), option.defaultValue)
+            pc = pc.option(flags, option.description, new RegExp(`^(${option.values.join('|')})$`))
           } else {
-            pc = pc.option(flags, option.description, option.defaultValue)
+            pc = pc.option(flags, option.description)
           }
           break
         case 'strings':
-          pc = pc.option(flags, option.description, parseStrings, option.defaultValue)
+          pc = pc.option(flags, option.description, parseStrings)
           break
         case 'number':
-          pc = pc.option(flags, option.description, parseNumber, option.defaultValue)
+          pc = pc.option(flags, option.description, parseNumber)
           break
         case 'numbers':
-          pc = pc.option(flags, option.description, parseNumbers, option.defaultValue)
+          pc = pc.option(flags, option.description, parseNumbers)
           break
         case 'boolean':
           pc = pc.option(flags, option.description)
