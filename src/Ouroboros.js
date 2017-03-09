@@ -175,4 +175,19 @@ export default class Ouroboros extends StateConsumer {
     }
     return options
   }
+
+  async updateOptions (options: Object = {}, user: boolean = false): Promise<Object> {
+    const normalizedOptions = {}
+    const filePath = this.resolvePath(user ? '$HOME/.ouroboros.yaml' : '$DIR/$NAME.yaml')
+
+    if (await File.canRead(filePath)) {
+      const currentOptions = await File.safeLoad(filePath)
+      this.state.assignSubOptions(normalizedOptions, currentOptions)
+    }
+
+    this.state.assignSubOptions(normalizedOptions, options)
+    await File.safeDump(filePath, normalizedOptions)
+
+    return normalizedOptions
+  }
 }
