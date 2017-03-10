@@ -19,12 +19,14 @@ export default class State extends EventEmitter {
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set()
+  env: Object
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
     const resolveFilePath = path.resolve(filePath)
-    this.filePath = path.basename(resolveFilePath)
-    this.rootPath = path.dirname(resolveFilePath)
+    const { dir, base, name, ext } = path.parse(resolveFilePath)
+    this.filePath = base
+    this.rootPath = dir
     for (const option of schema) {
       this.optionSchema.set(option.name, option)
       for (const alias of option.aliases || []) {
@@ -33,6 +35,13 @@ export default class State extends EventEmitter {
       if (option.defaultValue) this.defaultOptions[option.name] = option.defaultValue
     }
     this.assignOptions(this.defaultOptions)
+    this.env = {
+      HOME: process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'],
+      DIR: dir,
+      BASE: base,
+      NAME: name,
+      EXT: ext
+    }
   }
 
   static async create (filePath: string, schema: Array<Option> = []) {

@@ -38,6 +38,7 @@ describe('Ouroboros', () => {
 
         // Initialize ouroboros and listen for messages
         ouroboros = await Ouroboros.create(filePath)
+        ouroboros.state.env.HOME = fixturesPath
 
         // Load the event archive
         const eventFilePath = ouroboros.resolvePath(':dir/:name-events.yaml')

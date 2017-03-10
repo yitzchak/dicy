@@ -84,17 +84,23 @@ export default class StateConsumer {
   }
 
   resolvePath (filePath: string, reference?: File | string): string {
-    const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.filePath : (reference || this.filePath))
-    const properties = {
+    const properties = Object.assign({}, this.state.env, {
       OUTDIR: this.options.outputDirectory || '.',
       OUTEXT: `.${this.options.outputFormat}`,
-      JOB: this.jobName || this.options.jobName || name,
-      DIR: (reference instanceof File ? dir : this.rootPath) || '.',
-      HOME: process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'],
-      BASE: base,
-      NAME: name,
-      EXT: ext
+      JOB: this.jobName || this.options.jobName || this.state.env.NAME
+    })
+
+    if (reference) {
+      const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.filePath : reference)
+      Object.assign(properties, {
+        JOB: this.jobName || this.options.jobName || name,
+        DIR: (reference instanceof File ? dir : this.rootPath) || '.',
+        BASE: base,
+        NAME: name,
+        EXT: ext
+      })
     }
+
     return path.normalize(filePath.replace(VARIABLE_PATTERN, (match, name) => properties[name]))
   }
 
