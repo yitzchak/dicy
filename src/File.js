@@ -357,4 +357,8 @@ export default class File {
       fs.copy(from, to, error => error ? reject(error) : resolve())
     })
   }
+
+  copy (to: string): Promise<void> {
+    return File.copy(this.realFilePath, to)
+  }
 }

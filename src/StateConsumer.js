@@ -40,6 +40,20 @@ export default class StateConsumer {
     })
   }
 
+  addTarget (filePath: string) {
+    this.state.targets.add(filePath)
+  }
+
+  addResolvedTarget (filePath: string, reference?: File | string) {
+    this.state.targets.add(this.resolvePath(filePath, reference))
+  }
+
+  addResolvedTargets (filePaths: Array<string>, reference?: File | string) {
+    for (const filePath of filePaths) {
+      this.addResolvedTarget(filePath, reference)
+    }
+  }
+
   get ruleClasses (): Array<Class<Rule>> {
     return this.state.ruleClasses
   }
@@ -73,6 +87,14 @@ export default class StateConsumer {
     }
 
     return Array.from(targets.values())
+  }
+
+  getTargetPaths (): Promise<Array<string>> {
+    return this.state.getTargetPaths()
+  }
+
+  getTargetFiles (): Promise<Array<File>> {
+    return this.state.getTargetFiles()
   }
 
   async addRule (rule: Rule): Promise<void> {

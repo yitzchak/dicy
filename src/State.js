@@ -20,6 +20,7 @@ export default class State extends EventEmitter {
   cacheTimeStamp: Date
   processes: Set<number> = new Set()
   env: Object
+  targets: Set<string> = new Set()
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
@@ -50,6 +51,24 @@ export default class State extends EventEmitter {
     await state.getFile(filePath)
 
     return state
+  }
+
+  async getTargetPaths (): Promise<Array<string>> {
+    const results: Array<string> = []
+    for (const target of this.targets.values()) {
+      const file = await this.getFile(target)
+      if (file) results.push(file.realFilePath)
+    }
+    return results
+  }
+
+  async getTargetFiles (): Promise<Array<File>> {
+    const results: Array<File> = []
+    for (const target of this.targets.values()) {
+      const file = await this.getFile(target)
+      if (file) results.push(file)
+    }
+    return results
   }
 
   normalizePath (filePath: string): string {

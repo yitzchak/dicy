@@ -23,6 +23,7 @@ export default class LaTeX extends Rule {
 
   async initialize () {
     await this.getResolvedInputs(['$OUTDIR/$JOB.fls-ParsedLaTeXFileListing', '$OUTDIR/$JOB.log-ParsedLaTeXLog'])
+    await this.addResolvedTargets(['$OUTDIR/$JOB$OUTEXT', '$OUTDIR/$JOB.synctex.gz'])
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
