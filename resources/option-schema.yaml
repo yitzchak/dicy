@@ -10,6 +10,14 @@ cleanPatterns:
     - '/$OUTDIR/_minted-$JOB/*'
   commands:
     - clean
+copyTargetsToRoot:
+  aliases:
+    - moveResultToSourceDirectory
+  description: Copy output targets to project root path.
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
 deepClean:
   aliases:
     - d

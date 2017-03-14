@@ -71,6 +71,10 @@ export default class State extends EventEmitter {
     return results
   }
 
+  removeTarget (filePath: string) {
+    this.targets.delete(filePath)
+  }
+
   normalizePath (filePath: string): string {
     filePath = path.normalize(filePath)
 

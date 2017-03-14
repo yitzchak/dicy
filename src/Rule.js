@@ -52,7 +52,7 @@ export default class Rule extends StateConsumer {
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      this.fileTypes.has(file.type) &&
+      (this.fileTypes.has('*') || this.fileTypes.has(file.type)) &&
       Array.from(file.rules.values()).every(rule => rule.constructor.name !== this.name || rule.jobName !== jobName)
   }
 

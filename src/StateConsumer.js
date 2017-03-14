@@ -44,6 +44,10 @@ export default class StateConsumer {
     this.state.targets.add(filePath)
   }
 
+  removeTarget (filePath: string) {
+    this.state.targets.delete(filePath)
+  }
+
   addResolvedTarget (filePath: string, reference?: File | string) {
     this.state.targets.add(this.resolvePath(filePath, reference))
   }
@@ -107,6 +111,7 @@ export default class StateConsumer {
 
   resolvePath (filePath: string, reference?: File | string): string {
     const properties = Object.assign({}, this.state.env, {
+      ROOTDIR: this.rootPath,
       OUTDIR: this.options.outputDirectory || '.',
       OUTEXT: `.${this.options.outputFormat}`,
       JOB: this.jobName || this.options.jobName || this.state.env.NAME
