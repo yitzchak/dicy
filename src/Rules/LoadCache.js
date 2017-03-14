@@ -30,6 +30,8 @@ export default class LoadCache extends Rule {
 
     if (!cache) return true
 
+    this.state.options = cache.options
+
     if (cache.files) {
       for (const filePath in cache.files) {
         await this.state.getFile(filePath, cache.files[filePath])

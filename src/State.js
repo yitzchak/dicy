@@ -53,11 +53,11 @@ export default class State extends EventEmitter {
     return state
   }
 
-  async getTargetPaths (): Promise<Array<string>> {
+  async getTargetPaths (absolute: boolean = false): Promise<Array<string>> {
     const results: Array<string> = []
     for (const target of this.targets.values()) {
       const file = await this.getFile(target)
-      if (file) results.push(file.realFilePath)
+      if (file) results.push(absolute ? file.realFilePath : target)
     }
     return results
   }
