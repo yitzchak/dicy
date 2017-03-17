@@ -137,6 +137,8 @@ export default class Ouroboros extends StateConsumer {
   }
 
   async run (...commands: Array<Command>): Promise<boolean> {
+    await Promise.all(Array.from(this.files).map(file => file.update()))
+
     for (const command of commands) {
       for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
         await this.runPhase(command, phase)
@@ -150,6 +152,10 @@ export default class Ouroboros extends StateConsumer {
     for (const file of this.files) {
       file.hasBeenUpdated = file.hasBeenUpdatedCache
       file.analyzed = false
+    }
+
+    for (const rule of this.rules) {
+      await rule.phaseInitialize(command, phase)
     }
 
     await this.analyzePhase(command, phase)

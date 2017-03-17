@@ -72,6 +72,20 @@ export default class Rule extends StateConsumer {
 
   async initialize () {}
 
+  async phaseInitialize (command: ?Command, phase: ?Phase) {
+    if ((!command || command === this.command) && (!phase || phase === this.phase) && this.constructor.alwaysEvaluate) {
+      if (this.inputs.size === 0) {
+        this.addAction()
+      } else {
+        for (const input of this.inputs.values()) {
+          for (const action of await this.getFileActions(input)) {
+            this.addAction(input, action)
+          }
+        }
+      }
+    }
+  }
+
   async addFileActions (file: File, command: ?Command, phase: ?Phase): Promise<void> {
     if ((!command || command === this.command) && (!phase || phase === this.phase) && file.hasBeenUpdated) {
       const timeStamp: ?Date = this.timeStamp
