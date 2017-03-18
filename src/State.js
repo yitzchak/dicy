@@ -99,6 +99,13 @@ export default class State extends EventEmitter {
     rule.addAction()
   }
 
+  removeRule (rule: Rule) {
+    this.rules.delete(rule.id)
+    for (const file of this.files.values()) {
+      file.rules.delete(rule)
+    }
+  }
+
   async addCachedRule (cache: RuleCache): Promise<void> {
     const id = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, ...cache.parameters)
     if (this.rules.has(id)) return
