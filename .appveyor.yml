@@ -21,7 +21,7 @@ cache:
   - '%R_LIBS_USER%'
 
 install:
-  - set PATH=%PATH%;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
+  - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
   - ps: Install-Product node 7 x64
   - cinst miktex ghostscript
   - cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
