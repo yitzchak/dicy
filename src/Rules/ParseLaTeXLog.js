@@ -34,7 +34,7 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['text'],
-      patterns: [/^Package: (.*)$/],
+      patterns: [/^Package: (.*)$/i],
       evaluate: (reference, groups) => {
         messages.push({
           name,
@@ -45,7 +45,7 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['category', 'text'],
-      patterns: [/^! (.+) Error: (.+?)\.?$/],
+      patterns: [/^! (.+) Error: (.+?)\.?$/i],
       evaluate: (reference, groups) => {
         messages.push({
           severity: 'error',
@@ -57,7 +57,7 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['file', 'line', 'category', 'text'],
-      patterns: [/^(.*):(\d+): (.+) Error: (.+?)\.?$/],
+      patterns: [/^(.*):(\d+): (?:(.+) Error: )?(.+?)\.?$/i],
       evaluate: (reference, groups) => {
         const line: number = parseInt(groups.line, 10)
         messages.push({
@@ -75,10 +75,10 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['category', 'severity', 'text', 'line'],
-      patterns: [/^(.*) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/],
+      patterns: [/^(\S+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
       evaluate: (reference, groups) => {
         const message: Message = {
-          severity: groups.severity === 'Info' ? 'info' : 'warning',
+          severity: groups.severity.toLowerCase() === 'info' ? 'info' : 'warning',
           name,
           category: groups.category,
           text: groups.text,
