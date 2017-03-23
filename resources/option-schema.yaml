@@ -129,6 +129,12 @@ shellEscape:
     - true
   commands:
     - build
+sources:
+  description: additional source files
+  type: strings
+  defaultValue: []
+  commands:
+    - build
 synctex:
   aliases:
     - enableSynctex
