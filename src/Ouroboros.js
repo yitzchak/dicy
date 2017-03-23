@@ -95,6 +95,12 @@ export default class Ouroboros extends StateConsumer {
       if (notUsed) ruleGroups.push([rule])
     }
 
+    const primaryCount = ruleGroup => ruleGroup.reduce(
+      (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
+      0)
+
+    ruleGroups.sort((x, y) => primaryCount(x) - primaryCount(y))
+
     for (const ruleGroup of ruleGroups) {
       let candidateRules = []
       let dependents = []

@@ -24,15 +24,14 @@ export default class Asymptote extends Rule {
       'asy',
       '-offscreen',
       '-vv',
-      path.basename(this.firstParameter.filePath)
+      this.resolvePath('$BASE', this.firstParameter)
     ]
   }
 
   constructProcessOptions (): Object {
     return {
-      cwd: this.options.outputDirectory
-        ? path.resolve(this.rootPath, this.options.outputDirectory)
-        : this.rootPath
+      maxBuffer: 524288,
+      cwd: this.resolvePath('$ROOTDIR/$DIR', this.firstParameter)
     }
   }
 

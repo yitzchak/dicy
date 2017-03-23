@@ -82,7 +82,7 @@ MetaPostLog:
   fileName: !!js/regexp /\.log$/i
   hashSkip: !!js/regexp /^This is/
 MetaPostOutput:
-  fileName: !!js/regexp /\.1$/i
+  fileName: !!js/regexp /\.[0-9]+$/i
 NomenclatureControlFile:
   fileName: !!js/regexp /\.nlo$/i
 NomenclatureListing:

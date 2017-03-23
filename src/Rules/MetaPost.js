@@ -1,7 +1,5 @@
 /* @flow */
 
-import path from 'path'
-
 import Rule from '../Rule'
 
 export default class MetaPost extends Rule {
@@ -9,19 +7,21 @@ export default class MetaPost extends Rule {
   static description: string = 'Runs MetaPost on produced MetaPost files.'
 
   constructCommand () {
-    return ['mpost', path.basename(this.firstParameter.filePath)]
+    return [
+      'mpost',
+      this.resolvePath('$BASE', this.firstParameter.filePath)
+    ]
   }
 
   constructProcessOptions (): Object {
     return {
-      cwd: this.options.outputDirectory
-        ? path.resolve(this.rootPath, this.options.outputDirectory)
-        : this.rootPath
+      cwd: this.resolvePath('$ROOTDIR/$DIR', this.firstParameter)
     }
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['$DIR/$NAME.1', '$DIR/$NAME.log', '$DIR/$NAME.t1'], this.firstParameter)
+    await this.getGlobbedOutputs('$DIR/$NAME.+([0-9])', this.firstParameter)
+    await this.getResolvedOutputs(['$DIR/$NAME.log', '$DIR/$NAME.t1'], this.firstParameter)
     return true
   }
 }
