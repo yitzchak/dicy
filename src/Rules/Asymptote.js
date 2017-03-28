@@ -22,7 +22,7 @@ export default class Asymptote extends Rule {
   constructCommand () {
     return [
       'asy',
-      '-offscreen',
+      // '-offscreen',
       '-vv',
       this.resolvePath('$BASE', this.firstParameter)
     ]

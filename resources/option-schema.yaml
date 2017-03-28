@@ -37,6 +37,11 @@ engine:
   defaultValue: pdflatex
   commands:
     - build
+filePath:
+  description: Override the master file path
+  type: string
+  commands:
+    - build
 ignoreRules:
   description: ignore specific rules when processing
   type: strings
@@ -127,12 +132,6 @@ shellEscape:
     - restricted
     - enabled
     - true
-  commands:
-    - build
-sources:
-  description: additional source files
-  type: strings
-  defaultValue: []
   commands:
     - build
 synctex:
