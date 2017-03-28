@@ -32,10 +32,10 @@ export default class StateConsumer {
           if (key === 'jobName') return jobName
           if (target.jobs) {
             const jobOptions = target.jobs[jobName]
-            return (jobOptions && key in jobOptions) ? jobOptions[key] : target[key]
+            if (jobOptions && key in jobOptions) return jobOptions[key]
           }
         }
-        return target[key]
+        return (key === 'filePath') ? state.filePath : target[key]
       }
     })
   }

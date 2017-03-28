@@ -234,7 +234,7 @@ export default class State extends EventEmitter {
       }
     }
 
-    return this.options[name]
+    return (name === 'filePath') ? this.filePath : this.options[name]
   }
 
   calculateDistances (): void {
