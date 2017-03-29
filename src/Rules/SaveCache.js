@@ -30,7 +30,7 @@ export default class SaveCache extends Rule {
   async run () {
     const cache: Cache = {
       filePath: this.filePath,
-      options: this.options,
+      options: this.state.options,
       files: {},
       rules: []
     }

@@ -21,21 +21,9 @@ export default class StateConsumer {
   constructor (state: State, jobName: ?string) {
     this.jobName = jobName
     this.state = state
-    this.options = new Proxy(state.options, {
+    this.options = new Proxy(this, {
       get (target, key) {
-        if (key === 'jobNames') {
-          if ('jobName' in target) return [target.jobName]
-          if ('jobNames' in target) return target.jobNames
-          if ('jobs' in target) return Object.keys(target.jobs)
-          return [undefined]
-        } else if (jobName) {
-          if (key === 'jobName') return jobName
-          if (target.jobs) {
-            const jobOptions = target.jobs[jobName]
-            if (jobOptions && key in jobOptions) return jobOptions[key]
-          }
-        }
-        return (key === 'filePath') ? state.filePath : target[key]
+        return target.state.getOption(key, target.jobName)
       }
     })
   }
