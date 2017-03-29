@@ -30,7 +30,11 @@ export default class ApplyOptions extends Rule {
       }
     }
 
-    if (!_.isEqual(this.state.options, oldOptions)) {
+    function matcher (objValue, srcValue, key, object, source) {
+      if (['deepClean', 'ignoreCache', 'phaseCycles', 'severity'].includes(key)) return true
+    }
+
+    if (!_.isMatchWith(this.state.options, oldOptions, matcher)) {
       const rules = Array.from(this.rules).filter(rule => rule.command !== 'load' || rule.phase === 'finalize')
       if (rules.length !== 0) {
         this.warning('Options have changed. Resetting all rules.')
