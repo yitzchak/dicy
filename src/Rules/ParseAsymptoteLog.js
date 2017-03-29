@@ -14,14 +14,18 @@ export default class ParseAsymptoteLog extends Rule {
     const output = await this.getResolvedOutput('$DIR/$NAME.log-ParsedAsymptoteLog', this.firstParameter)
     if (!output) return false
 
-    const rootPath = this.options.outputDirectory
-      ? path.resolve(this.rootPath, this.options.outputDirectory)
-      : this.rootPath
+    let rootPath = this.rootPath
     const messages: Array<Message> = []
     const inputs: Array<string> = []
     const outputs: Array<string> = []
 
     await this.firstParameter.parse([{
+      names: ['filePath'],
+      patterns: [/^cd (.*)$/],
+      evaluate: (reference, groups) => {
+        rootPath = groups.filePath
+      }
+    }, {
       names: ['filePath'],
       patterns: [/^Wrote (.*)$/],
       evaluate: (reference, groups) => {
