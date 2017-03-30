@@ -7,6 +7,7 @@ import type { Command } from '../types'
 export default class VerifyFileExistance extends Rule {
   static commands: Set<Command> = new Set(['load'])
   static alwaysEvaluate: boolean = true
+  static ignoreJobName: boolean = true
   static description: string = 'Verifies that all files still exist.'
 
   async run () {

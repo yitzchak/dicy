@@ -42,6 +42,8 @@ export default class LoadCache extends Rule {
       for (const rule: RuleCache of cache.rules) {
         await this.state.addCachedRule(rule)
       }
+
+      this.calculateDistances()
     }
 
     return true

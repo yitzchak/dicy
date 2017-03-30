@@ -44,6 +44,8 @@ export default class Ouroboros extends StateConsumer {
   }
 
   async analyzeFiles (command: Command, phase: Phase) {
+    let rulesAdded = false
+
     while (true) {
       const file: ?File = Array.from(this.files).find(file => !file.analyzed)
 
@@ -54,6 +56,7 @@ export default class Ouroboros extends StateConsumer {
         for (const jobName of jobNames) {
           const rule = await ruleClass.analyzeFile(this.state, command, phase, jobName, file)
           if (rule) {
+            rulesAdded = true
             await this.addRule(rule)
           }
         }
@@ -62,7 +65,7 @@ export default class Ouroboros extends StateConsumer {
       file.analyzed = true
     }
 
-    this.calculateDistances()
+    if (rulesAdded) this.calculateDistances()
   }
 
   getAvailableRules (command: ?Command): Array<RuleInfo> {
