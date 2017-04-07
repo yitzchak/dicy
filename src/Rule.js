@@ -264,7 +264,7 @@ export default class Rule extends StateConsumer {
 
   async getResolvedInput (filePath: string, reference?: File | string): Promise<?File> {
     const expanded = this.resolvePath(filePath, reference)
-    return await this.getInput(expanded)
+    return this.getInput(expanded)
   }
 
   async getResolvedInputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
@@ -280,7 +280,7 @@ export default class Rule extends StateConsumer {
 
   async getResolvedOutput (filePath: string, reference?: File | string): Promise<?File> {
     const expanded = this.resolvePath(filePath, reference)
-    return await this.getOutput(expanded)
+    return this.getOutput(expanded)
   }
 
   async getResolvedOutputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {

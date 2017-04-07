@@ -198,7 +198,7 @@ export default class StateConsumer {
   }
 
   async getResolvedFile (filePath: string, reference?: File | string): Promise<?File> {
-    return await this.getFile(this.resolvePath(filePath, reference))
+    return this.getFile(this.resolvePath(filePath, reference))
   }
 
   // EventEmmitter proxy

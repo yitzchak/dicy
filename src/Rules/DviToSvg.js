@@ -11,8 +11,8 @@ export default class DviToSvg extends Rule {
   static description: string = 'Converts DVI to SVG using dvisvgm.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return state.options.outputFormat === 'svg' &&
-      await super.appliesToFile(state, command, phase, jobName, file)
+    const appliesToFile = super.appliesToFile(state, command, phase, jobName, file)
+    return state.options.outputFormat === 'svg' && appliesToFile
   }
 
   constructCommand () {
