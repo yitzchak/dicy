@@ -1,5 +1,7 @@
 # Ouroboros
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/yitzchak/ouroboros.svg)](https://greenkeeper.io/)
+
 An experimental builder for LaTeX...not ready for production use.
 
 [![Build Status][travis svg]][travis]
