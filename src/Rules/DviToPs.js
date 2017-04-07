@@ -11,8 +11,8 @@ export default class DviToPs extends Rule {
   static description: string = 'Converts DVI to PS using dvips.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return state.options.outputFormat === 'ps' &&
-      await super.appliesToFile(state, command, phase, jobName, file)
+    const appliesToFile = super.appliesToFile(state, command, phase, jobName, file)
+    return state.options.outputFormat === 'ps' && appliesToFile
   }
 
   constructCommand () {

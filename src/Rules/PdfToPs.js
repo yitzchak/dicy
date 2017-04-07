@@ -11,8 +11,8 @@ export default class PdfToPs extends Rule {
   static description: string = 'Converts PDF to PS using pdf2ps. Enabled by the `pdfProducer` option.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return state.options.outputFormat === 'ps' &&
-      await super.appliesToFile(state, command, phase, jobName, file)
+    const appliesToFile = super.appliesToFile(state, command, phase, jobName, file)
+    return state.options.outputFormat === 'ps' && appliesToFile
   }
 
   constructCommand () {

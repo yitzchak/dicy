@@ -6,6 +6,7 @@ An experimental builder for LaTeX...not ready for production use.
 [![Windows Build Status][appveyor svg]][appveyor]
 [![Dependency Status][dependency svg]][dependency]
 [![devDependency Status][devDependency svg]][devDependency]
+[![Greenkeeper badge](https://badges.greenkeeper.io/yitzchak/ouroboros.svg)](https://greenkeeper.io/)
 
 ## Installation
 
