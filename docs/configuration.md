@@ -23,7 +23,7 @@ with the exception of job name specific options which is detailed in the
 Ouroboros can run LaTeX multiple times on the same source file with different
 job names and can also have job specific settings which include the ability to
 build jobs that depend on source files other than the main source file. These
-abilities are accomplished through the [jobNames] and the [jobs] options.
+abilities are accomplished through the [jobNames][] and the [jobs][] options.
 
 Modern LaTeX engines provide a command line option `jobname` which can be used
 to specify the output file name as different from the input source name. For instance,
@@ -34,8 +34,8 @@ pdflatex -jobname=bar foo.tex
 ```
 
 will output `bar.pdf` instead of `foo.pdf`. This can be accomplished in
-Ouroboros by using the [jobName](options#jobName) option. For example, using
-LaTeX magic comments
+Ouroboros by using the [jobName][] option. For example, using LaTeX magic
+comments
 
 ```latex
 %!TeX jobName = bar
@@ -52,7 +52,7 @@ jobName: bar
 ```
 
 Ouroboros also provides the ability to execute multile jobs with different job
-names via the [jobNames] option.
+names via the [jobNames][] option.
 
 ```latex
 %!TeX jobNames = bar, quux, gronk
@@ -72,7 +72,7 @@ jobNames:
 
 ### Job Specific Options
 
-Each separate job can has specific options via the [jobs] option. For example,
+Each separate job can has specific options via the [jobs][] option. For example,
 via YAML the following will enable SyncTeX for the `quux` job, enable shell
 escape for the `gronk` job while using restricted shell escape for the other
 jobs.
@@ -105,8 +105,8 @@ Wibble, wibble, wibble!
 ```
 
 In the case of YAML specified options, the job names and job specific options
-can be specified using only the [jobs] option, versus explicitly specifying the
-job names via the [jobNames] option.
+can be specified using only the [jobs][] option, versus explicitly specifying
+the job names via the [jobNames][] option.
 
 ```yaml
 shellEscape: restricted
@@ -120,8 +120,8 @@ jobs:
 
 ### Job Specific Source Files
 
-Jobs may override the source file path by using the [filePath] option. This not
-intended as a way to create a "batch" compiler, but as a way to build
+Jobs may override the source file path by using the [filePath][] option. This
+not intended as a way to create a "batch" compiler, but as a way to build
 dependencies that are not automatically generated when the main source file is
 processed by the appropriate rule such as `LaTeX`, `Knitr`, etc.
 
@@ -159,7 +159,7 @@ jobs:
 ```
 
 This will compile `foo.tex` to `foo.pdf` and also use Asymptote to process
-`bar.asy`. Jobs that override the [filePath] will be executed before jobs that
+`bar.asy`. Jobs that override the [filePath][] will be executed before jobs that
 do not. This is done in case the job creates a dependency for the main source
 file.
 
