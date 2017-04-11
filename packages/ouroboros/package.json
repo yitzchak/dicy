@@ -1,4 +1,46 @@
 {
+  "name": "ouroboros",
+  "version": "0.0.0",
+  "description": "A circular dependency builder designed with LaTeX in mind.",
+  "keywords": [
+    "latex",
+    "knitr",
+    "sage",
+    "biblatex"
+  ],
+  "bugs": "https://github.com/yitzchak/ouroboros/issues",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
+    "compile": "babel -d lib/ src/",
+    "lint": "eslint --color src spec",
+    "flow-typed": "flow-typed update",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yitzchak/ouroboros.git"
+  },
+  "author": "Tarn Burton <twburton@gmail.com>",
+  "contributors": [],
+  "homepage": "https://yitzchak.github.io/ouroboros/",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "any-shell-escape": "^0.1.1",
+    "babel-runtime": "^6.23.0",
+    "command-join": "^2.0.0",
+    "fast-glob": "^1.0.0",
+    "fs-extra": "^2.1.2",
+    "js-yaml": "^3.8.2",
+    "lodash": "^4.17.4",
+    "micromatch": "^2.3.11",
+    "readdir-enhanced": "^1.4.5",
+    "temp": "^0.8.3",
+    "tree-kill": "^1.1.0"
+  },
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
@@ -18,10 +60,9 @@
     "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "^0.44.0",
+    "flow-bin": "^0.43.0",
     "flow-typed": "^2.0.0",
-    "jasmine": "^2.5.3",
-    "lerna": "^2.0.0-rc.1"
+    "jasmine": "^2.5.3"
   },
   "babel": {
     "presets": [
