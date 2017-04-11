@@ -36,6 +36,7 @@ install:
   - initexmf --admin --update-fndb
   - sh ./scripts/install-r-libs
   - npm install
+  - lerna bootstrap --ignore=ouroboros-cli
   - lerna bootstrap
 
 test_script:
