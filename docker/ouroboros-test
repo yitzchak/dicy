@@ -8,6 +8,7 @@ cd ouroboros
 git checkout ${1:-master}
 nvm install node
 npm install
+npm run bootstrap
 if [ -z ${2+x} ]; then
   npm test
 else
