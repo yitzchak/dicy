@@ -45,3 +45,6 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
   - ./scripts/install-mac
   - ./scripts/install-r-libs
+
+before_script:
+  - npm run bootstrap
