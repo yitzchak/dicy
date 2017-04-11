@@ -1,6 +1,10 @@
 {
+  "name": "ouroboros",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "bootstrap": "lerna bootstrap",
+    "lint": "eslint --color packages",
     "test": "lerna run test"
   },
   "devDependencies": {
