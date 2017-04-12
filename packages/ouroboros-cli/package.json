@@ -8,7 +8,7 @@
     "sage",
     "biblatex"
   ],
-  "bugs": "https://github.com/yitzchak/ouroboros-cli/issues",
+  "bugs": "https://github.com/yitzchak/ouroboros/issues",
   "main": "lib/main.js",
   "scripts": {
     "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
@@ -22,11 +22,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yitzchak/ouroboros-cli.git"
+    "url": "https://github.com/yitzchak/ouroboros.git"
   },
   "author": "Tarn Burton <twburton@gmail.com>",
   "contributors": [],
-  "homepage": "https://yitzchak.github.io/ouroboros-cli/",
+  "homepage": "https://yitzchak.github.io/ouroboros/",
   "engines": {
     "node": ">=6.0.0"
   },
