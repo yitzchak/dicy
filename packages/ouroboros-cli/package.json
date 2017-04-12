@@ -11,7 +11,7 @@
   "bugs": "https://github.com/yitzchak/ouroboros/issues",
   "main": "lib/main.js",
   "scripts": {
-    "test": "echo Linting sources ... && eslint --color src spec && echo Running specs... && jasmine",
+    "test": "jasmine",
     "compile": "babel -d lib/ src/",
     "lint": "eslint --color src spec",
     "flow-typed": "flow-typed update",
@@ -61,47 +61,5 @@
     "flow-bin": "^0.43.0",
     "flow-typed": "^2.0.0",
     "jasmine": "^2.5.3"
-  },
-  "babel": {
-    "presets": [
-      "latest",
-      "flow"
-    ],
-    "plugins": [
-      "transform-runtime",
-      "transform-class-properties",
-      "transform-strict-mode",
-      "syntax-async-generators",
-      "transform-object-rest-spread"
-    ]
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "extends": [
-      "standard",
-      "plugin:flowtype/recommended"
-    ],
-    "plugins": [
-      "flowtype",
-      "flowtype-errors"
-    ],
-    "env": {
-      "jasmine": true,
-      "node": true
-    },
-    "rules": {
-      "flowtype-errors/show-errors": 2,
-      "flowtype/delimiter-dangle": [
-        2,
-        "never"
-      ],
-      "flowtype/require-valid-file-annotation": [
-        2,
-        "always",
-        {
-          "annotationStyle": "block"
-        }
-      ]
-    }
   }
 }
