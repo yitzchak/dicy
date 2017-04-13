@@ -47,4 +47,5 @@ before_install:
   - ./scripts/install-r-libs
 
 before_script:
+  - npm run update-dependencies
   - npm run bootstrap
