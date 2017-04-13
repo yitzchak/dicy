@@ -1,0 +1,19 @@
+parser: babel-eslint
+extends:
+  - standard
+  - plugin:flowtype/recommended
+plugins:
+  - flowtype
+  - flowtype-errors
+env:
+  jasmine: true
+  node: true
+rules:
+  flowtype-errors/show-errors: error
+  flowtype/delimiter-dangle:
+    - error
+    - never
+  flowtype/require-valid-file-annotation:
+    - error
+    - always
+    - annotationStyle: block

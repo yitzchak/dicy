@@ -59,7 +59,7 @@ export default class GraphDependencies extends Rule {
           if (jobName !== 'undefined') {
             startGraph(`${command};${phase};${jobName}`, `\\"${jobName}\\" job`)
           }
-          const rules = rulesByJobName[jobName]
+          const rules = rulesByJobName[jobName] || []
           for (let i = 0; i < rules.length; i++) {
             // let connected = false
             for (let j = 0; j < rules.length; j++) {
