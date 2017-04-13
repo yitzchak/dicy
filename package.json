@@ -5,7 +5,8 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "lint": "eslint --color packages",
-    "test": "eslint --color packages && lerna run test"
+    "test": "eslint --color packages && lerna run test",
+    "flow-typed-update": "flow-typed update && lerna exec -- flow-typed update"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",
