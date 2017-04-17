@@ -1,6 +1,5 @@
 {
   "name": "ouroboros",
-  "private": true,
   "license": "MIT",
   "scripts": {
     "bootstrap": "lerna bootstrap",
