@@ -2,34 +2,34 @@
 
 ## cleanPatterns
 
-- **Type:** array of strings
-- **Default Value:** `$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)`,
-  `/$OUTDIR/_minted-$JOB/*`
-- **Commands:** [clean][]
+-   **Type:** array of strings
+-   **Default Value:** `$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)`,
+    `/$OUTDIR/_minted-$JOB/*`
+-   **Commands:** [clean][]
 
 A list of file glob patterns to use when executing a [clean][] command. Each
 glob pattern uses following syntax:
 
-- Typical glob patterns, like `**/*`, `foo/bar/*.pdf`.
-- Brace Expansion, like `foo/bar-{1..5}.tex` or `one/{two,three}/four.Rnw`.
-- Logical OR, like `foo/bar/(abc|xyz).js`
-- Regular Expression character classes, like `foo/bar/baz-[1-5].tex`
-- POSIX bracket expressions, like `**/[[:alpha:][:digit:]]/*`
-- Quantifiers, like `?(quux|bar)` or `+(quux|bar)`. `?` matches zero or one
-  patterns, `*` matches zero or more patterns, `+` matches one or more patterns,
-  `@` matches exactly one pattern, and `!` match anything but given patterns.
-- Value of environment variable using shell variable form (`$VAR` or `${VAR}`)
-  or the following job variables.
-  * `$BASE` &mdash; File name of current source file.
-  * `$DIR` &mdash; Directory of current source file.
-  * `$EXT` &mdash; Extension of current source file.
-  * `$JOB` &mdash; Current job name or base name of source file if no job name
-    is used.
-  * `$NAME` &mdash; File name of current source file with extension.
-  * `$OUTDIR` &mdash; Current output directory or `.` if no output directory has
-    been specified.
-  * `$OUTEXT` &mdash; File extension associated with output format.
-  * `$ROOTDIR` &mdash; Directory of current main source file.
+-   Typical glob patterns, like `**/*`, `foo/bar/*.pdf`.
+-   Brace Expansion, like `foo/bar-{1..5}.tex` or `one/{two,three}/four.Rnw`.
+-   Logical OR, like `foo/bar/(abc|xyz).js`
+-   Regular Expression character classes, like `foo/bar/baz-[1-5].tex`
+-   POSIX bracket expressions, like `**/[[:alpha:][:digit:]]/*`
+-   Quantifiers, like `?(quux|bar)` or `+(quux|bar)`. `?` matches zero or one
+    patterns, `*` matches zero or more patterns, `+` matches one or more patterns,
+    `@` matches exactly one pattern, and `!` match anything but given patterns.
+-   Value of environment variable using shell variable form (`$VAR` or `${VAR}`)
+    or the following job variables.
+    *   `$BASE` &mdash; File name of current source file.
+    *   `$DIR` &mdash; Directory of current source file.
+    *   `$EXT` &mdash; Extension of current source file.
+    *   `$JOB` &mdash; Current job name or base name of source file if no job name
+        is used.
+    *   `$NAME` &mdash; File name of current source file with extension.
+    *   `$OUTDIR` &mdash; Current output directory or `.` if no output directory has
+        been specified.
+    *   `$OUTEXT` &mdash; File extension associated with output format.
+    *   `$ROOTDIR` &mdash; Directory of current main source file.
 
 Patterns that begin with a slash or a backslash (`/` or `\`) are interpreted as
 a file system glob pattern with the directory of the main source file as the
@@ -44,9 +44,9 @@ auxiliary files created by the [LaTeX][] rule to be removed during [clean][].
 
 ## copyTargetsToRoot
 
-- **Type:** boolean
-- **Default Value:** `false`
-- **Commands:** [build][]
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** [build][]
 
 If [copyTargetsToRoot][] is `true` and [outputDirectory][] is not `.` for the
 current job then the rule [CopyTargetsToRoot][] will copy each generated output
@@ -54,9 +54,9 @@ file to the directory that contains the source file.
 
 ## deepClean
 
-- **Type:** boolean
-- **Default Value:** `false`
-- **Commands:** [clean][]
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** [clean][]
 
 If [deepClean][] is `true` then all generated files will be removed regardless
 of the value of [cleanPatterns][]. This is equivalent to appending `**/*` to
@@ -65,103 +65,108 @@ of all rules being deleted then the cache file will be removed.
 
 ## engine
 
-- **Type:** string
-- **Default Value:** `pdflatex`
-- **Commands:** [build][]
+-   **Type:** string
+-   **Default Value:** `pdflatex`
+-   **Commands:** [build][]
 
 The LaTeX engine to use when applying the [LaTeX][] rule, e.g. `latex`,
 `pdflatex` or `uplatex`.
 
 ## filePath
 
-- **Type:** string
-- **Default Value:** none
-- **Commands:** [build][]
+-   **Type:** string
+-   **Default Value:** none
+-   **Commands:** [build][]
 
 Override the master source file path for a specific job.
 
 ## ignoreRules
 
-- **Type:** array of strings
-- **Default Value:** none
-- **Commands:** all
+-   **Type:** array of strings
+-   **Default Value:** none
+-   **Commands:** all
 
 Ignore specific rules when processing.
 
 ## ignoreCache
 
-- **Type:** boolean
-- **Default Value:** `false`
-- **Commands:** [build][]
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** [build][]
 
 Ignore file cache generated by previous builds.
 
 ## jobName
 
-- **Type:** string
-- **Default Value:** none
-- **Commands:** all
+-   **Type:** string
+-   **Default Value:** none
+-   **Commands:** all
 
 Job name used for latex.
 
 ## jobNames
 
-- **Type:** array of strings
-- **Default Value:** none
-- **Commands:** all
+-   **Type:** array of strings
+-   **Default Value:** none
+-   **Commands:** all
 
 Job names used for latex.
 
 ## phaseCycles
 
-- **Type:** number
-- **Default Value:** `20`
-- **Commands:** all
+-   **Type:** number
+-   **Default Value:** `20`
+-   **Commands:** all
 
 Maximum number of evaluation cycles in each phase.
 
 ## outputDirectory
 
-- **Type:** string
-- **Default Value:** none
-- **Commands:** [build][]
+-   **Type:** string
+-   **Default Value:** none
+-   **Commands:** [build][]
 
 Name of directory for output files.
 
 ## outputFormat
 
-- **Type:** array of strings
-- **Values:** `dvi`, `pdf`, `ps` or `svg`
-- **Default Value:** `pdf`
-- **Commands:** [build][]
+-   **Type:** array of strings
+-   **Values:** `dvi`, `pdf`, `ps` or `svg`
+-   **Default Value:** `pdf`
+-   **Commands:** [build][]
 
 Output format of main generated file.
 
 ## severity
 
-- **Type:** string
-- **Values:** `trace`, `info`, `warning` or `error`
-- **Default Value:** `warning`
-- **Commands:** all
+-   **Type:** string
+-   **Values:** `trace`, `info`, `warning` or `error`
+-   **Default Value:** `warning`
+-   **Commands:** all
 
 The severity of messages to display.
 
 ## shellEscape
 
-- **Type:** string
-- **Values:** `disable`, `restricted`, `enable`
-- **Default Value:** none
-- **Commands:** [build][]
+-   **Type:** string
+-   **Values:** `disable`, `restricted`, `enable`
+-   **Default Value:** none
+-   **Commands:** [build][]
 
 Enable shell escape (write18).
 
 ## synctex
 
-- **Type:** boolean
-- **Default Value:** `false`
-- **Commands:** [build][]
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** [build][]
 
 Generate SyncTeX annotations.
 
+[build]: commands#build
 [clean]: commands#clean
 [cleanPatterns]: #cleanpatterns
+[copyTargetsToRoot]: #copytargetstoroot
+[deepClean]: #deepclean
+[LaTeX]: rules#latex
+[outputDirectory]: #outputdirectory
