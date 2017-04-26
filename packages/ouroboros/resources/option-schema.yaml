@@ -42,7 +42,7 @@ filePath:
   type: string
   commands:
     - build
-ignoreRules:
+disableRules:
   description: ignore specific rules when processing
   type: strings
   defaultValue: []

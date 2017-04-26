@@ -18,6 +18,7 @@ Basic usage of the Command Line interface and library can be found below. For
 more detailed documentation please see the following pages.
 
 -   [Configuration][configuration]
+-   [Events][events]
 -   [Options][options]
 -   [Rules][rules]
 
@@ -77,6 +78,7 @@ always be `load` and `save`, respectively.
 | graph   | Graph dependencies using GraphViz |
 | log     | Report log messages generated     |
 
+[events]: events
 [options]: options
 [configuration]: configuration
 [rules]: rules
