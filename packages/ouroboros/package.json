@@ -1,7 +1,7 @@
 {
   "name": "ouroboros",
   "version": "0.0.0",
-  "description": "A circular dependency builder designed with LaTeX in mind.",
+  "description": "Library interface to Ouroboros, a builder for LaTeX, knitr and literate Haskell that automatically builds dependencies.",
   "keywords": [
     "latex",
     "knitr",

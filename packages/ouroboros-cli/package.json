@@ -1,7 +1,7 @@
 {
   "name": "ouroboros-cli",
   "version": "0.0.0",
-  "description": "Command line interface to the circular LaTeX builder Ouroboros.",
+  "description": "Command line interface to Ouroboros, a builder for LaTeX, knitr and literate Haskell that automatically builds dependencies.",
   "keywords": [
     "latex",
     "knitr",
