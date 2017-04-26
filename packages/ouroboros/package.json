@@ -34,10 +34,10 @@
     "command-join": "^2.0.0",
     "fast-glob": "^1.0.0",
     "fs-extra": "^2.1.2",
-    "js-yaml": "^3.8.2",
+    "js-yaml": "^3.8.3",
     "lodash": "^4.17.4",
     "micromatch": "^2.3.11",
-    "readdir-enhanced": "^1.4.5",
+    "readdir-enhanced": "^1.5.2",
     "temp": "^0.8.3",
     "tree-kill": "^1.1.0"
   },
