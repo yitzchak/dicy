@@ -24,9 +24,10 @@ Basic usage of the Command Line interface and library can be found below. For
 more detailed documentation please see the following pages.
 
 -   [Configuration][configuration]
--   [Events][events]
 -   [Options][options]
+-   [Commands][commands]
 -   [Rules][rules]
+-   [Events][events]
 
 ## Command Line Usage
 
@@ -86,15 +87,16 @@ always be `load` and `save`, respectively.
 
 [appveyor svg]: https://ci.appveyor.com/api/projects/status/s3unjr8c90bhcd99?svg=true
 [appveyor]: https://ci.appveyor.com/project/yitzchak/ouroboros/branch/master
-[configuration]: configuration
+[commands]: https://yitzchak.github.io/ouroboros/commands
+[configuration]: https://yitzchak.github.io/ouroboros/configuration
 [dependency svg]: https://david-dm.org/yitzchak/ouroboros.svg
 [dependency]: https://david-dm.org/yitzchak/ouroboros
 [devDependency svg]: https://david-dm.org/yitzchak/ouroboros/dev-status.svg
 [devDependency]: https://david-dm.org/yitzchak/ouroboros?type=dev
-[events]: events
+[events]: https://yitzchak.github.io/ouroboros/events
 [greenkeeper svg]: https://badges.greenkeeper.io/yitzchak/ouroboros.svg
 [greenkeeper]: https://greenkeeper.io/
-[options]: options
-[rules]: rules
+[options]: https://yitzchak.github.io/ouroboros/options
+[rules]: https://yitzchak.github.io/ouroboros/rules
 [travis svg]: https://travis-ci.org/yitzchak/ouroboros.svg?branch=master
 [travis]: https://travis-ci.org/yitzchak/ouroboros
