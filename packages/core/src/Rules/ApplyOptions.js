@@ -15,11 +15,11 @@ export default class ApplyOptions extends Rule {
 
   async run () {
     const inputs = await this.getResolvedInputs([
-      '$HOME/.ouroboros.yaml-ParsedYAML',
-      'ouroboros.yaml-ParsedYAML',
+      '$HOME/.dicy.yaml-ParsedYAML',
+      'dicy.yaml-ParsedYAML',
       '$NAME.yaml-ParsedYAML',
       '$BASE-ParsedLaTeXMagic',
-      'ouroboros-instance.yaml-ParsedYAML'])
+      'dicy-instance.yaml-ParsedYAML'])
 
     const oldOptions = _.cloneDeep(this.state.options)
 

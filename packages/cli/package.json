@@ -1,14 +1,14 @@
 {
-  "name": "ouroboros-cli",
+  "name": "@dicy/cli",
   "version": "0.0.0",
-  "description": "Command line interface to Ouroboros, a builder for LaTeX, knitr and literate Haskell that automatically builds dependencies.",
+  "description": "Command line interface to Dicy, a builder for LaTeX, knitr and literate Haskell that automatically builds dependencies.",
   "keywords": [
     "latex",
     "knitr",
     "sage",
     "biblatex"
   ],
-  "bugs": "https://github.com/yitzchak/ouroboros/issues",
+  "bugs": "https://github.com/yitzchak/dicy/issues",
   "main": "lib/main.js",
   "scripts": {
     "test": "jasmine",
@@ -18,15 +18,15 @@
     "prepublish": "npm run compile"
   },
   "bin": {
-    "ouroboros": "lib/main.js"
+    "dicy": "lib/main.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yitzchak/ouroboros.git"
+    "url": "https://github.com/yitzchak/dicy.git"
   },
   "author": "Tarn Burton <twburton@gmail.com>",
   "contributors": [],
-  "homepage": "https://yitzchak.github.io/ouroboros/",
+  "homepage": "https://yitzchak.github.io/dicy/",
   "engines": {
     "node": ">=6.0.0"
   },
@@ -37,7 +37,7 @@
     "cliui": "^3.2.0",
     "commander": "^2.9.0",
     "lodash": "^4.17.4",
-    "ouroboros": "^0.0.0"
+    "@dicy/core": "^0.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

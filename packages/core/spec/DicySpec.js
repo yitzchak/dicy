@@ -5,7 +5,7 @@ import path from 'path'
 import readdir from 'readdir-enhanced'
 import childProcess from 'child_process'
 
-import { Ouroboros, File } from '../src/main'
+import { Dicy, File } from '../src/main'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
@@ -16,8 +16,8 @@ function doCheck (command: string): Promise<boolean> {
   })
 }
 
-describe('Ouroboros', () => {
-  let ouroboros: Ouroboros
+describe('Dicy', () => {
+  let dicy: Dicy
   let fixturesPath: string
   const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
   let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw)$/i })
@@ -36,23 +36,23 @@ describe('Ouroboros', () => {
         let events = []
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
-        // Initialize ouroboros and listen for messages
-        ouroboros = await Ouroboros.create(filePath)
-        ouroboros.state.env.HOME = fixturesPath
+        // Initialize dicy and listen for messages
+        dicy = await Dicy.create(filePath)
+        dicy.state.env.HOME = fixturesPath
 
         // Load the event archive
-        const eventFilePath = ouroboros.resolvePath(':dir/:name-events.yaml')
+        const eventFilePath = dicy.resolvePath(':dir/:name-events.yaml')
         if (await File.canRead(eventFilePath)) {
           expected = await File.safeLoad(eventFilePath)
           for (const type of expected.types) {
-            ouroboros.on(type, event => { events.push(event) })
+            dicy.on(type, event => { events.push(event) })
           }
         }
 
         // Run the builder
-        expect(await ouroboros.run('load')).toBeTruthy()
+        expect(await dicy.run('load')).toBeTruthy()
 
-        for (const command of ouroboros.options.check || []) {
+        for (const command of dicy.options.check || []) {
           if (!await doCheck(command)) {
             // $FlowIgnore
             spec.pend(`Skipped test since required program is not available (\`${command}\` was not successful).`)
@@ -61,7 +61,7 @@ describe('Ouroboros', () => {
           }
         }
 
-        expect(await ouroboros.run('build', 'log', 'save')).toBeTruthy()
+        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
 
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)

@@ -37,7 +37,7 @@ install:
   - sh ./scripts/install-r-libs
   - npm install
   - npm run update-dependencies
-  - lerna bootstrap --ignore=ouroboros-cli
+  - lerna bootstrap --ignore=@dicy/cli
   - lerna bootstrap
 
 test_script:

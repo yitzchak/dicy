@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 branch="$(git branch | grep \\* | cut -d ' ' -f2)"
-sudo docker run -it docker-ouroboros ${1:-$branch} bash
+sudo docker run -it docker-dicy ${1:-$branch} bash

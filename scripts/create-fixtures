@@ -23,5 +23,5 @@ cd ../builder-tests
 
 for file in {*.tex,*.lhs,*.Rnw}; do
   echo "Creating event archive for $file"
-  ouroboros build,log,clean --save-events=command,log "$file" &>/dev/null
+  dicy build,log,clean --save-events=command,log "$file" &>/dev/null
 done

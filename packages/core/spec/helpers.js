@@ -9,7 +9,7 @@ import { File } from '../src/main'
 import type { Event } from '../src/types'
 
 export async function cloneFixtures () {
-  const tempPath = fs.realpathSync(temp.mkdirSync('ouroboros'))
+  const tempPath = fs.realpathSync(temp.mkdirSync('dicy'))
   let fixturesPath = path.resolve(__dirname, 'fixtures')
   await File.copy(fixturesPath, tempPath)
   return tempPath

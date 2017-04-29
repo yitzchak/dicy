@@ -16,5 +16,5 @@ RUN mktexlsr
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
 RUN mkdir -p ~/R/library
 RUN Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
-COPY ouroboros-test ~/ouroboros-test
-ENTRYPOINT ["~/ouroboros-test"]
+COPY dicy-test ~/dicy-test
+ENTRYPOINT ["~/dicy-test"]
