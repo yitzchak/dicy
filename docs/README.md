@@ -8,9 +8,9 @@ during build.
 
 ## Installation
 
-Dicy can be used either as a library or via the command line. To install
-Dicy as a library use `npm install dicy`. To install for command line
-access use `npm install -g dicy-cli`.
+Dicy can be used either as a library or via the command line. To install Dicy as
+a library use `npm install @dicy/core`. To install for command line access use
+`npm install -g @dicy/cli`.
 
 ## Documentation
 
