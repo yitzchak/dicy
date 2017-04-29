@@ -10,13 +10,13 @@ import Rule from './Rule'
 
 import type { Action, Command, Option, Phase, RuleInfo } from './types'
 
-export default class Ouroboros extends StateConsumer {
+export default class Dicy extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
-    const schema = await Ouroboros.getOptionDefinitions()
+    const schema = await Dicy.getOptionDefinitions()
     const state = await State.create(filePath, schema)
-    const builder = new Ouroboros(state)
+    const builder = new Dicy(state)
 
-    const instance = await state.getFile('ouroboros-instance.yaml-ParsedYAML')
+    const instance = await state.getFile('dicy-instance.yaml-ParsedYAML')
     if (instance) instance.value = options
 
     await builder.initialize()
@@ -193,7 +193,7 @@ export default class Ouroboros extends StateConsumer {
 
   async updateOptions (options: Object = {}, user: boolean = false): Promise<Object> {
     const normalizedOptions = {}
-    const filePath = this.resolvePath(user ? '$HOME/.ouroboros.yaml' : '$DIR/$NAME.yaml')
+    const filePath = this.resolvePath(user ? '$HOME/.dicy.yaml' : '$DIR/$NAME.yaml')
 
     if (await File.canRead(filePath)) {
       const currentOptions = await File.safeLoad(filePath)

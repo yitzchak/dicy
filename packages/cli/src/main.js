@@ -8,7 +8,7 @@ import path from 'path'
 import program from 'commander'
 import cliui from 'cliui'
 
-import { Ouroboros, File } from 'ouroboros'
+import { Dicy, File } from '@dicy/core'
 
 const ui = cliui({ width: 80 })
 
@@ -45,8 +45,8 @@ const command = async (inputs, env) => {
 
   for (const filePath of inputs) {
     const events = []
-    const ouroboros = await Ouroboros.create(path.resolve(filePath), options)
-    ouroboros
+    const dicy = await Dicy.create(path.resolve(filePath), options)
+    dicy
       .on('log', event => {
         const nameText = event.name ? `[${event.name}] ` : ''
         const typeText = event.category ? `${event.category}: ` : ''
@@ -80,13 +80,13 @@ const command = async (inputs, env) => {
       })
 
     for (const type of saveEvents) {
-      ouroboros.on(type, event => { events.push(event) })
+      dicy.on(type, event => { events.push(event) })
     }
 
-    await ouroboros.run(...commands)
+    await dicy.run(...commands)
 
     if (saveEvents.length !== 0) {
-      const eventFilePath = ouroboros.resolvePath('$dir/$name-events.yaml')
+      const eventFilePath = dicy.resolvePath('$dir/$name-events.yaml')
       await File.safeDump(eventFilePath, { types: saveEvents, events })
     }
   }
@@ -96,7 +96,7 @@ program
   .version('0.0.0')
   .description('An experimental circular builder for LaTeX')
 
-Ouroboros.getOptionDefinitions().then(definitions => {
+Dicy.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const option of definitions) {
       const commands = pc.name().split(',')
@@ -186,8 +186,8 @@ Ouroboros.getOptionDefinitions().then(definitions => {
     .option('--command <command>', 'List only rules that apply to a specific command.', null)
     .action(async (env) => {
       const { command } = cloneOptions(env.opts())
-      const ouroboros = await Ouroboros.create('foo.tex')
-      ui.div(ouroboros.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
+      const dicy = await Dicy.create('foo.tex')
+      ui.div(dicy.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
       console.log(ui.toString())
     })
 

@@ -3,8 +3,8 @@
 cd ~
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-git clone https://github.com/yitzchak/ouroboros.git
-cd ouroboros
+git clone https://github.com/yitzchak/dicy.git
+cd dicy
 git checkout ${1:-master}
 nvm install node
 npm install

@@ -157,19 +157,19 @@ export default class StateConsumer {
     return files
   }
 
-  error (text: string, name: string = 'Ouroboros') {
+  error (text: string, name: string = 'Dicy') {
     this.log({ severity: 'error', name, text })
   }
 
-  warning (text: string, name: string = 'Ouroboros') {
+  warning (text: string, name: string = 'Dicy') {
     this.log({ severity: 'warning', name, text })
   }
 
-  info (text: string, name: string = 'Ouroboros') {
+  info (text: string, name: string = 'Dicy') {
     this.log({ severity: 'info', name, text })
   }
 
-  trace (text: string, name: string = 'Ouroboros') {
+  trace (text: string, name: string = 'Dicy') {
     this.log({ severity: 'trace', name, text })
   }
 
