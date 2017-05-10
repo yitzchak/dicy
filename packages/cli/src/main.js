@@ -151,6 +151,12 @@ Dicy.getOptionDefinitions().then(definitions => {
     .action(command)
 
   loadOptions(program
+    .command('zap [inputs...]')
+    .alias('z')
+    .description('Clean up generated files after a previous build.'))
+    .action(command)
+
+  loadOptions(program
     .command('log [inputs...]')
     .alias('l')
     .description('Report messages from any logs.'))

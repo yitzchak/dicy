@@ -7,7 +7,7 @@ export type globOptions = {
   ignorePattern: string
 }
 
-export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save'
+export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'zap'
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 

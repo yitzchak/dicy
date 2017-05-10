@@ -23,5 +23,6 @@ cd ../builder-tests
 
 for file in {*.tex,*.lhs,*.Rnw}; do
   echo "Creating event archive for $file"
-  dicy build,log,clean --save-events=command,log "$file" &>/dev/null
+  dicy bl --save-events=command,log "$file" &>/dev/null
+  dicy z "$file" &>/dev/null
 done

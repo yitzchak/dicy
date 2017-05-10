@@ -18,14 +18,6 @@ copyTargetsToRoot:
   defaultValue: false
   commands:
     - build
-deepClean:
-  aliases:
-    - d
-  description: Remove all generated files and the cache.
-  type: boolean
-  defaultValue: false
-  commands:
-    - clean
 engine:
   aliases:
     - e
@@ -48,7 +40,7 @@ disableRules:
   defaultValue: []
   commands:
     - build
-    - report
+    - log
 ignoreCache:
   aliases:
     - i
@@ -66,6 +58,7 @@ jobName:
   commands:
     - build
     - clean
+    - zap
 jobNames:
   aliases:
     - jobnames
@@ -74,6 +67,7 @@ jobNames:
   commands:
     - build
     - clean
+    - zap
 phaseCycles:
   description: maximum number of evaluation cycles in each phase
   type: number
@@ -81,7 +75,9 @@ phaseCycles:
   commands:
     - build
     - clean
-    - report
+    - graph
+    - log
+    - zap
 outputDirectory:
   aliases:
     - o
@@ -120,7 +116,9 @@ severity:
   commands:
     - build
     - clean
-    - report
+    - graph
+    - log
+    - zap
 shellEscape:
   aliases:
     - enableShellEscape

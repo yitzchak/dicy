@@ -25,3 +25,6 @@ Report log messages generated
 
 Save the cache. Performed automatically by the command line interface.
 
+## zap
+
+Clean up all generated files after a build
