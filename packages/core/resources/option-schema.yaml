@@ -58,7 +58,7 @@ jobName:
   commands:
     - build
     - clean
-    - zap
+    - scrub
 jobNames:
   aliases:
     - jobnames
@@ -67,7 +67,7 @@ jobNames:
   commands:
     - build
     - clean
-    - zap
+    - scrub
 phaseCycles:
   description: maximum number of evaluation cycles in each phase
   type: number
@@ -77,7 +77,7 @@ phaseCycles:
     - clean
     - graph
     - log
-    - zap
+    - scrub
 outputDirectory:
   aliases:
     - o
@@ -118,7 +118,7 @@ severity:
     - clean
     - graph
     - log
-    - zap
+    - scrub
 shellEscape:
   aliases:
     - enableShellEscape

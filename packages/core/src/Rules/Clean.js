@@ -11,17 +11,17 @@ import Rule from '../Rule'
 import type { Command } from '../types'
 
 export default class Clean extends Rule {
-  static commands: Set<Command> = new Set(['clean', 'zap'])
+  static commands: Set<Command> = new Set(['clean', 'scrub'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Clean up a previous build.'
 
   async run () {
-    const zap: boolean = this.command === 'zap'
+    const scrub: boolean = this.command === 'scrub'
     const generatedFiles: Set<File> = new Set()
     const files: Set<File> = new Set()
     const directories: Set<string> = new Set()
 
-    if (zap) {
+    if (scrub) {
       directories.add(this.resolvePath('$NAME-cache.yaml'))
     }
 
@@ -29,7 +29,7 @@ export default class Clean extends Rule {
       if (rule.jobName === this.jobName) {
         for (const file of rule.outputs.values()) {
           if (file.virtual) continue
-          if (zap) {
+          if (scrub) {
             files.add(file)
           } else {
             generatedFiles.add(file)
@@ -49,7 +49,7 @@ export default class Clean extends Rule {
             directories.add(filePath)
           }
         }
-      } else if (!zap && generatedFiles.size !== 0) {
+      } else if (!scrub && generatedFiles.size !== 0) {
         const isMatch = micromatch.matcher(this.resolvePath(pattern), { dot: true })
         for (const file of generatedFiles.values()) {
           if (isMatch(file.filePath)) {
