@@ -31,7 +31,7 @@ export default class ApplyOptions extends Rule {
     }
 
     function matcher (objValue, srcValue, key, object, source) {
-      if (['deepClean', 'ignoreCache', 'phaseCycles', 'severity'].includes(key)) return true
+      if (['ignoreCache', 'phaseCycles', 'severity'].includes(key)) return true
     }
 
     if (!_.isMatchWith(this.state.options, oldOptions, matcher)) {

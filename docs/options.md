@@ -55,18 +55,6 @@ current job then the rule [CopyTargetsToRoot][] will copy each generated output
 file to the directory that contains the source file. The original file will be
 preserved so that the dependency tree will not be broken.
 
-## deepClean
-
--   **Type:** boolean
--   **Default Value:** `false`
--   **Commands:** [clean][]
--   **Command Line Interface:**  `--deep-clean`, `-d`
-
-If [deepClean][] is `true` then all generated files will be removed regardless
-of the value of [cleanPatterns][]. This is equivalent to appending `**/*` to
-[cleanPatterns][]. Additionally, if the `clean` command results in the outputs
-of all rules being deleted then the cache file will be removed.
-
 ## engine
 
 -   **Type:** string
@@ -214,9 +202,7 @@ displayed in addition to log messages specified by the [severity][] level.
 [action]: events#action
 [build]: commands#build
 [clean]: commands#clean
-[cleanPatterns]: #cleanpatterns
 [copyTargetsToRoot]: #copytargetstoroot
-[deepClean]: #deepclean
 [DviToPdf]: rules#dvitopdf
 [engine]: #engine
 [Job Specific Source Files]: configuration#job-specific-source-files
