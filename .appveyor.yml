@@ -23,7 +23,7 @@ cache:
 install:
   - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
   - ps: Install-Product node 7 x64
-  - npm install -g lerna@2.0.0-rc.3
+  - npm install -g lerna@2.0.0-rc.5
   - cinst miktex ghostscript
   - cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
   - curl -LfsS -o asymptote-setup.exe https://downloads.sourceforge.net/project/asymptote/%ASYMPTOTE_VERSION%/asymptote-%ASYMPTOTE_VERSION%-setup.exe

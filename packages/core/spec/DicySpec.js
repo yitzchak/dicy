@@ -29,7 +29,7 @@ describe('Dicy', () => {
     done()
   })
 
-  describe('can successfully build', () => {
+  it('can successfully build', () => {
     for (const name of tests) {
       const spec = it(name, async (done) => {
         let expected = { types: [], events: [] }
@@ -67,6 +67,7 @@ describe('Dicy', () => {
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
 
         done()
+      // $FlowIgnore
       }, ASYNC_TIMEOUT)
     }
   })
