@@ -64,10 +64,10 @@
     "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "^0.46.0",
+    "flow-bin": "^0.47.0",
     "flow-typed": "^2.1.2",
     "jasmine": "^2.6.0",
-    "lerna": "^2.0.0-rc.3"
+    "lerna": "^2.0.0-rc.5"
   },
   "babel": {
     "presets": [

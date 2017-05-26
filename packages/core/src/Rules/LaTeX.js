@@ -57,7 +57,7 @@ export default class LaTeX extends Rule {
         ''
       ]
 
-      if (options.env.TEXINPUTS) paths.shift(options.env.TEXINPUTS)
+      if (options.env.TEXINPUTS) paths.unshift(options.env.TEXINPUTS)
       options.env.TEXINPUTS = paths.join(':')
     }
 

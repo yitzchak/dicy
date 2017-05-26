@@ -69,6 +69,7 @@ export const customMatchers = {
               : ((typeof x === 'string' && typeof y === 'string')
                 ? stringCompare(x, y)
                 : undefined)),
+            // $FlowIgnore
             fromIndex)
           if (expectedIndex === -1) {
             receivedMissing.push(received)
