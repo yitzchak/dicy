@@ -14,9 +14,9 @@ export default class MetaPost extends Rule {
   }
 
   constructProcessOptions (): Object {
-    return {
+    return Object.assign(super.constructProcessOptions(), {
       cwd: this.resolvePath('$ROOTDIR/$DIR', this.firstParameter)
-    }
+    })
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

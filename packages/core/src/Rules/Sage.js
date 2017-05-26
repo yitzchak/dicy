@@ -13,11 +13,9 @@ export default class Sage extends Rule {
   }
 
   constructProcessOptions (): Object {
-    return {
-      cwd: this.options.outputDirectory
-        ? path.resolve(this.rootPath, this.options.outputDirectory)
-        : this.rootPath
-    }
+    return Object.assign(super.constructProcessOptions(), {
+      cwd: this.resolvePath('$ROOTDIR/$OUTDIR')
+    })
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

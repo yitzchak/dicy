@@ -140,3 +140,67 @@ synctex:
   defaultValue: false
   commands:
     - build
+PATH:
+  aliases:
+    - texPath
+  description: search path for executables
+  type: strings
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+BIBINPUTS:
+  description: BibTeX bibliography source search path
+  type: strings
+  defaultValue:
+    - .
+    - $OUTDIR
+    -
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+BSTINPUTS:
+  description: BibTeX style file search path
+  type: strings
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+TEXPICTS:
+  description: Picture search path
+  type: strings
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+MFINPUTS:
+  description: Metafont source search path
+  type: strings
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+TEXINPUTS:
+  description: TeX source search path
+  type: strings
+  defaultValue:
+    - .
+    - $OUTDIR
+    -
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub

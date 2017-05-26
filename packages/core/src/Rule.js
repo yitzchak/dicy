@@ -313,10 +313,37 @@ export default class Rule extends StateConsumer {
   }
 
   constructProcessOptions (): Object {
-    return {
+    const processOptions = {
       cwd: this.rootPath,
       env: Object.assign({}, process.env)
     }
+    const searchOptionNames = [
+      'BIBINPUTS',
+      'BSTINPUTS',
+      'MFINPUTS',
+      'PATH',
+      'TEXINPUTS',
+      'TEXPICTS'
+    ]
+
+    for (const name of searchOptionNames) {
+      const value: ?Array<string> = this.options[name]
+      if (value && value !== ['']) {
+        const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath) : '')
+
+        if (processOptions.env[name] && paths.length > 0 && paths[paths.length - 1] === '') {
+          paths[paths.length - 1] = processOptions.env[name]
+        }
+
+        if (process.platform === 'win32' && name === 'PATH') {
+          processOptions.env['Path'] = paths.join(';')
+        } else {
+          processOptions.env[name] = paths.join(':')
+        }
+      }
+    }
+
+    return processOptions
   }
 
   constructCommand (): Array<string> {
