@@ -1,5 +1,6 @@
 /* @flow */
 
+import path from 'path'
 import commandJoin from 'command-join'
 
 import State from './State'
@@ -330,16 +331,13 @@ export default class Rule extends StateConsumer {
       const value: ?Array<string> = this.options[name]
       if (value && value !== ['']) {
         const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath) : '')
+        const envName = process.platform === 'win32' && name === 'PATH' ? 'Path' : name
 
-        if (processOptions.env[name] && paths.length > 0 && paths[paths.length - 1] === '') {
-          paths[paths.length - 1] = processOptions.env[name]
+        if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
+          paths[paths.length - 1] = processOptions.env[envName]
         }
 
-        if (process.platform === 'win32' && name === 'PATH') {
-          processOptions.env['Path'] = paths.join(';')
-        } else {
-          processOptions.env[name] = paths.join(':')
-        }
+        processOptions.env[envName] = paths.join(path.delimiter)
       }
     }
 
