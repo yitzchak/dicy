@@ -194,9 +194,16 @@ export default class State extends EventEmitter {
       if (from.hasOwnProperty(name)) {
         const value = from[name]
         if (typeof value !== 'object' || Array.isArray(value)) {
-          const schema = this.optionSchema.get(name)
-          if (schema) {
-            to[schema.name] = value
+          if (name.startsWith('$')) {
+            // Its an environment variable
+            to[name] = value
+          } else {
+            const schema = this.optionSchema.get(name)
+            if (schema) {
+              to[schema.name] = value
+            } else {
+              // Tell somebody!
+            }
           }
         } else {
           if (!(name in to)) to[name] = {}
@@ -235,6 +242,25 @@ export default class State extends EventEmitter {
     }
 
     return (name === 'filePath') ? this.filePath : this.options[name]
+  }
+
+  * getOptions (jobName: ?string): Iterable<[string, any]> {
+    if (jobName && 'jobs' in this.options && jobName in this.options.jobs) {
+      const jobOptions = this.options.jobs[jobName]
+
+      for (const name in jobOptions) {
+        yield [name, jobOptions]
+      }
+
+      for (const name in this.options) {
+        if (name === 'jobs' || name in jobOptions) continue
+        yield [name, this.options[name]]
+      }
+    } else {
+      for (const name in this.options) {
+        if (name !== 'jobs') yield [name, this.options[name]]
+      }
+    }
   }
 
   calculateDistances (): void {
