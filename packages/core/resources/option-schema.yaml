@@ -155,9 +155,18 @@ BIBINPUTS:
   description: BibTeX bibliography source search path
   type: strings
   defaultValue:
-    - .
-    - $OUTDIR
+    - $ROOTDIR
+    - $ROOTDIR/$OUTDIR
     -
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+BLTXMLINPUTS:
+  description: BibLaTeXML bibliography files for Biber search path
+  type: strings
   commands:
     - build
     - clean
@@ -166,6 +175,15 @@ BIBINPUTS:
     - scrub
 BSTINPUTS:
   description: BibTeX style file search path
+  type: strings
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+CLUAINPUTS:
+  description: Dynamic libraries for Lua search path
   type: strings
   commands:
     - build
@@ -182,8 +200,26 @@ TEXPICTS:
     - graph
     - log
     - scrub
+LUAINPUTS:
+  description: Lua source search path
+  type: strings
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
 MFINPUTS:
   description: Metafont source search path
+  type: strings
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
+MPINPUTS:
+  description: MetaPont source search path
   type: strings
   commands:
     - build
@@ -195,8 +231,8 @@ TEXINPUTS:
   description: TeX source search path
   type: strings
   defaultValue:
-    - .
-    - $OUTDIR
+    - $ROOTDIR
+    - $ROOTDIR/$OUTDIR
     -
   commands:
     - build

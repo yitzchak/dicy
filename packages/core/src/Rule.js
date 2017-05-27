@@ -320,8 +320,12 @@ export default class Rule extends StateConsumer {
     }
     const searchOptionNames = [
       'BIBINPUTS',
+      'BLTXMLINPUTS',
       'BSTINPUTS',
+      'CLUAINPUTS',
+      'LUAINPUTS',
       'MFINPUTS',
+      'MPINPUTS',
       'PATH',
       'TEXINPUTS',
       'TEXPICTS'
