@@ -194,16 +194,14 @@ export default class State extends EventEmitter {
       if (from.hasOwnProperty(name)) {
         const value = from[name]
         if (typeof value !== 'object' || Array.isArray(value)) {
-          if (name.startsWith('$')) {
-            // Its an environment variable
+          const schema = this.optionSchema.get(name)
+          if (schema) {
+            to[schema.name] = value
+          } else if (name.startsWith('$')) {
+            // It's an environment variable
             to[name] = value
           } else {
-            const schema = this.optionSchema.get(name)
-            if (schema) {
-              to[schema.name] = value
-            } else {
-              // Tell somebody!
-            }
+            // Tell somebody!
           }
         } else {
           if (!(name in to)) to[name] = {}
