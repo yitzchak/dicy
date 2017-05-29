@@ -323,7 +323,8 @@ export default class Rule extends StateConsumer {
       if (!name.startsWith('$')) continue
       const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
       if (Array.isArray(value)) {
-        const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath) : '')
+        const emptyPath = (name === '$PATH') ? process.env[envName] : ''
+        const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath) : emptyPath)
 
         if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
           paths[paths.length - 1] = processOptions.env[envName]
