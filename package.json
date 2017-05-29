@@ -40,7 +40,7 @@
     "fs-extra": "^3.0.0",
     "js-yaml": "^3.8.3",
     "lodash": "^4.17.4",
-    "micromatch": "^2.3.11",
+    "micromatch": "^3.0.1",
     "readdir-enhanced": "^1.5.2",
     "temp": "^0.8.3",
     "tree-kill": "^1.1.0"
