@@ -116,7 +116,7 @@ export default class StateConsumer {
       })
     }
 
-    return path.normalize(filePath.replace(VARIABLE_PATTERN, (match, name) => properties[name]))
+    return path.normalize(filePath.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0]))
   }
 
   async globPath (pattern: string, reference?: File | string, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
