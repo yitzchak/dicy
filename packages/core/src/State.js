@@ -36,12 +36,18 @@ export default class State extends EventEmitter {
       if (option.defaultValue) this.defaultOptions[option.name] = option.defaultValue
     }
     this.assignOptions(this.defaultOptions)
-    this.env = {
-      HOME: process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'],
+
+    this.env = Object.assign({}, process.env, {
       DIR: dir,
       BASE: base,
       NAME: name,
       EXT: ext
+    })
+    if (process.platform === 'win32') {
+      Object.assign(this.env, {
+        HOME: process.env.USERPROFILE,
+        PATH: process.env.Path
+      })
     }
   }
 

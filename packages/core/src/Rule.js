@@ -332,7 +332,7 @@ export default class Rule extends StateConsumer {
 
         processOptions.env[envName] = paths.join(path.delimiter)
       } else {
-        processOptions.env[envName] = value
+        processOptions.env[envName] = this.expandVariables(value)
       }
     }
 
