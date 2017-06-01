@@ -199,9 +199,54 @@ Only accessible from the command line interface, this option sets the verbosity
 of the console output. When verbose is enabled then [action][] messages will be
 displayed in addition to log messages specified by the [severity][] level.
 
+# Environment Variables
+
+Environment variables like `TEXINPUTS` maybe set in any options file by
+prefixing the variable with a `$`. For instance, the following YAML file will
+set the environment variable `FOO` to the value of `bar`.
+
+```yaml
+$FOO: bar
+```
+
+Environment variables may refer to system level environment variables also. For
+example the following will prefix the system search path with `/foo/bar`.
+
+```yaml
+$PATH: /foo/bar:$PATH
+```
+
+Path resolution (as detailed in [cleanPatterns][]) may also be done on
+environment variable values by using arrays. For instance, the following will
+set `TEXINPUTS` to `/baz:/baz/output:` if the current file path is
+`/baz/gronk.tex`.
+
+```yaml
+outputDirectory: output
+$TEXINPUTS:
+  - $ROOTDIR
+  - $ROOTDIR/$OUTDIR
+  -
+```
+
+Kpathsea compliant TeX distributions typically use a trailing empty path to
+indicate that the system default search path should be appended to the search
+path specified by the environment variable. This convention can also be used
+to set the system search path. The final item will be replaced with the value
+of `PATH` (`Path` on Windows) from the system environment.
+
+```yaml
+outputDirectory: output
+$PATH:
+  - $ROOTDIR
+  - $ROOTDIR/$OUTDIR
+  -
+```
+
 [action]: events#action
 [build]: commands#build
 [clean]: commands#clean
+[cleanPatterns]: #cleanPatterns
 [copyTargetsToRoot]: #copytargetstoroot
 [DviToPdf]: rules#dvitopdf
 [engine]: #engine

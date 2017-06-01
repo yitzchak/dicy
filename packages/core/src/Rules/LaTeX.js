@@ -1,7 +1,5 @@
 /* @flow */
 
-import path from 'path'
-
 import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
@@ -46,22 +44,6 @@ export default class LaTeX extends Rule {
     await this.getResolvedInput('$OUTDIR/$JOB.aux')
     await this.getResolvedOutputs(['$OUTDIR/$JOB.aux', '$OUTDIR/$JOB.fls', '$OUTDIR/$JOB.log', '$OUTDIR/$JOB.synctex.gz'])
     return true
-  }
-
-  constructProcessOptions (): Object {
-    const options = super.constructProcessOptions()
-
-    if (this.options.outputDirectory) {
-      const paths = [
-        path.resolve(this.rootPath, this.options.outputDirectory),
-        ''
-      ]
-
-      if (options.env.TEXINPUTS) paths.unshift(options.env.TEXINPUTS)
-      options.env.TEXINPUTS = paths.join(':')
-    }
-
-    return options
   }
 
   constructCommand () {

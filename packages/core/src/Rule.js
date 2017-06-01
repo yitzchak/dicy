@@ -1,5 +1,6 @@
 /* @flow */
 
+import path from 'path'
 import commandJoin from 'command-join'
 
 import State from './State'
@@ -313,10 +314,29 @@ export default class Rule extends StateConsumer {
   }
 
   constructProcessOptions (): Object {
-    return {
+    const processOptions = {
       cwd: this.rootPath,
       env: Object.assign({}, process.env)
     }
+
+    for (const [name, value] of this.state.getOptions(this.jobName)) {
+      if (!name.startsWith('$')) continue
+      const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
+      if (Array.isArray(value)) {
+        const emptyPath = (name === '$PATH') ? process.env[envName] : ''
+        const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath) : emptyPath)
+
+        if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
+          paths[paths.length - 1] = processOptions.env[envName]
+        }
+
+        processOptions.env[envName] = paths.join(path.delimiter)
+      } else {
+        processOptions.env[envName] = this.expandVariables(value)
+      }
+    }
+
+    return processOptions
   }
 
   constructCommand (): Array<string> {

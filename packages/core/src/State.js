@@ -36,12 +36,18 @@ export default class State extends EventEmitter {
       if (option.defaultValue) this.defaultOptions[option.name] = option.defaultValue
     }
     this.assignOptions(this.defaultOptions)
-    this.env = {
-      HOME: process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'],
+
+    this.env = Object.assign({}, process.env, {
       DIR: dir,
       BASE: base,
       NAME: name,
       EXT: ext
+    })
+    if (process.platform === 'win32') {
+      Object.assign(this.env, {
+        HOME: process.env.USERPROFILE,
+        PATH: process.env.Path
+      })
     }
   }
 
@@ -197,6 +203,11 @@ export default class State extends EventEmitter {
           const schema = this.optionSchema.get(name)
           if (schema) {
             to[schema.name] = value
+          } else if (name.startsWith('$')) {
+            // It's an environment variable
+            to[name] = value
+          } else {
+            // Tell somebody!
           }
         } else {
           if (!(name in to)) to[name] = {}
@@ -235,6 +246,25 @@ export default class State extends EventEmitter {
     }
 
     return (name === 'filePath') ? this.filePath : this.options[name]
+  }
+
+  * getOptions (jobName: ?string): Iterable<[string, any]> {
+    if (jobName && 'jobs' in this.options && jobName in this.options.jobs) {
+      const jobOptions = this.options.jobs[jobName]
+
+      for (const name in jobOptions) {
+        yield [name, jobOptions]
+      }
+
+      for (const name in this.options) {
+        if (name === 'jobs' || name in jobOptions) continue
+        yield [name, this.options[name]]
+      }
+    } else {
+      for (const name in this.options) {
+        if (name !== 'jobs') yield [name, this.options[name]]
+      }
+    }
   }
 
   calculateDistances (): void {

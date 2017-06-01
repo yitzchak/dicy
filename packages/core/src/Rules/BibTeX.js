@@ -47,18 +47,6 @@ export default class BibTeX extends Rule {
     if (!this.input) this.actions.delete('run')
   }
 
-  constructProcessOptions () {
-    const options: Object = {
-      cwd: this.rootPath
-    }
-
-    if (this.options.outputDirectory) {
-      options.env = Object.assign({}, process.env, { BIBINPUTS: ['.', this.options.outputDirectory].join(path.delimiter) })
-    }
-
-    return options
-  }
-
   constructCommand () {
     return ['bibtex', this.input ? this.input.filePath : '']
   }

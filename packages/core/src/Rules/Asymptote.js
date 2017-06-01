@@ -29,10 +29,10 @@ export default class Asymptote extends Rule {
   }
 
   constructProcessOptions (): Object {
-    return {
+    return Object.assign(super.constructProcessOptions(), {
       maxBuffer: 524288,
       cwd: this.resolvePath('$ROOTDIR/$DIR', this.firstParameter)
-    }
+    })
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

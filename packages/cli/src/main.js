@@ -99,6 +99,9 @@ program
 Dicy.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const option of definitions) {
+      // Skip environment variables
+      if (option.name.startsWith('$')) continue
+
       const commands = pc.name().split(',')
 
       if (!option.commands.some(command => commands.includes(command))) continue

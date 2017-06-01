@@ -29,7 +29,7 @@ describe('Dicy', () => {
     done()
   })
 
-  it('can successfully build', () => {
+  describe('can successfully build', () => {
     for (const name of tests) {
       const spec = it(name, async (done) => {
         let expected = { types: [], events: [] }
