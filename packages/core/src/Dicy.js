@@ -16,10 +16,8 @@ export default class Dicy extends StateConsumer {
     const state = await State.create(filePath, schema)
     const builder = new Dicy(state)
 
-    const instance = await state.getFile('dicy-instance.yaml-ParsedYAML')
-    if (instance) instance.value = options
-
     await builder.initialize()
+    await builder.setInstanceOptions(options)
 
     return builder
   }
@@ -29,6 +27,11 @@ export default class Dicy extends StateConsumer {
     const entries: Array<string> = await readdir.async(ruleClassPath)
     this.state.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
+  }
+
+  async setInstanceOptions (options: Object = {}) {
+    const instance = await this.getFile('dicy-instance.yaml-ParsedYAML')
+    if (instance) instance.value = options
   }
 
   async analyzePhase (command: Command, phase: Phase) {
