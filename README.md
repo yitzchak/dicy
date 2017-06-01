@@ -61,7 +61,7 @@ polyfill for `Set`/`Map` usage such as `babel-polyfill`. For instance, to build
 
 ```javascript
 import 'babel-polyfill'
-import { DiCy } from 'dicy'
+import { DiCy } from '@dicy/core'
 
 const builder = await DiCy.create('foo.tex', { synctex: true })
 
