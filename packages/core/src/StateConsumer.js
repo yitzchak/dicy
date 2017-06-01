@@ -98,25 +98,31 @@ export default class StateConsumer {
   }
 
   resolvePath (filePath: string, reference?: File | string): string {
-    const properties = Object.assign({}, this.state.env, {
-      ROOTDIR: this.rootPath,
-      OUTDIR: this.options.outputDirectory || '.',
-      OUTEXT: `.${this.options.outputFormat}`,
-      JOB: this.jobName || this.options.jobName || this.state.env.NAME
-    })
+    let properties = {}
 
     if (reference) {
       const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.filePath : reference)
-      Object.assign(properties, {
+      properties = {
         JOB: this.jobName || this.options.jobName || name,
         DIR: (reference instanceof File ? dir : this.rootPath) || '.',
         BASE: base,
         NAME: name,
         EXT: ext
-      })
+      }
     }
 
-    return path.normalize(filePath.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0]))
+    return path.normalize(this.expandVariables(filePath, properties))
+  }
+
+  expandVariables (value: string, additionalProperties: Object = {}): string {
+    const properties = Object.assign({}, this.state.env, {
+      ROOTDIR: this.rootPath,
+      OUTDIR: this.options.outputDirectory || '.',
+      OUTEXT: `.${this.options.outputFormat}`,
+      JOB: this.jobName || this.options.jobName || this.state.env.NAME
+    }, additionalProperties)
+
+    return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
 
   async globPath (pattern: string, reference?: File | string, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
