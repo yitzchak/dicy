@@ -1,6 +1,6 @@
 # Configuration
 
-During the `load` command Dicy configures the build environment based on
+During the `load` command DiCy configures the build environment based on
 the options provided directly to the builder and those provided in various
 configuration files. These options are applied the following specific order.
 
@@ -13,14 +13,14 @@ configuration files. These options are applied the following specific order.
     derived format such as LaTeX, knitr, or Literate Haskell.
 5.  Options provided directly to the builder or command line interface.
 
-The various options that may be provide to Dicy via each of these
+The various options that may be provide to DiCy via each of these
 configuration sources are detailed in the [Options](options) page,
 with the exception of job name specific options which is detailed in the
 [Multiple Jobs](#multiple-jobs) section.
 
 # Multiple Jobs
 
-Dicy can run LaTeX multiple times on the same source file with different
+DiCy can run LaTeX multiple times on the same source file with different
 job names and can also have job specific settings which include the ability to
 build jobs that depend on source files other than the main source file. These
 abilities are accomplished through the [jobNames][] and the [jobs][] options.
@@ -34,7 +34,7 @@ pdflatex -jobname=bar foo.tex
 ```
 
 will output `bar.pdf` instead of `foo.pdf`. This can be accomplished in
-Dicy by using the [jobName][] option. For example, using LaTeX magic
+DiCy by using the [jobName][] option. For example, using LaTeX magic
 comments
 
 ```latex
@@ -51,7 +51,7 @@ or using a YAML file `foo.yaml`
 jobName: bar
 ```
 
-Dicy also provides the ability to execute multile jobs with different job
+DiCy also provides the ability to execute multile jobs with different job
 names via the [jobNames][] option.
 
 ```latex
@@ -126,7 +126,7 @@ dependencies that are not automatically generated when the main source file is
 processed by the appropriate rule such as `LaTeX`, `Knitr`, etc.
 
 For instance, the following LaTeX source file will create the appropriate
-Asymptote source files and Dicy will automatically call Asymptote to
+Asymptote source files and DiCy will automatically call Asymptote to
 proess those source files without any user configuration.
 
 ```latex

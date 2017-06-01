@@ -10,11 +10,11 @@ import Rule from './Rule'
 
 import type { Action, Command, Option, Phase, RuleInfo } from './types'
 
-export default class Dicy extends StateConsumer {
+export default class DiCy extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
-    const schema = await Dicy.getOptionDefinitions()
+    const schema = await DiCy.getOptionDefinitions()
     const state = await State.create(filePath, schema)
-    const builder = new Dicy(state)
+    const builder = new DiCy(state)
 
     await builder.initialize()
     await builder.setInstanceOptions(options)

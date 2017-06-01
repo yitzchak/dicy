@@ -5,7 +5,7 @@ import path from 'path'
 import readdir from 'readdir-enhanced'
 import childProcess from 'child_process'
 
-import { Dicy, File } from '../src/main'
+import { DiCy, File } from '../src/main'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
@@ -16,8 +16,8 @@ function doCheck (command: string): Promise<boolean> {
   })
 }
 
-describe('Dicy', () => {
-  let dicy: Dicy
+describe('DiCy', () => {
+  let dicy: DiCy
   let fixturesPath: string
   const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
   let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw)$/i })
@@ -37,7 +37,7 @@ describe('Dicy', () => {
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
         // Initialize dicy and listen for messages
-        dicy = await Dicy.create(filePath)
+        dicy = await DiCy.create(filePath)
         dicy.state.env.HOME = fixturesPath
 
         // Load the event archive
