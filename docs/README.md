@@ -1,4 +1,4 @@
-# Dicy
+# DiCy
 
 A JavaScript based builder for LaTeX, knitr and literate Haskell that
 automatically builds dependencies. Can automatically process projects that
@@ -8,7 +8,7 @@ during build.
 
 ## Installation
 
-Dicy can be used either as a library or via the command line. To install Dicy as
+DiCy can be used either as a library or via the command line. To install DiCy as
 a library use `npm install @dicy/core`. To install for command line access use
 `npm install -g @dicy/cli`.
 
@@ -48,15 +48,15 @@ via the library interface.
 
 ## Library Usage
 
-The primary class for usage is the `Dicy` class. The library requires a
+The primary class for usage is the `DiCy` class. The library requires a
 polyfill for `Set`/`Map` usage such as `babel-polyfill`. For instance, to build
 `foo.tex` and report any log messages:
 
 ```javascript
 import 'babel-polyfill'
-import { Dicy } from 'dicy'
+import { DiCy } from '@dicy/core'
 
-const builder = await Dicy.create('foo.tex', { synctex: true })
+const builder = await DiCy.create('foo.tex', { synctex: true })
 
 builder.on('log', event => {
   const nameText = event.name ? `[${event.name}] ` : ''

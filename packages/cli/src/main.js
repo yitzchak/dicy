@@ -8,7 +8,7 @@ import path from 'path'
 import program from 'commander'
 import cliui from 'cliui'
 
-import { Dicy, File } from '@dicy/core'
+import { DiCy, File } from '@dicy/core'
 
 const ui = cliui({ width: 80 })
 
@@ -45,7 +45,7 @@ const command = async (inputs, env) => {
 
   for (const filePath of inputs) {
     const events = []
-    const dicy = await Dicy.create(path.resolve(filePath), options)
+    const dicy = await DiCy.create(path.resolve(filePath), options)
     dicy
       .on('log', event => {
         const nameText = event.name ? `[${event.name}] ` : ''
@@ -96,7 +96,7 @@ program
   .version('0.0.0')
   .description('An experimental circular builder for LaTeX')
 
-Dicy.getOptionDefinitions().then(definitions => {
+DiCy.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const option of definitions) {
       // Skip environment variables
@@ -195,7 +195,7 @@ Dicy.getOptionDefinitions().then(definitions => {
     .option('--command <command>', 'List only rules that apply to a specific command.', null)
     .action(async (env) => {
       const { command } = cloneOptions(env.opts())
-      const dicy = await Dicy.create('foo.tex')
+      const dicy = await DiCy.create('foo.tex')
       ui.div(dicy.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
       console.log(ui.toString())
     })
