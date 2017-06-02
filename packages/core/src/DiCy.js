@@ -85,7 +85,7 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  async evaluate (command: Command, phase: Phase, action: Action) {
+  async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.command === command && rule.phase === phase)
     const ruleGroups: Array<Array<Rule>> = []
 
@@ -137,6 +137,8 @@ export default class DiCy extends StateConsumer {
     }
 
     await this.checkUpdates(command, phase)
+
+    return rules.some(rule => rule.success)
   }
 
   async checkUpdates (command: Command, phase: Phase) {
@@ -177,10 +179,18 @@ export default class DiCy extends StateConsumer {
     await this.analyzePhase(command, phase)
 
     for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
+      let success: boolean = false
+
       for (const action of ['updateDependencies', 'run']) {
         await this.analyzeFiles(command, phase)
-        await this.evaluate(command, phase, action)
+        success = await this.evaluate(command, phase, action) || success
       }
+
+      if (!success) {
+        this.info(`Abandoning evaluation of ${phase} phase in ${command} command because all rules have failed.`)
+        break
+      }
+
       if (Array.from(this.files).every(file => file.analyzed) &&
         Array.from(this.rules).every(rule => rule.command !== command || rule.phase !== phase || !rule.needsEvaluation)) break
     }
