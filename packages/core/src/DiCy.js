@@ -148,6 +148,10 @@ export default class DiCy extends StateConsumer {
     }
   }
 
+  async kill () {
+    this.killChildProcesses()
+  }
+
   async run (...commands: Array<Command>): Promise<boolean> {
     await Promise.all(Array.from(this.files).map(file => file.update()))
 
