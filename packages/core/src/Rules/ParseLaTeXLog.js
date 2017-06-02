@@ -75,7 +75,7 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['category', 'severity', 'text', 'line'],
-      patterns: [/^(\S+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
+      patterns: [/^(.+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
       evaluate: (reference, groups) => {
         const message: Message = {
           severity: groups.severity.toLowerCase() === 'info' ? 'info' : 'warning',
