@@ -138,7 +138,8 @@ export default class DiCy extends StateConsumer {
 
     await this.checkUpdates(command, phase)
 
-    return rules.some(rule => rule.success)
+    // If one of the rules succeed then we count that as success
+    return rules.length === 0 || rules.some(rule => rule.success)
   }
 
   async checkUpdates (command: Command, phase: Phase) {
@@ -155,15 +156,20 @@ export default class DiCy extends StateConsumer {
   }
 
   async run (...commands: Array<Command>): Promise<boolean> {
-    await Promise.all(Array.from(this.files).map(file => file.update()))
+    try {
+      await Promise.all(Array.from(this.files).map(file => file.update()))
 
-    for (const command of commands) {
-      for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
-        await this.runPhase(command, phase)
+      for (const command of commands) {
+        for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
+          await this.runPhase(command, phase)
+        }
       }
-    }
 
-    return Array.from(this.rules).every(rule => rule.success)
+      return Array.from(this.rules).every(rule => rule.success)
+    } catch (error) {
+      this.error(error.message)
+      return false
+    }
   }
 
   async runPhase (command: Command, phase: Phase): Promise<void> {
@@ -179,16 +185,12 @@ export default class DiCy extends StateConsumer {
     await this.analyzePhase(command, phase)
 
     for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
-      let success: boolean = false
-
       for (const action of ['updateDependencies', 'run']) {
         await this.analyzeFiles(command, phase)
-        success = await this.evaluate(command, phase, action) || success
-      }
-
-      if (!success) {
-        this.info(`Abandoning evaluation of ${phase} phase in ${command} command because all rules have failed.`)
-        break
+        if (!await this.evaluate(command, phase, action)) {
+          this.error(`(${command};${phase};${action}) Abandoning phase because all rules have failed.`)
+          return
+        }
       }
 
       if (Array.from(this.files).every(file => file.analyzed) &&
