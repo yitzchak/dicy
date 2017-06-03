@@ -158,3 +158,8 @@ export type Option = {
   aliases?: Array<string>,
   commands: Array<string>
 }
+
+export type KillToken = {
+  error: Error,
+  resolve: Function
+}

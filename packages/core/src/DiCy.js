@@ -35,6 +35,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async analyzePhase (command: Command, phase: Phase) {
+    this.checkForKill()
+
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
       for (const jobName of jobNames) {
@@ -47,6 +49,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async analyzeFiles (command: Command, phase: Phase) {
+    this.checkForKill()
+
     let rulesAdded = false
 
     while (true) {
@@ -78,6 +82,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async evaluateRule (rule: Rule, action: Action) {
+    this.checkForKill()
+
     if (rule.success) {
       await rule.evaluate(action)
     } else {
@@ -86,6 +92,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
+    this.checkForKill()
+
     const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.command === command && rule.phase === phase)
     const ruleGroups: Array<Array<Rule>> = []
 
@@ -143,6 +151,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async checkUpdates (command: Command, phase: Phase) {
+    this.checkForKill()
+
     for (const file of this.files) {
       for (const rule of file.rules.values()) {
         await rule.addFileActions(file, command, phase)
@@ -151,11 +161,21 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  async kill () {
-    this.killChildProcesses()
+  kill (message: string = 'Build was killed.'): Promise<void> {
+    return new Promise(resolve => {
+      this.killToken = {
+        error: new Error(message),
+        resolve
+      }
+      this.killChildProcesses()
+    }).then(() => {
+      this.killToken = undefined
+    })
   }
 
   async run (...commands: Array<Command>): Promise<boolean> {
+    let success = true
+
     try {
       await Promise.all(Array.from(this.files).map(file => file.update()))
 
@@ -165,14 +185,23 @@ export default class DiCy extends StateConsumer {
         }
       }
 
-      return Array.from(this.rules).every(rule => rule.success)
+      success = Array.from(this.rules).every(rule => rule.success)
     } catch (error) {
+      success = false
       this.error(error.message)
-      return false
+    } finally {
+      if (this.killToken) {
+        success = false
+        this.killToken.resolve()
+      }
     }
+
+    return success
   }
 
   async runPhase (command: Command, phase: Phase): Promise<void> {
+    this.checkForKill()
+
     for (const file of this.files) {
       file.hasBeenUpdated = file.hasBeenUpdatedCache
       file.analyzed = false

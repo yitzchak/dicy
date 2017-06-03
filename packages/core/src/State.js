@@ -5,7 +5,7 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, FileCache, RuleCache, Phase, Option } from './types'
+import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
 
 export default class State extends EventEmitter {
   filePath: string
@@ -21,6 +21,7 @@ export default class State extends EventEmitter {
   processes: Set<number> = new Set()
   env: Object
   targets: Set<string> = new Set()
+  killToken: ?KillToken
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()

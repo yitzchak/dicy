@@ -83,6 +83,9 @@ const command = async (inputs, env) => {
       dicy.on(type, event => { events.push(event) })
     }
 
+    process.on('SIGTERM', () => dicy.kill())
+    process.on('SIGINT', () => dicy.kill())
+
     await dicy.run(...commands)
 
     if (saveEvents.length !== 0) {
@@ -93,7 +96,7 @@ const command = async (inputs, env) => {
 }
 
 program
-  .version('0.0.0')
+  .version('0.1.0')
   .description('An experimental circular builder for LaTeX')
 
 DiCy.getOptionDefinitions().then(definitions => {
