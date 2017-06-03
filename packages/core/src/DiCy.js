@@ -162,15 +162,21 @@ export default class DiCy extends StateConsumer {
   }
 
   kill (message: string = 'Build was killed.'): Promise<void> {
-    return new Promise(resolve => {
-      this.killToken = {
-        error: new Error(message),
-        resolve
-      }
+    if (this.killToken) return this.killToken.promise
+
+    this.killToken = {
+      error: new Error(message)
+    }
+    // $FlowIgnore
+    this.killToken.promise = new Promise(resolve => {
+      // $FlowIgnore
+      this.killToken.resolve = resolve
       this.killChildProcesses()
     }).then(() => {
       this.killToken = undefined
     })
+
+    return this.killToken.promise
   }
 
   async run (...commands: Array<Command>): Promise<boolean> {
