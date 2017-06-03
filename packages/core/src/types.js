@@ -160,7 +160,7 @@ export type Option = {
 }
 
 export type KillToken = {
-  error: Error,
-  resolve: Function,
-  promise: Promise<void>
+  error: ?Error,
+  resolve: ?Function,
+  promise: ?Promise<void>
 }

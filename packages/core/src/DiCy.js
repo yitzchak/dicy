@@ -162,24 +162,28 @@ export default class DiCy extends StateConsumer {
   }
 
   kill (message: string = 'Build was killed.'): Promise<void> {
-    if (this.killToken) return this.killToken.promise
+    if (!this.killToken) return Promise.resolve()
 
-    this.killToken = {
-      error: new Error(message)
+    if (!this.killToken.promise) {
+      this.killToken.error = new Error(message)
+      this.killToken.promise = new Promise(resolve => {
+        // $FlowIgnore
+        this.killToken.resolve = resolve
+        this.killChildProcesses()
+      })
     }
-    // $FlowIgnore
-    this.killToken.promise = new Promise(resolve => {
-      // $FlowIgnore
-      this.killToken.resolve = resolve
-      this.killChildProcesses()
-    }).then(() => {
-      this.killToken = undefined
-    })
 
     return this.killToken.promise
   }
 
   async run (...commands: Array<Command>): Promise<boolean> {
+    if (this.killToken) {
+      this.error('Build currently in progress')
+      return false
+    }
+
+    this.killToken = {}
+
     let success = true
 
     try {
@@ -196,10 +200,11 @@ export default class DiCy extends StateConsumer {
       success = false
       this.error(error.message)
     } finally {
-      if (this.killToken) {
+      if (this.killToken && this.killToken.resolve) {
         success = false
         this.killToken.resolve()
       }
+      this.killToken = null
     }
 
     return success

@@ -55,7 +55,7 @@ export default class StateConsumer {
   }
 
   checkForKill (): void {
-    if (this.state.killToken) throw this.state.killToken.error
+    if (this.state.killToken && this.state.killToken.error) throw this.state.killToken.error
   }
 
   get ruleClasses (): Array<Class<Rule>> {
