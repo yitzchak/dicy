@@ -187,14 +187,9 @@ export default class StateConsumer {
     this.log({ severity: 'info', name, text })
   }
 
-  trace (text: string, name: string = 'DiCy') {
-    this.log({ severity: 'trace', name, text })
-  }
-
   log (message: Message) {
     const severity = this.options.severity || 'warning'
-    if ((severity === 'info' && message.severity === 'trace') ||
-      (severity === 'warning' && (message.severity === 'trace' || message.severity === 'info')) ||
+    if ((severity === 'warning' && message.severity === 'info') ||
       (severity === 'error' && message.severity !== 'error')) return
     this.emit('log', { type: 'log', ...message })
   }

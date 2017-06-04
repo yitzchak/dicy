@@ -105,11 +105,10 @@ severity:
   aliases:
     - s
     - loggingLevel
-  description: severity of messages to display [trace, info, warning (default), error]
+  description: severity of messages to display [info, warning (default), error]
   type: string
   defaultValue: warning
   values:
-    - trace
     - info
     - warning
     - error

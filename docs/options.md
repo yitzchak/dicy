@@ -162,7 +162,7 @@ construct tests.
 ## severity
 
 -   **Type:** string
--   **Values:** `trace`, `info`, `warning` or `error`
+-   **Values:** `info`, `warning` or `error`
 -   **Default Value:** `warning`
 -   **Commands:** all
 -   **Command Line Interface:**  `--severity <severity>`, `-s <severity>`
