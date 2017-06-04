@@ -9,7 +9,7 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 
-import type { globOptions, Message } from './types'
+import type { globOptions, Message, KillToken } from './types'
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
@@ -44,6 +44,18 @@ export default class StateConsumer {
     for (const filePath of filePaths) {
       this.addResolvedTarget(filePath, reference)
     }
+  }
+
+  get killToken (): ?KillToken {
+    return this.state.killToken
+  }
+
+  set killToken (value: ?KillToken): void {
+    this.state.killToken = value
+  }
+
+  checkForKill (): void {
+    if (this.state.killToken && this.state.killToken.error) throw this.state.killToken.error
   }
 
   get ruleClasses (): Array<Class<Rule>> {

@@ -35,6 +35,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async analyzePhase (command: Command, phase: Phase) {
+    this.checkForKill()
+
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
       for (const jobName of jobNames) {
@@ -47,6 +49,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async analyzeFiles (command: Command, phase: Phase) {
+    this.checkForKill()
+
     let rulesAdded = false
 
     while (true) {
@@ -78,6 +82,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async evaluateRule (rule: Rule, action: Action) {
+    this.checkForKill()
+
     if (rule.success) {
       await rule.evaluate(action)
     } else {
@@ -85,7 +91,9 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  async evaluate (command: Command, phase: Phase, action: Action) {
+  async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
+    this.checkForKill()
+
     const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.command === command && rule.phase === phase)
     const ruleGroups: Array<Array<Rule>> = []
 
@@ -137,9 +145,14 @@ export default class DiCy extends StateConsumer {
     }
 
     await this.checkUpdates(command, phase)
+
+    // If one of the rules succeed then we count that as success
+    return rules.length === 0 || rules.some(rule => rule.success)
   }
 
   async checkUpdates (command: Command, phase: Phase) {
+    this.checkForKill()
+
     for (const file of this.files) {
       for (const rule of file.rules.values()) {
         await rule.addFileActions(file, command, phase)
@@ -148,23 +161,58 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  async kill () {
-    this.killChildProcesses()
+  kill (message: string = 'Build was killed.'): Promise<void> {
+    if (!this.killToken) return Promise.resolve()
+
+    if (!this.killToken.promise) {
+      this.killToken.error = new Error(message)
+      this.killToken.promise = new Promise(resolve => {
+        // $FlowIgnore
+        this.killToken.resolve = resolve
+        this.killChildProcesses()
+      })
+    }
+
+    return this.killToken.promise
   }
 
   async run (...commands: Array<Command>): Promise<boolean> {
-    await Promise.all(Array.from(this.files).map(file => file.update()))
-
-    for (const command of commands) {
-      for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
-        await this.runPhase(command, phase)
-      }
+    if (this.killToken) {
+      this.error('Build currently in progress')
+      return false
     }
 
-    return Array.from(this.rules).every(rule => rule.success)
+    this.killToken = {}
+
+    let success = true
+
+    try {
+      await Promise.all(Array.from(this.files).map(file => file.update()))
+
+      for (const command of commands) {
+        for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
+          await this.runPhase(command, phase)
+        }
+      }
+
+      success = Array.from(this.rules).every(rule => rule.success)
+    } catch (error) {
+      success = false
+      this.error(error.message)
+    } finally {
+      if (this.killToken && this.killToken.resolve) {
+        success = false
+        this.killToken.resolve()
+      }
+      this.killToken = null
+    }
+
+    return success
   }
 
   async runPhase (command: Command, phase: Phase): Promise<void> {
+    this.checkForKill()
+
     for (const file of this.files) {
       file.hasBeenUpdated = file.hasBeenUpdatedCache
       file.analyzed = false
@@ -179,8 +227,12 @@ export default class DiCy extends StateConsumer {
     for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
       for (const action of ['updateDependencies', 'run']) {
         await this.analyzeFiles(command, phase)
-        await this.evaluate(command, phase, action)
+        if (!await this.evaluate(command, phase, action)) {
+          this.error(`(${command};${phase};${action}) Abandoning phase because all rules have failed.`)
+          return
+        }
       }
+
       if (Array.from(this.files).every(file => file.analyzed) &&
         Array.from(this.rules).every(rule => rule.command !== command || rule.phase !== phase || !rule.needsEvaluation)) break
     }
