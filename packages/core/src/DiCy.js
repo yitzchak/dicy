@@ -81,20 +81,25 @@ export default class DiCy extends StateConsumer {
       .map(rule => ({ name: rule.name, description: rule.description }))
   }
 
-  async evaluateRule (rule: Rule, action: Action) {
+  async evaluateRule (rule: Rule, action: Action): Promise<boolean> {
     this.checkForKill()
 
     if (rule.success) {
       await rule.evaluate(action)
-    } else {
-      this.info(`Skipping rule ${rule.id} because of previous failure.`)
+      return true
     }
+
+    this.info(`Skipping rule ${rule.id} because of previous failure.`)
+    return false
   }
 
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
     const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.command === command && rule.phase === phase)
+    if (rules.length === 0) return false
+
+    let didEvaluation: boolean = false
     const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
@@ -140,14 +145,13 @@ export default class DiCy extends StateConsumer {
 
       for (const rule of candidateRules) {
         await this.checkUpdates(command, phase)
-        await this.evaluateRule(rule, action)
+        didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
       }
     }
 
     await this.checkUpdates(command, phase)
 
-    // If one of the rules succeed then we count that as success
-    return rules.length === 0 || rules.some(rule => rule.success)
+    return didEvaluation
   }
 
   async checkUpdates (command: Command, phase: Phase) {
@@ -225,16 +229,17 @@ export default class DiCy extends StateConsumer {
     await this.analyzePhase(command, phase)
 
     for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
+      let didEvaluation = false
+
       for (const action of ['updateDependencies', 'run']) {
         await this.analyzeFiles(command, phase)
-        if (!await this.evaluate(command, phase, action)) {
-          this.error(`(${command};${phase};${action}) Abandoning phase because all rules have failed.`)
-          return
-        }
+        didEvaluation = await this.evaluate(command, phase, action) || didEvaluation
       }
 
       if (Array.from(this.files).every(file => file.analyzed) &&
         Array.from(this.rules).every(rule => rule.command !== command || rule.phase !== phase || !rule.needsEvaluation)) break
+
+      if (!didEvaluation) break
     }
   }
 
