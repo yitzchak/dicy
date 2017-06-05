@@ -20,7 +20,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   pip install Pygments
 
   echo Installing MacTeX...
-  wget http://ctan.org/tex-archive/systems/mac/mactex/BasicTeX.pkg
+  wget http://tug.org/cgi-bin/mactex-download/BasicTeX.pkg
   sudo installer -pkg BasicTeX.pkg -target /
 
   echo Installing TeX packages...
