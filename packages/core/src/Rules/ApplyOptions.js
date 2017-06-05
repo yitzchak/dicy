@@ -5,10 +5,13 @@ import _ from 'lodash'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command } from '../types'
+import type { Command, Phase } from '../types'
 
 export default class ApplyOptions extends Rule {
   static commands: Set<Command> = new Set(['load'])
+  // ApplyOptions runs in both the initialize and execute phases so that
+  // instance options will be seen in the initialize phase.
+  static phases: Set<Phase> = new Set(['initialize', 'execute'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
   static description: string = 'Apply options from YAML file and any LaTeX magic comments found in source file.'
