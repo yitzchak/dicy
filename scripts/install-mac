@@ -24,6 +24,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   sudo installer -pkg BasicTeX.pkg -target /
 
   echo Installing TeX packages...
+  sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
   sudo tlmgr update --self
   sudo tlmgr update --all
   sudo tlmgr install \
