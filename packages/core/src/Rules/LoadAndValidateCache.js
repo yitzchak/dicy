@@ -25,10 +25,11 @@ export default class LoadAndValidateCache extends Rule {
     if (this.options.ignoreCache) {
       this.cleanCache()
     } else {
-      if (await File.canRead(this.cacheFilePath)) {
-        await this.validateCache()
-      } else {
+      if (await File.canRead(this.cacheFilePath) && (!this.state.cacheTimeStamp ||
+        this.state.cacheTimeStamp < await File.getModifiedTime(this.cacheFilePath))) {
         await this.loadCache()
+      } else {
+        await this.validateCache()
       }
     }
 
@@ -48,9 +49,6 @@ export default class LoadAndValidateCache extends Rule {
   }
 
   async loadCache () {
-    const timeStamp: Date = await File.getModifiedTime(this.cacheFilePath)
-    if (this.state.cacheTimeStamp && this.state.cacheTimeStamp >= timeStamp) return true
-
     this.cleanCache()
 
     this.state.cacheTimeStamp = timeStamp
