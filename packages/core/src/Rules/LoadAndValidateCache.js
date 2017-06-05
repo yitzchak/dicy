@@ -5,7 +5,7 @@ import Rule from '../Rule'
 
 import type { Command, Phase, RuleCache, Cache } from '../types'
 
-export default class LoadCache extends Rule {
+export default class LoadAndValidateCache extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
   static commands: Set<Command> = new Set(['load'])
   static alwaysEvaluate: boolean = true
@@ -22,8 +22,36 @@ export default class LoadCache extends Rule {
   }
 
   async run () {
+    if (this.options.ignoreCache) {
+      this.cleanCache()
+    } else {
+      if (await File.canRead(this.cacheFilePath)) {
+        await this.validateCache()
+      } else {
+        await this.loadCache()
+      }
+    }
+
+    this.calculateDistances()
+
+    return true
+  }
+
+  cleanCache () {
+    for (const jobName of this.options.jobNames) {
+      for (const file of this.files) {
+        if (file.filePath !== this.filePath) {
+          this.state.deleteFile(file, jobName, false)
+        }
+      }
+    }
+  }
+
+  async loadCache () {
     const timeStamp: Date = await File.getModifiedTime(this.cacheFilePath)
     if (this.state.cacheTimeStamp && this.state.cacheTimeStamp >= timeStamp) return true
+
+    this.cleanCache()
 
     this.state.cacheTimeStamp = timeStamp
     const cache: ?Cache = await File.safeLoad(this.cacheFilePath)
@@ -42,10 +70,32 @@ export default class LoadCache extends Rule {
       for (const rule: RuleCache of cache.rules) {
         await this.state.addCachedRule(rule)
       }
+    }
+  }
 
-      this.calculateDistances()
+  async validateCache () {
+    const files = []
+
+    for (const file of this.files) {
+      if (!file.virtual) {
+        if (await file.canRead()) {
+          await file.update()
+        } else {
+          files.push(file)
+        }
+      }
     }
 
-    return true
+    for (const jobName of this.options.jobNames) {
+      for (const file of files) {
+        this.state.deleteFile(file, jobName, false)
+      }
+    }
+
+    for (const rule of this.rules) {
+      for (const input of rule.inputs.values()) {
+        await rule.addFileActions(input)
+      }
+    }
   }
 }

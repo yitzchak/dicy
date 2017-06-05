@@ -191,8 +191,6 @@ export default class DiCy extends StateConsumer {
     let success = true
 
     try {
-      await Promise.all(Array.from(this.files).map(file => file.update()))
-
       for (const command of commands) {
         for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
           await this.runPhase(command, phase)
