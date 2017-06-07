@@ -43,6 +43,7 @@ where the following commands are available (`--help` will enumerate options):
 |:----------------|:-----:|---------------------------------------------------------------------|
 | build           | b     | Build the inputs.                                                   |
 | clean           | c     | Clean up after a previous build.                                    |
+| scrub           | s     | Clean up after a previous build and remove all generated files.     |
 | log             | l     | Report messages from any logs.                                      |
 | graph           | g     | Create a dependency graph from a previous build.                    |
 | build,clean     | bc    | Build the inputs and then clean up.                                 |
@@ -78,12 +79,13 @@ await builder.run('load', 'build', 'log', 'save')
 Any sequence of commands listed below may be used, but the first and last commands should
 always be `load` and `save`, respectively.
 
-| Command | Description                       |
-|---------|-----------------------------------|
-| build   | Build the input file              |
-| clean   | Clean up after a build            |
-| graph   | Graph dependencies using GraphViz |
-| log     | Report log messages generated     |
+| Command | Description                                                     |
+|---------|-----------------------------------------------------------------|
+| build   | Build the input file                                            |
+| clean   | Clean up after a build                                          |
+| scrub   | Clean up after a previous build and remove all generated files. |
+| graph   | Graph dependencies using GraphViz                               |
+| log     | Report log messages generated                                   |
 
 [appveyor svg]: https://ci.appveyor.com/api/projects/status/s3unjr8c90bhcd99?svg=true
 [appveyor]: https://ci.appveyor.com/project/yitzchak/dicy/branch/master
