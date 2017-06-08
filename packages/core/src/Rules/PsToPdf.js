@@ -16,11 +16,14 @@ export default class PsToPdf extends Rule {
   }
 
   constructCommand () {
-    return [
-      'ps2pdf',
-      this.firstParameter.filePath,
-      this.resolvePath('$DIR/$NAME.pdf', this.firstParameter)
-    ]
+    return {
+      args: [
+        'ps2pdf',
+        this.firstParameter.filePath,
+        this.resolvePath('$DIR/$NAME.pdf', this.firstParameter)
+      ],
+      severity: 'error'
+    }
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

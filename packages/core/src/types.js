@@ -164,3 +164,8 @@ export type KillToken = {
   resolve: ?Function,
   promise: ?Promise<void>
 }
+
+export type CommandOptions = {
+  args: Array<string>,
+  severity: Severity
+}

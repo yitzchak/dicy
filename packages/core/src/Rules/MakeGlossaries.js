@@ -24,6 +24,9 @@ export default class MakeGlossaries extends Rule {
     if (dir) args.push('-d', dir)
     args.push(name)
 
-    return args
+    return {
+      args,
+      severity: 'error'
+    }
   }
 }

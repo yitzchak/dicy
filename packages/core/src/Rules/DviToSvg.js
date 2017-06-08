@@ -16,12 +16,15 @@ export default class DviToSvg extends Rule {
   }
 
   constructCommand () {
-    return [
-      'dvisvgm',
-      '-o',
-      this.resolvePath('$DIR/$NAME.svg', this.firstParameter),
-      this.firstParameter.filePath
-    ]
+    return {
+      args: [
+        'dvisvgm',
+        '-o',
+        this.resolvePath('$DIR/$NAME.svg', this.firstParameter),
+        this.firstParameter.filePath
+      ],
+      severity: 'error'
+    }
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

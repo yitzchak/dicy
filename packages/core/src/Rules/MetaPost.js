@@ -7,10 +7,13 @@ export default class MetaPost extends Rule {
   static description: string = 'Runs MetaPost on produced MetaPost files.'
 
   constructCommand () {
-    return [
-      'mpost',
-      this.resolvePath('$BASE', this.firstParameter.filePath)
-    ]
+    return {
+      args: [
+        'mpost',
+        this.resolvePath('$BASE', this.firstParameter.filePath)
+      ],
+      severity: 'error'
+    }
   }
 
   constructProcessOptions (): Object {

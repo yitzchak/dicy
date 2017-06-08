@@ -16,11 +16,14 @@ export default class PdfToPs extends Rule {
   }
 
   constructCommand () {
-    return [
-      'pdf2ps',
-      this.firstParameter.filePath,
-      this.resolvePath('$DIR/$NAME.ps', this.firstParameter)
-    ]
+    return {
+      args: [
+        'pdf2ps',
+        this.firstParameter.filePath,
+        this.resolvePath('$DIR/$NAME.ps', this.firstParameter)
+      ],
+      severity: 'error'
+    }
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
