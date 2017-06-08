@@ -14,12 +14,15 @@ export default class GraphViz extends Rule {
   constructCommand () {
     const { dir, name } = path.parse(this.firstParameter.filePath)
 
-    return [
-      'fdp',
-      `-T${this.options.outputFormat}`,
-      '-o',
-      path.format({ dir, name, ext: `.${this.options.outputFormat}` }),
-      this.firstParameter.filePath
-    ]
+    return {
+      args: [
+        'fdp',
+        `-T${this.options.outputFormat}`,
+        '-o',
+        path.format({ dir, name, ext: `.${this.options.outputFormat}` }),
+        this.firstParameter.filePath
+      ],
+      severity: 'error'
+    }
   }
 }

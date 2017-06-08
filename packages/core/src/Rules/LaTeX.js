@@ -95,6 +95,9 @@ export default class LaTeX extends Rule {
 
     args.push(this.firstParameter.filePath)
 
-    return args
+    return {
+      args,
+      severity: 'error'
+    }
   }
 }

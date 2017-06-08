@@ -20,6 +20,9 @@ export default class PatchSyncTeX extends Rule {
       'library(patchSynctex)',
       `patchSynctex('${filePath}',syncfile='${synctexPath}')`]
 
-    return ['Rscript', '-e', lines.join(';')]
+    return {
+      args: ['Rscript', '-e', lines.join(';')],
+      severity: 'warning'
+    }
   }
 }

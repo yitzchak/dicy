@@ -20,12 +20,10 @@ export default class Asymptote extends Rule {
   }
 
   constructCommand () {
-    return [
-      'asy',
-      // '-offscreen',
-      '-vv',
-      this.resolvePath('$BASE', this.firstParameter)
-    ]
+    return {
+      args: ['asy', '-vv', this.resolvePath('$BASE', this.firstParameter)],
+      severity: 'error'
+    }
   }
 
   constructProcessOptions (): Object {

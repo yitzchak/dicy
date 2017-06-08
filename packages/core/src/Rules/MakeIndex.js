@@ -48,6 +48,9 @@ export default class MakeIndex extends Rule {
     if (this.stylePath) args.push('-s', this.stylePath)
     args.push(this.firstParameter.filePath)
 
-    return args
+    return {
+      args,
+      severity: 'error'
+    }
   }
 }

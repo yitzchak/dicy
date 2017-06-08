@@ -7,7 +7,7 @@ import State from './State'
 import File from './File'
 import StateConsumer from './StateConsumer'
 
-import type { Action, Command, Phase } from './types'
+import type { Action, Command, Phase, CommandOptions } from './types'
 
 export default class Rule extends StateConsumer {
   static fileTypes: Set<string> = new Set()
@@ -163,7 +163,8 @@ export default class Rule extends StateConsumer {
   async run (): Promise<boolean> {
     let success: boolean = true
     const options = this.constructProcessOptions()
-    const command = commandJoin(this.constructCommand())
+    const { args, severity } = this.constructCommand()
+    const command = commandJoin(args)
 
     this.emit('command', {
       type: 'command',
@@ -172,7 +173,7 @@ export default class Rule extends StateConsumer {
     })
     const { stdout, stderr, error } = await this.executeChildProcess(command, options)
     if (error) {
-      this.error(error.toString())
+      this.log({ severity, text: error.toString(), name: this.constructor.name })
       success = false
     }
     return await this.processOutput(stdout, stderr) && success
@@ -339,8 +340,8 @@ export default class Rule extends StateConsumer {
     return processOptions
   }
 
-  constructCommand (): Array<string> {
-    return []
+  constructCommand (): CommandOptions {
+    return { args: [], severity: 'error' }
   }
 
   actionTrace (action: Action) {

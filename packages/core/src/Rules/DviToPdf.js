@@ -16,12 +16,15 @@ export default class DviToPdf extends Rule {
   }
 
   constructCommand () {
-    return [
-      'xdvipdfmx',
-      '-o',
-      this.resolvePath('$DIR/$NAME.pdf', this.firstParameter),
-      this.firstParameter.filePath
-    ]
+    return {
+      args: [
+        'xdvipdfmx',
+        '-o',
+        this.resolvePath('$DIR/$NAME.pdf', this.firstParameter),
+        this.firstParameter.filePath
+      ],
+      severity: 'error'
+    }
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
