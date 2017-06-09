@@ -93,7 +93,7 @@ const command = async (inputs, env) => {
 }
 
 program
-  .version('0.2.0')
+  .version(require('../package.json').version)
   .description('An experimental circular builder for LaTeX')
 
 DiCy.getOptionDefinitions().then(definitions => {

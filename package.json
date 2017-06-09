@@ -1,6 +1,6 @@
 {
   "name": "dicy",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A builder for LaTeX, knitr and literate Haskell that automatically builds dependencies.",
   "keywords": [
     "latex",
@@ -24,6 +24,7 @@
     "bootstrap": "lerna bootstrap",
     "lint": "eslint --color packages",
     "lerna-publish": "lerna publish",
+    "lerna-updated": "lerna updated",
     "test": "eslint --color packages && lerna run test",
     "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
     "flow-typed-update": "flow-typed update && lerna exec -- flow-typed update"
