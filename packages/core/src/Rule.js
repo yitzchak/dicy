@@ -94,6 +94,8 @@ export default class Rule extends StateConsumer {
       for (const action of await this.getFileActions(file)) {
         if (action === 'updateDependencies' || ruleNeedsUpdate) {
           this.addAction(file, action)
+          // Clear the failure flag since an input update has happened
+          this.success = true
         }
       }
     }
