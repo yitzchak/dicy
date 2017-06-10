@@ -1,6 +1,6 @@
 {
   "name": "@dicy/cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Command line interface to DiCy, a builder for LaTeX, knitr and literate Haskell that automatically builds dependencies.",
   "keywords": [
     "latex",
@@ -32,7 +32,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@dicy/core": "^0.2.1",
+    "@dicy/core": "^0.2.2",
     "babel-polyfill": "^6.23.0",
     "chalk": "^1.1.3",
     "cliui": "^3.2.0",
