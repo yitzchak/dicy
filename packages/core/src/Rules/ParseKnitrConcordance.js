@@ -17,7 +17,7 @@ export default class ParseKnitrConcordance extends Rule {
     let output: ?string
     let indicies: Array<number> = []
 
-    this.firstParameter.parse([{
+    await this.firstParameter.parse([{
       names: ['output', 'input'],
       patterns: [/^\\Sconcordance\{concordance:([^:]*):([^:]*):%$/],
       evaluate: (reference, groups) => {
@@ -32,6 +32,7 @@ export default class ParseKnitrConcordance extends Rule {
       }
     }])
 
+    indicies.shift()
     outputFile.value = { input, output, indicies }
 
     return true
