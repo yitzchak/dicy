@@ -103,19 +103,20 @@ export default class File {
           input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
 
-        rl.on('line', line => {
-          current.text += line
-          current.count += 1
-          if (!isWrapped(line)) {
-            lines.push(current)
-            current = { text: '', count: 0 }
-            checkForMatches()
-          }
-        })
-        .on('close', () => {
-          checkForMatches(true)
-          resolve()
-        })
+        rl
+          .on('line', line => {
+            current.text += line
+            current.count += 1
+            if (!isWrapped(line)) {
+              lines.push(current)
+              current = { text: '', count: 0 }
+              checkForMatches()
+            }
+          })
+          .on('close', () => {
+            checkForMatches(true)
+            resolve()
+          })
       }
     })
   }
@@ -179,18 +180,19 @@ export default class File {
             })
             let match = false
 
-            rl.on('line', line => {
-              const [value, subType] = line.match(fileType.contents) || []
-              if (value) {
-                match = true
-                this.type = name
-                this.subType = subType
-                rl.close()
-              }
-            })
-            .on('close', () => {
-              resolve(match)
-            })
+            rl
+              .on('line', line => {
+                const [value, subType] = line.match(fileType.contents) || []
+                if (value) {
+                  match = true
+                  this.type = name
+                  this.subType = subType
+                  rl.close()
+                }
+              })
+              .on('close', () => {
+                resolve(match)
+              })
           } else resolve(false)
         })
       } else {
@@ -235,10 +237,12 @@ export default class File {
         const rl = readline.createInterface({
           input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
-        rl.on('line', line => {
-          if (!fileType.hashSkip || !fileType.hashSkip.test(line)) hash.update(line)
-        })
-        .on('close', finish)
+
+        rl
+          .on('line', line => {
+            if (!fileType.hashSkip || !fileType.hashSkip.test(line)) hash.update(line)
+          })
+          .on('close', finish)
       } else {
         fs.createReadStream(this.realFilePath)
           .on('data', data => hash.update(data))
