@@ -40,6 +40,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           severity: 'info',
           text: groups.text,
+          sources: [],
           log: reference
         })
       }
@@ -52,6 +53,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
+          sources: [],
           log: reference
         })
       }
@@ -66,11 +68,11 @@ export default class ParseLaTeXLog extends Rule {
           category: groups.category,
           text: groups.text,
           log: reference,
-          source: {
+          sources: [{
             file: groups.file,
             start: line,
             end: line
-          }
+          }]
         })
       }
     }, {
@@ -82,16 +84,18 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
+          sources: [],
           log: reference
         }
 
         if (groups.line) {
           const line: number = parseInt(groups.line, 10)
-          message.source = {
+          // $FlowIgnore
+          message.sources.push({
             file: filePath,
             start: line,
             end: line
-          }
+          })
         }
 
         messages.push(message)

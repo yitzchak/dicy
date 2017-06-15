@@ -33,6 +33,7 @@ export default class ParseBiberLog extends Rule {
           severity,
           name: 'Biber',
           text: groups.text,
+          sources: [],
           log: reference
         }
 

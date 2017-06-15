@@ -30,11 +30,11 @@ export default class ParseMakeIndexLog extends Rule {
           name: 'makeindex',
           text: groups.text,
           log: reference,
-          source: {
+          sources: [{
             file: groups.inputPath,
             start: line,
             end: line
-          }
+          }]
         })
       }
     }, {
@@ -51,11 +51,11 @@ export default class ParseMakeIndexLog extends Rule {
           text: groups.text,
           category: groups.category,
           log: reference,
-          source: {
+          sources: [{
             file: groups.file,
             start: line,
             end: line
-          }
+          }]
         })
       }
     }])

@@ -23,6 +23,7 @@ export default class ParseBibTeXLog extends Rule {
           severity: 'error',
           name: 'BibTeX',
           text: groups.text,
+          sources: [],
           log: reference
         })
       }
@@ -34,6 +35,7 @@ export default class ParseBibTeXLog extends Rule {
           severity: 'warning',
           name: 'BibTeX',
           text: groups.text,
+          sources: [],
           log: reference
         })
       }
@@ -41,14 +43,15 @@ export default class ParseBibTeXLog extends Rule {
       names: ['line', 'file'],
       patterns: [/^-+line (\d+) of file (.+)$/],
       evaluate: (reference, groups) => {
-        const message = messages[messages.length - 1]
+        const message: Message = messages[messages.length - 1]
         const line = parseInt(groups.line, 10)
         if (message.log) message.log.end = reference.start
-        message.source = {
+        // $FlowIgnore
+        message.sources.push({
           file: this.normalizePath(groups.file),
           start: line,
           end: line
-        }
+        })
       }
     }, {
       names: ['text', 'line', 'file'],
@@ -60,11 +63,11 @@ export default class ParseBibTeXLog extends Rule {
           name: 'BibTeX',
           text: groups.text,
           log: reference,
-          source: {
+          sources: [{
             file: this.normalizePath(groups.file),
             start: line,
             end: line
-          }
+          }]
         })
       }
     }])

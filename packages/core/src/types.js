@@ -86,7 +86,7 @@ export type Message = {
   text: string,
   name?: string,
   category?: string,
-  source?: Reference,
+  sources: Array<Reference>,
   log?: Reference
 }
 
@@ -96,7 +96,7 @@ export type LogEvent = {
   text: string,
   name?: string,
   category?: string,
-  source?: Reference,
+  sources: Array<Reference>,
   log?: Reference
 }
 
