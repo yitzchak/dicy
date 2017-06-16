@@ -142,25 +142,53 @@ export default class File {
     this._value = value
   }
 
-  async findType (): Promise<void> {
-    if (!File.fileTypes) {
+  /**
+   * Load the file types from the resource file `resources/file-types.yaml`
+   */
+  static async loadFileTypes (): Promise<void> {
+    if (!this.fileTypes) {
       const fileTypesPath = path.resolve(__dirname, '..', 'resources', 'file-types.yaml')
-      const value = await File.load(fileTypesPath)
-      File.fileTypes = new Map()
+      const value = await this.load(fileTypesPath)
+
+      // Create a new map and iterate through each type in the file and save it
+      // to the map.
+      this.fileTypes = new Map()
       for (const name in value) {
-        File.fileTypes.set(name, value[name])
+        this.fileTypes.set(name, value[name])
       }
     }
+  }
 
+  /**
+   * Find the type of a file by iterating through the available types and
+   * testing each one.
+   * @return {void}
+   */
+  async findType (): Promise<void> {
+    // Make sure the file types are loaded
+    await File.loadFileTypes()
+
+    // Go through each file type and test each one. Break when we find a match.
     for (const [type, properties] of File.fileTypes.entries()) {
       if (await this.isFileType(type, properties)) break
     }
   }
 
+  /**
+   * Test a file to see if it matches the supplied FileType.
+   * @param  {String}   name     The name of the file type
+   * @param  {FileType} fileType The FileType descriptor
+   * @return {Boolean}           True if the file matches the file type, false
+   *                             otherwise.
+   */
   isFileType (name: string, fileType: FileType): Promise<boolean> {
+    // If the file type descriptor does not have a pattern for the file name or
+    // a pattern for the contents of the file then it must be a virtual file.
     if (!fileType.fileName && !fileType.contents) {
+      // Test to see if the file path ends in the file type's name.
       const isMatch = this.realFilePath.endsWith(`-${name}`)
       if (isMatch) {
+        // Its a match so set the file type.
         this.type = name
         this.virtual = true
       }
