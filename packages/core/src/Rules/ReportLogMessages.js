@@ -5,13 +5,13 @@ import Rule from '../Rule'
 import type { Command, Message } from '../types'
 
 export default class ReportLogMessages extends Rule {
-  static fileTypes: Set<string> = new Set([
+  static fileTypes: Array<Set<string>> = [new Set([
     'ParsedAsymptoteLog',
     'ParsedBiberLog',
     'ParsedBibTeXLog',
     'ParsedLaTeXLog',
     'ParsedMakeIndexLog'
-  ])
+  ])]
   static commands: Set<Command> = new Set(['log'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Reports log messages from any parsed log files.'

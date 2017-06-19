@@ -10,7 +10,7 @@ import StateConsumer from './StateConsumer'
 import type { Action, Command, Phase, CommandOptions } from './types'
 
 export default class Rule extends StateConsumer {
-  static fileTypes: Array<Set<string>> = [new Set()]
+  static fileTypes: Array<Set<string>> = []
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = false
@@ -43,20 +43,36 @@ export default class Rule extends StateConsumer {
 
   static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<Array<Rule>> {
     const rules = []
-    const getFilesByType = fileTypes => Array.from(state.files.values())
+    const getFilesByType = (fileTypes: Set<string>): Array<File> => Array.from(state.files.values())
       .filter(file => (!jobName || file.jobNames.has(jobName)) && fileTypes.has(file.type))
 
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
       for (let i = 0; i < this.fileTypes.length; i++) {
         if (this.fileTypes[i].has('*') || this.fileTypes[i].has(file.type)) {
-          const parameters = this.fileTypes.map(getFilesByType)
-          parameters[i] = [file]
+          const candidates: Array<Array<File>> = this.fileTypes.map((fileTypes, index) => (index === i) ? [file] : getFilesByType(fileTypes))
+          let indicies = candidates.map(files => files.length - 1)
+
+          while (indicies.every(index => index > -1)) {
+            const parameters = candidates.map((files, index) => files[indicies[index]])
+            const ruleId = state.getRuleId(this.name, command, phase, jobName, ...parameters)
+
+            if (!state.rules.has(ruleId)) {
+              const rule = new this(state, command, phase, jobName, ...parameters)
+              await rule.initialize()
+              if (rule.alwaysEvaluate) rule.addAction(file)
+              rules.push(rule)
+            }
+
+            let j = 0
+            while (j < indicies.length && --indicies[j] < 0) {
+              indicies[j] = candidates[j].length - 1
+              j++
+            }
+
+            if (j === indicies.length) break
+          }
         }
       }
-      const rule = new this(state, command, phase, jobName, file)
-      await rule.initialize()
-      if (rule.alwaysEvaluate) rule.addAction(file)
-      rules.push(rule)
     }
 
     return rules
@@ -65,8 +81,7 @@ export default class Rule extends StateConsumer {
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      this.fileTypes.some(x => x.has('*') || x.has(file.type)) &&
-      Array.from(file.rules.values()).every(rule => rule.constructor.name !== this.name || rule.jobName !== jobName)
+      this.fileTypes.some(x => x.has('*') || x.has(file.type))
   }
 
   constructor (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {
@@ -187,7 +202,7 @@ export default class Rule extends StateConsumer {
     })
     const { stdout, stderr, error } = await this.executeChildProcess(command, options)
     if (error) {
-      this.log({ severity, text: error.toString(), name: this.constructor.name })
+      this.log({ severity, text: error.toString(), name: this.constructor.name, sources: [] })
       success = false
     }
     return await this.processOutput(stdout, stderr) && success
