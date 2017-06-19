@@ -3,7 +3,7 @@
 import Rule from '../Rule'
 
 export default class MetaPost extends Rule {
-  static fileTypes: Set<string> = new Set(['MetaPost'])
+  static fileTypes: Array<Set<string>> = [new Set(['MetaPost'])]
   static description: string = 'Runs MetaPost on produced MetaPost files.'
 
   constructCommand () {

@@ -5,7 +5,7 @@ import path from 'path'
 import Rule from '../Rule'
 
 export default class MakeIndex extends Rule {
-  static fileTypes: Set<string> = new Set(['IndexControlFile', 'BibRefControlFile', 'NomenclatureControlFile'])
+  static fileTypes: Array<Set<string>> = [new Set(['IndexControlFile', 'BibRefControlFile', 'NomenclatureControlFile'])]
   static description: string = 'Runs makeindex on any index files.'
 
   stylePath: string

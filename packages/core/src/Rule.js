@@ -10,7 +10,7 @@ import StateConsumer from './StateConsumer'
 import type { Action, Command, Phase, CommandOptions } from './types'
 
 export default class Rule extends StateConsumer {
-  static fileTypes: Set<string> = new Set()
+  static fileTypes: Array<Set<string>> = [new Set()]
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = false
@@ -26,7 +26,7 @@ export default class Rule extends StateConsumer {
   actions: Map<Action, Set<File>> = new Map()
   success: boolean = true
 
-  static async analyzePhase (state: State, command: Command, phase: Phase, jobName: ?string) {
+  static async analyzePhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<?Rule> {
     if (await this.appliesToPhase(state, command, phase, jobName)) {
       const rule = new this(state, command, phase, jobName)
       await rule.initialize()
@@ -38,22 +38,34 @@ export default class Rule extends StateConsumer {
   static async appliesToPhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      this.fileTypes.size === 0
+      this.fileTypes.length === 0
   }
 
-  static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<?Rule> {
+  static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<Array<Rule>> {
+    const rules = []
+    const getFilesByType = fileTypes => Array.from(state.files.values())
+      .filter(file => (!jobName || file.jobNames.has(jobName)) && fileTypes.has(file.type))
+
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
+      for (let i = 0; i < this.fileTypes.length; i++) {
+        if (this.fileTypes[i].has('*') || this.fileTypes[i].has(file.type)) {
+          const parameters = this.fileTypes.map(getFilesByType)
+          parameters[i] = [file]
+        }
+      }
       const rule = new this(state, command, phase, jobName, file)
       await rule.initialize()
       if (rule.alwaysEvaluate) rule.addAction(file)
-      return rule
+      rules.push(rule)
     }
+
+    return rules
   }
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      (this.fileTypes.has('*') || this.fileTypes.has(file.type)) &&
+      this.fileTypes.some(x => x.has('*') || x.has(file.type)) &&
       Array.from(file.rules.values()).every(rule => rule.constructor.name !== this.name || rule.jobName !== jobName)
   }
 

@@ -5,7 +5,7 @@ import path from 'path'
 import Rule from '../Rule'
 
 export default class MakeGlossaries extends Rule {
-  static fileTypes: Set<string> = new Set(['GlossaryControlFile'])
+  static fileTypes: Array<Set<string>> = [new Set(['GlossaryControlFile'])]
   static description: string = 'Runs makeglossaries on any glossary files generated.'
 
   async initialize (): Promise<void> {

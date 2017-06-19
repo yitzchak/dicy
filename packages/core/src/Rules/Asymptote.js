@@ -8,7 +8,7 @@ import Rule from '../Rule'
 import type { Action } from '../types'
 
 export default class Asymptote extends Rule {
-  static fileTypes: Set<string> = new Set(['Asymptote'])
+  static fileTypes: Array<Set<string>> = [new Set(['Asymptote'])]
   static description: string = 'Run Asymptote on any generated .asy files.'
 
   async initialize () {

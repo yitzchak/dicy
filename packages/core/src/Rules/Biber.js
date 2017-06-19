@@ -8,7 +8,7 @@ import Rule from '../Rule'
 import type { Action, Message } from '../types'
 
 export default class Biber extends Rule {
-  static fileTypes: Set<string> = new Set(['BiberControlFile'])
+  static fileTypes: Array<Set<string>> = [new Set(['BiberControlFile'])]
   static description: string = 'Runs Biber to process bibliography files (bib) when need is detected.'
 
   async initialize () {

@@ -7,7 +7,7 @@ import Rule from '../Rule'
 import type { Command } from '../types'
 
 export default class GraphViz extends Rule {
-  static fileTypes: Set<string> = new Set(['GraphViz'])
+  static fileTypes: Array<Set<string>> = [new Set(['GraphViz'])]
   static commands: Set<Command> = new Set(['graph'])
   static description: string = 'Runs GraphViz on dependency graphs.'
 
