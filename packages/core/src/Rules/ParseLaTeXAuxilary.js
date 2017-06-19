@@ -3,7 +3,7 @@
 import Rule from '../Rule'
 
 export default class ParseLaTeXAuxilary extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set(['LaTeXAuxilary'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['LaTeXAuxilary'])]
   static description: string = 'Parses the aux files produced by all variants of latex.'
 
   async run () {

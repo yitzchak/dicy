@@ -9,7 +9,7 @@ const ITEM_SEPARATOR_PATTERN = /\s*,\s*/
 
 export default class ParseLaTeXMagic extends Rule {
   static commands: Set<Command> = new Set(['load'])
-  static fileTypes: Array<Set<string>> = [new Set(['Knitr', 'LaTeX', 'LiterateHaskell'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['Knitr', 'LaTeX', 'LiterateHaskell'])]
   static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
 
   async run () {

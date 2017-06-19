@@ -5,7 +5,7 @@ import Rule from '../Rule'
 import type { Command } from '../types'
 
 export default class ApplySourceMaps extends Rule {
-  static fileTypes: Array<Set<string>> = [
+  static parameterTypes: Array<Set<string>> = [
     new Set(['ParsedSourceMap']),
     new Set([
       'ParsedAsymptoteLog',

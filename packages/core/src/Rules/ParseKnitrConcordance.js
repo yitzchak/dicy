@@ -7,7 +7,7 @@ import type { Command } from '../types'
 const WRAPPED_LINE_PATTERN = /%$/
 
 export default class ParseKnitrConcordance extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set(['KnitrConcordance'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['KnitrConcordance'])]
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses any knitr concordance files.'
 

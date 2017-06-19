@@ -11,7 +11,7 @@ const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label\(s\) may have changed\. Rerun|No
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set(['LaTeX'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['LaTeX'])]
   static description: string = 'Runs the required latex variant.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {

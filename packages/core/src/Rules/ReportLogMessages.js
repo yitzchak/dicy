@@ -5,7 +5,7 @@ import Rule from '../Rule'
 import type { Command, Message } from '../types'
 
 export default class ReportLogMessages extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set([
+  static parameterTypes: Array<Set<string>> = [new Set([
     'ParsedAsymptoteLog',
     'ParsedBiberLog',
     'ParsedBibTeXLog',

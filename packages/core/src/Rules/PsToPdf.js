@@ -7,7 +7,7 @@ import Rule from '../Rule'
 import type { Command, Phase } from '../types'
 
 export default class PsToPdf extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set(['PostScript'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['PostScript'])]
   static description: string = 'Converts PS to PDF using ps2pdf.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {

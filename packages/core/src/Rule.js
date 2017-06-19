@@ -10,7 +10,7 @@ import StateConsumer from './StateConsumer'
 import type { Action, Command, Phase, CommandOptions } from './types'
 
 export default class Rule extends StateConsumer {
-  static fileTypes: Array<Set<string>> = []
+  static parameterTypes: Array<Set<string>> = []
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = false
@@ -38,18 +38,18 @@ export default class Rule extends StateConsumer {
   static async appliesToPhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      this.fileTypes.length === 0
+      this.parameterTypes.length === 0
   }
 
   static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<Array<Rule>> {
     const rules = []
-    const getFilesByType = (fileTypes: Set<string>): Array<File> => Array.from(state.files.values())
-      .filter(file => (!jobName || file.jobNames.has(jobName)) && fileTypes.has(file.type))
+    const getFilesByType = (types: Set<string>): Array<File> => Array.from(state.files.values())
+      .filter(file => (!jobName || file.jobNames.has(jobName)) && types.has(file.type))
 
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
-      for (let i = 0; i < this.fileTypes.length; i++) {
-        if (this.fileTypes[i].has('*') || this.fileTypes[i].has(file.type)) {
-          const candidates: Array<Array<File>> = this.fileTypes.map((fileTypes, index) => (index === i) ? [file] : getFilesByType(fileTypes))
+      for (let i = 0; i < this.parameterTypes.length; i++) {
+        if (this.parameterTypes[i].has('*') || this.parameterTypes[i].has(file.type)) {
+          const candidates: Array<Array<File>> = this.parameterTypes.map((types, index) => (index === i) ? [file] : getFilesByType(types))
           let indicies = candidates.map(files => files.length - 1)
 
           while (indicies.every(index => index > -1)) {
@@ -81,7 +81,7 @@ export default class Rule extends StateConsumer {
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      this.fileTypes.some(x => x.has('*') || x.has(file.type))
+      this.parameterTypes.some(x => x.has('*') || x.has(file.type))
   }
 
   constructor (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {

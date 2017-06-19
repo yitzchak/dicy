@@ -5,7 +5,7 @@ import Rule from '../Rule'
 import type { Command, Message } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses any bibtex produced logs.'
 

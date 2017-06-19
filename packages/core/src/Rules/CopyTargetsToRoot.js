@@ -9,7 +9,7 @@ import Rule from '../Rule'
 import type { Command, Phase } from '../types'
 
 export default class CopyTargetsToRoot extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set(['*'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['*'])]
   static description: string = 'Copy targets to root directory.'
   static alwaysEvaluate: boolean = true
 

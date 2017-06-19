@@ -7,7 +7,7 @@ import type { Command, Message } from '../types'
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 
 export default class ParseLaTeXLog extends Rule {
-  static fileTypes: Array<Set<string>> = [new Set(['LaTeXLog'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['LaTeXLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses the logs produced by all latex variants.'
 
