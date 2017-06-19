@@ -43,10 +43,11 @@ export default class Rule extends StateConsumer {
 
   static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<Array<Rule>> {
     const rules = []
-    const getFilesByType = (types: Set<string>): Array<File> => Array.from(state.files.values())
-      .filter(file => (!jobName || file.jobNames.has(jobName)) && types.has(file.type))
 
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
+      const files = Array.from(state.files.values())
+      const getFilesByType = (types: Set<string>): Array<File> => files.filter(file => types.has(file.type))
+
       for (let i = 0; i < this.parameterTypes.length; i++) {
         if (this.parameterTypes[i].has('*') || this.parameterTypes[i].has(file.type)) {
           const candidates: Array<Array<File>> = this.parameterTypes.map((types, index) => (index === i) ? [file] : getFilesByType(types))
