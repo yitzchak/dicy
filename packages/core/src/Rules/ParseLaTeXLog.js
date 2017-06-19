@@ -118,7 +118,8 @@ export default class ParseLaTeXLog extends Rule {
           severity: 'warning',
           name,
           text: groups.text,
-          log: reference
+          log: reference,
+          sources: []
         })
       }
     }, {
