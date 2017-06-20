@@ -205,7 +205,7 @@ export default class Rule extends StateConsumer {
     })
     const { stdout, stderr, error } = await this.executeChildProcess(command, options)
     if (error) {
-      this.log({ severity, text: error.toString(), name: this.constructor.name, sources: [] })
+      this.log({ severity, text: error.toString(), name: this.constructor.name, sources: {}, logs: {} })
       success = false
     }
     return await this.processOutput(stdout, stderr) && success

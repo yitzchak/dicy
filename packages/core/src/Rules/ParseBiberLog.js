@@ -18,7 +18,7 @@ export default class ParseBiberLog extends Rule {
     await this.firstParameter.parse([{
       names: ['severity', 'text'],
       patterns: [/^[^>]+> (INFO|WARN|ERROR) - (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         let severity = 'error'
         switch (groups.severity) {
           case 'INFO':
@@ -33,8 +33,8 @@ export default class ParseBiberLog extends Rule {
           severity,
           name: 'Biber',
           text: groups.text,
-          sources: [],
-          log: reference
+          sources: {},
+          logs: references
         }
 
         messages.push(message)

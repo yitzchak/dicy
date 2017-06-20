@@ -67,16 +67,19 @@ export type Cache = {
   rules: Array<RuleCache>
 }
 
-export type Reference = {
-  file: string,
-  start: ?number,
-  end: ?number
+export type LineRange = {
+  start: number,
+  end: number
+}
+
+export type References = {
+  [string]: ?LineRange
 }
 
 export type Parser = {
   names: Array<string>,
   patterns: Array<RegExp>,
-  evaluate: (reference: Reference, groups: Object) => void
+  evaluate: (references: References, groups: Object) => void
 }
 
 export type Severity = 'info' | 'warning' | 'error'
@@ -86,8 +89,8 @@ export type Message = {
   text: string,
   name?: string,
   category?: string,
-  sources: Array<Reference>,
-  log?: Reference
+  sources: References,
+  logs: References
 }
 
 export type LogEvent = {
@@ -96,8 +99,8 @@ export type LogEvent = {
   text: string,
   name?: string,
   category?: string,
-  sources: Array<Reference>,
-  log?: Reference
+  sources: References,
+  logs: References
 }
 
 export type ActionEvent = {
@@ -168,4 +171,15 @@ export type KillToken = {
 export type CommandOptions = {
   args: Array<string>,
   severity: Severity
+}
+
+export type LineRangeMapping = {
+  input: LineRange,
+  output: LineRange
+}
+
+export type SourceMap = {
+  input: string,
+  output: string,
+  mappings: Array<LineRangeMapping>
 }

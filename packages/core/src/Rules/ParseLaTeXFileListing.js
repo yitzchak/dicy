@@ -21,13 +21,13 @@ export default class ParseLaTeXFileListing extends Rule {
     await this.firstParameter.parse([{
       names: ['path'],
       patterns: [/^PWD (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         rootPath = groups.path
       }
     }, {
       names: ['type', 'path'],
       patterns: [/^(INPUT|OUTPUT) (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         results[groups.type].add(this.normalizePath(path.resolve(rootPath, groups.path)))
       }
     }])

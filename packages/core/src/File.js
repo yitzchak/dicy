@@ -9,7 +9,7 @@ import yaml from 'js-yaml'
 
 import Rule from './Rule'
 
-import type { FileType, Parser, Reference } from './types'
+import type { FileType, Parser, References } from './types'
 
 export default class File {
   static fileTypes: Map<string, FileType>
@@ -124,13 +124,15 @@ export default class File {
                 if (m[index] !== undefined) groups[name] = m[index]
               })
               const lineCount = lines.splice(0, parser.patterns.length).reduce((total, line) => total + line.count, 0)
-              const reference: Reference = {
-                file: this.filePath,
-                start: lineNumber,
-                end: lineNumber + lineCount - 1
-              }
+              const references: References = _.fromPairs([[
+                this.filePath,
+                {
+                  start: lineNumber,
+                  end: lineNumber + lineCount - 1
+                }
+              ]])
               lineNumber += lineCount
-              parser.evaluate(reference, groups)
+              parser.evaluate(references, groups)
               break
             }
           }

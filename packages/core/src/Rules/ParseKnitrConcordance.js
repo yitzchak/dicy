@@ -20,7 +20,7 @@ export default class ParseKnitrConcordance extends Rule {
     await this.firstParameter.parse([{
       names: ['output', 'input', 'indicies'],
       patterns: [/^\\Sconcordance\{concordance:([^:]*):([^:]*):([^}]*)\}$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const encodedIndicies: Array<number> = groups.indicies.split(/\s+/).map(x => parseInt(x))
         const indicies: Array<[number, number]> = []
         let inputLine: number = 1

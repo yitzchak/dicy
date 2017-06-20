@@ -1,5 +1,7 @@
 /* @flow */
 
+import _ from 'lodash'
+
 import Rule from '../Rule'
 
 import type { Command, Message } from '../types'
@@ -23,18 +25,14 @@ export default class ParseMakeIndexLog extends Rule {
         /## Warning \(input = (.+), line = (\d+); output = (.+), line = (\d+)\):/,
         MESSAGE_PATTERN
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const line = parseInt(groups.inputLine, 10)
         messages.push({
           severity: 'warning',
           name: 'makeindex',
           text: groups.text,
-          log: reference,
-          sources: [{
-            file: groups.inputPath,
-            start: line,
-            end: line
-          }]
+          logs: references,
+          sources: _.fromPairs([[groups.inputPath, { start: line, end: line }]])
         })
       }
     }, {
@@ -43,19 +41,15 @@ export default class ParseMakeIndexLog extends Rule {
         /^[*!]+ (Input (?:index|style)) error \(file = (.+), line = (\d+)\):$/,
         MESSAGE_PATTERN
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const line = parseInt(groups.line, 10)
         messages.push({
           severity: 'error',
           name: 'makeindex',
           text: groups.text,
           category: groups.category,
-          log: reference,
-          sources: [{
-            file: groups.file,
-            start: line,
-            end: line
-          }]
+          logs: references,
+          sources: _.fromPairs([[groups.file, { start: line, end: line }]])
         })
       }
     }])

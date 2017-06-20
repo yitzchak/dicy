@@ -1,8 +1,10 @@
 /* @flow */
 
+import _ from 'lodash'
+
 import Rule from '../Rule'
 
-import type { Command, Message } from '../types'
+import type { Command, LineRange, Message } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 
@@ -23,79 +25,70 @@ export default class ParseLaTeXLog extends Rule {
     await this.firstParameter.parse([{
       names: ['filePath'],
       patterns: [/^\*\*(.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         filePath = groups.filePath
       }
     }, {
       names: ['name'],
       patterns: [/^This is (.*),/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         name = groups.name
       }
     }, {
       names: ['text'],
       patterns: [/^Package: (.*)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         messages.push({
           name,
           severity: 'info',
           text: groups.text,
-          sources: [],
-          log: reference
+          sources: {},
+          logs: references
         })
       }
     }, {
       names: ['category', 'text'],
       patterns: [/^! (.+) Error: (.+?)\.?$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         messages.push({
           severity: 'error',
           name,
           category: groups.category,
           text: groups.text,
-          sources: [],
-          log: reference
+          sources: {},
+          logs: references
         })
       }
     }, {
       names: ['file', 'line', 'category', 'text'],
       patterns: [/^(.*):(\d+): (?:(.+) Error: )?(.+?)\.?$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const line: number = parseInt(groups.line, 10)
         messages.push({
           severity: 'error',
           name,
           category: groups.category,
           text: groups.text,
-          log: reference,
-          sources: [{
-            file: groups.file,
-            start: line,
-            end: line
-          }]
+          logs: references,
+          sources: _.fromPairs([[groups.file, { start: line, end: line }]])
         })
       }
     }, {
       names: ['category', 'severity', 'text', 'line'],
       patterns: [/^(.+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const message: Message = {
           severity: groups.severity.toLowerCase() === 'info' ? 'info' : 'warning',
           name,
           category: groups.category,
           text: groups.text,
-          sources: [],
-          log: reference
+          sources: {},
+          logs: references
         }
 
         if (groups.line) {
           const line: number = parseInt(groups.line, 10)
-          // $FlowIgnore
-          message.sources.push({
-            file: filePath,
-            start: line,
-            end: line
-          })
+          message.sources[filePath] = { start: line, end: line }
         }
 
         messages.push(message)
@@ -103,29 +96,32 @@ export default class ParseLaTeXLog extends Rule {
     }, {
       names: ['package', 'text'],
       patterns: [/^\(([^()]+)\) +(.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const message: Message = messages[messages.length - 1]
         if (message && message.category && message.category.endsWith(groups.package)) {
           message.text = `${message.text}\n${groups.text}`
-          if (message.log) message.log.end = reference.start
+          const oldLineRange: ?LineRange = message.logs[output.filePath]
+          const newLineRange: ?LineRange = references[output.filePath]
+
+          if (oldLineRange && newLineRange) oldLineRange.end = newLineRange.end
         }
       }
     }, {
       names: ['text'],
       patterns: [/^(No file .*\.)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         messages.push({
           severity: 'warning',
           name,
           text: groups.text,
-          log: reference,
-          sources: []
+          logs: references,
+          sources: {}
         })
       }
     }, {
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         outputs.push(groups.filePath)
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))

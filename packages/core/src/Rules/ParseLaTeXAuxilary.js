@@ -15,7 +15,7 @@ export default class ParseLaTeXAuxilary extends Rule {
     await this.firstParameter.parse([{
       names: ['bibdata'],
       patterns: [/\\bibdata\{([^}]+)\}$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         results.bibdata = groups.bibdata.split(',')
       }
     }])

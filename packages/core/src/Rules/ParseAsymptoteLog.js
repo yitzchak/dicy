@@ -22,19 +22,19 @@ export default class ParseAsymptoteLog extends Rule {
     await this.firstParameter.parse([{
       names: ['filePath'],
       patterns: [/^cd (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         rootPath = groups.filePath
       }
     }, {
       names: ['filePath'],
       patterns: [/^Wrote (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         outputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
       }
     }, {
       names: ['type', 'filePath'],
       patterns: [/^(Including|Loading) \S+ from (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         if (!path.isAbsolute(groups.filePath)) {
           inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
         }
