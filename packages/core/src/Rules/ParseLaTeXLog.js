@@ -42,7 +42,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           severity: 'info',
           text: groups.text,
-          sources: {},
+          sources: filePath ? _.fromPairs([[filePath, null]]) : {},
           logs: references
         })
       }
@@ -55,7 +55,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
-          sources: {},
+          sources: filePath ? _.fromPairs([[filePath, null]]) : {},
           logs: references
         })
       }
@@ -70,7 +70,7 @@ export default class ParseLaTeXLog extends Rule {
           category: groups.category,
           text: groups.text,
           logs: references,
-          sources: _.fromPairs([[groups.file, { start: line, end: line }]])
+          sources: _.fromPairs([[this.normalizePath(groups.file), { start: line, end: line }]])
         })
       }
     }, {
@@ -89,13 +89,15 @@ export default class ParseLaTeXLog extends Rule {
         if (groups.line) {
           const line: number = parseInt(groups.line, 10)
           message.sources[filePath] = { start: line, end: line }
+        } else {
+          message.sources[filePath] = null
         }
 
         messages.push(message)
       }
     }, {
-      names: ['package', 'text'],
-      patterns: [/^\(([^()]+)\) +(.*)$/],
+      names: ['package', 'text', 'line'],
+      patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.)?$/],
       evaluate: (references, groups) => {
         const message: Message = messages[messages.length - 1]
         if (message && message.category && message.category.endsWith(groups.package)) {
@@ -104,6 +106,11 @@ export default class ParseLaTeXLog extends Rule {
           const newLineRange: ?LineRange = references[output.filePath]
 
           if (oldLineRange && newLineRange) oldLineRange.end = newLineRange.end
+
+          if (groups.line) {
+            const line: number = parseInt(groups.line, 10)
+            message.sources[filePath] = { start: line, end: line }
+          }
         }
       }
     }, {
@@ -115,7 +122,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           text: groups.text,
           logs: references,
-          sources: {}
+          sources: filePath ? _.fromPairs([[filePath, null]]) : {}
         })
       }
     }, {
