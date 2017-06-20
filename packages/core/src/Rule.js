@@ -46,11 +46,13 @@ export default class Rule extends StateConsumer {
 
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
       const files = Array.from(state.files.values())
-      const getFilesByType = (types: Set<string>): Array<File> => files.filter(file => types.has(file.type))
 
       for (let i = 0; i < this.parameterTypes.length; i++) {
-        if (this.parameterTypes[i].has('*') || this.parameterTypes[i].has(file.type)) {
-          const candidates: Array<Array<File>> = this.parameterTypes.map((types, index) => (index === i) ? [file] : getFilesByType(types))
+        if (file.inTypeSet(this.parameterTypes[i])) {
+          const candidates: Array<Array<File>> = this.parameterTypes.map((types, index) =>
+            (index === i)
+              ? [file]
+              : files.filter(file => file.inTypeSet(types)))
           let indicies = candidates.map(files => files.length - 1)
 
           while (indicies.every(index => index > -1)) {
@@ -82,7 +84,7 @@ export default class Rule extends StateConsumer {
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      this.parameterTypes.some(x => x.has('*') || x.has(file.type))
+      this.parameterTypes.some(types => file.inTypeSet(types))
   }
 
   constructor (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {

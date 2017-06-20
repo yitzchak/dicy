@@ -178,6 +178,10 @@ export default class File {
     })
   }
 
+  inTypeSet (types: Set<string>) {
+    return types.has('*') || types.has(this.type)
+  }
+
   /**
    * Getter for `hasBeenUpdated`
    * @return {Boolean}  Update status.
