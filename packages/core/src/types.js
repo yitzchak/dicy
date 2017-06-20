@@ -11,28 +11,11 @@ export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 's
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 
-export type ResolvePathOptions = {
-  absolute?: boolean,
-  useJobName?: boolean,
-  useOutputDirectory?: boolean,
-  referenceFile?: File
-}
-
 export type Action = 'run' | 'updateDependencies'
 
 export type RuleInfo = {
   name: string,
   description: string
-}
-
-export type resolvePathOptions = {
-  job?: string,
-  dir?: string,
-  name?: string,
-  ext?: string,
-  pattern?: string,
-  filePath?: string,
-  absolute?: boolean
 }
 
 export type FileType = {
@@ -73,7 +56,7 @@ export type LineRange = {
 }
 
 export type References = {
-  [string]: ?LineRange
+  [filePath: string]: ?LineRange
 }
 
 export type Parser = {
