@@ -1,7 +1,5 @@
 /* @flow */
 
-import File from './File'
-
 export type globOptions = {
   types: 'all' | 'files' | 'directories',
   ignorePattern: string
