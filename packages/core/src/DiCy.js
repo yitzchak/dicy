@@ -61,8 +61,8 @@ export default class DiCy extends StateConsumer {
       for (const ruleClass: Class<Rule> of this.ruleClasses) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          const rule = await ruleClass.analyzeFile(this.state, command, phase, jobName, file)
-          if (rule) {
+          const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, jobName, file)
+          for (const rule of rules) {
             rulesAdded = true
             await this.addRule(rule)
           }

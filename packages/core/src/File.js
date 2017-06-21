@@ -303,6 +303,10 @@ export default class File {
     })
   }
 
+  inTypeSet (types: Set<string>) {
+    return types.has('*') || types.has(this.type)
+  }
+
   async delete (): Promise<void> {
     if (!this.virtual) await File.remove(this.realFilePath)
   }

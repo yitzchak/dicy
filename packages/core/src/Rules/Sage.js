@@ -5,7 +5,7 @@ import path from 'path'
 import Rule from '../Rule'
 
 export default class Sage extends Rule {
-  static fileTypes: Set<string> = new Set(['Sage'])
+  static parameterTypes: Array<Set<string>> = [new Set(['Sage'])]
   static description: string = 'Supports SageTeX by running Sage when needed.'
 
   constructCommand () {

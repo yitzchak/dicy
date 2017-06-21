@@ -117,6 +117,8 @@ StandalonePreambles:
   fileName: !!js/regexp /\.sta$/i
 StateCache:
   fileName: !!js/regexp /-cache\.yaml$/i
+SyncTeX:
+  fileName: !!js/regexp /\.synctex(\.gz)?$/i
 TableOfContents:
   fileName: !!js/regexp /\.toc$/i
 XML:

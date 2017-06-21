@@ -7,7 +7,7 @@ import Rule from '../Rule'
 import type { Message } from '../types'
 
 export default class ParseAsymptoteLog extends Rule {
-  static fileTypes: Set<string> = new Set(['AsymptoteLog'])
+  static parameterTypes: Array<Set<string>> = [new Set(['AsymptoteLog'])]
   static description: string = 'Parses the console output of Asymptote.'
 
   async run () {
