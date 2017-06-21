@@ -45,7 +45,7 @@ export default class Rule extends StateConsumer {
     const rules = []
 
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
-      const files = Array.from(state.files.values())
+      const files = Array.from(state.files.values()).filter(file => !jobName || file.jobNames.has(jobName))
 
       for (let i = 0; i < this.parameterTypes.length; i++) {
         if (file.inTypeSet(this.parameterTypes[i])) {
