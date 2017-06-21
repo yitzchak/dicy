@@ -28,10 +28,15 @@ export default class ParseKnitrConcordance extends Rule {
 
         for (let i = 1; i < encodedIndicies.length; i += 2) {
           for (let j = 0; j < encodedIndicies[i]; j++, outputLine++, inputLine += encodedIndicies[i + 1]) {
-            mappings.push({
-              input: { start: inputLine, end: inputLine + encodedIndicies[i + 1] },
-              output: { start: outputLine, end: outputLine }
-            })
+            const start = inputLine
+            const end = inputLine + encodedIndicies[i + 1] - 1
+
+            if (start <= end) {
+              mappings.push({
+                input: { start, end },
+                output: { start: outputLine, end: outputLine }
+              })
+            }
           }
         }
 
