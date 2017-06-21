@@ -176,15 +176,15 @@ export default class StateConsumer {
   }
 
   error (text: string, name: string = 'DiCy') {
-    this.log({ severity: 'error', name, text })
+    this.log({ severity: 'error', name, text, sources: {}, logs: {} })
   }
 
   warning (text: string, name: string = 'DiCy') {
-    this.log({ severity: 'warning', name, text })
+    this.log({ severity: 'warning', name, text, sources: {}, logs: {} })
   }
 
   info (text: string, name: string = 'DiCy') {
-    this.log({ severity: 'info', name, text })
+    this.log({ severity: 'info', name, text, sources: {}, logs: {} })
   }
 
   log (message: Message) {

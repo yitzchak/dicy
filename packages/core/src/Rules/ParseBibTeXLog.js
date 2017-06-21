@@ -1,11 +1,13 @@
 /* @flow */
 
+import _ from 'lodash'
+
 import Rule from '../Rule'
 
-import type { Command, Message } from '../types'
+import type { Command, LineRange, Message } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
-  static fileTypes: Set<string> = new Set(['BibTeXLog'])
+  static parameterTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses any bibtex produced logs.'
 
@@ -18,34 +20,38 @@ export default class ParseBibTeXLog extends Rule {
     await this.firstParameter.parse([{
       names: ['text'],
       patterns: [/^(I couldn't open database file .*|A bad cross reference---entry .*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         messages.push({
           severity: 'error',
           name: 'BibTeX',
           text: groups.text,
-          log: reference
+          sources: {},
+          logs: references
         })
       }
     }, {
       names: ['text'],
       patterns: [/^Warning--(.+)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         messages.push({
           severity: 'warning',
           name: 'BibTeX',
           text: groups.text,
-          log: reference
+          sources: {},
+          logs: references
         })
       }
     }, {
       names: ['line', 'file'],
       patterns: [/^-+line (\d+) of file (.+)$/],
-      evaluate: (reference, groups) => {
-        const message = messages[messages.length - 1]
+      evaluate: (references, groups) => {
+        const message: Message = messages[messages.length - 1]
         const line = parseInt(groups.line, 10)
-        if (message.log) message.log.end = reference.start
-        message.source = {
-          file: this.normalizePath(groups.file),
+        const oldLineRange: ?LineRange = message.logs[output.filePath]
+        const newLineRange: ?LineRange = references[output.filePath]
+
+        if (oldLineRange && newLineRange) oldLineRange.end = newLineRange.end
+        message.sources[this.normalizePath(groups.file)] = {
           start: line,
           end: line
         }
@@ -53,18 +59,16 @@ export default class ParseBibTeXLog extends Rule {
     }, {
       names: ['text', 'line', 'file'],
       patterns: [/^(.+)---line (\d+) of file (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const line = parseInt(groups.line, 10)
+        const file = this.normalizePath(groups.file)
+
         messages.push({
           severity: 'error',
           name: 'BibTeX',
           text: groups.text,
-          log: reference,
-          source: {
-            file: this.normalizePath(groups.file),
-            start: line,
-            end: line
-          }
+          logs: references,
+          sources: _.fromPairs([[file, { start: line, end: line }]])
         })
       }
     }])

@@ -9,7 +9,7 @@ const ITEM_SEPARATOR_PATTERN = /\s*,\s*/
 
 export default class ParseLaTeXMagic extends Rule {
   static commands: Set<Command> = new Set(['load'])
-  static fileTypes: Set<string> = new Set(['Knitr', 'LaTeX', 'LiterateHaskell'])
+  static parameterTypes: Array<Set<string>> = [new Set(['Knitr', 'LaTeX', 'LiterateHaskell'])]
   static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
 
   async run () {
@@ -19,7 +19,7 @@ export default class ParseLaTeXMagic extends Rule {
     await this.firstParameter.parse([{
       names: ['jobName', 'name', 'value'],
       patterns: [/^%\s*!T[eE]X\s+(?:([^:]+)\s*:\s*)?(\w+)\s*=\s*(.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         const schema = this.state.optionSchema.get(groups.name)
         let value = groups.value.trim()
 

@@ -1,7 +1,5 @@
 /* @flow */
 
-import File from './File'
-
 export type globOptions = {
   types: 'all' | 'files' | 'directories',
   ignorePattern: string
@@ -11,28 +9,11 @@ export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 's
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 
-export type ResolvePathOptions = {
-  absolute?: boolean,
-  useJobName?: boolean,
-  useOutputDirectory?: boolean,
-  referenceFile?: File
-}
-
 export type Action = 'run' | 'updateDependencies'
 
 export type RuleInfo = {
   name: string,
   description: string
-}
-
-export type resolvePathOptions = {
-  job?: string,
-  dir?: string,
-  name?: string,
-  ext?: string,
-  pattern?: string,
-  filePath?: string,
-  absolute?: boolean
 }
 
 export type FileType = {
@@ -67,16 +48,19 @@ export type Cache = {
   rules: Array<RuleCache>
 }
 
-export type Reference = {
-  file: string,
-  start: ?number,
-  end: ?number
+export type LineRange = {
+  start: number,
+  end: number
+}
+
+export type References = {
+  [filePath: string]: ?LineRange
 }
 
 export type Parser = {
   names: Array<string>,
   patterns: Array<RegExp>,
-  evaluate: (reference: Reference, groups: Object) => void
+  evaluate: (references: References, groups: Object) => void
 }
 
 export type Severity = 'info' | 'warning' | 'error'
@@ -86,8 +70,8 @@ export type Message = {
   text: string,
   name?: string,
   category?: string,
-  source?: Reference,
-  log?: Reference
+  sources: References,
+  logs: References
 }
 
 export type LogEvent = {
@@ -96,8 +80,8 @@ export type LogEvent = {
   text: string,
   name?: string,
   category?: string,
-  source?: Reference,
-  log?: Reference
+  sources: References,
+  logs: References
 }
 
 export type ActionEvent = {
@@ -168,4 +152,15 @@ export type KillToken = {
 export type CommandOptions = {
   args: Array<string>,
   severity: Severity
+}
+
+export type LineRangeMapping = {
+  input: LineRange,
+  output: LineRange
+}
+
+export type SourceMap = {
+  input: string,
+  output: string,
+  mappings: Array<LineRangeMapping>
 }

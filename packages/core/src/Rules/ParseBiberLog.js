@@ -5,7 +5,7 @@ import Rule from '../Rule'
 import type { Command, Message } from '../types'
 
 export default class ParseBiberLog extends Rule {
-  static fileTypes: Set<string> = new Set(['BiberLog'])
+  static parameterTypes: Array<Set<string>> = [new Set(['BiberLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses any biber produced logs.'
 
@@ -18,7 +18,7 @@ export default class ParseBiberLog extends Rule {
     await this.firstParameter.parse([{
       names: ['severity', 'text'],
       patterns: [/^[^>]+> (INFO|WARN|ERROR) - (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (references, groups) => {
         let severity = 'error'
         switch (groups.severity) {
           case 'INFO':
@@ -33,7 +33,8 @@ export default class ParseBiberLog extends Rule {
           severity,
           name: 'Biber',
           text: groups.text,
-          log: reference
+          sources: {},
+          logs: references
         }
 
         messages.push(message)

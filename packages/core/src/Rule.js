@@ -10,7 +10,7 @@ import StateConsumer from './StateConsumer'
 import type { Action, Command, Phase, CommandOptions } from './types'
 
 export default class Rule extends StateConsumer {
-  static fileTypes: Set<string> = new Set()
+  static parameterTypes: Array<Set<string>> = []
   static phases: Set<Phase> = new Set(['execute'])
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = false
@@ -26,7 +26,7 @@ export default class Rule extends StateConsumer {
   actions: Map<Action, Set<File>> = new Map()
   success: boolean = true
 
-  static async analyzePhase (state: State, command: Command, phase: Phase, jobName: ?string) {
+  static async analyzePhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<?Rule> {
     if (await this.appliesToPhase(state, command, phase, jobName)) {
       const rule = new this(state, command, phase, jobName)
       await rule.initialize()
@@ -38,23 +38,53 @@ export default class Rule extends StateConsumer {
   static async appliesToPhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      this.fileTypes.size === 0
+      this.parameterTypes.length === 0
   }
 
-  static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<?Rule> {
+  static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<Array<Rule>> {
+    const rules = []
+
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
-      const rule = new this(state, command, phase, jobName, file)
-      await rule.initialize()
-      if (rule.alwaysEvaluate) rule.addAction(file)
-      return rule
+      const files = Array.from(state.files.values()).filter(file => !jobName || file.jobNames.has(jobName))
+
+      for (let i = 0; i < this.parameterTypes.length; i++) {
+        if (file.inTypeSet(this.parameterTypes[i])) {
+          const candidates: Array<Array<File>> = this.parameterTypes.map((types, index) =>
+            (index === i)
+              ? [file]
+              : files.filter(file => file.inTypeSet(types)))
+          let indicies = candidates.map(files => files.length - 1)
+
+          while (indicies.every(index => index > -1)) {
+            const parameters = candidates.map((files, index) => files[indicies[index]])
+            const ruleId = state.getRuleId(this.name, command, phase, jobName, ...parameters)
+
+            if (!state.rules.has(ruleId)) {
+              const rule = new this(state, command, phase, jobName, ...parameters)
+              await rule.initialize()
+              if (rule.alwaysEvaluate) rule.addAction(file)
+              rules.push(rule)
+            }
+
+            let j = 0
+            while (j < indicies.length && --indicies[j] < 0) {
+              indicies[j] = candidates[j].length - 1
+              j++
+            }
+
+            if (j === indicies.length) break
+          }
+        }
+      }
     }
+
+    return rules
   }
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
-      (this.fileTypes.has('*') || this.fileTypes.has(file.type)) &&
-      Array.from(file.rules.values()).every(rule => rule.constructor.name !== this.name || rule.jobName !== jobName)
+      this.parameterTypes.some(types => file.inTypeSet(types))
   }
 
   constructor (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {
@@ -175,7 +205,7 @@ export default class Rule extends StateConsumer {
     })
     const { stdout, stderr, error } = await this.executeChildProcess(command, options)
     if (error) {
-      this.log({ severity, text: error.toString(), name: this.constructor.name })
+      this.log({ severity, text: error.toString(), name: this.constructor.name, sources: {}, logs: {} })
       success = false
     }
     return await this.processOutput(stdout, stderr) && success
