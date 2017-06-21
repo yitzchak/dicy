@@ -27,12 +27,14 @@ export default class ParseMakeIndexLog extends Rule {
       ],
       evaluate: (references, groups) => {
         const line = parseInt(groups.inputLine, 10)
+        const file = this.normalizePath(groups.inputPath)
+
         messages.push({
           severity: 'warning',
           name: 'makeindex',
           text: groups.text,
           logs: references,
-          sources: _.fromPairs([[groups.inputPath, { start: line, end: line }]])
+          sources: _.fromPairs([[file, { start: line, end: line }]])
         })
       }
     }, {
@@ -43,13 +45,15 @@ export default class ParseMakeIndexLog extends Rule {
       ],
       evaluate: (references, groups) => {
         const line = parseInt(groups.line, 10)
+        const file = this.normalizePath(groups.file)
+
         messages.push({
           severity: 'error',
           name: 'makeindex',
           text: groups.text,
           category: groups.category,
           logs: references,
-          sources: _.fromPairs([[groups.file, { start: line, end: line }]])
+          sources: _.fromPairs([[file, { start: line, end: line }]])
         })
       }
     }])

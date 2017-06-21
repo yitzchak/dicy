@@ -64,13 +64,15 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^(.*):(\d+): (?:(.+) Error: )?(.+?)\.?$/i],
       evaluate: (references, groups) => {
         const line: number = parseInt(groups.line, 10)
+        const file: string = this.normalizePath(groups.file)
+
         messages.push({
           severity: 'error',
           name,
           category: groups.category,
           text: groups.text,
           logs: references,
-          sources: _.fromPairs([[this.normalizePath(groups.file), { start: line, end: line }]])
+          sources: _.fromPairs([[file, { start: line, end: line }]])
         })
       }
     }, {
@@ -100,6 +102,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.)?$/],
       evaluate: (references, groups) => {
         const message: Message = messages[messages.length - 1]
+
         if (message && message.category && message.category.endsWith(groups.package)) {
           message.text = `${message.text}\n${groups.text}`
           const oldLineRange: ?LineRange = message.logs[output.filePath]

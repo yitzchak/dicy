@@ -61,14 +61,14 @@ export default class ParseBibTeXLog extends Rule {
       patterns: [/^(.+)---line (\d+) of file (.*)$/],
       evaluate: (references, groups) => {
         const line = parseInt(groups.line, 10)
-        const sources = _.fromPairs([[this.normalizePath(groups.file), { start: line, end: line }]])
+        const file = this.normalizePath(groups.file)
 
         messages.push({
           severity: 'error',
           name: 'BibTeX',
           text: groups.text,
           logs: references,
-          sources
+          sources: _.fromPairs([[file, { start: line, end: line }]])
         })
       }
     }])
