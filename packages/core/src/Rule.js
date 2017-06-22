@@ -24,7 +24,7 @@ export default class Rule extends StateConsumer {
   inputs: Map<string, File> = new Map()
   outputs: Map<string, File> = new Map()
   actions: Map<Action, Set<File>> = new Map()
-  success: boolean = true
+  failures: Set<Action> = new Set()
 
   static async analyzePhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<?Rule> {
     if (await this.appliesToPhase(state, command, phase, jobName)) {
@@ -124,8 +124,6 @@ export default class Rule extends StateConsumer {
       for (const action of await this.getFileActions(file)) {
         if (action === 'updateDependencies' || ruleNeedsUpdate) {
           this.addAction(file, action)
-          // Clear the failure flag since an input update has happened
-          this.success = true
         }
       }
     }
@@ -168,13 +166,18 @@ export default class Rule extends StateConsumer {
     if (!this.actions.has(action)) return true
 
     this.actionTrace(action)
-    this.success = (action === 'updateDependencies')
+    const success = (action === 'updateDependencies')
       ? await this.updateDependencies()
       : await this.run()
+    if (success) {
+      this.failures.delete(action)
+    } else {
+      this.failures.add(action)
+    }
     this.actions.delete(action)
     await this.updateOutputs()
 
-    return this.success
+    return success
   }
 
   async updateDependencies (): Promise<boolean> {

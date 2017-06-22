@@ -84,19 +84,19 @@ export default class DiCy extends StateConsumer {
   async evaluateRule (rule: Rule, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    if (rule.success) {
-      await rule.evaluate(action)
-      return true
+    if (rule.failures.has(action)) {
+      this.info(`Skipping rule ${rule.id} because of previous failure.`)
+      return false
     }
 
-    this.info(`Skipping rule ${rule.id} because of previous failure.`)
-    return false
+    await rule.evaluate(action)
+    return true
   }
 
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.needsEvaluation && rule.command === command && rule.phase === phase)
+    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.actions.has(action) && rule.command === command && rule.phase === phase)
     if (rules.length === 0) return false
 
     let didEvaluation: boolean = false
@@ -196,8 +196,7 @@ export default class DiCy extends StateConsumer {
           await this.runPhase(command, phase)
         }
       }
-
-      success = Array.from(this.rules).every(rule => rule.success)
+      success = Array.from(this.rules).every(rule => rule.failures.size === 0)
     } catch (error) {
       success = false
       this.error(error.message)
