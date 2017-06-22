@@ -17,10 +17,6 @@ export default class LoadAndValidateCache extends Rule {
     this.cacheFilePath = this.resolvePath('$DIR/$NAME-cache.yaml')
   }
 
-  async preEvaluate () {
-    if (this.options.ignoreCache || !await File.canRead(this.cacheFilePath)) this.actions.delete('run')
-  }
-
   async run () {
     if (this.options.ignoreCache) {
       this.cleanCache()
@@ -32,6 +28,10 @@ export default class LoadAndValidateCache extends Rule {
         await this.validateCache()
       }
     }
+
+    // Get the main source file just in case it wasn't added by the cache load.
+    // This also lets the cache load test for a change in the main source file.
+    await this.getFile(this.filePath)
 
     this.calculateDistances()
 
