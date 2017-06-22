@@ -24,6 +24,10 @@ export default class ApplySourceMaps extends Rule {
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Applies source maps to log files.'
 
+  async initialize () {
+    await this.getOutput(this.secondParameter.filePath)
+  }
+
   async run () {
     const { sourceMaps } = this.firstParameter.value || {}
     let { messages } = this.secondParameter.value || {}
