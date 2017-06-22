@@ -9,7 +9,7 @@ import Rule from '../Rule'
 import type { Action, Command, Message, Phase } from '../types'
 
 export default class BibTeX extends Rule {
-  static fileTypes: Set<string> = new Set(['ParsedLaTeXAuxilary'])
+  static parameterTypes: Array<Set<string>> = [new Set(['ParsedLaTeXAuxilary'])]
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
   input: ?File

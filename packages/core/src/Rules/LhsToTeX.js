@@ -3,7 +3,7 @@
 import Rule from '../Rule'
 
 export default class LhsToTeX extends Rule {
-  static fileTypes: Set<string> = new Set(['LiterateHaskell'])
+  static parameterTypes: Array<Set<string>> = [new Set(['LiterateHaskell'])]
   static description: string = 'Runs lhs2TeX on lhs files.'
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

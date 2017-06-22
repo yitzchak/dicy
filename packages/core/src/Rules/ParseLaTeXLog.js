@@ -7,7 +7,7 @@ import type { Command, Message } from '../types'
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 
 export default class ParseLaTeXLog extends Rule {
-  static fileTypes: Set<string> = new Set(['LaTeXLog'])
+  static parameterTypes: Array<Set<string>> = [new Set(['LaTeXLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses the logs produced by all latex variants.'
 
@@ -24,7 +24,10 @@ export default class ParseLaTeXLog extends Rule {
       names: ['filePath'],
       patterns: [/^\*\*(.*)$/],
       evaluate: (reference, groups) => {
-        filePath = groups.filePath
+        // Don't let subsequent lines overwrite the first.
+        if (!filePath) {
+          filePath = this.normalizePath(groups.filePath)
+        }
       }
     }, {
       names: ['name'],
@@ -40,6 +43,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           severity: 'info',
           text: groups.text,
+          source: { file: filePath },
           log: reference
         })
       }
@@ -52,6 +56,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
+          source: { file: filePath },
           log: reference
         })
       }
@@ -67,7 +72,7 @@ export default class ParseLaTeXLog extends Rule {
           text: groups.text,
           log: reference,
           source: {
-            file: groups.file,
+            file: this.normalizePath(groups.file),
             start: line,
             end: line
           }
@@ -82,11 +87,13 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
+          source: { file: filePath },
           log: reference
         }
 
         if (groups.line) {
           const line: number = parseInt(groups.line, 10)
+
           message.source = {
             file: filePath,
             start: line,
@@ -97,13 +104,22 @@ export default class ParseLaTeXLog extends Rule {
         messages.push(message)
       }
     }, {
-      names: ['package', 'text'],
-      patterns: [/^\(([^()]+)\) +(.*)$/],
+      names: ['package', 'text', 'line'],
+      patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.)?$/],
       evaluate: (reference, groups) => {
         const message: Message = messages[messages.length - 1]
         if (message && message.category && message.category.endsWith(groups.package)) {
           message.text = `${message.text}\n${groups.text}`
-          if (message.log) message.log.end = reference.start
+          if (message.log) message.log.end = reference.end
+          if (groups.line) {
+            const line: number = parseInt(groups.line, 10)
+
+            message.source = {
+              file: filePath,
+              start: line,
+              end: line
+            }
+          }
         }
       }
     }, {
@@ -121,7 +137,7 @@ export default class ParseLaTeXLog extends Rule {
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
       evaluate: (reference, groups) => {
-        outputs.push(groups.filePath)
+        outputs.push(this.normalizePath(groups.filePath))
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 
