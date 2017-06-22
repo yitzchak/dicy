@@ -43,11 +43,13 @@ export default class ParseBibTeXLog extends Rule {
       evaluate: (reference, groups) => {
         const message = messages[messages.length - 1]
         const line = parseInt(groups.line, 10)
-        if (message.log) message.log.end = reference.start
+        if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.start
         message.source = {
           file: this.normalizePath(groups.file),
-          start: line,
-          end: line
+          range: {
+            start: line,
+            end: line
+          }
         }
       }
     }, {
@@ -62,8 +64,10 @@ export default class ParseBibTeXLog extends Rule {
           log: reference,
           source: {
             file: this.normalizePath(groups.file),
-            start: line,
-            end: line
+            range: {
+              start: line,
+              end: line
+            }
           }
         })
       }

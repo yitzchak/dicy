@@ -73,8 +73,10 @@ export default class ParseLaTeXLog extends Rule {
           log: reference,
           source: {
             file: this.normalizePath(groups.file),
-            start: line,
-            end: line
+            range: {
+              start: line,
+              end: line
+            }
           }
         })
       }
@@ -96,8 +98,10 @@ export default class ParseLaTeXLog extends Rule {
 
           message.source = {
             file: filePath,
-            start: line,
-            end: line
+            range: {
+              start: line,
+              end: line
+            }
           }
         }
 
@@ -110,14 +114,16 @@ export default class ParseLaTeXLog extends Rule {
         const message: Message = messages[messages.length - 1]
         if (message && message.category && message.category.endsWith(groups.package)) {
           message.text = `${message.text}\n${groups.text}`
-          if (message.log) message.log.end = reference.end
+          if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.end
           if (groups.line) {
             const line: number = parseInt(groups.line, 10)
 
             message.source = {
               file: filePath,
-              start: line,
-              end: line
+              range: {
+                start: line,
+                end: line
+              }
             }
           }
         }

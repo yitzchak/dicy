@@ -97,6 +97,7 @@ ParsedLaTeXFileListing: {}
 ParsedLaTeXLog: {}
 ParsedLaTeXMagic: {}
 ParsedMakeIndexLog: {}
+ParsedSourceMap: {}
 ParsedYAML: {}
 PortableDocumentFormat:
   fileName: !!js/regexp /\.pdf$/i
