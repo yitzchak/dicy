@@ -32,8 +32,10 @@ export default class ParseMakeIndexLog extends Rule {
           log: reference,
           source: {
             file: groups.inputPath,
-            start: line,
-            end: line
+            range: {
+              start: line,
+              end: line
+            }
           }
         })
       }
@@ -53,8 +55,10 @@ export default class ParseMakeIndexLog extends Rule {
           log: reference,
           source: {
             file: groups.file,
-            start: line,
-            end: line
+            range: {
+              start: line,
+              end: line
+            }
           }
         })
       }

@@ -48,10 +48,14 @@ export type Cache = {
   rules: Array<RuleCache>
 }
 
+export type LineRange = {
+  start: number,
+  end: number
+}
+
 export type Reference = {
   file: string,
-  start?: number,
-  end?: number
+  range?: LineRange
 }
 
 export type Parser = {
@@ -149,4 +153,15 @@ export type KillToken = {
 export type CommandOptions = {
   args: Array<string>,
   severity: Severity
+}
+
+export type LineRangeMapping = {
+  input: LineRange,
+  output: LineRange
+}
+
+export type SourceMap = {
+  input: string,
+  output: string,
+  mappings: Array<LineRangeMapping>
 }

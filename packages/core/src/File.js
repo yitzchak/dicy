@@ -126,8 +126,10 @@ export default class File {
               const lineCount = lines.splice(0, parser.patterns.length).reduce((total, line) => total + line.count, 0)
               const reference: Reference = {
                 file: this.filePath,
-                start: lineNumber,
-                end: lineNumber + lineCount - 1
+                range: {
+                  start: lineNumber,
+                  end: lineNumber + lineCount - 1
+                }
               }
               lineNumber += lineCount
               parser.evaluate(reference, groups)
