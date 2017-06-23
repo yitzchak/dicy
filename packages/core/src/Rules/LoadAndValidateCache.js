@@ -41,9 +41,7 @@ export default class LoadAndValidateCache extends Rule {
   cleanCache () {
     for (const jobName of this.options.jobNames) {
       for (const file of this.files) {
-        if (file.filePath !== this.filePath) {
-          this.state.deleteFile(file, jobName, false)
-        }
+        this.state.deleteFile(file, jobName, false)
       }
     }
   }
