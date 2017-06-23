@@ -122,7 +122,7 @@ export default class Rule extends StateConsumer {
       const timeStamp: ?Date = this.timeStamp
       const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
       for (const action of await this.getFileActions(file)) {
-        if (ruleNeedsUpdate) this.failures.clear()
+        if (ruleNeedsUpdate) this.failures.delete(action)
         if (action === 'updateDependencies' || ruleNeedsUpdate) {
           this.addAction(file, action)
         }
