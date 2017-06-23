@@ -79,7 +79,7 @@ export default class File {
     if (!file.virtual && !await File.canRead(realFilePath)) return
     // Check for an update to file in case it has changed since the cache was
     // finalized.
-    file.hasBeenUpdated = await file.updateTimeStamp() && await file.updateHash()
+    await file.update()
 
     return file
   }
@@ -325,7 +325,7 @@ export default class File {
     if (this.virtual) return false
     const oldTimeStamp = this.timeStamp
     this.timeStamp = await File.getModifiedTime(this.realFilePath)
-    return oldTimeStamp !== this.timeStamp
+    return oldTimeStamp < this.timeStamp
   }
 
   updateHash (): Promise<boolean> {

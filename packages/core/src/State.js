@@ -55,7 +55,10 @@ export default class State extends EventEmitter {
   static async create (filePath: string, schema: Array<Option> = []) {
     const state = new State(filePath, schema)
 
-    await state.getFile(filePath)
+    // I've removed this line to allow for the cache to test for a file update
+    // in the main source file. This make the async not really needed anymore,
+    // but I'll leave for a bit just in case.
+    // await state.getFile(filePath)
 
     return state
   }
