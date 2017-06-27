@@ -22,7 +22,7 @@ export default class ParseLaTeXLog extends Rule {
 
     await this.firstParameter.parse([{
       names: ['filePath'],
-      patterns: [/^\*\*(.*)$/],
+      patterns: [/^\*\*([^*]+)$/],
       evaluate: (reference, groups) => {
         // Don't let subsequent lines overwrite the first.
         if (!filePath) {
@@ -73,10 +73,7 @@ export default class ParseLaTeXLog extends Rule {
           log: reference,
           source: {
             file: this.normalizePath(groups.file),
-            range: {
-              start: line,
-              end: line
-            }
+            range: { start: line, end: line }
           }
         })
       }
@@ -98,10 +95,7 @@ export default class ParseLaTeXLog extends Rule {
 
           message.source = {
             file: filePath,
-            range: {
-              start: line,
-              end: line
-            }
+            range: { start: line, end: line }
           }
         }
 
@@ -109,58 +103,95 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['package', 'text', 'line'],
-      patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.)?$/],
+      patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = messages[messages.length - 1]
         if (message && message.category && message.category.endsWith(groups.package)) {
-          message.text = `${message.text}\n${groups.text}`
+          message.text = `${message.text} ${groups.text}`
           if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.end
           if (groups.line) {
             const line: number = parseInt(groups.line, 10)
 
+            message.text = `${message.text}.`
             message.source = {
               file: filePath,
-              range: {
-                start: line,
-                end: line
-              }
+              range: { start: line, end: line }
             }
           }
         }
       }
     }, {
-      // LateX3 message
-      names: ['category', 'severity', 'text', 'description'],
+      // LaTeX3 error messages when -file-line-error is on
+      names: ['file', 'line', 'category', 'text'],
       patterns: [
-        /^\.+$/,
-        /^\. (.*?) (info|warning|error): "([^"]*)"$/,
-        /^\. *$/,
-        /^\. (.*)$/,
-        /^\.+$/
+        /^!{48,50}$/,
+        /^!$/,
+        /^(.*):(\d+): (?:(.+) error: )?(.+?)\.?$/
+      ],
+      evaluate: (reference, groups) => {
+        const line: number = parseInt(groups.line, 10)
+        const message: Message = {
+          severity: 'error',
+          name,
+          category: groups.category,
+          source: {
+            file: this.normalizePath(groups.file),
+            range: { start: line, end: line }
+          },
+          text: groups.text,
+          log: reference
+        }
+
+        messages.push(message)
+      }
+    }, {
+      // LaTeX3 messages
+      names: ['category', 'severity', 'text'],
+      patterns: [
+        /^[.*!]{48,50}$/,
+        /^[.*!] (.*?) (info|warning|error): ("[^"]*")$/
       ],
       evaluate: (reference, groups) => {
         const message: Message = {
           severity: groups.severity.toLowerCase() === 'info' ? 'info' : 'warning',
           name,
           category: groups.category,
-          text: groups.text,
           source: { file: filePath },
+          text: groups.text,
           log: reference
         }
 
-        if (groups.line) {
-          const line: number = parseInt(groups.line, 10)
+        messages.push(message)
+      }
+    }, {
+      // LaTeX3 continued message
+      names: ['text', 'line'],
+      patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
+      evaluate: (reference, groups) => {
+        const message: Message = messages[messages.length - 1]
+        if (message && groups.text !== 'Type <return> to continue.') {
+          message.text = `${message.text} ${groups.text || '\n'}`
+          if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.end
+          if (groups.line) {
+            const line: number = parseInt(groups.line, 10)
 
-          message.source = {
-            file: filePath,
-            range: {
-              start: line,
-              end: line
+            message.text = `${message.text}.`
+            message.source = {
+              file: filePath,
+              range: { start: line, end: line }
             }
           }
         }
-
-        messages.push(message)
+      }
+    }, {
+      // End of LaTeX3 message
+      names: [],
+      patterns: [/^[.*!]{48,50} *$/],
+      evaluate: (reference, groups) => {
+        const message: Message = messages[messages.length - 1]
+        if (message && message.log && message.log.range && reference.range) {
+          message.log.range.end = reference.range.end
+        }
       }
     }, {
       names: ['text'],
@@ -180,6 +211,10 @@ export default class ParseLaTeXLog extends Rule {
         outputs.push(this.normalizePath(groups.filePath))
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
+
+    for (const message of messages) {
+      message.text = message.text.trim().replace(/ *\n+ */, '\n').replace(/ +/, ' ')
+    }
 
     output.value = { outputs, messages }
 

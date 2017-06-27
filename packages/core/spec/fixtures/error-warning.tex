@@ -40,10 +40,15 @@
   \PackageInfo{bar}{Insignificant package issue}
 
   \section{\LaTeX3}
-  
+
   \ExplSyntaxOn
-  \msg_new:nnnn {foo} {bar} {gronk} {wibble}
+  \msg_new:nnn {foo} {bar} {
+    The~blind~spot~behind~a~submarine~which~makes~a~good~hidding~spot~
+    for~other~submarines~\msg_line_context:.}
+  \msg_error:nn {foo} {bar}
+  \msg_warning:nn {foo} {bar}
   \msg_info:nn {foo} {bar}
+  \msg_log:nn {foo} {bar}
   \ExplSyntaxOff
 
   % Generate an error in a subfile located in another directory
