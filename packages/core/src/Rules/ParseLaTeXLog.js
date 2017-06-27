@@ -129,6 +129,40 @@ export default class ParseLaTeXLog extends Rule {
         }
       }
     }, {
+      // LateX3 message
+      names: ['category', 'severity', 'text', 'description'],
+      patterns: [
+        /^\.+$/,
+        /^\. (.*?) (info|warning|error): "([^"]*)"$/,
+        /^\. *$/,
+        /^\. (.*)$/,
+        /^\.+$/
+      ],
+      evaluate: (reference, groups) => {
+        const message: Message = {
+          severity: groups.severity.toLowerCase() === 'info' ? 'info' : 'warning',
+          name,
+          category: groups.category,
+          text: groups.text,
+          source: { file: filePath },
+          log: reference
+        }
+
+        if (groups.line) {
+          const line: number = parseInt(groups.line, 10)
+
+          message.source = {
+            file: filePath,
+            range: {
+              start: line,
+              end: line
+            }
+          }
+        }
+
+        messages.push(message)
+      }
+    }, {
       names: ['text'],
       patterns: [/^(No file .*\.)$/],
       evaluate: (reference, groups) => {
