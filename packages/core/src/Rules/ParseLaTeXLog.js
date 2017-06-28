@@ -11,7 +11,12 @@ export default class ParseLaTeXLog extends Rule {
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses the logs produced by all latex variants.'
 
-  async run () {
+  /**
+   * Parse the latex log.
+   * @return {Promise<boolean>}  Status of rule evaluation
+   */
+  async run (): Promise<boolean> {
+    // Get the output file
     const output = await this.getResolvedOutput('$DIR/$BASE-ParsedLaTeXLog', this.firstParameter)
     if (!output) return false
 
@@ -21,6 +26,7 @@ export default class ParseLaTeXLog extends Rule {
     let filePath: string
 
     await this.firstParameter.parse([{
+      // Input file name
       names: ['filePath'],
       patterns: [/^\*\*([^*]+)$/],
       evaluate: (reference, groups) => {
@@ -30,12 +36,14 @@ export default class ParseLaTeXLog extends Rule {
         }
       }
     }, {
+      // Program identifier
       names: ['name'],
       patterns: [/^This is (.*),/],
       evaluate: (reference, groups) => {
         name = groups.name
       }
     }, {
+      // Package info message
       names: ['text'],
       patterns: [/^Package: (.*)$/i],
       evaluate: (reference, groups) => {
@@ -48,6 +56,8 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
+      // Error messages when -file-line-error is off or no file reference is
+      // included.
       names: ['category', 'text'],
       patterns: [/^! (.+) Error: (.+?)\.?$/i],
       evaluate: (reference, groups) => {
@@ -61,6 +71,8 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
+      // Error messages when -file-line-error is on and file reference is
+      // available.
       names: ['file', 'line', 'category', 'text'],
       patterns: [/^(\S.*):(\d+): (?:(.+) Error: )?(.+?)\.?$/i],
       evaluate: (reference, groups) => {
@@ -81,11 +93,12 @@ export default class ParseLaTeXLog extends Rule {
         messages.push(message)
       }
     }, {
+      // Warning/Info messages, possibly with a line reference.
       names: ['category', 'severity', 'text', 'line'],
       patterns: [/^(.+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
       evaluate: (reference, groups) => {
         const message: Message = {
-          severity: groups.severity.toLowerCase() === 'info' ? 'info' : 'warning',
+          severity: groups.severity.toLowerCase(),
           name,
           category: groups.category,
           text: groups.text,
@@ -93,6 +106,7 @@ export default class ParseLaTeXLog extends Rule {
           log: reference
         }
 
+        // There is a line reference so add it to the message.
         if (groups.line) {
           const line: number = parseInt(groups.line, 10)
 
@@ -105,13 +119,19 @@ export default class ParseLaTeXLog extends Rule {
         messages.push(message)
       }
     }, {
+      // Continuation of message with possible file reference.
       names: ['package', 'text', 'line'],
       patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = messages[messages.length - 1]
+        // Verify that the previous message matches the category.
         if (message && message.category && message.category.endsWith(groups.package)) {
           message.text = `${message.text} ${groups.text}`
-          if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.end
+          // If the previous message has a log reference then extend it.
+          if (message.log && message.log.range && reference.range) {
+            message.log.range.end = reference.range.end
+          }
+          // If there is a line reference then add it the the message.
           if (groups.line) {
             const line: number = parseInt(groups.line, 10)
 
@@ -136,7 +156,6 @@ export default class ParseLaTeXLog extends Rule {
         const message: Message = {
           severity: 'error',
           name,
-          category: groups.category,
           source: {
             file: this.normalizePath(groups.file),
             range: { start: line, end: line }
@@ -144,6 +163,8 @@ export default class ParseLaTeXLog extends Rule {
           text: groups.text,
           log: reference
         }
+
+        if (groups.category) message.category = groups.category
 
         messages.push(message)
       }
@@ -156,7 +177,7 @@ export default class ParseLaTeXLog extends Rule {
       ],
       evaluate: (reference, groups) => {
         const message: Message = {
-          severity: groups.severity.toLowerCase() === 'info' ? 'info' : 'warning',
+          severity: groups.severity,
           name,
           category: groups.category,
           source: { file: filePath },
@@ -173,10 +194,15 @@ export default class ParseLaTeXLog extends Rule {
       evaluate: (reference, groups) => {
         const message: Message = messages[messages.length - 1]
         if (message) {
+          // Don't add input requests to the message.
           if (groups.text !== 'Type <return> to continue.') {
             message.text = `${message.text} ${groups.text.trim() || '\n'}`
           }
-          if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.end
+          // If the the previous message has a log reference then extend it.
+          if (message.log && message.log.range && reference.range) {
+            message.log.range.end = reference.range.end
+          }
+          // If there is a line reference then add it to the message.
           if (groups.line) {
             const line: number = parseInt(groups.line, 10)
 
@@ -194,11 +220,13 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^[.*!]{48,50} *$/],
       evaluate: (reference, groups) => {
         const message: Message = messages[messages.length - 1]
+        // If the the previous message has a log reference then extend it.
         if (message && message.log && message.log.range && reference.range) {
           message.log.range.end = reference.range.end
         }
       }
     }, {
+      // Missing file warning.
       names: ['text'],
       patterns: [/^(No file .*\.)$/],
       evaluate: (reference, groups) => {
@@ -210,6 +238,7 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
+      // Output file message.
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
       evaluate: (reference, groups) => {
@@ -217,6 +246,7 @@ export default class ParseLaTeXLog extends Rule {
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 
+    // Clean the message text up.
     for (const message of messages) {
       message.text = message.text.trim().replace(/ *\n+ */g, '\n').replace(/ +/g, ' ')
     }
