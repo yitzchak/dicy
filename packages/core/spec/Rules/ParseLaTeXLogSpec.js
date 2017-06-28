@@ -670,18 +670,28 @@ describe('File', () => {
         }
       }
     }]
-    let fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-    let sourcePath = path.resolve(fixturesPath, sourceName)
-    let parsedLogPath = 'error-warning.log-ParsedLaTeXLog'
-    let state: State = await State.create(sourcePath)
-    let logFile: ?File = await state.getFile(logName)
+    const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
+    const sourcePath = path.resolve(fixturesPath, sourceName)
+    const parsedLogPath = 'error-warning.log-ParsedLaTeXLog'
+    const state: State = await State.create(sourcePath)
+    const logFile: ?File = await state.getFile(logName)
 
-    // $FlowIgnore
-    let parser: ParseLaTeXLog = new ParseLaTeXLog(state, 'build', 'execute', null, logFile)
+    expect(logFile).toBeDefined()
+    if (!logFile) return
+
+    const parser: ParseLaTeXLog = new ParseLaTeXLog(state, 'build', 'execute', null, logFile)
 
     await parser.run()
-    const parsedLog = await state.getFile(parsedLogPath)
-    if (parsedLog && parsedLog.value) expect(parsedLog.value.messages).toEqual(messages)
+
+    const parsedLog: ?File = parser.outputs.get(parsedLogPath)
+
+    expect(parsedLog).toBeDefined()
+    if (!parsedLog) return
+
+    expect(parsedLog.value).toBeDefined()
+    if (!parsedLog.value) return
+
+    expect(parsedLog.value.messages).toEqual(messages)
 
     done()
   })
