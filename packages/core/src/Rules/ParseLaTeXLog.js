@@ -172,8 +172,10 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = messages[messages.length - 1]
-        if (message && groups.text !== 'Type <return> to continue.') {
-          message.text = `${message.text} ${groups.text || '\n'}`
+        if (message) {
+          if (groups.text !== 'Type <return> to continue.') {
+            message.text = `${message.text} ${groups.text.trim() || '\n'}`
+          }
           if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.end
           if (groups.line) {
             const line: number = parseInt(groups.line, 10)
