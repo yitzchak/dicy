@@ -12,9 +12,7 @@
   "main": "lib/main.js",
   "scripts": {
     "test": "jasmine",
-    "compile": "babel -d lib/ src/",
-    "lint": "eslint --color src spec",
-    "flow-typed": "flow-typed update",
+    "compile": "rm -rf lib && babel -d lib/ src/",
     "prepublish": "npm run compile"
   },
   "bin": {
@@ -50,16 +48,6 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-latest": "^6.24.1",
     "babel-register": "^6.24.1",
-    "eslint": "^4.1.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-flowtype": "^2.34.0",
-    "eslint-plugin-flowtype-errors": "^3.3.0",
-    "eslint-plugin-import": "^2.6.0",
-    "eslint-plugin-node": "^5.0.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "^0.49.1",
-    "flow-typed": "^2.1.2",
     "jasmine": "^2.6.0"
   }
 }
