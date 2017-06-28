@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
-cd spec/fixtures/file-types
+cd packages/core/spec/fixtures
+
+echo Creating log files...
+
+pdflatex -file-line-error -interaction=batchmode error-warning.tex &>/dev/null
+rm error-warning.aux
+
+cd file-types
 
 echo Creating Knitr files...
 Rscript -e "library(knitr);opts_knit\$set(concordance=TRUE);knit('Knitr.Rnw')" &>/dev/null
@@ -24,5 +31,5 @@ cd ../builder-tests
 for file in {*.tex,*.lhs,*.Rnw}; do
   echo "Creating event archive for $file"
   dicy bl --save-events=command,log "$file" &>/dev/null
-  dicy z "$file" &>/dev/null
+  dicy s "$file" &>/dev/null
 done

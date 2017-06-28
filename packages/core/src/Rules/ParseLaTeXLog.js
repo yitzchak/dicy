@@ -62,20 +62,23 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       names: ['file', 'line', 'category', 'text'],
-      patterns: [/^(.*):(\d+): (?:(.+) Error: )?(.+?)\.?$/i],
+      patterns: [/^(\S.*):(\d+): (?:(.+) Error: )?(.+?)\.?$/i],
       evaluate: (reference, groups) => {
         const line: number = parseInt(groups.line, 10)
-        messages.push({
+        const message: Message = {
           severity: 'error',
           name,
-          category: groups.category,
           text: groups.text,
           log: reference,
           source: {
             file: this.normalizePath(groups.file),
             range: { start: line, end: line }
           }
-        })
+        }
+
+        if (groups.category) message.category = groups.category
+
+        messages.push(message)
       }
     }, {
       names: ['category', 'severity', 'text', 'line'],
@@ -213,7 +216,7 @@ export default class ParseLaTeXLog extends Rule {
     }], line => WRAPPED_LINE_PATTERN.test(line))
 
     for (const message of messages) {
-      message.text = message.text.trim().replace(/ *\n+ */, '\n').replace(/ +/, ' ')
+      message.text = message.text.trim().replace(/ *\n+ */g, '\n').replace(/ +/g, ' ')
     }
 
     output.value = { outputs, messages }
