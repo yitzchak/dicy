@@ -47,8 +47,9 @@ export default class ApplyOptions extends Rule {
 
   checkForConfigurationChange (previousOptions: Object): void {
     // Ignore options that don't actually change the build.
-    function matcher (objValue, srcValue, key, object, source) {
-      if (['ignoreCache', 'phaseCycles', 'severity'].includes(key)) return true
+    const matcher = (objValue, srcValue, key, object, source) => {
+      const schema = this.state.optionSchema.get(key.toString())
+      if (schema && schema.noInvalidate) return true
     }
 
     if (!_.isMatchWith(this.state.options, previousOptions, matcher)) {

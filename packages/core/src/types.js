@@ -141,7 +141,8 @@ export type Option = {
   description: string,
   values?: Array<any>,
   aliases?: Array<string>,
-  commands: Array<string>
+  commands: Array<string>,
+  noInvalidate?: boolean
 }
 
 export type KillToken = {
