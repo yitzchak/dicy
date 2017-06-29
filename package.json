@@ -22,6 +22,7 @@
   "license": "MIT",
   "scripts": {
     "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean --yes",
     "lint": "eslint --color packages",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
