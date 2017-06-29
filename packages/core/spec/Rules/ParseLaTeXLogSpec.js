@@ -7,8 +7,8 @@ import State from '../../src/State'
 import File from '../../src/File'
 import ParseLaTeXLog from '../../src/Rules/ParseLaTeXLog'
 
-describe('File', () => {
-  it('verifies that virtual files can be created without a physical file existing and is the right type', async (done) => {
+describe('ParseLaTeXLog', () => {
+  it('verifies that all log messages are successfully parsed.', async (done) => {
     const sourceName = 'error-warning.tex'
     const logName = 'error-warning.log'
     const messages = [{
