@@ -11,10 +11,14 @@ export default class AssignJobNames extends Rule {
   static description: string = 'Assign job names to initial source file.'
 
   async run () {
+    // Get the source file associated with this job.
     const file = await this.getFile(this.options.filePath)
+
     if (file && this.jobName) {
+      // If the file exists and we have a job name then add it.
       file.jobNames.add(this.jobName)
     }
+
     return true
   }
 }
