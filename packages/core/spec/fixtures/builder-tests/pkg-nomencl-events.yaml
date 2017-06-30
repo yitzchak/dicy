@@ -30,6 +30,14 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-2 pkg-nomencl.tex
+  - type: command
+    rule: MakeIndex(build;execute;job-1;job-1.nlo)
+    command: makeindex -t job-1.nlg -o job-1.nls -s nomencl.ist job-1.nlo
+  - type: command
+    rule: MakeIndex(build;execute;job-2;output/job-2.nlo)
+    command: >-
+      makeindex -t output/job-2.nlg -o output/job-2.nls -s nomencl.ist
+      output/job-2.nlo
   - type: log
     severity: error
     name: makeindex
@@ -37,12 +45,14 @@ events:
     category: Input style
     log:
       file: job-1.nlg
-      start: 3
-      end: 4
+      range:
+        start: 3
+        end: 4
     source:
-      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: 70
-      end: 70
+      file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+      range:
+        start: 70
+        end: 70
   - type: log
     severity: error
     name: makeindex
@@ -50,12 +60,14 @@ events:
     category: Input style
     log:
       file: job-1.nlg
-      start: 5
-      end: 6
+      range:
+        start: 5
+        end: 6
     source:
-      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: 71
-      end: 71
+      file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+      range:
+        start: 71
+        end: 71
   - type: log
     severity: error
     name: makeindex
@@ -63,12 +75,14 @@ events:
     category: Input style
     log:
       file: job-1.nlg
-      start: 7
-      end: 8
+      range:
+        start: 7
+        end: 8
     source:
-      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: 72
-      end: 72
+      file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+      range:
+        start: 72
+        end: 72
   - type: log
     severity: error
     name: makeindex
@@ -76,12 +90,14 @@ events:
     category: Input style
     log:
       file: output/job-2.nlg
-      start: 3
-      end: 4
+      range:
+        start: 3
+        end: 4
     source:
-      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: 70
-      end: 70
+      file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+      range:
+        start: 70
+        end: 70
   - type: log
     severity: error
     name: makeindex
@@ -89,12 +105,14 @@ events:
     category: Input style
     log:
       file: output/job-2.nlg
-      start: 5
-      end: 6
+      range:
+        start: 5
+        end: 6
     source:
-      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: 71
-      end: 71
+      file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+      range:
+        start: 71
+        end: 71
   - type: log
     severity: error
     name: makeindex
@@ -102,9 +120,11 @@ events:
     category: Input style
     log:
       file: output/job-2.nlg
-      start: 7
-      end: 8
+      range:
+        start: 7
+        end: 8
     source:
-      file: /usr/local/texlive/2016/texmf-dist/makeindex/nomencl/nomencl.ist
-      start: 72
-      end: 72
+      file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+      range:
+        start: 72
+        end: 72

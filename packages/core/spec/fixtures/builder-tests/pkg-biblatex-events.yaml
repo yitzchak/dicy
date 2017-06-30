@@ -55,6 +55,12 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=biber-2 pkg-biblatex.tex
   - type: command
+    rule: Biber(build;execute;biber-1;biber-1.bcf)
+    command: biber biber-1.bcf
+  - type: command
+    rule: Biber(build;execute;biber-2;output/biber-2.bcf)
+    command: biber output/biber-2.bcf
+  - type: command
     rule: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder

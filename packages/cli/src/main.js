@@ -86,7 +86,7 @@ const command = async (inputs, env) => {
     await dicy.run(...commands)
 
     if (saveEvents.length !== 0) {
-      const eventFilePath = dicy.resolvePath('$dir/$name-events.yaml')
+      const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
       await File.safeDump(eventFilePath, { types: saveEvents, events })
     }
   }

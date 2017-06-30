@@ -41,7 +41,7 @@ describe('DiCy', () => {
         dicy.state.env.HOME = fixturesPath
 
         // Load the event archive
-        const eventFilePath = dicy.resolvePath(':dir/:name-events.yaml')
+        const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
         if (await File.canRead(eventFilePath)) {
           expected = await File.safeLoad(eventFilePath)
           for (const type of expected.types) {

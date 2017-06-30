@@ -26,3 +26,8 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-bibtopic.tex
+  - type: command
+    rule: LaTeX(build;execute;;pkg-bibtopic.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-bibtopic.tex
