@@ -28,9 +28,3 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-2 pkg-sagetex.tex
-  - type: command
-    rule: Sage(build;execute;job-1;job-1.sagetex.sage)
-    command: sage job-1.sagetex.sage
-  - type: command
-    rule: Sage(build;execute;job-2;output/job-2.sagetex.sage)
-    command: sage job-2.sagetex.sage

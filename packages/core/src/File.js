@@ -321,11 +321,22 @@ export default class File {
     this.rules.delete(rule)
   }
 
+  /**
+   * Update the file time stamp
+   * @return {boolean}  true if time stamp has been updated, false otherwise.
+   */
   async updateTimeStamp (): Promise<boolean> {
+    // If it is a virtual file then we only update the time stamp when `value`
+    // is set.
     if (this.virtual) return false
+
+    // Save the old time stamp and get the current one.
     const oldTimeStamp = this.timeStamp
     this.timeStamp = await File.getModifiedTime(this.realFilePath)
-    return oldTimeStamp < this.timeStamp
+
+    // Return true indicating an updated time stamp if there was no time stamp
+    // before or the new time stamp is more recent.
+    return !oldTimeStamp || oldTimeStamp < this.timeStamp
   }
 
   updateHash (): Promise<boolean> {
