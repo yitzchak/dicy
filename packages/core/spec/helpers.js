@@ -52,39 +52,41 @@ function stringCompare (x: string, y: string): boolean {
   return x.replace(/[/\\'"^]/g, '') === y.replace(/[/\\'"^]/g, '')
 }
 
+export function partitionMessages (received: Array<Event>, expected: Array<Event>) {
+  let proper = []
+  let improper = []
+  let missing = expected.slice(0)
+
+  for (const event of received) {
+    let index = _.findIndex(missing,
+      candidate => _.isMatchWith(event, candidate, (x, y, key) => key === 'file'
+        ? compareFilePaths(x, y)
+        : ((typeof x === 'string' && typeof y === 'string')
+          ? stringCompare(x, y)
+          : undefined)),
+      // $FlowIgnore
+      0)
+    if (index === -1) {
+      improper.push(event)
+    } else {
+      proper.push(event)
+      missing.splice(index, 1)
+    }
+  }
+
+  return { proper, improper, missing }
+}
+
 export const customMatchers = {
   toReceiveEvents (util: Object, customEqualityTesters: Object) {
     return {
-      compare: function (receivedEvents: Array<Event>, expectedEvents: Array<Event>) {
-        let receivedFound = []
-        let receivedMissing = []
-        let expectedFound = []
-        let expectedMissing = []
-        let fromIndex = 0
+      compare: function (received: Array<Event>, expected: Array<Event>) {
+        const { proper, improper, missing } = partitionMessages(received, expected)
 
-        for (const received of receivedEvents) {
-          let expectedIndex = _.findIndex(expectedEvents,
-            expected => _.isMatchWith(received, expected, (x, y, key) => key === 'file'
-              ? compareFilePaths(x, y)
-              : ((typeof x === 'string' && typeof y === 'string')
-                ? stringCompare(x, y)
-                : undefined)),
-            // $FlowIgnore
-            fromIndex)
-          if (expectedIndex === -1) {
-            receivedMissing.push(received)
-          } else {
-            receivedFound.push(received)
-            expectedFound.push(expectedEvents[expectedIndex])
-            expectedMissing = expectedMissing.concat(expectedEvents.slice(fromIndex, expectedIndex))
-            fromIndex = expectedIndex + 1
-          }
-        }
-
-        const pass = receivedMissing.length === 0 && expectedMissing.length === 0
+        const pass = improper.length === 0 && missing.length === 0
         const message = pass
-          ? constructMessage(receivedFound, expectedFound)
-          : constructMessage(receivedMissing, expectedMissing)
+          ? constructMessage(proper, [])
+          : constructMessage(improper, missing)
 
         return { pass, message }
       }
