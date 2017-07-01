@@ -58,14 +58,12 @@ export function partitionMessages (received: Array<Event>, expected: Array<Event
   let missing = expected.slice(0)
 
   for (const event of received) {
-    let index = _.findIndex(missing,
-      candidate => _.isMatchWith(event, candidate, (x, y, key) => key === 'file'
+    let index = missing.findIndex(candidate =>
+      _.isMatchWith(event, candidate, (x, y, key) => key === 'file'
         ? compareFilePaths(x, y)
         : ((typeof x === 'string' && typeof y === 'string')
           ? stringCompare(x, y)
-          : undefined)),
-      // $FlowIgnore
-      0)
+          : undefined)))
     if (index === -1) {
       improper.push(event)
     } else {

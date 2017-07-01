@@ -340,10 +340,12 @@ export default class File {
   }
 
   updateHash (): Promise<boolean> {
-    if (this.virtual || path.isAbsolute(this.filePath)) return Promise.resolve(true)
+    const fileType = File.fileTypes.get(this.type)
+
+    if (this.virtual || path.isAbsolute(this.filePath) || (fileType && fileType.noHash)) return Promise.resolve(true)
 
     return new Promise((resolve, reject) => {
-      const fileType = File.fileTypes.get(this.type)
+      // const fileType = File.fileTypes.get(this.type)
       const hash = crypto.createHash('sha256')
       const finish = () => {
         const oldHash = this.hash
