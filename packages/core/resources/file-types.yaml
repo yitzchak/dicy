@@ -26,7 +26,8 @@ BiberLog:
   hashSkip: !!js/regexp /===/
 DeviceIndependentFile:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
-  noHash: true
+  hashFilter: dvitype
+  hashSkip: !!js/regexp /' TeX output [0-9.:]+'/i
 DocumentedTeX:
   fileName: !!js/regexp /\.dtx$/i
 EncapsulatedPostScript:

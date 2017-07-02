@@ -1,6 +1,8 @@
 /* @flow */
 
 import _ from 'lodash'
+import childProcess from 'child_process'
+import commandJoin from 'command-join'
 import crypto from 'crypto'
 import fs from 'fs-extra'
 import path from 'path'
@@ -353,7 +355,19 @@ export default class File {
         resolve(oldHash !== this.hash)
       }
 
-      if (fileType && fileType.hashSkip) {
+      if (fileType && fileType.hashFilter) {
+        const command = commandJoin([fileType.hashFilter, this.realFilePath])
+        childProcess.exec(command, {}, (error, stdout, stderr) => {
+          if (error) {
+            resolve(true)
+          } else {
+            for (const line of stdout.toString().split(/\n/g)) {
+              if (!fileType.hashSkip || !fileType.hashSkip.test(line)) hash.update(line)
+            }
+            finish()
+          }
+        })
+      } else if (fileType && fileType.hashSkip) {
         const rl = readline.createInterface({
           input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
