@@ -342,7 +342,7 @@ export default class File {
   updateHash (): Promise<boolean> {
     const fileType = File.fileTypes.get(this.type)
 
-    if (this.virtual || path.isAbsolute(this.filePath) || (fileType && fileType.noHash)) return Promise.resolve(true)
+    if (this.virtual || path.isAbsolute(this.filePath)) return Promise.resolve(true)
 
     return new Promise((resolve, reject) => {
       // const fileType = File.fileTypes.get(this.type)
