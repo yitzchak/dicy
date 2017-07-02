@@ -30,6 +30,6 @@ cd ../builder-tests
 
 for file in {*.tex,*.lhs,*.Rnw}; do
   echo "Creating event archive for $file"
-  dicy bl --save-events=command,log "$file" &>/dev/null
-  dicy s "$file" &>/dev/null
+  HOME=. node ../../../../cli/lib/main.js bl --save-events=command,log "$file" &>/dev/null
+  HOME=. node ../../../../cli/lib/main.js s "$file" &>/dev/null
 done

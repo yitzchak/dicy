@@ -49,6 +49,7 @@ ignoreCache:
   defaultValue: false
   commands:
     - build
+  noInvalidate: true
 jobName:
   aliases:
     - j
@@ -78,6 +79,7 @@ phaseCycles:
     - graph
     - log
     - scrub
+  noInvalidate: true
 outputDirectory:
   aliases:
     - o
@@ -118,6 +120,7 @@ severity:
     - graph
     - log
     - scrub
+  noInvalidate: true
 shellEscape:
   aliases:
     - enableShellEscape

@@ -1,6 +1,8 @@
 /* @flow */
 
 import _ from 'lodash'
+import childProcess from 'child_process'
+import commandJoin from 'command-join'
 import crypto from 'crypto'
 import fs from 'fs-extra'
 import path from 'path'
@@ -321,18 +323,31 @@ export default class File {
     this.rules.delete(rule)
   }
 
+  /**
+   * Update the file time stamp
+   * @return {boolean}  true if time stamp has been updated, false otherwise.
+   */
   async updateTimeStamp (): Promise<boolean> {
+    // If it is a virtual file then we only update the time stamp when `value`
+    // is set.
     if (this.virtual) return false
+
+    // Save the old time stamp and get the current one.
     const oldTimeStamp = this.timeStamp
     this.timeStamp = await File.getModifiedTime(this.realFilePath)
-    return oldTimeStamp < this.timeStamp
+
+    // Return true indicating an updated time stamp if there was no time stamp
+    // before or the new time stamp is more recent.
+    return !oldTimeStamp || oldTimeStamp < this.timeStamp
   }
 
   updateHash (): Promise<boolean> {
+    const fileType = File.fileTypes.get(this.type)
+
     if (this.virtual || path.isAbsolute(this.filePath)) return Promise.resolve(true)
 
     return new Promise((resolve, reject) => {
-      const fileType = File.fileTypes.get(this.type)
+      // const fileType = File.fileTypes.get(this.type)
       const hash = crypto.createHash('sha256')
       const finish = () => {
         const oldHash = this.hash
@@ -340,7 +355,19 @@ export default class File {
         resolve(oldHash !== this.hash)
       }
 
-      if (fileType && fileType.hashSkip) {
+      if (fileType && fileType.hashFilter) {
+        const command = commandJoin([fileType.hashFilter, this.realFilePath])
+        childProcess.exec(command, {}, (error, stdout, stderr) => {
+          if (error) {
+            resolve(true)
+          } else {
+            for (const line of stdout.toString().split(/\n/g)) {
+              if (!fileType.hashSkip || !fileType.hashSkip.test(line)) hash.update(line)
+            }
+            finish()
+          }
+        })
+      } else if (fileType && fileType.hashSkip) {
         const rl = readline.createInterface({
           input: fs.createReadStream(this.realFilePath, { encoding: 'utf-8' })
         })
