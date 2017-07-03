@@ -1,7 +1,5 @@
 /* @flow */
 
-import path from 'path'
-
 import File from '../File'
 import Rule from '../Rule'
 
@@ -39,13 +37,17 @@ export default class Asymptote extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    const { dir, name } = path.parse(this.firstParameter.filePath)
-    for (const ext of ['_0.pdf', '_0.eps']) {
-      await this.getOutput(path.format({ dir, name, ext }))
-    }
-    await this.getResolvedOutput('$DIR/$NAME.pre', this.firstParameter)
     const output = await this.getResolvedOutput('$DIR/$NAME.log-AsymptoteLog', this.firstParameter)
+
     if (output) output.value = `${stdout}\n${stderr}`
+
+    /* eslint no-template-curly-in-string: 0 */
+    await this.getResolvedOutputs([
+      '$DIR/${NAME}_0.pdf',
+      '$DIR/${NAME}_0.eps',
+      '$DIR/$NAME.pre'
+    ], this.firstParameter)
+
     return true
   }
 }
