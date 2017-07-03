@@ -10,7 +10,7 @@ export default class MetaPost extends Rule {
     return {
       args: [
         'mpost',
-        this.resolvePath('$BASE', this.firstParameter.filePath)
+        this.resolvePath('$BASE', this.firstParameter)
       ],
       severity: 'error'
     }

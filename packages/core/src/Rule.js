@@ -300,12 +300,12 @@ export default class Rule extends StateConsumer {
     return false
   }
 
-  async getResolvedInput (filePath: string, reference?: File | string): Promise<?File> {
+  async getResolvedInput (filePath: string, reference: ?File): Promise<?File> {
     const expanded = this.resolvePath(filePath, reference)
     return this.getInput(expanded)
   }
 
-  async getResolvedInputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
+  async getResolvedInputs (filePaths: Array<string>, reference: ?File): Promise<Array<File>> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -316,12 +316,12 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getResolvedOutput (filePath: string, reference?: File | string): Promise<?File> {
+  async getResolvedOutput (filePath: string, reference: ?File): Promise<?File> {
     const expanded = this.resolvePath(filePath, reference)
     return this.getOutput(expanded)
   }
 
-  async getResolvedOutputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
+  async getResolvedOutputs (filePaths: Array<string>, reference: ?File): Promise<Array<File>> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -332,7 +332,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getGlobbedInputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+  async getGlobbedInputs (pattern: string, reference: ?File): Promise<Array<File>> {
     const files = []
     for (const filePath of await this.globPath(pattern, reference)) {
       const file = await this.getInput(filePath)
@@ -341,7 +341,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getGlobbedOutputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+  async getGlobbedOutputs (pattern: string, reference: ?File): Promise<Array<File>> {
     const files = []
     for (const filePath of await this.globPath(pattern, reference)) {
       const file = await this.getOutput(filePath)

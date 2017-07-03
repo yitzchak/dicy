@@ -11,7 +11,7 @@ export default class PsToPdf extends Rule {
   static description: string = 'Converts PS to PDF using ps2pdf.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = super.appliesToFile(state, command, phase, jobName, file)
+    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
     return state.options.outputFormat === 'pdf' && appliesToFile
   }
 
@@ -19,7 +19,7 @@ export default class PsToPdf extends Rule {
     return {
       args: [
         'ps2pdf',
-        this.firstParameter.filePath,
+        this.resolvePath('$DIR/$BASE', this.firstParameter),
         this.resolvePath('$DIR/$NAME.pdf', this.firstParameter)
       ],
       severity: 'error'

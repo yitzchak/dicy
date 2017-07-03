@@ -11,7 +11,7 @@ export default class DviToPdf extends Rule {
   static description: string = 'Converts DVI to PDF using (x)dvipdfm(x).'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = super.appliesToFile(state, command, phase, jobName, file)
+    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
     return state.options.outputFormat === 'pdf' && appliesToFile
   }
 

@@ -55,9 +55,9 @@ function stringCompare (x: string, y: string): boolean {
 export function partitionMessages (received: Array<Event>, expected: Array<Event>) {
   let proper = []
   let improper = []
-  let missing = _.uniqWith(expected, _.isEqual)
+  let missing = expected
 
-  for (const event of _.uniqWith(received, _.isEqual)) {
+  for (const event of received) {
     let index = missing.findIndex(candidate =>
       _.isMatchWith(event, candidate, (x, y, key) => key === 'file'
         ? compareFilePaths(x, y)

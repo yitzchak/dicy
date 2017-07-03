@@ -1,7 +1,5 @@
 /* @flow */
 
-import path from 'path'
-
 import Rule from '../Rule'
 
 export default class Sage extends Rule {
@@ -10,14 +8,14 @@ export default class Sage extends Rule {
 
   constructCommand () {
     return {
-      args: ['sage', path.basename(this.firstParameter.filePath)],
+      args: ['sage', this.resolvePath('$BASE', this.firstParameter)],
       severity: 'error'
     }
   }
 
   constructProcessOptions (): Object {
     return Object.assign(super.constructProcessOptions(), {
-      cwd: this.resolvePath('$ROOTDIR/$OUTDIR')
+      cwd: this.resolvePath('$ROOTDIR/$DIR', this.firstParameter)
     })
   }
 

@@ -36,11 +36,11 @@ export default class StateConsumer {
     this.state.targets.delete(filePath)
   }
 
-  addResolvedTarget (filePath: string, reference?: File | string) {
+  addResolvedTarget (filePath: string, reference: ?File) {
     this.state.targets.add(this.resolvePath(filePath, reference))
   }
 
-  addResolvedTargets (filePaths: Array<string>, reference?: File | string) {
+  addResolvedTargets (filePaths: Array<string>, reference: ?File) {
     for (const filePath of filePaths) {
       this.addResolvedTarget(filePath, reference)
     }
@@ -109,11 +109,11 @@ export default class StateConsumer {
     return this.state.normalizePath(filePath)
   }
 
-  resolvePath (filePath: string, reference?: File | string): string {
+  resolvePath (filePath: string, reference: ?File): string {
     let properties = {}
 
     if (reference) {
-      const { dir, base, name, ext } = path.parse(reference instanceof File ? reference.filePath : reference)
+      const { dir, base, name, ext } = path.parse(reference.filePath)
       properties = {
         JOB: this.jobName || this.options.jobName || name,
         DIR: (reference instanceof File ? dir : this.rootPath) || '.',
@@ -137,7 +137,7 @@ export default class StateConsumer {
     return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
 
-  async globPath (pattern: string, reference?: File | string, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
+  async globPath (pattern: string, reference: ?File, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
     try {
       return await fastGlob(this.resolvePath(pattern, reference), {
         cwd: this.rootPath,
@@ -166,7 +166,7 @@ export default class StateConsumer {
     return files
   }
 
-  async getGlobbedFiles (pattern: string, reference?: File | string): Promise<Array<File>> {
+  async getGlobbedFiles (pattern: string, reference: ?File): Promise<Array<File>> {
     const files = []
     for (const filePath of await this.globPath(pattern, reference)) {
       const file = await this.getFile(filePath)
@@ -210,7 +210,7 @@ export default class StateConsumer {
     return this.state.isChild(x, y)
   }
 
-  async getResolvedFile (filePath: string, reference?: File | string): Promise<?File> {
+  async getResolvedFile (filePath: string, reference: ?File): Promise<?File> {
     return this.getFile(this.resolvePath(filePath, reference))
   }
 
