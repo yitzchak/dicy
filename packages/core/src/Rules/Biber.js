@@ -5,7 +5,7 @@ import path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Message } from '../types'
+import type { Action, CommandOptions, Message } from '../types'
 
 export default class Biber extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BiberControlFile'])]
@@ -30,9 +30,10 @@ export default class Biber extends Rule {
     return []
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     return {
       args: ['biber', this.firstParameter.filePath],
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

@@ -4,7 +4,7 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Phase } from '../types'
+import type { Command, Phase, CommandOptions } from '../types'
 
 export default class PdfToPs extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['PortableDocumentFormat'])]
@@ -15,13 +15,14 @@ export default class PdfToPs extends Rule {
     return state.options.outputFormat === 'ps' && appliesToFile
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     return {
       args: [
         'pdf2ps',
         this.resolvePath('$DIR_0/$BASE_0'),
         this.resolvePath('$DIR_0/$NAME_0.ps')
       ],
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

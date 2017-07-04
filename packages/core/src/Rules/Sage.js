@@ -2,21 +2,18 @@
 
 import Rule from '../Rule'
 
+import type { CommandOptions } from '../types'
+
 export default class Sage extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['Sage'])]
   static description: string = 'Supports SageTeX by running Sage when needed.'
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     return {
       args: ['sage', this.resolvePath('$BASE_0')],
+      cd: '$ROOTDIR_0',
       severity: 'error'
     }
-  }
-
-  constructProcessOptions (): Object {
-    return Object.assign(super.constructProcessOptions(), {
-      cwd: this.resolvePath('$ROOTDIR_0')
-    })
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

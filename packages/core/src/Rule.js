@@ -162,6 +162,10 @@ export default class Rule extends StateConsumer {
     return this.parameters[1]
   }
 
+  get thirdParameter (): File {
+    return this.parameters[2]
+  }
+
   get needsEvaluation (): boolean {
     return this.actions.size !== 0
   }
@@ -209,8 +213,8 @@ export default class Rule extends StateConsumer {
 
   async run (): Promise<boolean> {
     let success: boolean = true
-    const options = this.constructProcessOptions()
-    const { args, severity } = this.constructCommand()
+    const { args, cd, severity } = this.constructCommand()
+    const options = this.constructProcessOptions(cd)
     const command = commandJoin(args)
 
     this.emit('command', {
@@ -230,17 +234,21 @@ export default class Rule extends StateConsumer {
     return true
   }
 
+  addOutput (file: ?File): void {
+    if (!file) return
+    if (!this.outputs.has(file.filePath)) {
+      this.outputs.set(file.filePath, file)
+      this.emit('outputAdded', { type: 'outputAdded', rule: this.id, file: file.filePath })
+    }
+  }
+
   async getOutput (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.outputs.get(filePath)
 
     if (!file) {
       file = await this.getFile(filePath)
-      if (!file) return
-      if (!this.outputs.has(filePath)) {
-        this.outputs.set(filePath, file)
-        this.emit('outputAdded', { type: 'outputAdded', rule: this.id, file: filePath })
-      }
+      this.addOutput(file)
     }
 
     return file
@@ -265,19 +273,23 @@ export default class Rule extends StateConsumer {
     }
   }
 
+  addInput (file: ?File) {
+    if (!file) return
+    if (!this.inputs.has(file.filePath)) {
+      // $FlowIgnore
+      file.addRule(this)
+      this.inputs.set(file.filePath, file)
+      this.emit('inputAdded', { type: 'inputAdded', rule: this.id, file: file.filePath })
+    }
+  }
+
   async getInput (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.inputs.get(filePath)
 
     if (!file) {
       file = await this.getFile(filePath)
-      if (!file) return
-      if (!this.inputs.has(filePath)) {
-        // $FlowIgnore
-        await file.addRule(this)
-        this.inputs.set(filePath, file)
-        this.emit('inputAdded', { type: 'inputAdded', rule: this.id, file: filePath })
-      }
+      this.addInput(file)
     }
 
     return file
@@ -361,9 +373,10 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  constructProcessOptions (): Object {
+  constructProcessOptions (cd: string): Object {
     const processOptions = {
-      cwd: this.rootPath,
+      maxBuffer: 524288,
+      cwd: this.resolvePath(cd),
       env: Object.assign({}, process.env)
     }
 
@@ -390,7 +403,7 @@ export default class Rule extends StateConsumer {
   }
 
   constructCommand (): CommandOptions {
-    return { args: [], severity: 'error' }
+    return { args: [], cd: '$ROOTDIR', severity: 'error' }
   }
 
   actionTrace (action: Action) {

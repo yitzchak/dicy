@@ -4,6 +4,8 @@ import path from 'path'
 
 import Rule from '../Rule'
 
+import type { CommandOptions } from '../types'
+
 export default class MakeGlossaries extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['GlossaryControlFile'])]
   static description: string = 'Runs makeglossaries on any glossary files generated.'
@@ -22,7 +24,7 @@ export default class MakeGlossaries extends Rule {
     return true
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     const { dir, name } = path.parse(this.firstParameter.filePath)
     const args = ['makeglossaries']
 
@@ -31,6 +33,7 @@ export default class MakeGlossaries extends Rule {
 
     return {
       args,
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

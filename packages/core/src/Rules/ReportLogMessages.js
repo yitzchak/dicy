@@ -17,8 +17,7 @@ export default class ReportLogMessages extends Rule {
   static description: string = 'Reports log messages from any parsed log files.'
 
   async run () {
-    if (this.firstParameter.value) {
-      // $FlowIgnore
+    if (this.firstParameter.value && this.firstParameter.value.messages) {
       for (const message: Message of this.firstParameter.value.messages) {
         this.log(message)
       }

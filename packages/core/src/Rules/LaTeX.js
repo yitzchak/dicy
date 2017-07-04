@@ -4,7 +4,7 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Command, Message, Phase } from '../types'
+import type { Action, Command, CommandOptions, Message, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label\(s\) may have changed\. Rerun|No file )/i
@@ -57,7 +57,7 @@ export default class LaTeX extends Rule {
     return true
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     const args = [
       this.options.engine,
       '-file-line-error',
@@ -108,6 +108,7 @@ export default class LaTeX extends Rule {
 
     return {
       args,
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

@@ -4,6 +4,8 @@ import path from 'path'
 
 import Rule from '../Rule'
 
+import type { CommandOptions } from '../types'
+
 export default class MakeIndex extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set([
     'IndexControlFile',
@@ -42,7 +44,7 @@ export default class MakeIndex extends Rule {
     return true
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     const args = [
       'makeindex',
       '-t', this.logPath,
@@ -54,6 +56,7 @@ export default class MakeIndex extends Rule {
 
     return {
       args,
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

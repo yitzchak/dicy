@@ -4,7 +4,7 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Phase } from '../types'
+import type { Command, CommandOptions, Phase } from '../types'
 
 export default class DviToPs extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
@@ -15,7 +15,7 @@ export default class DviToPs extends Rule {
     return state.options.outputFormat === 'ps' && appliesToFile
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     return {
       args: [
         'dvips',
@@ -23,6 +23,7 @@ export default class DviToPs extends Rule {
         this.resolvePath('$DIR_0/$NAME_0.ps'),
         this.firstParameter.filePath
       ],
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

@@ -25,15 +25,9 @@ export default class Asymptote extends Rule {
     // file from the output.
     return {
       args: ['asy', '-vv', this.resolvePath('$BASE_0')],
+      cd: '$ROOTDIR_0',
       severity: 'error'
     }
-  }
-
-  constructProcessOptions (): Object {
-    return Object.assign(super.constructProcessOptions(), {
-      maxBuffer: 524288,
-      cwd: this.resolvePath('$ROOTDIR_0')
-    })
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {

@@ -4,7 +4,7 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Phase } from '../types'
+import type { Command, Phase, CommandOptions } from '../types'
 
 export default class PsToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['PostScript'])]
@@ -15,13 +15,14 @@ export default class PsToPdf extends Rule {
     return state.options.outputFormat === 'pdf' && appliesToFile
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     return {
       args: [
         'ps2pdf',
         this.resolvePath('$DIR_0/$BASE_0'),
         this.resolvePath('$DIR_0/$NAME_0.pdf')
       ],
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

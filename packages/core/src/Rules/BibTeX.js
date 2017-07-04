@@ -6,7 +6,7 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Command, Message, Phase } from '../types'
+import type { Action, Command, CommandOptions, Message, Phase } from '../types'
 
 export default class BibTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['ParsedLaTeXAuxilary'])]
@@ -47,9 +47,10 @@ export default class BibTeX extends Rule {
     if (!this.input) this.actions.delete('run')
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     return {
       args: ['bibtex', this.input ? this.input.filePath : ''],
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

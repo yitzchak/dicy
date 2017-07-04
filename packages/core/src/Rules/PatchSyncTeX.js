@@ -2,7 +2,7 @@
 
 import Rule from '../Rule'
 
-import type { Phase } from '../types'
+import type { CommandOptions, Phase } from '../types'
 
 function escapePath (filePath) {
   return filePath.replace(/\\/g, '\\\\')
@@ -21,7 +21,7 @@ export default class PatchSyncTeX extends Rule {
     await this.getOutput(this.secondParameter.filePath)
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     const filePath = escapePath(this.firstParameter.filePath)
     const synctexPath = escapePath(this.secondParameter.filePath.replace(/\.synctex(\.gz)?$/i, ''))
     const lines = [
@@ -30,6 +30,7 @@ export default class PatchSyncTeX extends Rule {
 
     return {
       args: ['Rscript', '-e', lines.join(';')],
+      cd: '$ROOTDIR',
       severity: 'warning'
     }
   }

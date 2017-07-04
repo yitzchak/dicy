@@ -25,7 +25,7 @@ export default class ApplySourceMaps extends Rule {
   static description: string = 'Applies source maps to log files.'
 
   async initialize () {
-    await this.getOutput(this.secondParameter.filePath)
+    this.addOutput(this.secondParameter)
   }
 
   async run () {

@@ -2,6 +2,8 @@
 
 import Rule from '../Rule'
 
+import type { CommandOptions } from '../types'
+
 function escapePath (filePath) {
   return filePath.replace(/\\/g, '\\\\')
 }
@@ -18,7 +20,7 @@ export default class Knitr extends Rule {
     return true
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     const filePath = escapePath(this.firstParameter.filePath)
     const lines = ['library(knitr)']
 
@@ -27,6 +29,7 @@ export default class Knitr extends Rule {
 
     return {
       args: ['Rscript', '-e', lines.join(';')],
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }
