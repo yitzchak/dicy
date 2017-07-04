@@ -23,6 +23,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "clean": "lerna clean --yes",
+    "dicy": "node packages/cli/lib/main.js",
     "lint": "eslint --color packages",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
