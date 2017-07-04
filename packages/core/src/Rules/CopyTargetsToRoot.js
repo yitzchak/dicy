@@ -14,7 +14,7 @@ export default class CopyTargetsToRoot extends Rule {
   static alwaysEvaluate: boolean = true
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = super.appliesToFile(state, command, phase, jobName, file)
+    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
     return !!state.getOption('copyTargetsToRoot', jobName) &&
       state.targets.has(file.filePath) &&
       path.dirname(file.filePath) !== '.' &&
@@ -23,11 +23,11 @@ export default class CopyTargetsToRoot extends Rule {
 
   async initialize () {
     this.removeTarget(this.firstParameter.filePath)
-    await this.addResolvedTarget('$BASE', this.firstParameter)
+    await this.addResolvedTarget('$BASE_0')
   }
 
   async run () {
-    const filePath = this.resolvePath('$ROOTDIR/$BASE', this.firstParameter)
+    const filePath = this.resolvePath('$ROOTDIR/$BASE_0')
     await this.firstParameter.copy(filePath)
     await this.getOutput(filePath)
     return true

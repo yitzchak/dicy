@@ -13,7 +13,7 @@ export default class ParseLaTeXMagic extends Rule {
   static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
 
   async run () {
-    const output = await this.getResolvedOutput('$DIR/$BASE-ParsedLaTeXMagic', this.firstParameter)
+    const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedLaTeXMagic')
     const magic = {}
 
     await this.firstParameter.parse([{

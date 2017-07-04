@@ -4,7 +4,7 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Command, Message, Phase } from '../types'
+import type { Action, Command, CommandOptions, Message, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label\(s\) may have changed\. Rerun|No file )/i
@@ -20,8 +20,14 @@ export default class LaTeX extends Rule {
   }
 
   async initialize () {
-    await this.getResolvedInputs(['$OUTDIR/$JOB.fls-ParsedLaTeXFileListing', '$OUTDIR/$JOB.log-ParsedLaTeXLog'])
-    await this.addResolvedTargets(['$OUTDIR/$JOB$OUTEXT', '$OUTDIR/$JOB.synctex.gz'])
+    await this.getResolvedInputs([
+      '$OUTDIR/$JOB.fls-ParsedLaTeXFileListing',
+      '$OUTDIR/$JOB.log-ParsedLaTeXLog'
+    ])
+    await this.addResolvedTargets([
+      '$OUTDIR/$JOB$OUTEXT',
+      '$OUTDIR/$JOB.synctex.gz'
+    ])
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -42,11 +48,16 @@ export default class LaTeX extends Rule {
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
     await this.getResolvedInput('$OUTDIR/$JOB.aux')
-    await this.getResolvedOutputs(['$OUTDIR/$JOB.aux', '$OUTDIR/$JOB.fls', '$OUTDIR/$JOB.log', '$OUTDIR/$JOB.synctex.gz'])
+    await this.getResolvedOutputs([
+      '$OUTDIR/$JOB.aux',
+      '$OUTDIR/$JOB.fls',
+      '$OUTDIR/$JOB.log',
+      '$OUTDIR/$JOB.synctex.gz'
+    ])
     return true
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     const args = [
       this.options.engine,
       '-file-line-error',
@@ -97,6 +108,7 @@ export default class LaTeX extends Rule {
 
     return {
       args,
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

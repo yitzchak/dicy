@@ -153,6 +153,7 @@ export type KillToken = {
 
 export type CommandOptions = {
   args: Array<string>,
+  cd: string,
   severity: Severity
 }
 

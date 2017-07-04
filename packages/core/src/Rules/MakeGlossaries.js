@@ -4,20 +4,27 @@ import path from 'path'
 
 import Rule from '../Rule'
 
+import type { CommandOptions } from '../types'
+
 export default class MakeGlossaries extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['GlossaryControlFile'])]
   static description: string = 'Runs makeglossaries on any glossary files generated.'
 
   async initialize (): Promise<void> {
-    await this.getResolvedInputs(['$DIR/$NAME.acn', '$DIR/$NAME.ist'], this.firstParameter)
+    await this.getResolvedInputs(['$DIR_0/$NAME_0.acn', '$DIR_0/$NAME_0.ist'])
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['$DIR/$NAME.acr', '$DIR/$NAME.alg', '$DIR/$NAME.gls', '$DIR/$NAME.glg'], this.firstParameter)
+    await this.getResolvedOutputs([
+      '$DIR_0/$NAME_0.acr',
+      '$DIR_0/$NAME_0.alg',
+      '$DIR_0/$NAME_0.gls',
+      '$DIR_0/$NAME_0.glg'
+    ])
     return true
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     const { dir, name } = path.parse(this.firstParameter.filePath)
     const args = ['makeglossaries']
 
@@ -26,6 +33,7 @@ export default class MakeGlossaries extends Rule {
 
     return {
       args,
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }

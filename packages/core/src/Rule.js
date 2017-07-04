@@ -89,16 +89,27 @@ export default class Rule extends StateConsumer {
 
   constructor (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {
     super(state, jobName)
+
     this.parameters = parameters
     this.command = command
     this.phase = phase
     this.id = state.getRuleId(this.constructor.name, command, phase, jobName, ...parameters)
-    for (const file: File of parameters) {
+
+    this.parameters.forEach((file, index) => {
+      const { dir, base, name, ext } = path.parse(file.filePath)
+      const rootPath = path.dirname(file.realFilePath)
+
+      this.env[`ROOTDIR_${index}`] = rootPath
+      this.env[`DIR_${index}`] = dir || '.'
+      this.env[`BASE_${index}`] = base
+      this.env[`NAME_${index}`] = name
+      this.env[`EXT_${index}`] = ext
+
       if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.filePath, file)
       // $FlowIgnore
       file.addRule(this)
-    }
+    })
   }
 
   async initialize () {}
@@ -151,6 +162,10 @@ export default class Rule extends StateConsumer {
     return this.parameters[1]
   }
 
+  get thirdParameter (): File {
+    return this.parameters[2]
+  }
+
   get needsEvaluation (): boolean {
     return this.actions.size !== 0
   }
@@ -198,8 +213,8 @@ export default class Rule extends StateConsumer {
 
   async run (): Promise<boolean> {
     let success: boolean = true
-    const options = this.constructProcessOptions()
-    const { args, severity } = this.constructCommand()
+    const { args, cd, severity } = this.constructCommand()
+    const options = this.constructProcessOptions(cd)
     const command = commandJoin(args)
 
     this.emit('command', {
@@ -219,17 +234,21 @@ export default class Rule extends StateConsumer {
     return true
   }
 
+  addOutput (file: ?File): void {
+    if (!file) return
+    if (!this.outputs.has(file.filePath)) {
+      this.outputs.set(file.filePath, file)
+      this.emit('outputAdded', { type: 'outputAdded', rule: this.id, file: file.filePath })
+    }
+  }
+
   async getOutput (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.outputs.get(filePath)
 
     if (!file) {
       file = await this.getFile(filePath)
-      if (!file) return
-      if (!this.outputs.has(filePath)) {
-        this.outputs.set(filePath, file)
-        this.emit('outputAdded', { type: 'outputAdded', rule: this.id, file: filePath })
-      }
+      this.addOutput(file)
     }
 
     return file
@@ -254,19 +273,23 @@ export default class Rule extends StateConsumer {
     }
   }
 
+  addInput (file: ?File) {
+    if (!file) return
+    if (!this.inputs.has(file.filePath)) {
+      // $FlowIgnore
+      file.addRule(this)
+      this.inputs.set(file.filePath, file)
+      this.emit('inputAdded', { type: 'inputAdded', rule: this.id, file: file.filePath })
+    }
+  }
+
   async getInput (filePath: string): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.inputs.get(filePath)
 
     if (!file) {
       file = await this.getFile(filePath)
-      if (!file) return
-      if (!this.inputs.has(filePath)) {
-        // $FlowIgnore
-        await file.addRule(this)
-        this.inputs.set(filePath, file)
-        this.emit('inputAdded', { type: 'inputAdded', rule: this.id, file: filePath })
-      }
+      this.addInput(file)
     }
 
     return file
@@ -300,59 +323,60 @@ export default class Rule extends StateConsumer {
     return false
   }
 
-  async getResolvedInput (filePath: string, reference?: File | string): Promise<?File> {
-    const expanded = this.resolvePath(filePath, reference)
+  async getResolvedInput (filePath: string): Promise<?File> {
+    const expanded = this.resolvePath(filePath)
     return this.getInput(expanded)
   }
 
-  async getResolvedInputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
+  async getResolvedInputs (filePaths: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getResolvedInput(filePath, reference)
+      const file = await this.getResolvedInput(filePath)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getResolvedOutput (filePath: string, reference?: File | string): Promise<?File> {
-    const expanded = this.resolvePath(filePath, reference)
+  async getResolvedOutput (filePath: string): Promise<?File> {
+    const expanded = this.resolvePath(filePath)
     return this.getOutput(expanded)
   }
 
-  async getResolvedOutputs (filePaths: Array<string>, reference?: File | string): Promise<Array<File>> {
+  async getResolvedOutputs (filePaths: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getResolvedOutput(filePath, reference)
+      const file = await this.getResolvedOutput(filePath)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getGlobbedInputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+  async getGlobbedInputs (pattern: string): Promise<Array<File>> {
     const files = []
-    for (const filePath of await this.globPath(pattern, reference)) {
+    for (const filePath of await this.globPath(pattern)) {
       const file = await this.getInput(filePath)
       if (file) files.push(file)
     }
     return files
   }
 
-  async getGlobbedOutputs (pattern: string, reference?: File | string): Promise<Array<File>> {
+  async getGlobbedOutputs (pattern: string): Promise<Array<File>> {
     const files = []
-    for (const filePath of await this.globPath(pattern, reference)) {
+    for (const filePath of await this.globPath(pattern)) {
       const file = await this.getOutput(filePath)
       if (file) files.push(file)
     }
     return files
   }
 
-  constructProcessOptions (): Object {
+  constructProcessOptions (cd: string): Object {
     const processOptions = {
-      cwd: this.rootPath,
+      maxBuffer: 524288,
+      cwd: this.resolvePath(cd),
       env: Object.assign({}, process.env)
     }
 
@@ -379,7 +403,7 @@ export default class Rule extends StateConsumer {
   }
 
   constructCommand (): CommandOptions {
-    return { args: [], severity: 'error' }
+    return { args: [], cd: '$ROOTDIR', severity: 'error' }
   }
 
   actionTrace (action: Action) {

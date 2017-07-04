@@ -11,7 +11,7 @@ export default class ParseAsymptoteLog extends Rule {
   static description: string = 'Parses the console output of Asymptote.'
 
   async run () {
-    const output = await this.getResolvedOutput('$DIR/$NAME.log-ParsedAsymptoteLog', this.firstParameter)
+    const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-ParsedAsymptoteLog')
     if (!output) return false
 
     let rootPath = this.rootPath

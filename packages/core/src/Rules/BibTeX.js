@@ -6,7 +6,7 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, Command, Message, Phase } from '../types'
+import type { Action, Command, CommandOptions, Message, Phase } from '../types'
 
 export default class BibTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['ParsedLaTeXAuxilary'])]
@@ -22,7 +22,7 @@ export default class BibTeX extends Rule {
 
   async initialize () {
     await this.getResolvedInput('$OUTDIR/$JOB.log-ParsedLaTeXLog')
-    this.input = await this.getResolvedInput('$DIR/$NAME.aux', this.firstParameter)
+    this.input = await this.getResolvedInput('$DIR_0/$NAME_0.aux')
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -47,9 +47,10 @@ export default class BibTeX extends Rule {
     if (!this.input) this.actions.delete('run')
   }
 
-  constructCommand () {
+  constructCommand (): CommandOptions {
     return {
       args: ['bibtex', this.input ? this.input.filePath : ''],
+      cd: '$ROOTDIR',
       severity: 'error'
     }
   }
@@ -59,7 +60,7 @@ export default class BibTeX extends Rule {
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
 
-    await this.getResolvedOutputs(['$DIR/$NAME.bbl', '$DIR/$NAME.blg'], this.firstParameter)
+    await this.getResolvedOutputs(['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg'])
 
     while ((match = databasePattern.exec(stdout)) !== null) {
       await this.getInput(path.resolve(this.rootPath, match[1]))

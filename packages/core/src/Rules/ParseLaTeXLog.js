@@ -17,7 +17,7 @@ export default class ParseLaTeXLog extends Rule {
    */
   async run (): Promise<boolean> {
     // Get the output file
-    const output = await this.getResolvedOutput('$DIR/$BASE-ParsedLaTeXLog', this.firstParameter)
+    const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedLaTeXLog')
     if (!output) return false
 
     const messages: Array<Message> = []
