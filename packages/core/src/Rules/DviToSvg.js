@@ -12,7 +12,7 @@ export default class DviToSvg extends Rule {
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
-    return state.options.outputFormat === 'svg' && appliesToFile
+    return state.getOption('outputFormat', jobName) === 'svg' && appliesToFile
   }
 
   constructCommand (): CommandOptions {
