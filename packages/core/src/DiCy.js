@@ -254,7 +254,7 @@ export default class DiCy extends StateConsumer {
 
   async updateOptions (options: Object = {}, user: boolean = false): Promise<Object> {
     const normalizedOptions = {}
-    const filePath = this.resolvePath(user ? '$HOME/.dicy.yaml' : '$DIR/$NAME.yaml')
+    const filePath = this.resolvePath(user ? '$HOME/.dicy.yaml' : '$ROOTDIR/$NAME.yaml')
 
     if (await File.canRead(filePath)) {
       const currentOptions = await File.safeLoad(filePath)
