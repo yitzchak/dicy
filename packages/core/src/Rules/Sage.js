@@ -8,20 +8,25 @@ export default class Sage extends Rule {
 
   constructCommand () {
     return {
-      args: ['sage', this.resolvePath('$BASE', this.firstParameter)],
+      args: ['sage', this.resolvePath('$BASE_0')],
       severity: 'error'
     }
   }
 
   constructProcessOptions (): Object {
     return Object.assign(super.constructProcessOptions(), {
-      cwd: this.resolvePath('$ROOTDIR/$DIR', this.firstParameter)
+      cwd: this.resolvePath('$ROOTDIR_0')
     })
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['$DIR/$NAME.sout', '$DIR/$NAME.sage.cmd', '$DIR/$NAME.scmd', '$DIR/$BASE.py'], this.firstParameter)
-    await this.getGlobbedOutputs('$DIR/sage-plots-for-$JOB.tex/*', this.firstParameter)
+    await this.getResolvedOutputs([
+      '$DIR_0/$NAME_0.sout',
+      '$DIR_0/$NAME_0.sage.cmd',
+      '$DIR_0/$NAME_0.scmd',
+      '$DIR_0/$BASE_0.py'
+    ])
+    await this.getGlobbedOutputs('$DIR_0/sage-plots-for-$NAME_0.tex/*')
     return true
   }
 }

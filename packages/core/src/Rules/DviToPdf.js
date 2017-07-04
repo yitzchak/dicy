@@ -20,7 +20,7 @@ export default class DviToPdf extends Rule {
       args: [
         'xdvipdfmx',
         '-o',
-        this.resolvePath('$DIR/$NAME.pdf', this.firstParameter),
+        this.resolvePath('$DIR_0/$NAME_0.pdf'),
         this.firstParameter.filePath
       ],
       severity: 'error'
@@ -28,7 +28,7 @@ export default class DviToPdf extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutput('$DIR/$NAME.pdf', this.firstParameter)
+    await this.getResolvedOutput('$DIR_0/$NAME_0.pdf')
     return true
   }
 }

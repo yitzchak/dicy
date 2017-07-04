@@ -5,7 +5,11 @@ import path from 'path'
 import Rule from '../Rule'
 
 export default class MakeIndex extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['IndexControlFile', 'BibRefControlFile', 'NomenclatureControlFile'])]
+  static parameterTypes: Array<Set<string>> = [new Set([
+    'IndexControlFile',
+    'BibRefControlFile',
+    'NomenclatureControlFile'
+  ])]
   static description: string = 'Runs makeindex on any index files.'
 
   stylePath: string
@@ -16,19 +20,19 @@ export default class MakeIndex extends Rule {
     const ext = path.extname(this.firstParameter.filePath)
     const firstChar = ext[1]
 
-    this.logPath = this.resolvePath(`$DIR/$NAME.${firstChar === 'b' ? 'br' : firstChar}lg`, this.firstParameter)
+    this.logPath = this.resolvePath(`$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`)
 
     switch (this.firstParameter.type) {
       case 'NomenclatureControlFile':
         this.stylePath = 'nomencl.ist'
-        this.outputPath = this.resolvePath('$DIR/$NAME.nls', this.firstParameter)
+        this.outputPath = this.resolvePath('$DIR_0/$NAME_0.nls')
         break
       case 'BibRefControlFile':
         this.stylePath = 'bibref.ist'
-        this.outputPath = this.resolvePath('$DIR/$NAME.bnd', this.firstParameter)
+        this.outputPath = this.resolvePath('$DIR_0/$NAME_0.bnd')
         break
       default:
-        this.outputPath = this.resolvePath(`$DIR/$NAME.${firstChar}nd`, this.firstParameter)
+        this.outputPath = this.resolvePath(`$DIR_0/$NAME_0.${firstChar}nd`)
         break
     }
   }

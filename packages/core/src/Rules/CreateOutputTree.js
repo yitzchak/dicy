@@ -14,7 +14,7 @@ export default class CreateOutputTree extends Rule {
 
   async run () {
     if (this.options.outputDirectory) {
-      const directories = await this.globPath('**/*', undefined, {
+      const directories = await this.globPath('**/*', {
         types: 'directories',
         ignorePattern: `${this.options.outputDirectory}/**`
       })

@@ -89,16 +89,27 @@ export default class Rule extends StateConsumer {
 
   constructor (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {
     super(state, jobName)
+
     this.parameters = parameters
     this.command = command
     this.phase = phase
     this.id = state.getRuleId(this.constructor.name, command, phase, jobName, ...parameters)
-    for (const file: File of parameters) {
+
+    this.parameters.forEach((file, index) => {
+      const { dir, base, name, ext } = path.parse(file.filePath)
+      const rootPath = path.dirname(file.realFilePath)
+
+      this.env[`ROOTDIR_${index}`] = rootPath
+      this.env[`DIR_${index}`] = dir || '.'
+      this.env[`BASE_${index}`] = base
+      this.env[`NAME_${index}`] = name
+      this.env[`EXT_${index}`] = ext
+
       if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.filePath, file)
       // $FlowIgnore
       file.addRule(this)
-    }
+    })
   }
 
   async initialize () {}
@@ -300,50 +311,50 @@ export default class Rule extends StateConsumer {
     return false
   }
 
-  async getResolvedInput (filePath: string, reference: ?File): Promise<?File> {
-    const expanded = this.resolvePath(filePath, reference)
+  async getResolvedInput (filePath: string): Promise<?File> {
+    const expanded = this.resolvePath(filePath)
     return this.getInput(expanded)
   }
 
-  async getResolvedInputs (filePaths: Array<string>, reference: ?File): Promise<Array<File>> {
+  async getResolvedInputs (filePaths: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getResolvedInput(filePath, reference)
+      const file = await this.getResolvedInput(filePath)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getResolvedOutput (filePath: string, reference: ?File): Promise<?File> {
-    const expanded = this.resolvePath(filePath, reference)
+  async getResolvedOutput (filePath: string): Promise<?File> {
+    const expanded = this.resolvePath(filePath)
     return this.getOutput(expanded)
   }
 
-  async getResolvedOutputs (filePaths: Array<string>, reference: ?File): Promise<Array<File>> {
+  async getResolvedOutputs (filePaths: Array<string>): Promise<Array<File>> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getResolvedOutput(filePath, reference)
+      const file = await this.getResolvedOutput(filePath)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getGlobbedInputs (pattern: string, reference: ?File): Promise<Array<File>> {
+  async getGlobbedInputs (pattern: string): Promise<Array<File>> {
     const files = []
-    for (const filePath of await this.globPath(pattern, reference)) {
+    for (const filePath of await this.globPath(pattern)) {
       const file = await this.getInput(filePath)
       if (file) files.push(file)
     }
     return files
   }
 
-  async getGlobbedOutputs (pattern: string, reference: ?File): Promise<Array<File>> {
+  async getGlobbedOutputs (pattern: string): Promise<Array<File>> {
     const files = []
-    for (const filePath of await this.globPath(pattern, reference)) {
+    for (const filePath of await this.globPath(pattern)) {
       const file = await this.getOutput(filePath)
       if (file) files.push(file)
     }

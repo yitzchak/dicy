@@ -10,7 +10,7 @@ export default class MetaPost extends Rule {
     return {
       args: [
         'mpost',
-        this.resolvePath('$BASE', this.firstParameter)
+        this.resolvePath('$BASE_0')
       ],
       severity: 'error'
     }
@@ -18,13 +18,13 @@ export default class MetaPost extends Rule {
 
   constructProcessOptions (): Object {
     return Object.assign(super.constructProcessOptions(), {
-      cwd: this.resolvePath('$ROOTDIR/$DIR', this.firstParameter)
+      cwd: this.resolvePath('$ROOTDIR_0')
     })
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getGlobbedOutputs('$DIR/$NAME.+([0-9])', this.firstParameter)
-    await this.getResolvedOutputs(['$DIR/$NAME.log', '$DIR/$NAME.t1'], this.firstParameter)
+    await this.getGlobbedOutputs('$DIR_0/$NAME_0.+([0-9])')
+    await this.getResolvedOutputs(['$DIR_0/$NAME_0.log', '$DIR_0/$NAME_0.t1'])
     return true
   }
 }

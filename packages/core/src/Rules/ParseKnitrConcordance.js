@@ -12,7 +12,7 @@ export default class ParseKnitrConcordance extends Rule {
   static description: string = 'Parses any knitr concordance files.'
 
   async run () {
-    const outputFile = await this.getResolvedOutput('$DIR/$BASE-ParsedSourceMap', this.firstParameter)
+    const outputFile = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedSourceMap')
     if (!outputFile) return false
 
     const sourceMaps: Array<SourceMap> = []

@@ -20,7 +20,7 @@ export default class DviToPs extends Rule {
       args: [
         'dvips',
         '-o',
-        this.resolvePath('$DIR/$NAME.ps', this.firstParameter),
+        this.resolvePath('$DIR_0/$NAME_0.ps'),
         this.firstParameter.filePath
       ],
       severity: 'error'
@@ -28,7 +28,7 @@ export default class DviToPs extends Rule {
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutput('$DIR/$NAME.ps', this.firstParameter)
+    await this.getResolvedOutput('$DIR_0/$NAME_0.ps')
     return true
   }
 }

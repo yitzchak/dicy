@@ -17,6 +17,7 @@ export default class StateConsumer {
   state: State
   options: Object
   jobName: ?string
+  env: Object
 
   constructor (state: State, jobName: ?string) {
     this.jobName = jobName
@@ -26,6 +27,12 @@ export default class StateConsumer {
         return target.state.getOption(key, target.jobName)
       }
     })
+    this.env = {
+      OUTDIR: this.options.outputDirectory || '.',
+      // $FlowIgnore
+      OUTEXT: `.${this.options.outputFormat}`,
+      JOB: this.jobName || this.options.jobName || this.state.env.NAME
+    }
   }
 
   addTarget (filePath: string) {
@@ -36,13 +43,13 @@ export default class StateConsumer {
     this.state.targets.delete(filePath)
   }
 
-  addResolvedTarget (filePath: string, reference: ?File) {
-    this.state.targets.add(this.resolvePath(filePath, reference))
+  addResolvedTarget (filePath: string) {
+    this.state.targets.add(this.resolvePath(filePath))
   }
 
-  addResolvedTargets (filePaths: Array<string>, reference: ?File) {
+  addResolvedTargets (filePaths: Array<string>) {
     for (const filePath of filePaths) {
-      this.addResolvedTarget(filePath, reference)
+      this.addResolvedTarget(filePath)
     }
   }
 
@@ -109,37 +116,19 @@ export default class StateConsumer {
     return this.state.normalizePath(filePath)
   }
 
-  resolvePath (filePath: string, reference: ?File): string {
-    let properties = {}
-
-    if (reference) {
-      const { dir, base, name, ext } = path.parse(reference.filePath)
-      properties = {
-        JOB: this.jobName || this.options.jobName || name,
-        DIR: (reference instanceof File ? dir : this.rootPath) || '.',
-        BASE: base,
-        NAME: name,
-        EXT: ext
-      }
-    }
-
-    return path.normalize(this.expandVariables(filePath, properties))
+  resolvePath (filePath: string): string {
+    return path.normalize(this.expandVariables(filePath))
   }
 
   expandVariables (value: string, additionalProperties: Object = {}): string {
-    const properties = Object.assign({}, this.state.env, {
-      ROOTDIR: this.rootPath,
-      OUTDIR: this.options.outputDirectory || '.',
-      OUTEXT: `.${this.options.outputFormat}`,
-      JOB: this.jobName || this.options.jobName || this.state.env.NAME
-    }, additionalProperties)
+    const properties = Object.assign({}, this.state.env, this.env, additionalProperties)
 
     return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
 
-  async globPath (pattern: string, reference: ?File, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
+  async globPath (pattern: string, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
     try {
-      return await fastGlob(this.resolvePath(pattern, reference), {
+      return await fastGlob(this.resolvePath(pattern), {
         cwd: this.rootPath,
         bashNative: [],
         onlyFiles: types === 'files',
@@ -166,9 +155,9 @@ export default class StateConsumer {
     return files
   }
 
-  async getGlobbedFiles (pattern: string, reference: ?File): Promise<Array<File>> {
+  async getGlobbedFiles (pattern: string): Promise<Array<File>> {
     const files = []
-    for (const filePath of await this.globPath(pattern, reference)) {
+    for (const filePath of await this.globPath(pattern)) {
       const file = await this.getFile(filePath)
       if (file) files.push(file)
     }
@@ -210,8 +199,8 @@ export default class StateConsumer {
     return this.state.isChild(x, y)
   }
 
-  async getResolvedFile (filePath: string, reference: ?File): Promise<?File> {
-    return this.getFile(this.resolvePath(filePath, reference))
+  async getResolvedFile (filePath: string): Promise<?File> {
+    return this.getFile(this.resolvePath(filePath))
   }
 
   // EventEmmitter proxy

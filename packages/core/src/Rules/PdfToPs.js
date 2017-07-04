@@ -19,15 +19,15 @@ export default class PdfToPs extends Rule {
     return {
       args: [
         'pdf2ps',
-        this.resolvePath('$DIR/$BASE', this.firstParameter),
-        this.resolvePath('$DIR/$NAME.ps', this.firstParameter)
+        this.resolvePath('$DIR_0/$BASE_0'),
+        this.resolvePath('$DIR_0/$NAME_0.ps')
       ],
       severity: 'error'
     }
   }
 
   async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutput('$DIR/$NAME.ps', this.firstParameter)
+    await this.getResolvedOutput('$DIR_0/$NAME_0.ps')
     return true
   }
 }
