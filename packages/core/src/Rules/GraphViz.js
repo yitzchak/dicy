@@ -1,7 +1,5 @@
 /* @flow */
 
-import path from 'path'
-
 import Rule from '../Rule'
 
 import type { Command, CommandOptions } from '../types'
