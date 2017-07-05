@@ -10,7 +10,7 @@ export default class Sage extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: ['sage', this.resolvePath('$BASE_0')],
+      args: ['sage', '$BASE_0'],
       cd: '$ROOTDIR_0',
       severity: 'error',
       outputs: [

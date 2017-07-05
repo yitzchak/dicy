@@ -19,8 +19,8 @@ export default class PsToPdf extends Rule {
     return {
       args: [
         'ps2pdf',
-        this.resolvePath('$DIR_0/$BASE_0'),
-        this.resolvePath('$DIR_0/$NAME_0.pdf')
+        '$DIR_0/$BASE_0',
+        '$DIR_0/$NAME_0.pdf'
       ],
       cd: '$ROOTDIR',
       severity: 'error',

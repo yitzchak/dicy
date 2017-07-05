@@ -19,8 +19,8 @@ export default class PdfToPs extends Rule {
     return {
       args: [
         'pdf2ps',
-        this.resolvePath('$DIR_0/$BASE_0'),
-        this.resolvePath('$DIR_0/$NAME_0.ps')
+        '$DIR_0/$BASE_0',
+        '$DIR_0/$NAME_0.ps'
       ],
       cd: '$ROOTDIR',
       severity: 'error',

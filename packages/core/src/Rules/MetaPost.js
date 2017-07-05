@@ -12,7 +12,7 @@ export default class MetaPost extends Rule {
     return {
       args: [
         'mpost',
-        this.resolvePath('$BASE_0')
+        '$BASE_0'
       ],
       cd: '$ROOTDIR_0',
       severity: 'error',

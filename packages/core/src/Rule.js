@@ -215,7 +215,7 @@ export default class Rule extends StateConsumer {
     let success: boolean = true
     const { args, cd, severity, inputs, outputs, globbedInputs, globbedOutputs }: CommandOptions = this.constructCommand()
     const options = this.constructProcessOptions(cd)
-    const command = commandJoin(args)
+    const command = commandJoin(args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : arg))
 
     this.emit('command', {
       type: 'command',

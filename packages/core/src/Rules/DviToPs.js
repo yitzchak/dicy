@@ -20,8 +20,8 @@ export default class DviToPs extends Rule {
       args: [
         'dvips',
         '-o',
-        this.resolvePath('$DIR_0/$NAME_0.ps'),
-        this.firstParameter.filePath
+        '$DIR_0/$NAME_0.ps',
+        '$DIR_0/$BASE_0'
       ],
       cd: '$ROOTDIR',
       severity: 'error',

@@ -20,8 +20,8 @@ export default class DviToSvg extends Rule {
       args: [
         'dvisvgm',
         '-o',
-        this.resolvePath('$DIR_0/$NAME_0.svg'),
-        this.firstParameter.filePath
+        '$DIR_0/$NAME_0.svg',
+        '$DIR_0/$BASE_0'
       ],
       cd: '$ROOTDIR',
       severity: 'error',
