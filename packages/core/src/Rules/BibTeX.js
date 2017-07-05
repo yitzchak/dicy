@@ -51,7 +51,8 @@ export default class BibTeX extends Rule {
     return {
       args: ['bibtex', this.input ? this.input.filePath : ''],
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']
     }
   }
 
@@ -59,8 +60,6 @@ export default class BibTeX extends Rule {
     this.hasRun = true
     const databasePattern = /^Database file #\d+: (.*)$/mg
     let match
-
-    await this.getResolvedOutputs(['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg'])
 
     while ((match = databasePattern.exec(stdout)) !== null) {
       await this.getInput(path.resolve(this.rootPath, match[1]))

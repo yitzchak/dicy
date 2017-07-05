@@ -23,12 +23,8 @@ export default class PdfToPs extends Rule {
         this.resolvePath('$DIR_0/$NAME_0.ps')
       ],
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      outputs: ['$DIR_0/$NAME_0.ps']
     }
-  }
-
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutput('$DIR_0/$NAME_0.ps')
-    return true
   }
 }

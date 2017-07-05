@@ -34,12 +34,8 @@ export default class Biber extends Rule {
     return {
       args: ['biber', this.firstParameter.filePath],
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']
     }
-  }
-
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs(['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg'])
-    return true
   }
 }

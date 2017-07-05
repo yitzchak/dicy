@@ -213,7 +213,7 @@ export default class Rule extends StateConsumer {
 
   async run (): Promise<boolean> {
     let success: boolean = true
-    const { args, cd, severity } = this.constructCommand()
+    const { args, cd, severity, inputs, outputs, globbedInputs, globbedOutputs }: CommandOptions = this.constructCommand()
     const options = this.constructProcessOptions(cd)
     const command = commandJoin(args)
 
@@ -227,6 +227,16 @@ export default class Rule extends StateConsumer {
       this.log({ severity, text: error.toString(), name: this.constructor.name })
       success = false
     }
+
+    if (inputs) await this.getResolvedInputs(inputs)
+    if (outputs) await this.getResolvedInputs(outputs)
+    if (globbedInputs) {
+      await Promise.all(globbedInputs.map(pattern => this.getGlobbedInputs(pattern)))
+    }
+    if (globbedOutputs) {
+      await Promise.all(globbedOutputs.map(pattern => this.getGlobbedOutputs(pattern)))
+    }
+
     return await this.processOutput(stdout, stderr) && success
   }
 

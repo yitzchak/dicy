@@ -154,7 +154,11 @@ export type KillToken = {
 export type CommandOptions = {
   args: Array<string>,
   cd: string,
-  severity: Severity
+  severity: Severity,
+  inputs?: Array<string>,
+  outputs?: Array<string>,
+  globbedInputs?: Array<string>,
+  globbedOutputs?: Array<string>
 }
 
 export type LineRangeMapping = {
