@@ -4,20 +4,22 @@ import path from 'path'
 
 import Rule from '../Rule'
 
-import type { Message } from '../types'
+import type { ParsedLog } from '../types'
 
-export default class ParseAsymptoteLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['AsymptoteLog'])]
+export default class ParseAsymptoteStdOut extends Rule {
+  static parameterTypes: Array<Set<string>> = [new Set(['AsymptoteStdOut'])]
   static description: string = 'Parses the console output of Asymptote.'
 
   async run () {
-    const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-ParsedAsymptoteLog')
+    const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-ParsedAsymptoteStdOut')
     if (!output) return false
 
     let rootPath = this.rootPath
-    const messages: Array<Message> = []
-    const inputs: Array<string> = []
-    const outputs: Array<string> = []
+    const parsedLog: ParsedLog = {
+      messages: [],
+      inputs: [],
+      outputs: []
+    }
 
     await this.firstParameter.parse([{
       names: ['filePath'],
@@ -29,19 +31,19 @@ export default class ParseAsymptoteLog extends Rule {
       names: ['filePath'],
       patterns: [/^Wrote (.*)$/],
       evaluate: (reference, groups) => {
-        outputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+        parsedLog.outputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
       }
     }, {
       names: ['type', 'filePath'],
       patterns: [/^(Including|Loading) \S+ from (.*)$/],
       evaluate: (reference, groups) => {
         if (!path.isAbsolute(groups.filePath)) {
-          inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+          parsedLog.inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
         }
       }
     }])
 
-    output.value = { messages, inputs, outputs }
+    output.value = parsedLog
 
     return true
   }

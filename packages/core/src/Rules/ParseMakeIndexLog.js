@@ -2,7 +2,7 @@
 
 import Rule from '../Rule'
 
-import type { Command, Message } from '../types'
+import type { Command, ParsedLog } from '../types'
 
 const MESSAGE_PATTERN = /^\s+--\s*(.*)$/
 
@@ -15,7 +15,11 @@ export default class ParseMakeIndexLog extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedMakeIndexLog')
     if (!output) return false
 
-    const messages: Array<Message> = []
+    const parsedLog: ParsedLog = {
+      messages: [],
+      inputs: [],
+      outputs: []
+    }
 
     await this.firstParameter.parse([{
       names: ['inputPath', 'inputLine', 'outputPath', 'outputLine', 'text'],
@@ -25,7 +29,7 @@ export default class ParseMakeIndexLog extends Rule {
       ],
       evaluate: (reference, groups) => {
         const line = parseInt(groups.inputLine, 10)
-        messages.push({
+        parsedLog.messages.push({
           severity: 'warning',
           name: 'makeindex',
           text: groups.text,
@@ -47,7 +51,7 @@ export default class ParseMakeIndexLog extends Rule {
       ],
       evaluate: (reference, groups) => {
         const line = parseInt(groups.line, 10)
-        messages.push({
+        parsedLog.messages.push({
           severity: 'error',
           name: 'makeindex',
           text: groups.text,
@@ -64,7 +68,7 @@ export default class ParseMakeIndexLog extends Rule {
       }
     }])
 
-    output.value = { messages }
+    output.value = parsedLog
 
     return true
   }

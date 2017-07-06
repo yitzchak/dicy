@@ -7,7 +7,7 @@ import State from './State'
 import File from './File'
 import StateConsumer from './StateConsumer'
 
-import type { Action, Command, Phase, CommandOptions } from './types'
+import type { Action, Command, Phase, CommandOptions, ParsedLog } from './types'
 
 export default class Rule extends StateConsumer {
   static parameterTypes: Array<Set<string>> = []
@@ -201,9 +201,11 @@ export default class Rule extends StateConsumer {
 
     if (files) {
       for (const file of files.values()) {
-        if (file.value) {
-          if (file.value.inputs) await this.getInputs(file.value.inputs)
-          if (file.value.outputs) await this.getOutputs(file.value.outputs)
+        const parsedLog: ?ParsedLog = file.value
+
+        if (parsedLog) {
+          if (parsedLog.inputs) await this.getInputs(parsedLog.inputs)
+          if (parsedLog.outputs) await this.getOutputs(parsedLog.outputs)
         }
       }
     }
@@ -213,9 +215,9 @@ export default class Rule extends StateConsumer {
 
   async run (): Promise<boolean> {
     let success: boolean = true
-    const { args, cd, severity, inputs, outputs, globbedInputs, globbedOutputs }: CommandOptions = this.constructCommand()
-    const options = this.constructProcessOptions(cd)
-    const command = commandJoin(args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : arg))
+    const commandOptions: CommandOptions = this.constructCommand()
+    const options = this.constructProcessOptions(commandOptions.cd)
+    const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : arg))
 
     this.emit('command', {
       type: 'command',
@@ -224,24 +226,30 @@ export default class Rule extends StateConsumer {
     })
     const { stdout, stderr, error } = await this.executeChildProcess(command, options)
     if (error) {
-      this.log({ severity, text: error.toString(), name: this.constructor.name })
+      this.log({ severity: commandOptions.severity, text: error.toString(), name: this.constructor.name })
       success = false
     }
 
-    if (inputs) await this.getResolvedInputs(inputs)
-    if (outputs) await this.getResolvedInputs(outputs)
-    if (globbedInputs) {
-      await Promise.all(globbedInputs.map(pattern => this.getGlobbedInputs(pattern)))
+    if (commandOptions.inputs) await this.getResolvedInputs(commandOptions.inputs)
+    if (commandOptions.outputs) await this.getResolvedOutputs(commandOptions.outputs)
+    if (commandOptions.globbedInputs) {
+      await Promise.all(commandOptions.globbedInputs.map(pattern => this.getGlobbedInputs(pattern)))
     }
-    if (globbedOutputs) {
-      await Promise.all(globbedOutputs.map(pattern => this.getGlobbedOutputs(pattern)))
+    if (commandOptions.globbedOutputs) {
+      await Promise.all(commandOptions.globbedOutputs.map(pattern => this.getGlobbedOutputs(pattern)))
     }
 
-    return await this.processOutput(stdout, stderr) && success
-  }
+    if (commandOptions.stdout) {
+      const output = await this.getResolvedOutput(commandOptions.stdout)
+      if (output) output.value = stdout
+    }
 
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    return true
+    if (commandOptions.stderr) {
+      const output = await this.getResolvedOutput(commandOptions.stderr)
+      if (output) output.value = stderr
+    }
+
+    return success
   }
 
   addOutput (file: ?File): void {

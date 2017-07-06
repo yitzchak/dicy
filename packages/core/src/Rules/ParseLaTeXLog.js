@@ -2,7 +2,7 @@
 
 import Rule from '../Rule'
 
-import type { Command, Message } from '../types'
+import type { Command, Message, ParsedLog } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 
@@ -20,8 +20,11 @@ export default class ParseLaTeXLog extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedLaTeXLog')
     if (!output) return false
 
-    const messages: Array<Message> = []
-    const outputs: Array<string> = []
+    const parsedLog: ParsedLog = {
+      messages: [],
+      inputs: [],
+      outputs: []
+    }
     let name: string
     let filePath: string
 
@@ -47,7 +50,7 @@ export default class ParseLaTeXLog extends Rule {
       names: ['text'],
       patterns: [/^Package: (.*)$/i],
       evaluate: (reference, groups) => {
-        messages.push({
+        parsedLog.messages.push({
           name,
           severity: 'info',
           text: groups.text,
@@ -61,7 +64,7 @@ export default class ParseLaTeXLog extends Rule {
       names: ['category', 'text'],
       patterns: [/^! (.+) Error: (.+?)\.?$/i],
       evaluate: (reference, groups) => {
-        messages.push({
+        parsedLog.messages.push({
           severity: 'error',
           name,
           category: groups.category,
@@ -90,7 +93,7 @@ export default class ParseLaTeXLog extends Rule {
 
         if (groups.category) message.category = groups.category
 
-        messages.push(message)
+        parsedLog.messages.push(message)
       }
     }, {
       // Warning/Info messages, possibly with a line reference.
@@ -116,14 +119,14 @@ export default class ParseLaTeXLog extends Rule {
           }
         }
 
-        messages.push(message)
+        parsedLog.messages.push(message)
       }
     }, {
       // Continuation of message with possible file reference.
       names: ['package', 'text', 'line'],
       patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
-        const message: Message = messages[messages.length - 1]
+        const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         // Verify that the previous message matches the category.
         if (message && message.category && message.category.endsWith(groups.package)) {
           message.text = `${message.text} ${groups.text}`
@@ -166,7 +169,7 @@ export default class ParseLaTeXLog extends Rule {
 
         if (groups.category) message.category = groups.category
 
-        messages.push(message)
+        parsedLog.messages.push(message)
       }
     }, {
       // LaTeX3 messages
@@ -185,14 +188,14 @@ export default class ParseLaTeXLog extends Rule {
           log: reference
         }
 
-        messages.push(message)
+        parsedLog.messages.push(message)
       }
     }, {
       // LaTeX3 continued message
       names: ['text', 'line'],
       patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
-        const message: Message = messages[messages.length - 1]
+        const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         if (message) {
           // Don't add input requests to the message.
           if (groups.text !== 'Type <return> to continue.') {
@@ -219,7 +222,7 @@ export default class ParseLaTeXLog extends Rule {
       names: [],
       patterns: [/^[.*!]{48,50} *$/],
       evaluate: (reference, groups) => {
-        const message: Message = messages[messages.length - 1]
+        const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         // If the the previous message has a log reference then extend it.
         if (message && message.log && message.log.range && reference.range) {
           message.log.range.end = reference.range.end
@@ -230,7 +233,7 @@ export default class ParseLaTeXLog extends Rule {
       names: ['text'],
       patterns: [/^(No file .*\.)$/],
       evaluate: (reference, groups) => {
-        messages.push({
+        parsedLog.messages.push({
           severity: 'warning',
           name,
           text: groups.text,
@@ -242,16 +245,16 @@ export default class ParseLaTeXLog extends Rule {
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
       evaluate: (reference, groups) => {
-        outputs.push(this.normalizePath(groups.filePath))
+        parsedLog.outputs.push(this.normalizePath(groups.filePath))
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 
     // Clean the message text up.
-    for (const message of messages) {
+    for (const message of parsedLog.messages) {
       message.text = message.text.trim().replace(/ *\n+ */g, '\n').replace(/ +/g, ' ')
     }
 
-    output.value = { outputs, messages }
+    output.value = parsedLog
 
     return true
   }

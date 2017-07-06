@@ -1,8 +1,11 @@
 /* @flow */
 
+import path from 'path'
+
+import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Message } from '../types'
+import type { Command, Message, ParsedLog } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
@@ -13,7 +16,12 @@ export default class ParseBibTeXLog extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBibTeXLog')
     if (!output) return false
 
+    const bibinputs = this.options['$BIBINPUTS']
+      .filter(pattern => pattern)
+      .map(pattern => this.resolvePath(pattern))
+
     const messages: Array<Message> = []
+    const inputNames: Array<string> = []
 
     await this.firstParameter.parse([{
       names: ['text'],
@@ -71,9 +79,30 @@ export default class ParseBibTeXLog extends Rule {
           }
         })
       }
+    }, {
+      names: ['input'],
+      patterns: [/^Database file #\d+: (.*)$/],
+      evaluate: (reference, groups) => {
+        inputNames.push(groups.input)
+      }
     }])
 
-    output.value = { messages }
+    const parsedLog: ParsedLog = {
+      messages,
+      inputs: [],
+      outputs: []
+    }
+
+    for (const inputName of inputNames) {
+      for (const bibinput of bibinputs) {
+        const input = path.resolve(bibinput, inputName)
+        if (await File.canRead(input)) {
+          parsedLog.inputs.push(this.normalizePath(input))
+        }
+      }
+    }
+
+    output.value = parsedLog
 
     return true
   }
