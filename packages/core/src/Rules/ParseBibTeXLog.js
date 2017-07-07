@@ -1,8 +1,5 @@
 /* @flow */
 
-import path from 'path'
-
-import File from '../File'
 import Rule from '../Rule'
 
 import type { Command, Message, ParsedLog } from '../types'
@@ -16,9 +13,9 @@ export default class ParseBibTeXLog extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBibTeXLog')
     if (!output) return false
 
-    const bibinputs = this.options['$BIBINPUTS']
-      .filter(pattern => pattern)
-      .map(pattern => this.resolvePath(pattern))
+    // const bibinputs = this.options['$BIBINPUTS']
+    //   .filter(pattern => pattern)
+    //   .map(pattern => this.resolvePath(pattern))
 
     const messages: Array<Message> = []
     const inputNames: Array<string> = []
@@ -85,21 +82,26 @@ export default class ParseBibTeXLog extends Rule {
       evaluate: (reference, groups) => {
         inputNames.push(groups.input)
       }
+    }, {
+      names: ['input'],
+      patterns: [/^The style file: (.*)$/],
+      evaluate: (reference, groups) => {
+        inputNames.push(groups.input)
+      }
     }])
+
+    const { stdout } = await this.executeCommand({
+      args: ['kpsewhich'].concat(inputNames),
+      cd: '$ROOTDIR',
+      severity: 'warning'
+    })
 
     const parsedLog: ParsedLog = {
       messages,
-      inputs: [],
+      inputs: stdout
+        ? stdout.split('\n').filter(file => file).map(file => this.normalizePath(file))
+        : [],
       outputs: []
-    }
-
-    for (const inputName of inputNames) {
-      for (const bibinput of bibinputs) {
-        const input = path.resolve(bibinput, inputName)
-        if (await File.canRead(input)) {
-          parsedLog.inputs.push(this.normalizePath(input))
-        }
-      }
     }
 
     output.value = parsedLog
