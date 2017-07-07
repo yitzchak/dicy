@@ -20,6 +20,7 @@ export default class ParseBibTeXLog extends Rule {
     }
 
     await this.firstParameter.parse([{
+      // Missing database files or missing cross references.
       names: ['text'],
       patterns: [/^(I couldn't open database file .*|A bad cross reference---entry .*)$/],
       evaluate: (reference, groups) => {
@@ -31,6 +32,7 @@ export default class ParseBibTeXLog extends Rule {
         })
       }
     }, {
+      // Warning messages
       names: ['text'],
       patterns: [/^Warning--(.+)$/],
       evaluate: (reference, groups) => {
@@ -42,12 +44,17 @@ export default class ParseBibTeXLog extends Rule {
         })
       }
     }, {
+      // Continued source references.
       names: ['line', 'file'],
       patterns: [/^-+line (\d+) of file (.+)$/],
       evaluate: (reference, groups) => {
         const message = parsedLog.messages[parsedLog.messages.length - 1]
         const line = parseInt(groups.line, 10)
+
+        // Extend the log reference
         if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.start
+
+        // Add a source reference
         message.source = {
           file: this.normalizePath(groups.file),
           range: {
@@ -57,6 +64,7 @@ export default class ParseBibTeXLog extends Rule {
         }
       }
     }, {
+      // Error messages with a source reference.
       names: ['text', 'line', 'file'],
       patterns: [/^(.+)---line (\d+) of file (.*)$/],
       evaluate: (reference, groups) => {
@@ -76,8 +84,9 @@ export default class ParseBibTeXLog extends Rule {
         })
       }
     }, {
+      // Input file notifications.
       names: ['input'],
-      patterns: [/^(?:Database file #\d+|The style file): (.*)$/],
+      patterns: [/^(?:Database file #\d+|The style file|The top-level auxiliary file|A level-\d+ auxiliary file): (.*)$/],
       evaluate: (reference, groups) => {
         parsedLog.inputs.push(groups.input)
       }
