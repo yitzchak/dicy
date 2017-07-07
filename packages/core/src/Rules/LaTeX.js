@@ -46,17 +46,6 @@ export default class LaTeX extends Rule {
     return []
   }
 
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedInput('$OUTDIR/$JOB.aux')
-    await this.getResolvedOutputs([
-      '$OUTDIR/$JOB.aux',
-      '$OUTDIR/$JOB.fls',
-      '$OUTDIR/$JOB.log',
-      '$OUTDIR/$JOB.synctex.gz'
-    ])
-    return true
-  }
-
   constructCommand (): CommandOptions {
     const args = [
       this.options.engine,
@@ -109,7 +98,14 @@ export default class LaTeX extends Rule {
     return {
       args,
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      inputs: ['$OUTDIR/$JOB.aux'],
+      outputs: [
+        '$OUTDIR/$JOB.aux',
+        '$OUTDIR/$JOB.fls',
+        '$OUTDIR/$JOB.log',
+        '$OUTDIR/$JOB.synctex.gz'
+      ]
     }
   }
 }

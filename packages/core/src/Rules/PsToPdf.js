@@ -19,16 +19,12 @@ export default class PsToPdf extends Rule {
     return {
       args: [
         'ps2pdf',
-        this.resolvePath('$DIR_0/$BASE_0'),
-        this.resolvePath('$DIR_0/$NAME_0.pdf')
+        '$DIR_0/$BASE_0',
+        '$DIR_0/$NAME_0.pdf'
       ],
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      outputs: ['$DIR_0/$NAME_0.pdf']
     }
-  }
-
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutput('$DIR_0/$NAME_0.pdf')
-    return true
   }
 }

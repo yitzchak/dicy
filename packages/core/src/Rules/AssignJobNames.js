@@ -10,7 +10,7 @@ export default class AssignJobNames extends Rule {
   static alwaysEvaluate: boolean = true
   static description: string = 'Assign job names to initial source file.'
 
-  async run () {
+  async run (): Promise<boolean> {
     // Get the source file associated with this job.
     const file = await this.getFile(this.options.filePath)
 

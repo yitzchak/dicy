@@ -12,14 +12,6 @@ export default class Knitr extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['Knitr'])]
   static description: string = 'Runs knitr on Rnw files.'
 
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    await this.getResolvedOutputs([
-      '$DIR_0/$NAME_0.tex',
-      '$DIR_0/$NAME_0-concordance.tex'
-    ])
-    return true
-  }
-
   constructCommand (): CommandOptions {
     const filePath = escapePath(this.firstParameter.filePath)
     const lines = ['library(knitr)']
@@ -30,7 +22,11 @@ export default class Knitr extends Rule {
     return {
       args: ['Rscript', '-e', lines.join(';')],
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      outputs: [
+        '$DIR_0/$NAME_0.tex',
+        '$DIR_0/$NAME_0-concordance.tex'
+      ]
     }
   }
 }

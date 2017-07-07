@@ -16,7 +16,7 @@ export default class ApplyOptions extends Rule {
   static ignoreJobName: boolean = true
   static description: string = 'Apply options from YAML file and any LaTeX magic comments found in source file.'
 
-  async run () {
+  async run (): Promise<boolean> {
     // Save the old options so we can tell if they have changed.
     const previousOptions = _.cloneDeep(this.state.options)
 

@@ -10,38 +10,30 @@ export default class Asymptote extends Rule {
   static description: string = 'Run Asymptote on any generated .asy files.'
 
   async initialize (): Promise<void> {
-    // Add the parsed log as an input for updateDependencies
-    await this.getResolvedInput('$DIR_0/$NAME_0.log-ParsedAsymptoteLog')
+    await this.getResolvedInput('$DIR_0/$NAME_0.log-ParsedAsymptoteStdOut')
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
     // ParsedAsymptoteLog triggers updateDependencies, all others trigger run.
-    return [file.type === 'ParsedAsymptoteLog' ? 'updateDependencies' : 'run']
+    return [file.type === 'ParsedAsymptoteStdOut' ? 'updateDependencies' : 'run']
   }
 
   constructCommand (): CommandOptions {
     // We are executing in the same directory as the source file so we only need
     // the base name. Also, execute with high verbosity so we can capture a log
     // file from the output.
-    return {
-      args: ['asy', '-vv', this.resolvePath('$BASE_0')],
-      cd: '$ROOTDIR_0',
-      severity: 'error'
-    }
-  }
-
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-AsymptoteLog')
-
-    if (output) output.value = `${stdout}\n${stderr}`
-
     /* eslint no-template-curly-in-string: 0 */
-    await this.getResolvedOutputs([
-      '$DIR_0/${NAME_0}_0.pdf',
-      '$DIR_0/${NAME_0}_0.eps',
-      '$DIR_0/$NAME_0.pre'
-    ])
-
-    return true
+    return {
+      args: ['asy', '-vv', '$BASE_0'],
+      cd: '$ROOTDIR_0',
+      severity: 'error',
+      outputs: [
+        '$DIR_0/${NAME_0}_0.pdf',
+        '$DIR_0/${NAME_0}_0.eps',
+        '$DIR_0/$NAME_0.pre'
+      ],
+      stdout: '$DIR_0/$NAME_0.log-AsymptoteStdOut',
+      stderr: '$DIR_0/$NAME_0.log-AsymptoteStdErr'
+    }
   }
 }

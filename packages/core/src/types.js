@@ -151,10 +151,22 @@ export type KillToken = {
   promise: ?Promise<void>
 }
 
+export type ParsedLog = {
+  inputs: Array<string>,
+  outputs: Array<string>,
+  messages: Array<Message>
+}
+
 export type CommandOptions = {
   args: Array<string>,
   cd: string,
-  severity: Severity
+  severity: Severity,
+  inputs?: Array<string>,
+  outputs?: Array<string>,
+  globbedInputs?: Array<string>,
+  globbedOutputs?: Array<string>,
+  stdout?: string,
+  stderr?: string
 }
 
 export type LineRangeMapping = {

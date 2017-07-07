@@ -2,7 +2,7 @@
 
 import Rule from '../Rule'
 
-import type { Command, Message } from '../types'
+import type { Command, Message, ParsedLog } from '../types'
 
 export default class ParseBiberLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BiberLog'])]
@@ -13,7 +13,11 @@ export default class ParseBiberLog extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBiberLog')
     if (!output) return false
 
-    const messages: Array<Message> = []
+    const parsedLog: ParsedLog = {
+      messages: [],
+      inputs: [],
+      outputs: []
+    }
 
     await this.firstParameter.parse([{
       names: ['severity', 'text'],
@@ -36,11 +40,11 @@ export default class ParseBiberLog extends Rule {
           log: reference
         }
 
-        messages.push(message)
+        parsedLog.messages.push(message)
       }
     }])
 
-    output.value = { messages }
+    output.value = parsedLog
 
     return true
   }

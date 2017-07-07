@@ -4,7 +4,8 @@ AcronymListing:
   fileName: !!js/regexp /\.acr$/i
 Asymptote:
   fileName: !!js/regexp /\.asy$/i
-AsymptoteLog: {}
+AsymptoteStdOut: {}
+AsymptoteStdErr: {}
 AsymptotePre:
   fileName: !!js/regexp /\.pre$/i
 BibRefControlFile:
@@ -91,7 +92,8 @@ NomenclatureListing:
   fileName: !!js/regexp /\.nls$/i
 OUT:
   fileName: !!js/regexp /\.out$/i
-ParsedAsymptoteLog: {}
+ParsedAsymptoteStdOut: {}
+ParsedAsymptoteStdErr: {}
 ParsedBibTeXLog: {}
 ParsedBiberLog: {}
 ParsedLaTeXAuxilary: {}

@@ -12,22 +12,20 @@ export default class BibTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['ParsedLaTeXAuxilary'])]
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
-  input: ?File
-  hasRun: boolean
-
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(state, command, phase, jobName, file) &&
       !!file.value && !!file.value.bibdata
   }
 
   async initialize () {
-    await this.getResolvedInput('$OUTDIR/$JOB.log-ParsedLaTeXLog')
-    this.input = await this.getResolvedInput('$DIR_0/$NAME_0.aux')
+    await this.getResolvedInputs([
+      '$OUTDIR/$JOB.log-ParsedLaTeXLog',
+      '$DIR_0/$NAME_0.blg-ParsedBibTeXLog',
+      '$DIR_0/$NAME_0.aux'
+    ])
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
-    if (this.hasRun) return []
-
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.filePath)
@@ -36,39 +34,21 @@ export default class BibTeX extends Rule {
           return ['run']
         }
         break
-      default:
+      case 'ParsedBibTeXLog':
+        return ['updateDependencies']
+      case 'LaTeXAuxilary':
         return ['run']
     }
 
     return []
   }
 
-  async preEvaluate () {
-    if (!this.input) this.actions.delete('run')
-  }
-
   constructCommand (): CommandOptions {
     return {
-      args: ['bibtex', this.input ? this.input.filePath : ''],
+      args: ['bibtex', '$DIR_0/$NAME_0.aux'],
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']
     }
-  }
-
-  async processOutput (stdout: string, stderr: string): Promise<boolean> {
-    this.hasRun = true
-    const databasePattern = /^Database file #\d+: (.*)$/mg
-    let match
-
-    await this.getResolvedOutputs(['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg'])
-
-    while ((match = databasePattern.exec(stdout)) !== null) {
-      await this.getInput(path.resolve(this.rootPath, match[1]))
-      if (this.options.outputDirectory) {
-        await this.getInput(path.resolve(this.rootPath, this.options.outputDirectory, match[1]))
-      }
-    }
-
-    return true
   }
 }
