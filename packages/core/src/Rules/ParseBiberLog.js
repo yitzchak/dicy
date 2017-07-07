@@ -21,9 +21,24 @@ export default class ParseBiberLog extends Rule {
 
     await this.firstParameter.parse([{
       names: ['text', 'input'],
-      patterns: [/^[^>]+> INFO - (Found BibTeX data source '([^']+)')$/],
+      patterns: [/^[^>]+> INFO - ((?:Found BibTeX data source|Reading) '([^']+)')$/],
       evaluate: (reference, groups) => {
         parsedLog.inputs.push(groups.input)
+
+        const message: Message = {
+          severity: 'info',
+          name: 'Biber',
+          text: groups.text,
+          log: reference
+        }
+
+        parsedLog.messages.push(message)
+      }
+    }, {
+      names: ['text', 'output'],
+      patterns: [/^[^>]+> INFO - ((?:Writing|Logfile is) '([^']+)'.*)$/],
+      evaluate: (reference, groups) => {
+        parsedLog.outputs.push(groups.output)
 
         const message: Message = {
           severity: 'info',

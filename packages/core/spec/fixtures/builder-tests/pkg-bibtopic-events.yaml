@@ -27,7 +27,25 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-bibtopic.tex
   - type: command
+    rule: ParseBibTeXLog(build;execute;;pkg-bibtopic1.blg)
+    command: kpsewhich alpha.bst foo.bib
+  - type: command
+    rule: ParseBibTeXLog(build;execute;;pkg-bibtopic2.blg)
+    command: kpsewhich plain.bst bar.bib
+  - type: command
+    rule: ParseBibTeXLog(build;execute;;pkg-bibtopic3.blg)
+    command: kpsewhich plain.bst foo.bib bar.bib
+  - type: command
     rule: LaTeX(build;execute;;pkg-bibtopic.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-bibtopic.tex
+  - type: command
+    rule: ParseBibTeXLog(log;execute;;pkg-bibtopic1.blg)
+    command: kpsewhich alpha.bst foo.bib
+  - type: command
+    rule: ParseBibTeXLog(log;execute;;pkg-bibtopic2.blg)
+    command: kpsewhich plain.bst bar.bib
+  - type: command
+    rule: ParseBibTeXLog(log;execute;;pkg-bibtopic3.blg)
+    command: kpsewhich plain.bst foo.bib bar.bib
