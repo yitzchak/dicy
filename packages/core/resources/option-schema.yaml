@@ -142,6 +142,34 @@ synctex:
   defaultValue: false
   commands:
     - build
+MakeIndex_germanOrdering:
+  description: Use German word ordering.
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
+MakeIndex_letterOrdering:
+  description: Use letter ordering versus word ordering.
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
+MakeIndex_startPage:
+  description: The start page used (any/odd/even/number)
+  type: string
+  commands:
+    - build
+MakeIndex_style:
+  description: The style to use for makeindex.
+  type: string
+  commands:
+    - build
+MakeIndex_thaiSupport:
+  description: Enable Thai support.
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
 $PATH:
   aliases:
     - texPath

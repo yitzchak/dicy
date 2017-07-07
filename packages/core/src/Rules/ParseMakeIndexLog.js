@@ -22,6 +22,22 @@ export default class ParseMakeIndexLog extends Rule {
     }
 
     await this.firstParameter.parse([{
+      names: ['input'],
+      patterns: [
+        /^Scanning (?:style|input) file (.*?)[.]+done .*$/
+      ],
+      evaluate: (reference, groups) => {
+        parsedLog.inputs.push(this.normalizePath(groups.input))
+      }
+    }, {
+      names: ['output'],
+      patterns: [
+        /^(?:Output|Transcript) written in (.*?)\.*$/
+      ],
+      evaluate: (reference, groups) => {
+        parsedLog.outputs.push(this.normalizePath(groups.output))
+      }
+    }, {
       names: ['inputPath', 'inputLine', 'outputPath', 'outputLine', 'text'],
       patterns: [
         /## Warning \(input = (.+), line = (\d+); output = (.+), line = (\d+)\):/,
