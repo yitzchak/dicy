@@ -23,6 +23,9 @@ cp output/biber.bcf BiberControlFile.bcf
 cp output/biber.blg BiberLog.blg
 cp output/biber.fls LaTeXFileListing.fls
 cp output/biber.log LaTeXLog.log
+cp output/biber.nlo NomenclatureControlFile.nlo
+cp output/biber.bdx BibRefControlFile.bdx
+cp output/biber.idx IndexControlFile.idx
 
 rm -rf output
 

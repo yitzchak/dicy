@@ -19,6 +19,8 @@ export default class DiCy extends StateConsumer {
     await builder.initialize()
     await builder.setInstanceOptions(options)
 
+    state.assignOptions(options)
+
     return builder
   }
 
