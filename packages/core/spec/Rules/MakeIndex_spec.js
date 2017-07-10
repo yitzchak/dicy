@@ -11,16 +11,16 @@ describe('MakeIndex', () => {
   let builder: DiCy
   let rule: MakeIndex
 
-  async function initialize (indexPath, options = {}) {
+  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX.tex'), options)
     builder.state.env.HOME = fixturesPath
-    const index = await builder.getFile(indexPath)
-    rule = new MakeIndex(builder.state, 'build', 'execute', null, index)
+    const parameters = await builder.getFiles(parameterPaths)
+    rule = new MakeIndex(builder.state, 'build', 'execute', null, ...parameters)
   }
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for index file.', async (done) => {
-      await initialize('IndexControlFile.idx')
+      await initialize(['IndexControlFile.idx'])
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -41,7 +41,7 @@ describe('MakeIndex', () => {
     })
 
     it('returns correct arguments and command options for nomenclature file.', async (done) => {
-      await initialize('NomenclatureControlFile.nlo')
+      await initialize(['NomenclatureControlFile.nlo'])
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -64,7 +64,7 @@ describe('MakeIndex', () => {
     })
 
     it('returns correct arguments and command options for bibref file.', async (done) => {
-      await initialize('BibRefControlFile.bdx')
+      await initialize(['BibRefControlFile.bdx'])
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -87,7 +87,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -c to command line when MakeIndex_compressBlanks is enabled.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_compressBlanks: true })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_compressBlanks: true })
 
       expect(rule.constructCommand().args).toContain('-c')
 
@@ -95,7 +95,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -l to command line when MakeIndex_ordering is set to \'letter\'.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_ordering: 'letter' })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_ordering: 'letter' })
 
       expect(rule.constructCommand().args).toContain('-l')
 
@@ -103,7 +103,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -g to command line when MakeIndex_sorting is set to \'german\'.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_sorting: 'german' })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_sorting: 'german' })
 
       expect(rule.constructCommand().args).toContain('-g')
 
@@ -111,7 +111,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -T to command line when MakeIndex_sorting is set to \'thai\'.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_sorting: 'thai' })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_sorting: 'thai' })
 
       expect(rule.constructCommand().args).toContain('-T')
 
@@ -119,7 +119,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -L to command line when MakeIndex_sorting is set to \'locale\'.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_sorting: 'locale' })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_sorting: 'locale' })
 
       expect(rule.constructCommand().args).toContain('-L')
 
@@ -127,7 +127,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -r to command line when MakeIndex_automaticRanges is disabled.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_automaticRanges: false })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_automaticRanges: false })
 
       expect(rule.constructCommand().args).toContain('-r')
 
@@ -135,7 +135,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -p to command line when MakeIndex_startPage is set.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_startPage: 'odd' })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_startPage: 'odd' })
 
       expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-p', 'odd']))
 
@@ -143,7 +143,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -s to command line when MakeIndex_style is set.', async (done) => {
-      await initialize('IndexControlFile.idx', { MakeIndex_style: 'foo.ist' })
+      await initialize(['IndexControlFile.idx'], { MakeIndex_style: 'foo.ist' })
 
       expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-s', 'foo.ist']))
 
