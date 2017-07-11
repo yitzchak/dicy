@@ -36,13 +36,13 @@ events:
     command: bibtex output/job-2.aux
   - type: command
     rule: ParseBibTeXLog(build;execute;job-1;job-1.blg)
-    command: kpsewhich plainnat.bst foo.bib
+    command: kpsewhich job-1.aux plainnat.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(build;execute;job-2;output/job-2.blg)
-    command: kpsewhich plainnat.bst foo.bib
+    command: kpsewhich output/job-2.aux plainnat.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;job-1;job-1.blg)
-    command: kpsewhich plainnat.bst foo.bib
+    command: kpsewhich job-1.aux plainnat.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;job-2;output/job-2.blg)
-    command: kpsewhich plainnat.bst foo.bib
+    command: kpsewhich output/job-2.aux plainnat.bst foo.bib

@@ -20,10 +20,10 @@ events:
     command: bibtex other.aux
   - type: command
     rule: ParseBibTeXLog(build;execute;;other.blg)
-    command: kpsewhich alpha.bst foo.bib
+    command: kpsewhich other.aux alpha.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(build;execute;;pkg-multibib.blg)
-    command: kpsewhich plain.bst foo.bib
+    command: kpsewhich pkg-multibib.aux plain.bst foo.bib
   - type: command
     rule: BibTeX(build;execute;;pkg-multibib.aux-ParsedLaTeXAuxilary)
     command: bibtex pkg-multibib.aux
@@ -37,7 +37,7 @@ events:
     command: bibtex other.aux
   - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-multibib.blg)
-    command: kpsewhich plain.bst foo.bib
+    command: kpsewhich pkg-multibib.aux plain.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;;other.blg)
-    command: kpsewhich alpha.bst foo.bib
+    command: kpsewhich other.aux alpha.bst foo.bib

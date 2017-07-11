@@ -73,6 +73,8 @@ ListOfFigures:
   fileName: !!js/regexp /\.lof$/i
 ListOfTables:
   fileName: !!js/regexp /\.lot$/i
+LiterateAgda:
+  fileName: !!js/regexp /\.lagda$/i
 LiterateHaskell:
   fileName: !!js/regexp /\.lhs$/i
 MakeIndexLog:

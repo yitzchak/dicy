@@ -28,13 +28,13 @@ events:
       pkg-bibtopic.tex
   - type: command
     rule: ParseBibTeXLog(build;execute;;pkg-bibtopic1.blg)
-    command: kpsewhich alpha.bst foo.bib
+    command: kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(build;execute;;pkg-bibtopic2.blg)
-    command: kpsewhich plain.bst bar.bib
+    command: kpsewhich pkg-bibtopic2.aux plain.bst bar.bib
   - type: command
     rule: ParseBibTeXLog(build;execute;;pkg-bibtopic3.blg)
-    command: kpsewhich plain.bst foo.bib bar.bib
+    command: kpsewhich pkg-bibtopic3.aux plain.bst foo.bib bar.bib
   - type: command
     rule: LaTeX(build;execute;;pkg-bibtopic.tex)
     command: >-
@@ -42,10 +42,10 @@ events:
       pkg-bibtopic.tex
   - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-bibtopic1.blg)
-    command: kpsewhich alpha.bst foo.bib
+    command: kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-bibtopic2.blg)
-    command: kpsewhich plain.bst bar.bib
+    command: kpsewhich pkg-bibtopic2.aux plain.bst bar.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-bibtopic3.blg)
-    command: kpsewhich plain.bst foo.bib bar.bib
+    command: kpsewhich pkg-bibtopic3.aux plain.bst foo.bib bar.bib
