@@ -39,8 +39,8 @@ export default class LaTeX extends Rule {
         // return updateDependencies.
         return (file.value && file.value.messages &&
           file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text)))
-            ? ['updateDependencies', 'run']
-            : ['updateDependencies']
+          ? ['updateDependencies', 'run']
+          : ['updateDependencies']
       default:
         return ['run']
     }
