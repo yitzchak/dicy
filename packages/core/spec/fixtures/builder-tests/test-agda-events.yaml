@@ -1,0 +1,30 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: Agda(build;execute;job-1;test-agda.lagda)
+    command: agda --latex --latex-dir=. test-agda.lagda
+  - type: command
+    rule: Agda(build;execute;job-2;test-agda.lagda)
+    command: agda --latex --latex-dir=. test-agda.lagda
+  - type: command
+    rule: LaTeX(build;execute;job-1;test-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      test-agda.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;test-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 test-agda.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;test-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      test-agda.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;test-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 test-agda.tex
