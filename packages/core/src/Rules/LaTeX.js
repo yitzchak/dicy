@@ -35,18 +35,19 @@ export default class LaTeX extends Rule {
       case 'ParsedLaTeXFileListing':
         return ['updateDependencies']
       case 'ParsedLaTeXLog':
-        if (file.value && file.value.messages &&
-          file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
-          return ['updateDependencies', 'run']
-        }
-        break
+        // If a rerun instruction is found then return run, otherwise just
+        // return updateDependencies.
+        return (file.value && file.value.messages &&
+          file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text)))
+            ? ['updateDependencies', 'run']
+            : ['updateDependencies']
       default:
         return ['run']
     }
-    return []
   }
 
   constructCommand (): CommandOptions {
+    // Add engine and common options
     const args = [
       this.options.engine,
       '-file-line-error',
@@ -80,6 +81,8 @@ export default class LaTeX extends Rule {
         break
     }
 
+    // xelatex uses a different option to specify dvi output since it runs
+    // xdvipdfmx internally.
     if (PDF_CAPABLE_LATEX_PATTERN.test(this.options.engine)) {
       if (this.options.outputFormat !== 'pdf') {
         switch (this.options.engine) {
@@ -93,7 +96,8 @@ export default class LaTeX extends Rule {
       }
     }
 
-    args.push(this.firstParameter.filePath)
+    // Add the source file.
+    args.push('$DIR_0/$BASE_0')
 
     return {
       args,
