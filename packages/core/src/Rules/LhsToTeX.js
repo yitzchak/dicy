@@ -14,10 +14,31 @@ export default class LhsToTeX extends Rule {
   constructCommand (): CommandOptions {
     const args = ['lhs2TeX']
 
+    // If the source is a literate Agda file then add the `--agda` option
     if (this.firstParameter.type === 'LiterateAgda') {
       args.push('--agda')
     }
 
+    // Add the style option. `poly` is default so omit it.
+    switch (this.options.LhsToTeX_style) {
+      case 'math':
+        args.push('--math')
+        break
+      case 'newCode':
+        args.push('--newcode')
+        break
+      case 'code':
+        args.push('--code')
+        break
+      case 'typewriter':
+        args.push('--tt')
+        break
+      case 'verbatim':
+        args.push('--verb')
+        break
+    }
+
+    // Add the output file and source files.
     args.push('-o', '$DIR_0/$NAME_0.tex', '$DIR_0/$BASE_0')
 
     return {

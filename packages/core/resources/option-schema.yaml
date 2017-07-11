@@ -142,6 +142,19 @@ synctex:
   defaultValue: false
   commands:
     - build
+LhsToTeX_style:
+  description: Style to use for Haskell or Agda conversion.
+  type: string
+  values:
+    - poly
+    - math
+    - newCode
+    - code
+    - typewriter
+    - verbatim
+  defaultValue: poly
+  commands:
+    - build
 MakeIndex_automaticRanges:
   description: Use automatic page range formation. By default, three or more
     successive pages are automatically abbreviated as a range (e.g. 1-3).
