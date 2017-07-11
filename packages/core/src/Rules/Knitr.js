@@ -15,18 +15,21 @@ export default class Knitr extends Rule {
   constructCommand (): CommandOptions {
     const filePath = escapePath(this.firstParameter.filePath)
     const lines = ['library(knitr)']
+    const outputs = ['$DIR_0/$NAME_0.tex']
 
-    if (this.options.synctex) lines.push('opts_knit$set(concordance=TRUE)')
+    // If concordance option is enabled the add the option
+    if (this.options.Knitr_concordance) {
+      lines.push('opts_knit$set(concordance=TRUE)')
+      outputs.push('$DIR_0/$NAME_0-concordance.tex')
+    }
+
     lines.push(`knit('${filePath}')`)
 
     return {
       args: ['Rscript', '-e', lines.join(';')],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: [
-        '$DIR_0/$NAME_0.tex',
-        '$DIR_0/$NAME_0-concordance.tex'
-      ]
+      outputs
     }
   }
 }

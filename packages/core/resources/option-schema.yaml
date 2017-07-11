@@ -142,6 +142,13 @@ synctex:
   defaultValue: false
   commands:
     - build
+Knitr_concordance:
+  description: Enable creation of knitr concordance file used to SyncTeX
+    patching and source code mapping in log messages.
+  type: boolean
+  defaultValue: true
+  commands:
+    - build
 LhsToTeX_style:
   description: Style to use for Haskell or Agda conversion.
   type: string
