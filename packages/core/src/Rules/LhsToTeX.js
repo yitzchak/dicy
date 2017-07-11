@@ -1,8 +1,10 @@
 /* @flow */
 
+import File from '../File'
 import Rule from '../Rule'
+import State from '../State'
 
-import type { CommandOptions } from '../types'
+import type { CommandOptions, Command, Phase } from '../types'
 
 export default class LhsToTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set([
@@ -10,6 +12,12 @@ export default class LhsToTeX extends Rule {
     'LiterateAgda'
   ])]
   static description: string = 'Runs lhs2TeX on lhs or lagda files.'
+
+  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+    return await super.appliesToFile(state, command, phase, jobName, file) &&
+      (file.type === 'LiterateHaskell' ||
+      (file.type === 'LiterateAgda' && state.getOption('agdaProcessor', jobName) === 'lhs2TeX'))
+  }
 
   constructCommand (): CommandOptions {
     const args = ['lhs2TeX']

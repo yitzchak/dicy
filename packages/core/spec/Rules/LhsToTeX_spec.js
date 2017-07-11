@@ -18,6 +18,41 @@ describe('LhsToTeX', () => {
     rule = new LhsToTeX(builder.state, 'build', 'execute', null, ...parameters)
   }
 
+  describe('appliesToFile', () => {
+    it('returns true if file type is \'LiterateHaskell\'', async (done) => {
+      await initialize(['LiterateHaskell.lhs'])
+
+      const file = await builder.getFile('LiterateHaskell.lhs')
+      if (file) {
+        expect(await LhsToTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+      }
+
+      done()
+    })
+
+    it('returns true if agdaProcessor is \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
+      await initialize(['LiterateAgda.lagda'], { agdaProcessor: 'lhs2TeX' })
+
+      const file = await builder.getFile('LiterateAgda.lagda')
+      if (file) {
+        expect(await LhsToTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+      }
+
+      done()
+    })
+
+    it('returns false if agdaProcessor is not \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
+      await initialize(['LiterateAgda.lagda'])
+
+      const file = await builder.getFile('LiterateAgda.lagda')
+      if (file) {
+        expect(await LhsToTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+      }
+
+      done()
+    })
+  })
+
   describe('constructCommand', () => {
     it('returns correct arguments and command options for lhs file.', async (done) => {
       await initialize(['LiterateHaskell.lhs'])

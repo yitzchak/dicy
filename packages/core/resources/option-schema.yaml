@@ -1,3 +1,12 @@
+agdaProcessor:
+  description: Which program to use for processing literate Agda files.
+  type: string
+  values:
+    - agda
+    - lhs2Tex
+  defaultValue: agda
+  commands:
+    - build
 check:
   description: Commands to check.
   type: strings
