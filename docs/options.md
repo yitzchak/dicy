@@ -243,6 +243,27 @@ $PATH:
   -
 ```
 
+# Knitr Options
+
+## Knitr_concordance
+
+-   **Type:** boolean
+-   **Default Value:** `true`
+-   **Commands:** build
+
+Enable creation of knitr concordance file used to SyncTeX patching and source
+code mapping in log messages.
+
+# LhsToTeX Options
+
+## LhsToTeX_style
+
+-   **Type:** string
+-   **Values:** `poly`, `newCode`, `code`, `math`, `typewritter`, `verbatim`
+-   **Commands:** build
+
+Set the style that lhs2TeX will use with the default being `poly`.
+
 # MakeIndex Options
 
 ## MakeIndex_automaticRanges
