@@ -19,7 +19,7 @@ describe('Agda', () => {
   }
 
   describe('appliesToFile', () => {
-    it('returns true if agdaProcessor is \'agda\'', async (done) => {
+    it('returns true if literateAgdaEngine is \'agda\'', async (done) => {
       await initialize(['LiterateAgda.lagda'])
 
       const file = await builder.getFile('LiterateAgda.lagda')
@@ -30,8 +30,8 @@ describe('Agda', () => {
       done()
     })
 
-    it('returns false if agdaProcessor is not \'agda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'], { agdaProcessor: 'lhs2TeX' })
+    it('returns false if literateAgdaEngine is not \'agda\'', async (done) => {
+      await initialize(['LiterateAgda.lagda'], { literateAgdaEngine: 'lhs2TeX' })
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {

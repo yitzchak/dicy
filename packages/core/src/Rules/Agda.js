@@ -12,7 +12,7 @@ export default class Agda extends Rule {
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(state, command, phase, jobName, file) &&
-      state.getOption('agdaProcessor', jobName) === 'agda'
+      state.getOption('literateAgdaEngine', jobName) === 'agda'
   }
 
   constructCommand (): CommandOptions {
