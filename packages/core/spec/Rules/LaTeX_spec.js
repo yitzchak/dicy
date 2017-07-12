@@ -52,8 +52,8 @@ describe('LaTeX', () => {
       done()
     })
 
-    it('returns true if agdaProcessor is \'none\' and file type is \'LiterateAgda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'], { agdaProcessor: 'none' })
+    it('returns true if literateAgdaEngine is \'none\' and file type is \'LiterateAgda\'', async (done) => {
+      await initialize(['LiterateAgda.lagda'], { literateAgdaEngine: 'none' })
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
@@ -63,8 +63,8 @@ describe('LaTeX', () => {
       done()
     })
 
-    it('returns false if agdaProcessor is not \'none\' and file type is \'LiterateAgda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'], { agdaProcessor: 'agda' })
+    it('returns false if literateAgdaEngine is not \'none\' and file type is \'LiterateAgda\'', async (done) => {
+      await initialize(['LiterateAgda.lagda'], { literateAgdaEngine: 'agda' })
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
@@ -74,8 +74,8 @@ describe('LaTeX', () => {
       done()
     })
 
-    it('returns true if haskellProcessor is \'none\' and file type is \'LiterateHaskell\'', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { haskellProcessor: 'none' })
+    it('returns true if literateHaskellEngine is \'none\' and file type is \'LiterateHaskell\'', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { literateHaskellEngine: 'none' })
 
       const file = await builder.getFile('LiterateHaskell.lhs')
       if (file) {
@@ -85,8 +85,8 @@ describe('LaTeX', () => {
       done()
     })
 
-    it('returns false if haskellProcessor is not \'none\' and file type is \'LiterateHaskell\'', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { haskellProcessor: 'lhs2TeX' })
+    it('returns false if literateHaskellEngine is not \'none\' and file type is \'LiterateHaskell\'', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { literateHaskellEngine: 'lhs2TeX' })
 
       const file = await builder.getFile('LiterateHaskell.lhs')
       if (file) {
