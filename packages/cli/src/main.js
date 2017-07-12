@@ -100,7 +100,7 @@ DiCy.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
     for (const option of definitions) {
       // Skip environment variables
-      if (option.name.startsWith('$')) continue
+      if (option.name.startsWith('$') || option.name.includes('_')) continue
 
       const commands = pc.name().split(',')
 
@@ -111,23 +111,31 @@ DiCy.getOptionDefinitions().then(definitions => {
         .map(name => name.length === 1 ? `-${name}` : `--${prefix}${_.kebabCase(name)}`)
         .join(', ')
       const flags = (option.type === 'boolean') ? flagList : `${flagList} <${option.name}>`
+      let description = option.description
+
+      if ((option.type === 'string' || option.type === 'number') && (option.values || option.defaultValue)) {
+        const parts = []
+        if (option.values) parts.push(`values=${option.values.join('|')}`)
+        if (option.defaultValue) parts.push(`default value=${option.defaultValue}`)
+        description += ` (${parts.join('; ')})`
+      }
 
       switch (option.type) {
         case 'string':
           if (option.values) {
-            pc = pc.option(flags, option.description, new RegExp(`^(${option.values.join('|')})$`))
+            pc = pc.option(flags, description, new RegExp(`^(${option.values.join('|')})$`))
           } else {
-            pc = pc.option(flags, option.description)
+            pc = pc.option(flags, description)
           }
           break
         case 'strings':
-          pc = pc.option(flags, option.description, parseStrings)
+          pc = pc.option(flags, description, parseStrings)
           break
         case 'number':
-          pc = pc.option(flags, option.description, parseNumber)
+          pc = pc.option(flags, description, parseNumber)
           break
         case 'numbers':
-          pc = pc.option(flags, option.description, parseNumbers)
+          pc = pc.option(flags, description, parseNumbers)
           break
         case 'boolean':
           pc = pc.option(flags, option.description)
