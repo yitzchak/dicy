@@ -12,7 +12,7 @@ describe('Agda', () => {
   let rule: Agda
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX.tex'), options)
+    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
     builder.state.env.HOME = fixturesPath
     const parameters = await builder.getFiles(parameterPaths)
     rule = new Agda(builder.state, 'build', 'execute', null, ...parameters)
