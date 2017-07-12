@@ -27,7 +27,6 @@ addons:
     sources:
       - r-packages-trusty
     packages:
-      - agda
       - asymptote
       - biber
       - feynmf
