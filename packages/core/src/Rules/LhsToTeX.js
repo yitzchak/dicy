@@ -15,7 +15,7 @@ export default class LhsToTeX extends Rule {
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(state, command, phase, jobName, file) &&
-      (file.type === 'LiterateHaskell' ||
+      ((file.type === 'LiterateHaskell' && state.getOption('haskellProcessor', jobName) === 'lhs2TeX') ||
       (file.type === 'LiterateAgda' && state.getOption('agdaProcessor', jobName) === 'lhs2TeX'))
   }
 

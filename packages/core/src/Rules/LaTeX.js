@@ -11,12 +11,18 @@ const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label\(s\) may have changed\. Rerun|No
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['LaTeX'])]
+  static parameterTypes: Array<Set<string>> = [new Set([
+    'LaTeX',
+    'LiterateHaskell',
+    'LiterateAgda'
+  ])]
   static description: string = 'Runs the required latex variant.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(state, command, phase, jobName, file) &&
-      (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
+      ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))) ||
+      (file.type === 'LiterateHaskell' && state.getOption('haskellProcessor', jobName) === 'none') ||
+      (file.type === 'LiterateAgda' && state.getOption('agdaProcessor', jobName) === 'none'))
   }
 
   async initialize () {

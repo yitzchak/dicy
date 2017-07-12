@@ -18,6 +18,63 @@ describe('LaTeX', () => {
     rule = new LaTeX(builder.state, 'build', 'execute', null, ...parameters)
   }
 
+  describe('appliesToFile', () => {
+    it('returns true if file type is \'LaTeX\'', async (done) => {
+      await initialize(['LaTeX.tex'])
+
+      const file = await builder.getFile('LaTeX.tex')
+      if (file) {
+        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+      }
+
+      done()
+    })
+
+    it('returns true if agdaProcessor is \'none\' and file type is \'LiterateAgda\'', async (done) => {
+      await initialize(['LiterateAgda.lagda'], { agdaProcessor: 'none' })
+
+      const file = await builder.getFile('LiterateAgda.lagda')
+      if (file) {
+        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+      }
+
+      done()
+    })
+
+    it('returns false if agdaProcessor is not \'none\' and file type is \'LiterateAgda\'', async (done) => {
+      await initialize(['LiterateAgda.lagda'], { agdaProcessor: 'agda' })
+
+      const file = await builder.getFile('LiterateAgda.lagda')
+      if (file) {
+        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+      }
+
+      done()
+    })
+
+    it('returns true if haskellProcessor is \'none\' and file type is \'LiterateHaskell\'', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { haskellProcessor: 'none' })
+
+      const file = await builder.getFile('LiterateHaskell.lhs')
+      if (file) {
+        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+      }
+
+      done()
+    })
+
+    it('returns false if haskellProcessor is not \'none\' and file type is \'LiterateHaskell\'', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { haskellProcessor: 'lhs2TeX' })
+
+      const file = await builder.getFile('LiterateHaskell.lhs')
+      if (file) {
+        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+      }
+
+      done()
+    })
+  })
+
   describe('getFileActions', () => {
     beforeEach(async (done) => {
       await initialize(['LaTeX.tex'])

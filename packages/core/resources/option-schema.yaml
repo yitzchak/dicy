@@ -3,7 +3,8 @@ agdaProcessor:
   type: string
   values:
     - agda
-    - lhs2Tex
+    - lhs2TeX
+    - none
   defaultValue: agda
   commands:
     - build
@@ -27,6 +28,13 @@ copyTargetsToRoot:
   defaultValue: false
   commands:
     - build
+disableRules:
+  description: ignore specific rules when processing
+  type: strings
+  defaultValue: []
+  commands:
+    - build
+    - log
 engine:
   aliases:
     - e
@@ -43,13 +51,15 @@ filePath:
   type: string
   commands:
     - build
-disableRules:
-  description: ignore specific rules when processing
-  type: strings
-  defaultValue: []
+haskellProcessor:
+  description: Which program to use for processing literate Haskell files.
+  type: string
+  values:
+    - lhs2TeX
+    - none
+  defaultValue: lhs2TeX
   commands:
     - build
-    - log
 ignoreCache:
   aliases:
     - i
