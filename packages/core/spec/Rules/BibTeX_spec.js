@@ -6,7 +6,7 @@ import path from 'path'
 import DiCy from '../../src/DiCy'
 import BibTeX from '../../src/Rules/BibTeX'
 
-describe('Biber', () => {
+describe('BibTeX', () => {
   const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
   let builder: DiCy
   let rule: BibTeX
