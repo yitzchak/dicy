@@ -213,9 +213,7 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  async run (): Promise<boolean> {
-    let success: boolean = true
-    const commandOptions: CommandOptions = this.constructCommand()
+  async executeCommand (commandOptions: CommandOptions): Promise<Object> {
     const options = this.constructProcessOptions(commandOptions.cd)
     const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : arg))
 
@@ -224,17 +222,21 @@ export default class Rule extends StateConsumer {
       rule: this.id,
       command
     })
+
     const { stdout, stderr, error } = await this.executeChildProcess(command, options)
+
     if (error) {
       this.log({ severity: commandOptions.severity, text: error.toString(), name: this.constructor.name })
-      success = false
     }
 
     if (commandOptions.inputs) await this.getResolvedInputs(commandOptions.inputs)
+
     if (commandOptions.outputs) await this.getResolvedOutputs(commandOptions.outputs)
+
     if (commandOptions.globbedInputs) {
       await Promise.all(commandOptions.globbedInputs.map(pattern => this.getGlobbedInputs(pattern)))
     }
+
     if (commandOptions.globbedOutputs) {
       await Promise.all(commandOptions.globbedOutputs.map(pattern => this.getGlobbedOutputs(pattern)))
     }
@@ -249,7 +251,14 @@ export default class Rule extends StateConsumer {
       if (output) output.value = stderr
     }
 
-    return success
+    return { stdout, stderr, error }
+  }
+
+  async run (): Promise<boolean> {
+    const commandOptions: CommandOptions = this.constructCommand()
+    const { error } = await this.executeCommand(commandOptions)
+
+    return !error
   }
 
   addOutput (file: ?File): void {

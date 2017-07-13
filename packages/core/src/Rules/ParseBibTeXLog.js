@@ -1,11 +1,8 @@
 /* @flow */
 
-import path from 'path'
-
-import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Message, ParsedLog } from '../types'
+import type { Command, ParsedLog } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
@@ -16,18 +13,18 @@ export default class ParseBibTeXLog extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBibTeXLog')
     if (!output) return false
 
-    const bibinputs = this.options['$BIBINPUTS']
-      .filter(pattern => pattern)
-      .map(pattern => this.resolvePath(pattern))
-
-    const messages: Array<Message> = []
-    const inputNames: Array<string> = []
+    const parsedLog: ParsedLog = {
+      messages: [],
+      inputs: [],
+      outputs: []
+    }
 
     await this.firstParameter.parse([{
+      // Missing database files or missing cross references.
       names: ['text'],
       patterns: [/^(I couldn't open database file .*|A bad cross reference---entry .*)$/],
       evaluate: (reference, groups) => {
-        messages.push({
+        parsedLog.messages.push({
           severity: 'error',
           name: 'BibTeX',
           text: groups.text,
@@ -35,10 +32,11 @@ export default class ParseBibTeXLog extends Rule {
         })
       }
     }, {
+      // Warning messages
       names: ['text'],
       patterns: [/^Warning--(.+)$/],
       evaluate: (reference, groups) => {
-        messages.push({
+        parsedLog.messages.push({
           severity: 'warning',
           name: 'BibTeX',
           text: groups.text,
@@ -46,12 +44,17 @@ export default class ParseBibTeXLog extends Rule {
         })
       }
     }, {
+      // Continued source references.
       names: ['line', 'file'],
       patterns: [/^-+line (\d+) of file (.+)$/],
       evaluate: (reference, groups) => {
-        const message = messages[messages.length - 1]
+        const message = parsedLog.messages[parsedLog.messages.length - 1]
         const line = parseInt(groups.line, 10)
+
+        // Extend the log reference
         if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.start
+
+        // Add a source reference
         message.source = {
           file: this.normalizePath(groups.file),
           range: {
@@ -61,11 +64,12 @@ export default class ParseBibTeXLog extends Rule {
         }
       }
     }, {
+      // Error messages with a source reference.
       names: ['text', 'line', 'file'],
       patterns: [/^(.+)---line (\d+) of file (.*)$/],
       evaluate: (reference, groups) => {
         const line = parseInt(groups.line, 10)
-        messages.push({
+        parsedLog.messages.push({
           severity: 'error',
           name: 'BibTeX',
           text: groups.text,
@@ -80,27 +84,23 @@ export default class ParseBibTeXLog extends Rule {
         })
       }
     }, {
+      // Input file notifications.
       names: ['input'],
-      patterns: [/^Database file #\d+: (.*)$/],
+      patterns: [/^(?:Database file #\d+|The style file|The top-level auxiliary file|A level-\d+ auxiliary file): (.*)$/],
       evaluate: (reference, groups) => {
-        inputNames.push(groups.input)
+        parsedLog.inputs.push(groups.input)
       }
     }])
 
-    const parsedLog: ParsedLog = {
-      messages,
-      inputs: [],
-      outputs: []
-    }
+    const { stdout } = await this.executeCommand({
+      args: ['kpsewhich'].concat(parsedLog.inputs),
+      cd: '$ROOTDIR',
+      severity: 'warning'
+    })
 
-    for (const inputName of inputNames) {
-      for (const bibinput of bibinputs) {
-        const input = path.resolve(bibinput, inputName)
-        if (await File.canRead(input)) {
-          parsedLog.inputs.push(this.normalizePath(input))
-        }
-      }
-    }
+    parsedLog.inputs = stdout
+      ? stdout.split('\n').filter(file => file).map(file => this.normalizePath(file))
+      : []
 
     output.value = parsedLog
 

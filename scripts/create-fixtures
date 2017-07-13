@@ -23,12 +23,15 @@ cp output/biber.bcf BiberControlFile.bcf
 cp output/biber.blg BiberLog.blg
 cp output/biber.fls LaTeXFileListing.fls
 cp output/biber.log LaTeXLog.log
+cp output/biber.nlo NomenclatureControlFile.nlo
+cp output/biber.bdx BibRefControlFile.bdx
+cp output/biber.idx IndexControlFile.idx
 
 rm -rf output
 
 cd ../builder-tests
 
-for file in {*.tex,*.lhs,*.Rnw}; do
+for file in {*.tex,*.lhs,*.lagda,*.Rnw}; do
   echo "Creating event archive for $file"
   HOME=. node ../../../../cli/lib/main.js bl --save-events=command,log "$file" &>/dev/null
   HOME=. node ../../../../cli/lib/main.js s "$file" &>/dev/null

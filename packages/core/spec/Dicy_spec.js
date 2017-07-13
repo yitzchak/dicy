@@ -20,7 +20,7 @@ describe('DiCy', () => {
   let dicy: DiCy
   let fixturesPath: string
   const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
-  let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw)$/i })
+  let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda)$/i })
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()

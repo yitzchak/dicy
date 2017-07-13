@@ -1,4 +1,4 @@
-# Options
+# Common Options
 
 ## cleanPatterns
 
@@ -242,6 +242,83 @@ $PATH:
   - $ROOTDIR/$OUTDIR
   -
 ```
+
+# Knitr Options
+
+## Knitr_concordance
+
+-   **Type:** boolean
+-   **Default Value:** `true`
+-   **Commands:** build
+
+Enable creation of knitr concordance file used to SyncTeX patching and source
+code mapping in log messages.
+
+# LhsToTeX Options
+
+## LhsToTeX_style
+
+-   **Type:** string
+-   **Values:** `poly`, `newCode`, `code`, `math`, `typewritter`, `verbatim`
+-   **Commands:** build
+
+Set the style that lhs2TeX will use with the default being `poly`.
+
+# MakeIndex Options
+
+## MakeIndex_automaticRanges
+
+-   **Type:** boolean
+-   **Default Value:** `true`
+-   **Commands:** build
+
+Use automatic page range formation. By default, three or more successive pages
+are automatically abbreviated as a range (e.g. 1-3).
+
+## MakeIndex_compressBlanks
+
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** build
+
+Compress intermediate blanks including leading and trailing blanks and tabs.
+
+## MakeIndex_ordering
+
+-   **Type:** string
+-   **Values:** `letter`, `word`
+-   **Default Value:** `word`
+-   **Commands:** build
+
+Ordering scheme where `letter` ordering ignores spaces between words and `word`
+ordering respects spaces between word.
+
+## MakeIndex_sorting
+
+-   **Type:** string
+-   **Values:** `default`, `german`, `thai`, `locale`
+-   **Default Value:** `default`
+-   **Commands:** build
+
+Set the sorting method to default (ASCII), german, thai or using the system
+locale.
+
+## MakeIndex_startPage
+
+-   **Type:** string
+-   **Values:** `any`, `odd`, `even` or number
+-   **Commands:** build
+
+Set the start page.
+
+## MakeIndex_style
+
+-   **Type:** string
+-   **Commands:** build
+
+Use a custom style for formatting the index. For nomenclature indicies
+`nomencl.ist` is used by default. For bibref indicies `bibref.ist` is used by
+default.
 
 [action]: events#action
 [build]: commands#build

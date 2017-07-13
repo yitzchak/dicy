@@ -49,10 +49,13 @@ describe('File', () => {
   it('verifies that the detected file types are correct', async (done) => {
     const rootPath = path.join(fixturesPath, 'file-types')
     for (const fileName of await readdir.async(rootPath)) {
-      const [, type] = fileName.match(/^([^.-]+)/)
+      const [, type, subType] = fileName.match(/^([^-._]+)(?:_([^-.]+))?/)
       const file = await createFile(path.join('file-types', fileName))
       expect(file).toBeDefined()
-      if (file) expect(file.type).toEqual(type)
+      if (file) {
+        expect(file.type).toEqual(type)
+        expect(file.subType).toEqual(subType)
+      }
     }
     done()
   })

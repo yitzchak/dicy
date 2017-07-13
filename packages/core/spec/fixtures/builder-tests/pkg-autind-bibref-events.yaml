@@ -13,11 +13,11 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -output-directory=output -jobname=job-2 pkg-autind-bibref.tex
   - type: command
-    rule: MakeIndex(build;execute;job-1;job-1.bdx)
-    command: makeindex -t job-1.brlg -o job-1.bnd -s bibref.ist job-1.bdx
-  - type: command
     rule: MakeIndex(build;execute;job-1;job-1.adx)
     command: makeindex -t job-1.alg -o job-1.and job-1.adx
+  - type: command
+    rule: MakeIndex(build;execute;job-1;job-1.bdx)
+    command: makeindex -t job-1.brlg -o job-1.bnd -s bibref.ist job-1.bdx
   - type: command
     rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
@@ -27,13 +27,13 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       pkg-autind-bibref.tex
   - type: command
+    rule: MakeIndex(build;execute;job-2;output/job-2.adx)
+    command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
+  - type: command
     rule: MakeIndex(build;execute;job-2;output/job-2.bdx)
     command: >-
       makeindex -t output/job-2.brlg -o output/job-2.bnd -s bibref.ist
       output/job-2.bdx
-  - type: command
-    rule: MakeIndex(build;execute;job-2;output/job-2.adx)
-    command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
   - type: command
     rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
     command: bibtex output/job-2.aux
@@ -49,10 +49,22 @@ events:
     rule: MakeIndex(build;execute;job-2;output/job-2.adx)
     command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
   - type: command
+    rule: ParseBibTeXLog(build;execute;job-1;job-1.blg)
+    command: kpsewhich job-1.aux xplain.bst foo.bib
+  - type: command
+    rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
+    command: bibtex job-1.aux
+  - type: command
     rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       pkg-autind-bibref.tex
+  - type: command
+    rule: ParseBibTeXLog(build;execute;job-2;output/job-2.blg)
+    command: kpsewhich output/job-2.aux xplain.bst foo.bib
+  - type: command
+    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/job-2.aux
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-autind-bibref.tex)
     command: >-
@@ -64,3 +76,15 @@ events:
   - type: command
     rule: MakeIndex(build;execute;job-2;output/job-2.adx)
     command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
+  - type: command
+    rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
+    command: bibtex job-1.aux
+  - type: command
+    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    command: bibtex output/job-2.aux
+  - type: command
+    rule: ParseBibTeXLog(log;execute;job-1;job-1.blg)
+    command: kpsewhich job-1.aux xplain.bst foo.bib
+  - type: command
+    rule: ParseBibTeXLog(log;execute;job-2;output/job-2.blg)
+    command: kpsewhich output/job-2.aux xplain.bst foo.bib

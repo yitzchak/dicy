@@ -11,12 +11,18 @@ const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label\(s\) may have changed\. Rerun|No
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['LaTeX'])]
+  static parameterTypes: Array<Set<string>> = [new Set([
+    'LaTeX',
+    'LiterateHaskell',
+    'LiterateAgda'
+  ])]
   static description: string = 'Runs the required latex variant.'
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     return await super.appliesToFile(state, command, phase, jobName, file) &&
-      (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))
+      ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))) ||
+      (file.type === 'LiterateHaskell' && state.getOption('literateHaskellEngine', jobName) === 'none') ||
+      (file.type === 'LiterateAgda' && state.getOption('literateAgdaEngine', jobName) === 'none'))
   }
 
   async initialize () {
@@ -35,18 +41,19 @@ export default class LaTeX extends Rule {
       case 'ParsedLaTeXFileListing':
         return ['updateDependencies']
       case 'ParsedLaTeXLog':
-        if (file.value && file.value.messages &&
-          file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text))) {
-          return ['updateDependencies', 'run']
-        }
-        break
+        // If a rerun instruction is found then return run, otherwise just
+        // return updateDependencies.
+        return (file.value && file.value.messages &&
+          file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text)))
+          ? ['updateDependencies', 'run']
+          : ['updateDependencies']
       default:
         return ['run']
     }
-    return []
   }
 
   constructCommand (): CommandOptions {
+    // Add engine and common options
     const args = [
       this.options.engine,
       '-file-line-error',
@@ -80,6 +87,8 @@ export default class LaTeX extends Rule {
         break
     }
 
+    // xelatex uses a different option to specify dvi output since it runs
+    // xdvipdfmx internally.
     if (PDF_CAPABLE_LATEX_PATTERN.test(this.options.engine)) {
       if (this.options.outputFormat !== 'pdf') {
         switch (this.options.engine) {
@@ -93,7 +102,8 @@ export default class LaTeX extends Rule {
       }
     }
 
-    args.push(this.firstParameter.filePath)
+    // Add the source file.
+    args.push('$DIR_0/$BASE_0')
 
     return {
       args,

@@ -55,6 +55,3 @@ events:
     command: >-
       lualatex -file-line-error -interaction=batchmode -recorder '-jobname=job
       5' 'test-name with spaces.tex'
-  - type: command
-    rule: DviToPdf(build;execute;job 3;job 3.dvi)
-    command: xdvipdfmx -o 'job 3.pdf' 'job 3.dvi'

@@ -1,0 +1,29 @@
+\documentclass{article}
+
+\usepackage[backend=\jobname]{biblatex}
+
+\usepackage{bibref,makeidx,nomencl}
+
+\makeindex
+\makenomenclature
+
+\bibliography{BibTeXFile}{}
+
+\begin{document}
+
+Kilroy was here.
+
+foo, wibble, wibble \cite{wibble}, \index{gronk}.
+
+\section{Constants}
+
+\nomenclature{$\alpha$}{Fine-structure constant (Sommerfeld's constant)}
+\nomenclature{$\hbar$}{Dirac constant (reduced Planck constant)}
+
+\printnomenclature
+
+\printbibliography
+
+\printindex
+
+\end{document}

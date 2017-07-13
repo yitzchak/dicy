@@ -60,6 +60,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     supertabular \
     svn-prov \
     texware \
+    ucs \
     xfor \
     xstring
 fi

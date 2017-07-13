@@ -1,0 +1,30 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LhsToTeX(build;execute;job-1;test-lhs2TeX-agda.lagda)
+    command: lhs2TeX --agda -o test-lhs2TeX-agda.tex test-lhs2TeX-agda.lagda
+  - type: command
+    rule: LhsToTeX(build;execute;job-2;test-lhs2TeX-agda.lagda)
+    command: lhs2TeX --agda -o test-lhs2TeX-agda.tex test-lhs2TeX-agda.lagda
+  - type: command
+    rule: LaTeX(build;execute;job-1;test-lhs2TeX-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      test-lhs2TeX-agda.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;test-lhs2TeX-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 test-lhs2TeX-agda.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;test-lhs2TeX-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      test-lhs2TeX-agda.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;test-lhs2TeX-agda.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-2 test-lhs2TeX-agda.tex
