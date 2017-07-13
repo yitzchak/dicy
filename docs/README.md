@@ -1,10 +1,10 @@
 # DiCy
 
-A JavaScript based builder for LaTeX, knitr and literate Haskell that
-automatically builds dependencies. Can automatically process projects that
-utilize Asymptote, Biber, BibTeX, dvitopdf, MetaPost, makeindex, makeglossaries,
-or SageTeX. Also, parses and filters output logs and error messages generated
-during build.
+A JavaScript based builder for LaTeX, knitr, literate Agda and literate Haskell
+that automatically builds dependencies. Can automatically process projects that
+utilize Agda, Asymptote, Biber, BibTeX, dvitopdf, knitr, lhs2TeX, MetaPost,
+makeindex, makeglossaries, or SageTeX. Also, parses and filters output logs and
+error messages generated during build.
 
 ## Installation
 
