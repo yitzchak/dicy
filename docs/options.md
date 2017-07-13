@@ -116,6 +116,30 @@ Job name used for latex.
 
 Job names used for latex.
 
+## literateAgdaEngine
+
+-   **Type:** string
+-   **Values:** `agda`, `lhs2TeX` or `none`
+-   **Default Value:** `agda`
+-   **Commands:** [build][]
+-   **Command Line Interface:**  `--literate-agda-engine <engine>`, `-a <engine>`
+
+The program to preprocess literate Agda source with before sending the source to
+LaTeX. If `none` is selected then LaTeX will typeset the code directly without
+preprocessing.
+
+## literateHaskellEngine
+
+-   **Type:** string
+-   **Values:** `lhs2TeX` or `none`
+-   **Default Value:** `lhs2TeX`
+-   **Commands:** [build][]
+-   **Command Line Interface:**  `--literate-haskell-engine <engine>`, `-h <engine>`
+
+The program to preprocess literate Haskell source with before sending the source to
+LaTeX. If `none` is selected then LaTeX will typeset the code directly without
+preprocessing.
+
 ## phaseCycles
 
 -   **Type:** number
