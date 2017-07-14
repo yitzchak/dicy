@@ -18,11 +18,13 @@ echo Creating LaTeX files...
 mkdir output
 latex -jobname=biber -interaction=batchmode -recorder -output-directory=output -synctex=1 LaTeX_article.tex &>/dev/null
 biber output/biber.bcf &>/dev/null
+xdvipdfmx -o PortableDocumentFormat.pdf output/biber.dvi &>/dev/null
+dvips -o PostScript.ps output/biber.dvi &>/dev/null
 cp output/biber.aux LaTeXAuxilary.aux
 cp output/biber.bcf BiberControlFile.bcf
 cp output/biber.blg BiberLog.blg
 cp output/biber.fls LaTeXFileListing.fls
-cp output/biber.log LaTeXLog.log
+cp output/biber.log LaTeXLog_pdfTeX.log
 cp output/biber.nlo NomenclatureControlFile.nlo
 cp output/biber.bdx BibRefControlFile.bdx
 cp output/biber.idx IndexControlFile.idx

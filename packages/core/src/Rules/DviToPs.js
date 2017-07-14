@@ -12,7 +12,11 @@ export default class DviToPs extends Rule {
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
-    return state.getOption('outputFormat', jobName) === 'ps' && appliesToFile
+    const outputFormat = state.getOption('outputFormat', jobName)
+    const producer = state.getOption('producer', jobName)
+
+    return appliesToFile &&
+      (outputFormat === 'ps' || (outputFormat === 'pdf' && producer === 'ps2pdf'))
   }
 
   constructCommand (): CommandOptions {

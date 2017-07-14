@@ -40,6 +40,17 @@ describe('DviToPdf', () => {
 
       done()
     })
+
+    it('returns false if outputFormat is \'pdf\' but producer is not a dvipdf variant.', async (done) => {
+      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'pdf', producer: 'ps2pdf' })
+
+      const file = await builder.getFile('DeviceIndependentFile.dvi')
+      if (file) {
+        expect(await DviToPdf.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+      }
+
+      done()
+    })
   })
 
   describe('constructCommand', () => {
@@ -57,6 +68,14 @@ describe('DviToPdf', () => {
         severity: 'error',
         outputs: ['$DIR_0/$NAME_0.pdf']
       })
+
+      done()
+    })
+
+    it('change command name if producer is set.', async (done) => {
+      await initialize(['LaTeX_article.tex'], { producer: 'dvipdfm' })
+
+      expect(rule.constructCommand().args[0]).toEqual('dvipdfm')
 
       done()
     })

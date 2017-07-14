@@ -12,13 +12,16 @@ export default class DviToPdf extends Rule {
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
-    return state.getOption('outputFormat', jobName) === 'pdf' && appliesToFile
+    const outputFormat = state.getOption('outputFormat', jobName)
+    const producer = state.getOption('producer', jobName)
+
+    return outputFormat === 'pdf' && !!producer && !!producer.match(/^x?dvipdf(m|mx)?$/) && appliesToFile
   }
 
   constructCommand (): CommandOptions {
     return {
       args: [
-        'xdvipdfmx',
+        this.options.producer,
         '-o',
         '$DIR_0/$NAME_0.pdf',
         '$DIR_0/$BASE_0'

@@ -149,6 +149,17 @@ preprocessing.
 
 Maximum number of evaluation cycles in each phase.
 
+## producer
+
+-   **Type:** `dvipdfmx`, `xdvipdfmx`, `dvipdf`, `ps2pdf`
+-   **Values:** 
+-   **Default Value:** `20`
+-   **Commands:** [build][]
+-   **Command Line Interface:**  `--producer <producer>`, `-p <producer>`
+
+Program to use when post-processing DVI output in order to produce PDF. This is
+only used for LaTeX engines not capable of natively producing PDF.
+
 ## outputDirectory
 
 -   **Type:** string
