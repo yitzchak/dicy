@@ -20,15 +20,19 @@ latex -jobname=biber -interaction=batchmode -recorder -output-directory=output -
 biber output/biber.bcf &>/dev/null
 xdvipdfmx -o PortableDocumentFormat.pdf output/biber.dvi &>/dev/null
 dvips -o PostScript.ps output/biber.dvi &>/dev/null
+cp output/biber.acn AcronymControlFile.acn
 cp output/biber.aux LaTeXAuxilary.aux
 cp output/biber.bcf BiberControlFile.bcf
+cp output/biber.bdx BibRefControlFile.bdx
 cp output/biber.blg BiberLog.blg
+cp output/biber.dvi DeviceIndependentFile.dvi
 cp output/biber.fls FileListing.fls
+cp output/biber.glo GlossaryControlFile.glo
+cp output/biber.idx IndexControlFile.idx
+cp output/biber.ist IndexStyleFile.ist
 cp output/biber.log LaTeXLog_pdfTeX.log
 cp output/biber.nlo NomenclatureControlFile.nlo
-cp output/biber.bdx BibRefControlFile.bdx
-cp output/biber.idx IndexControlFile.idx
-cp output/biber.dvi DeviceIndependentFile.dvi
+cp output/biber.sagetex.sage Sage.sage
 
 rm -rf output
 

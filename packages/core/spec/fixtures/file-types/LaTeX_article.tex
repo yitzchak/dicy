@@ -3,6 +3,24 @@
 \usepackage[backend=\jobname]{biblatex}
 
 \usepackage{bibref,makeidx,nomencl}
+\usepackage{sagetex}
+\usepackage[acronym]{glossaries}
+
+\makeglossaries
+
+\newglossaryentry{baffles}{
+  name=baffles,
+  description={The blind spot behind a submarine which makes a good hidding spot
+    for other submarines}
+}
+
+\newglossaryentry{zero}{
+  name=absolute zero,
+  description={The temperature at which entropy is minimized}
+}
+
+\newacronym{dc}{DC}{Direct Current}
+\newacronym{rawq}{RAWQ}{Right Answer; Wrong Question}
 
 \makeindex
 \makenomenclature
@@ -20,10 +38,17 @@ foo, wibble, wibble \cite{wibble}, \index{gronk}.
 \nomenclature{$\alpha$}{Fine-structure constant (Sommerfeld's constant)}
 \nomenclature{$\hbar$}{Dirac constant (reduced Planck constant)}
 
+\begin{sageblock}
+  f(x) = cos(x) * exp(x)
+\end{sageblock}
+
+The temperature in  the \gls{baffles} baffles is greater then \gls{zero} because
+\acrlong{dc} can be abbreviated \acrshort{dc}.
+
 \printnomenclature
-
+\printglossary[type=\acronymtype]
+\printglossary
 \printbibliography
-
 \printindex
 
 \end{document}
