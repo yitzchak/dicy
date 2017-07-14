@@ -27,7 +27,7 @@ export default class LaTeX extends Rule {
 
   async initialize () {
     await this.getResolvedInputs([
-      '$OUTDIR/$JOB.fls-ParsedLaTeXFileListing',
+      '$OUTDIR/$JOB.fls-ParsedFileListing',
       '$OUTDIR/$JOB.log-ParsedLaTeXLog'
     ])
     await this.addResolvedTargets([
@@ -38,7 +38,7 @@ export default class LaTeX extends Rule {
 
   async getFileActions (file: File): Promise<Array<Action>> {
     switch (file.type) {
-      case 'ParsedLaTeXFileListing':
+      case 'ParsedFileListing':
         return ['updateDependencies']
       case 'ParsedLaTeXLog':
         // If a rerun instruction is found then return run, otherwise just

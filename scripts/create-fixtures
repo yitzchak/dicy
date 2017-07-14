@@ -23,7 +23,7 @@ dvips -o PostScript.ps output/biber.dvi &>/dev/null
 cp output/biber.aux LaTeXAuxilary.aux
 cp output/biber.bcf BiberControlFile.bcf
 cp output/biber.blg BiberLog.blg
-cp output/biber.fls LaTeXFileListing.fls
+cp output/biber.fls FileListing.fls
 cp output/biber.log LaTeXLog_pdfTeX.log
 cp output/biber.nlo NomenclatureControlFile.nlo
 cp output/biber.bdx BibRefControlFile.bdx

@@ -61,7 +61,7 @@ LaTeXAuxilary:
   fileName: !!js/regexp /\.aux$/i
 LaTeXClass:
   fileName: !!js/regexp /\.cls$/i
-LaTeXFileListing:
+FileListing:
   fileName: !!js/regexp /\.fls$/i
 LaTeXLog:
   contents: !!js/regexp /^This is ((?:pdf|e-u?p|u?p|Lua|Xe)?TeX),/
@@ -99,7 +99,7 @@ ParsedAsymptoteStdErr: {}
 ParsedBibTeXLog: {}
 ParsedBiberLog: {}
 ParsedLaTeXAuxilary: {}
-ParsedLaTeXFileListing: {}
+ParsedFileListing: {}
 ParsedLaTeXLog: {}
 ParsedLaTeXMagic: {}
 ParsedMakeIndexLog: {}
