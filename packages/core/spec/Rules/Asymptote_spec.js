@@ -34,7 +34,7 @@ describe('Asymptote', () => {
       done()
     })
 
-    it('returns a updateDependencies action for a BibTeX log file.', async (done) => {
+    it('returns a updateDependencies action for Asymptote stdout.', async (done) => {
       const file = await builder.getFile('Asymptote.log-ParsedAsymptoteStdOut')
       if (file) {
         const actions = await rule.getFileActions(file)
