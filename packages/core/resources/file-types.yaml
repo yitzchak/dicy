@@ -82,6 +82,9 @@ MakeIndexLog:
   fileName: !!js/regexp /\..+lg$/i
 MetaPost:
   fileName: !!js/regexp /\.mp$/i
+  contents: !!js/regexp /^ *(?:end|bye)\b/
+MetaPostLibrary:
+  fileName: !!js/regexp /\.mp$/i
 MetaPostLog:
   contents: !!js/regexp /^This is MetaPost,/
   fileName: !!js/regexp /\.log$/i
