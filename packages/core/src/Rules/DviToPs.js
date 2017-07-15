@@ -12,7 +12,15 @@ export default class DviToPs extends Rule {
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
     const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
-    return state.getOption('outputFormat', jobName) === 'ps' && appliesToFile
+    const outputFormat = state.getOption('outputFormat', jobName)
+    const intermediatePostScript = state.getOption('intermediatePostScript', jobName)
+
+    return appliesToFile &&
+      (outputFormat === 'ps' || (outputFormat === 'pdf' && !!intermediatePostScript))
+  }
+
+  async initialize () {
+    await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.ps')
   }
 
   constructCommand (): CommandOptions {

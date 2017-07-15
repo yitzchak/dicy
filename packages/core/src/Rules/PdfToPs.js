@@ -15,6 +15,10 @@ export default class PdfToPs extends Rule {
     return state.getOption('outputFormat', jobName) === 'ps' && appliesToFile
   }
 
+  async initialize () {
+    await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.ps')
+  }
+
   constructCommand (): CommandOptions {
     return {
       args: [

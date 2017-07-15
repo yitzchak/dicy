@@ -12,8 +12,8 @@ describe('LhsToTeX', () => {
   let rule: Knitr
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
+    options.ignoreHomeOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'Knitr.Rnw'), options)
-    builder.state.env.HOME = fixturesPath
     const parameters = await builder.getFiles(parameterPaths)
     rule = new Knitr(builder.state, 'build', 'execute', null, ...parameters)
   }

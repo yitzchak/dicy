@@ -98,41 +98,20 @@ export type CommandEvent = {
   command: string
 }
 
-export type FileChangedEvent = {
-  type: 'fileChanged',
-  file: string
+export type FileEvent = {
+  type: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved',
+  file: string,
+  virtual?: boolean
 }
 
-export type FileAddedEvent = {
-  type: 'fileAdded',
-  file: string
-}
-
-export type FileDeletedEvent = {
-  type: 'fileDeleted',
-  file: string
-}
-
-export type FileRemovedEvent = {
-  type: 'fileRemoved',
-  file: string
-}
-
-export type InputAddedEvent = {
-  type: 'inputAdded',
+export type InputOutputEvent = {
+  type: 'inputAdded' | 'outputAdded',
   rule: string,
-  file: string
+  file: string,
+  virtual?: boolean
 }
 
-export type OutputAddedEvent = {
-  type: 'outputAdded',
-  rule: string,
-  file: string
-}
-
-export type Event = LogEvent | ActionEvent | CommandEvent | FileAddedEvent |
-  FileDeletedEvent | FileRemovedEvent | FileChangedEvent | InputAddedEvent |
-  OutputAddedEvent
+export type Event = LogEvent | ActionEvent | CommandEvent | FileEvent | InputOutputEvent
 
 export type Option = {
   name: string,

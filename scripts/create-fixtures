@@ -16,16 +16,23 @@ mv Knitr-concordance.tex KnitrConcordance-concordance.tex
 
 echo Creating LaTeX files...
 mkdir output
-latex -jobname=biber -interaction=batchmode -recorder -output-directory=output -synctex=1 LaTeX.tex &>/dev/null
+latex -jobname=biber -interaction=batchmode -recorder -output-directory=output -synctex=1 LaTeX_article.tex &>/dev/null
 biber output/biber.bcf &>/dev/null
+xdvipdfmx -o PortableDocumentFormat.pdf output/biber.dvi &>/dev/null
+dvips -o PostScript.ps output/biber.dvi &>/dev/null
+cp output/biber.acn AcronymControlFile.acn
 cp output/biber.aux LaTeXAuxilary.aux
 cp output/biber.bcf BiberControlFile.bcf
-cp output/biber.blg BiberLog.blg
-cp output/biber.fls LaTeXFileListing.fls
-cp output/biber.log LaTeXLog.log
-cp output/biber.nlo NomenclatureControlFile.nlo
 cp output/biber.bdx BibRefControlFile.bdx
+cp output/biber.blg BiberLog.blg
+cp output/biber.dvi DeviceIndependentFile.dvi
+cp output/biber.fls FileListing.fls
+cp output/biber.glo GlossaryControlFile.glo
 cp output/biber.idx IndexControlFile.idx
+cp output/biber.ist IndexStyleFile.ist
+cp output/biber.log LaTeXLog_pdfTeX.log
+cp output/biber.nlo NomenclatureControlFile.nlo
+cp output/biber.sagetex.sage Sage.sage
 
 rm -rf output
 
@@ -33,6 +40,6 @@ cd ../builder-tests
 
 for file in {*.tex,*.lhs,*.lagda,*.Rnw}; do
   echo "Creating event archive for $file"
-  HOME=. node ../../../../cli/lib/main.js bl --save-events=command,log "$file" &>/dev/null
-  HOME=. node ../../../../cli/lib/main.js s "$file" &>/dev/null
+  node ../../../../cli/lib/main.js bl --save-events=command,log --ignore-home-options "$file" &>/dev/null
+  node ../../../../cli/lib/main.js s --ignore-home-options "$file" &>/dev/null
 done

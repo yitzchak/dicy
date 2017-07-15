@@ -6,14 +6,14 @@ import path from 'path'
 import DiCy from '../../src/DiCy'
 import BibTeX from '../../src/Rules/BibTeX'
 
-describe('Biber', () => {
+describe('BibTeX', () => {
   const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
   let builder: DiCy
   let rule: BibTeX
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
+    options.ignoreHomeOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    builder.state.env.HOME = fixturesPath
     const parameters = await builder.getFiles(parameterPaths)
     rule = new BibTeX(builder.state, 'build', 'execute', null, ...parameters)
   }

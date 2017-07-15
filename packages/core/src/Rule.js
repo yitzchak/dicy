@@ -265,7 +265,12 @@ export default class Rule extends StateConsumer {
     if (!file) return
     if (!this.outputs.has(file.filePath)) {
       this.outputs.set(file.filePath, file)
-      this.emit('outputAdded', { type: 'outputAdded', rule: this.id, file: file.filePath })
+      this.emit('outputAdded', {
+        type: 'outputAdded',
+        rule: this.id,
+        file: file.filePath,
+        virtual: file.virtual
+      })
     }
   }
 
@@ -295,7 +300,11 @@ export default class Rule extends StateConsumer {
   async updateOutputs () {
     for (const file: File of this.outputs.values()) {
       if (await file.update()) {
-        this.emit('fileChanged', { type: 'fileChanged', file })
+        this.emit('fileChanged', {
+          type: 'fileChanged',
+          file,
+          virtual: file.virtual
+        })
       }
     }
   }
@@ -306,7 +315,12 @@ export default class Rule extends StateConsumer {
       // $FlowIgnore
       file.addRule(this)
       this.inputs.set(file.filePath, file)
-      this.emit('inputAdded', { type: 'inputAdded', rule: this.id, file: file.filePath })
+      this.emit('inputAdded', {
+        type: 'inputAdded',
+        rule: this.id,
+        file: file.filePath,
+        virtual: file.virtual
+      })
     }
   }
 

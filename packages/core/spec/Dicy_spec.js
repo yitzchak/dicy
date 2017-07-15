@@ -37,8 +37,7 @@ describe('DiCy', () => {
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
         // Initialize dicy and listen for messages
-        dicy = await DiCy.create(filePath)
-        dicy.state.env.HOME = fixturesPath
+        dicy = await DiCy.create(filePath, { ignoreHomeOptions: true })
 
         // Load the event archive
         const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
@@ -61,10 +60,10 @@ describe('DiCy', () => {
           }
         }
 
-        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
-
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
+
+        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
 
         done()
       // $FlowIgnore

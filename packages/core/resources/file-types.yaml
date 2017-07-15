@@ -61,7 +61,7 @@ LaTeXAuxilary:
   fileName: !!js/regexp /\.aux$/i
 LaTeXClass:
   fileName: !!js/regexp /\.cls$/i
-LaTeXFileListing:
+FileListing:
   fileName: !!js/regexp /\.fls$/i
 LaTeXLog:
   contents: !!js/regexp /^This is ((?:pdf|e-u?p|u?p|Lua|Xe)?TeX),/
@@ -82,6 +82,9 @@ MakeIndexLog:
   fileName: !!js/regexp /\..+lg$/i
 MetaPost:
   fileName: !!js/regexp /\.mp$/i
+  contents: !!js/regexp /^ *(?:end|bye)\b/
+MetaPostLibrary:
+  fileName: !!js/regexp /\.mp$/i
 MetaPostLog:
   contents: !!js/regexp /^This is MetaPost,/
   fileName: !!js/regexp /\.log$/i
@@ -99,7 +102,7 @@ ParsedAsymptoteStdErr: {}
 ParsedBibTeXLog: {}
 ParsedBiberLog: {}
 ParsedLaTeXAuxilary: {}
-ParsedLaTeXFileListing: {}
+ParsedFileListing: {}
 ParsedLaTeXLog: {}
 ParsedLaTeXMagic: {}
 ParsedMakeIndexLog: {}

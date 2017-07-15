@@ -73,7 +73,7 @@ const command = async (inputs, env) => {
         console.log(`[${event.rule}] Executing \`${event.command}\``)
       })
       .on('fileDeleted', event => {
-        console.log(`Deleting \`${event.file}\``)
+        if (!event.virtual) console.log(`Deleting \`${event.file}\``)
       })
 
     for (const type of saveEvents) {
@@ -84,6 +84,10 @@ const command = async (inputs, env) => {
     process.on('SIGINT', () => dicy.kill())
 
     await dicy.run(...commands)
+
+    for (const target of await dicy.getTargetPaths()) {
+      console.log(`Produced \`${target}\``)
+    }
 
     if (saveEvents.length !== 0) {
       const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')

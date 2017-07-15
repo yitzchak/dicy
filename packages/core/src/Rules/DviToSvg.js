@@ -15,6 +15,10 @@ export default class DviToSvg extends Rule {
     return state.getOption('outputFormat', jobName) === 'svg' && appliesToFile
   }
 
+  async initialize () {
+    await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.svg')
+  }
+
   constructCommand (): CommandOptions {
     return {
       args: [
