@@ -49,6 +49,16 @@ ignoreCache:
   commands:
     - build
   noInvalidate: true
+intermediatePostScript:
+  aliases:
+    - ps
+  description: Generate PostScript using dvips when the output format is pdf.
+    This is only used for LaTeX engines not capable of natively producing PDF.
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
+    - graph
 jobName:
   aliases:
     - j
@@ -104,23 +114,7 @@ phaseCycles:
     - log
     - scrub
   noInvalidate: true
-producer:
-  aliases:
-    - p
-  description: Program to use when post-processing DVI output in order to
-    produce PDF. This is only used for LaTeX engines not capable of natively
-    producing PDF.
-  type: string
-  values:
-    - dvipdfmx
-    - xdvipdfmx
-    - dvipdf
-    - ps2pdf
-  defaultValue: xdvipdfmx
-  commands:
-    - build
-    - graph
-outputDirectory:  
+outputDirectory:
   aliases:
     - o
     - output

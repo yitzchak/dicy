@@ -30,8 +30,8 @@ describe('DviToPs', () => {
       done()
     })
 
-    it('returns true if outputFormat is \'pdf\' and producer is \'ps2pdf\'', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'pdf', producer: 'ps2pdf' })
+    it('returns true if outputFormat is \'pdf\' and intermediatePostScript is set', async (done) => {
+      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'pdf', intermediatePostScript: true })
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
