@@ -32,7 +32,7 @@ describe('Sage', () => {
           '$DIR_0/$NAME_0.scmd',
           '$DIR_0/$BASE_0.py'
         ],
-        globbedOutputs: ['$DIR_0/sage-plots-for-$NAME_0.tex/*']
+        globbedOutputs: ['$DIR_0/sage-plots-for-$JOB.tex/*']
       })
 
       done()
