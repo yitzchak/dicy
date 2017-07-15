@@ -47,6 +47,13 @@ export default class StateConsumer {
     this.state.targets.add(this.resolvePath(filePath))
   }
 
+  async replaceResolvedTarget (oldFilePath: string, newFilePath: string) {
+    const x = this.resolvePath(oldFilePath)
+    if (this.state.targets.has(x)) {
+      await this.addResolvedTarget(newFilePath)
+    }
+  }
+
   addResolvedTargets (filePaths: Array<string>) {
     for (const filePath of filePaths) {
       this.addResolvedTarget(filePath)

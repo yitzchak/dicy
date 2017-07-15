@@ -72,6 +72,23 @@ describe('DviToPdf', () => {
       done()
     })
 
+    it('returns correct arguments and command options for dvi file when the producer is dvipdf.', async (done) => {
+      await initialize(['DeviceIndependentFile.dvi'], { producer: 'dvipdf' })
+
+      expect(rule.constructCommand()).toEqual({
+        args: [
+          'dvipdf',
+          '$DIR_0/$BASE_0',
+          '$DIR_0/$NAME_0.pdf'
+        ],
+        cd: '$ROOTDIR',
+        severity: 'error',
+        outputs: ['$DIR_0/$NAME_0.pdf']
+      })
+
+      done()
+    })
+
     it('change command name if producer is set.', async (done) => {
       await initialize(['LaTeX_article.tex'], { producer: 'dvipdfm' })
 

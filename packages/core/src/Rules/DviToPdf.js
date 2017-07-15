@@ -18,14 +18,24 @@ export default class DviToPdf extends Rule {
     return outputFormat === 'pdf' && !!producer && !!producer.match(/^x?dvipdf(m|mx)?$/) && appliesToFile
   }
 
+  async initialize () {
+    await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.pdf')
+  }
+
   constructCommand (): CommandOptions {
     return {
-      args: [
-        this.options.producer,
-        '-o',
-        '$DIR_0/$NAME_0.pdf',
-        '$DIR_0/$BASE_0'
-      ],
+      args: this.options.producer === 'dvipdf'
+        ? [
+          'dvipdf',
+          '$DIR_0/$BASE_0',
+          '$DIR_0/$NAME_0.pdf'
+        ]
+        : [
+          this.options.producer,
+          '-o',
+          '$DIR_0/$NAME_0.pdf',
+          '$DIR_0/$BASE_0'
+        ],
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: ['$DIR_0/$NAME_0.pdf']
