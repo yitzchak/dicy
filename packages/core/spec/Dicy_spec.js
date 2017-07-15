@@ -61,10 +61,10 @@ describe('DiCy', () => {
           }
         }
 
-        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
-
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
+
+        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
 
         done()
       // $FlowIgnore
