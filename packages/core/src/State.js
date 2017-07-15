@@ -165,10 +165,17 @@ export default class State extends EventEmitter {
     if (!file) {
       file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash, value)
       if (!file) {
-        this.emit('fileRemoved', { type: 'fileRemoved', file: filePath })
+        this.emit('fileRemoved', {
+          type: 'fileRemoved',
+          file: filePath
+        })
         return
       }
-      this.emit('fileAdded', { type: 'fileAdded', file: filePath })
+      this.emit('fileAdded', {
+        type: 'fileAdded',
+        file: filePath,
+        virtual: file.virtual
+      })
       this.files.set(filePath, file)
     }
 
@@ -196,7 +203,11 @@ export default class State extends EventEmitter {
     if (file.jobNames.size === 0) {
       if (unlink) await file.delete()
       this.files.delete(file.filePath)
-      this.emit('fileDeleted', { type: 'fileDeleted', file: file.filePath })
+      this.emit('fileDeleted', {
+        type: 'fileDeleted',
+        file: file.filePath,
+        virtual: file.virtual
+      })
     }
   }
 
