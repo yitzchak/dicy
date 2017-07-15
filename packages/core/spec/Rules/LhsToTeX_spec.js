@@ -12,8 +12,8 @@ describe('LhsToTeX', () => {
   let rule: LhsToTeX
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
+    options.ignoreHomeOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    builder.state.env.HOME = fixturesPath
     const parameters = await builder.getFiles(parameterPaths)
     rule = new LhsToTeX(builder.state, 'build', 'execute', null, ...parameters)
   }

@@ -40,6 +40,6 @@ cd ../builder-tests
 
 for file in {*.tex,*.lhs,*.lagda,*.Rnw}; do
   echo "Creating event archive for $file"
-  HOME=. node ../../../../cli/lib/main.js bl --save-events=command,log "$file" &>/dev/null
-  HOME=. node ../../../../cli/lib/main.js s "$file" &>/dev/null
+  HOME=. node ../../../../cli/lib/main.js bl --save-events=command,log --ignore-home-options "$file" &>/dev/null
+  HOME=. node ../../../../cli/lib/main.js s --ignore-home-options "$file" &>/dev/null
 done

@@ -28,12 +28,18 @@ export default class ApplyOptions extends Rule {
 
   async assignOptions (): Promise<void> {
     // All the possible sources of configuration data with low priority first.
-    const inputs: Array<File> = await this.getResolvedInputs([
+    const optionPaths = [
       '$HOME/.dicy.yaml-ParsedYAML',
       'dicy.yaml-ParsedYAML',
       '$NAME.yaml-ParsedYAML',
       '$BASE-ParsedLaTeXMagic',
-      'dicy-instance.yaml-ParsedYAML'])
+      'dicy-instance.yaml-ParsedYAML'
+    ]
+
+    // Remove the home path is ignoreHomeOptions is set.
+    if (this.options.ignoreHomeOptions) optionPaths.shift()
+
+    const inputs: Array<File> = await this.getResolvedInputs(optionPaths)
 
     // Reset the options and assign from frrom the inputs
     this.state.resetOptions()

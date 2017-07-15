@@ -12,8 +12,8 @@ describe('LaTeX', () => {
   let rule: LaTeX
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
+    options.ignoreHomeOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    builder.state.env.HOME = fixturesPath
     const parameters = await builder.getFiles(parameterPaths)
     rule = new LaTeX(builder.state, 'build', 'execute', null, ...parameters)
   }

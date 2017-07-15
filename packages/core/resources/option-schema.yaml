@@ -49,6 +49,17 @@ ignoreCache:
   commands:
     - build
   noInvalidate: true
+ignoreHomeOptions:
+  description: Ignore options from YAML configuration file found in the user's
+    home directory.
+  type: boolean
+  defaultValue: false
+  commands:
+    - build
+    - clean
+    - graph
+    - log
+    - scrub
 intermediatePostScript:
   aliases:
     - ps
