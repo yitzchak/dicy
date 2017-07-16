@@ -4,13 +4,12 @@
 import 'babel-polyfill'
 import _ from 'lodash'
 import chalk from 'chalk'
+import cliui from 'cliui'
 import path from 'path'
 import program from 'commander'
-import cliui from 'cliui'
+import yaml from 'js-yaml'
 
 import { DiCy, File } from '@dicy/core'
-
-const ui = cliui({ width: 80 })
 
 function parseStrings (value) {
   return value.split(/\s*,\s*/)
@@ -39,41 +38,104 @@ function cloneOptions (options) {
 
 const command = async (inputs, env) => {
   const commands = env.name().split(',')
-  const { saveEvents = [], verbose = false, ...options } = cloneOptions(env.opts())
+  const {
+    saveEvents = [],
+    verbose = false,
+    consoleEventOutput = false,
+    ...options
+  } = cloneOptions(env.opts())
+  const eventData = {}
   commands.unshift('load')
   commands.push('save')
+
+  function log (message) {
+    if (consoleEventOutput) return
+
+    const ui = cliui()
+    const severityColumnWidth = 10
+
+    function printReference (reference, label) {
+      if (!reference) return
+      const start = reference.range && reference.range.start
+        ? ` @ ${reference.range.start}`
+        : ''
+      const end = reference.range && reference.range.end
+        ? `-${reference.range.end}`
+        : ''
+      return printRow('', chalk.dim(`[${label}] ${reference.file}${start}${end}`))
+    }
+
+    function printRow (severity, text) {
+      ui.div({
+        text: severity || '',
+        width: severityColumnWidth
+      }, {
+        text,
+        // $FlowIgnore
+        width: process.stdout.columns - severityColumnWidth
+      })
+    }
+
+    let severity
+
+    switch (message.severity) {
+      case 'error':
+        severity = chalk.red('(ERROR)')
+        break
+      case 'warning':
+        severity = chalk.yellow('(WARNING)')
+        break
+      default:
+        severity = chalk.blue('(INFO)')
+        break
+    }
+
+    let text = message.text
+
+    if (message.name || message.category) {
+      text = `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ${message.text}`
+    }
+
+    text.split('\n').forEach((line, index) => printRow(index === 0 ? severity : '', index === 0 ? line : `- ${line}`))
+
+    printReference(message.source, 'Source')
+    printReference(message.log, 'Log')
+
+    console.log(ui.toString())
+  }
+
+  let success = true
 
   for (const filePath of inputs) {
     const events = []
     const dicy = await DiCy.create(path.resolve(filePath), options)
     dicy
-      .on('log', event => {
-        const nameText = event.name ? `[${event.name}] ` : ''
-        const typeText = event.category ? `${event.category}: ` : ''
-        const text = `${nameText}${typeText}${event.text.replace('\n', ' ')}`
-        switch (event.severity) {
-          case 'error':
-            console.error(chalk.red(text))
-            break
-          case 'warning':
-            console.warn(chalk.yellow(text))
-            break
-          default:
-            console.info(text)
-            break
-        }
-      })
+      .on('log', log)
       .on('action', event => {
         if (verbose) {
           const triggerText = event.triggers.length !== 0 ? ` triggered by updates to ${event.triggers}` : ''
-          console.log(`[${event.rule}] Evaluating ${event.action} action${triggerText}`)
+          log({
+            severity: 'info',
+            name: event.rule,
+            text: `[${event.rule}] Evaluating ${event.action} action${triggerText}`
+          })
         }
       })
       .on('command', event => {
-        console.log(`[${event.rule}] Executing \`${event.command}\``)
+        log({
+          severity: 'info',
+          name: event.rule,
+          text: `Executing \`${event.command}\``
+        })
       })
       .on('fileDeleted', event => {
-        if (!event.virtual) console.log(`Deleting \`${event.file}\``)
+        if (!event.virtual) {
+          log({
+            severity: 'info',
+            name: 'DiCy',
+            text: `Deleting \`${event.file}\``
+          })
+        }
       })
 
     for (const type of saveEvents) {
@@ -83,17 +145,32 @@ const command = async (inputs, env) => {
     process.on('SIGTERM', () => dicy.kill())
     process.on('SIGINT', () => dicy.kill())
 
-    await dicy.run(...commands)
+    success = await dicy.run(...commands) || success
 
     for (const target of await dicy.getTargetPaths()) {
-      console.log(`Produced \`${target}\``)
+      log({
+        severity: 'info',
+        name: 'DiCy',
+        text: `Produced \`${target}\``
+      })
     }
 
     if (saveEvents.length !== 0) {
-      const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
-      await File.safeDump(eventFilePath, { types: saveEvents, events })
+      const data = { types: saveEvents, events }
+      if (consoleEventOutput) {
+        eventData[filePath] = data
+      } else {
+        const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
+        await File.safeDump(eventFilePath, data)
+      }
     }
   }
+
+  if (consoleEventOutput) {
+    console.log(yaml.safeDump(eventData))
+  }
+
+  process.exit(success ? 0 : 1)
 }
 
 program
@@ -147,8 +224,9 @@ DiCy.getOptionDefinitions().then(definitions => {
       }
     }
 
-    pc = pc.option('--save-events <saveEvents>', 'List of event types to save for test usage.', parseStrings, [])
+    pc = pc.option('--save-events <saveEvents>', 'List of event types to save in YAML format. By default this will save to a file <name>-events.yaml unless --console-event-output is enabled.', parseStrings, [])
     pc = pc.option('-v, --verbose', 'Be verbose in command output.')
+    pc = pc.option('--console-event-output', 'Output saved events in YAML format to console. This will supress all other output.')
 
     return pc
   }
@@ -206,6 +284,8 @@ DiCy.getOptionDefinitions().then(definitions => {
     .description('List available rules')
     .option('--command <command>', 'List only rules that apply to a specific command.', null)
     .action(async (env) => {
+      // $FlowIgnore
+      const ui = cliui({ width: process.stdout.columns })
       const { command } = cloneOptions(env.opts())
       const dicy = await DiCy.create('foo.tex')
       ui.div(dicy.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
