@@ -10,8 +10,6 @@ import cliui from 'cliui'
 
 import { DiCy, File } from '@dicy/core'
 
-const ui = cliui({ width: 80 })
-
 function parseStrings (value) {
   return value.split(/\s*,\s*/)
 }
@@ -43,37 +41,90 @@ const command = async (inputs, env) => {
   commands.unshift('load')
   commands.push('save')
 
+  function log (message) {
+    const ui = cliui()
+    const severityColumnWidth = 10
+
+    function printReference (reference, label) {
+      if (!reference) return
+      const start = reference.range && reference.range.start
+        ? ` @ ${reference.range.start}`
+        : ''
+      const end = reference.range && reference.range.end
+        ? `-${reference.range.end}`
+        : ''
+      return printRow('', chalk.dim(`[${label}] ${reference.file}${start}${end}`))
+    }
+
+    function printRow (severity, text) {
+      ui.div({
+        text: severity || '',
+        width: severityColumnWidth
+      }, {
+        text,
+        // $FlowIgnore
+        width: process.stdout.columns - severityColumnWidth
+      })
+    }
+
+    let severity
+
+    switch (message.severity) {
+      case 'error':
+        severity = chalk.red('(ERROR)')
+        break
+      case 'warning':
+        severity = chalk.yellow('(WARNING)')
+        break
+      default:
+        severity = chalk.blue('(INFO)')
+        break
+    }
+
+    let text = message.text
+
+    if (message.name || message.category) {
+      text = `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ${message.text}`
+    }
+
+    text.split('\n').forEach((line, index) => printRow(index === 0 ? severity : '', index === 0 ? line : `- ${line}`))
+
+    printReference(message.source, 'Source')
+    printReference(message.log, 'Log')
+
+    console.log(ui.toString())
+  }
+
   for (const filePath of inputs) {
     const events = []
     const dicy = await DiCy.create(path.resolve(filePath), options)
     dicy
-      .on('log', event => {
-        const nameText = event.name ? `[${event.name}] ` : ''
-        const typeText = event.category ? `${event.category}: ` : ''
-        const text = `${nameText}${typeText}${event.text.replace('\n', ' ')}`
-        switch (event.severity) {
-          case 'error':
-            console.error(chalk.red(text))
-            break
-          case 'warning':
-            console.warn(chalk.yellow(text))
-            break
-          default:
-            console.info(text)
-            break
-        }
-      })
+      .on('log', log)
       .on('action', event => {
         if (verbose) {
           const triggerText = event.triggers.length !== 0 ? ` triggered by updates to ${event.triggers}` : ''
-          console.log(`[${event.rule}] Evaluating ${event.action} action${triggerText}`)
+          log({
+            severity: 'info',
+            name: event.rule,
+            text: `[${event.rule}] Evaluating ${event.action} action${triggerText}`
+          })
         }
       })
       .on('command', event => {
-        console.log(`[${event.rule}] Executing \`${event.command}\``)
+        log({
+          severity: 'info',
+          name: event.rule,
+          text: `Executing \`${event.command}\``
+        })
       })
       .on('fileDeleted', event => {
-        if (!event.virtual) console.log(`Deleting \`${event.file}\``)
+        if (!event.virtual) {
+          log({
+            severity: 'info',
+            name: 'DiCy',
+            text: `Deleting \`${event.file}\``
+          })
+        }
       })
 
     for (const type of saveEvents) {
@@ -86,7 +137,11 @@ const command = async (inputs, env) => {
     await dicy.run(...commands)
 
     for (const target of await dicy.getTargetPaths()) {
-      console.log(`Produced \`${target}\``)
+      log({
+        severity: 'info',
+        name: 'DiCy',
+        text: `Produced \`${target}\``
+      })
     }
 
     if (saveEvents.length !== 0) {
@@ -206,6 +261,8 @@ DiCy.getOptionDefinitions().then(definitions => {
     .description('List available rules')
     .option('--command <command>', 'List only rules that apply to a specific command.', null)
     .action(async (env) => {
+      // $FlowIgnore
+      const ui = cliui({ width: process.stdout.columns })
       const { command } = cloneOptions(env.opts())
       const dicy = await DiCy.create('foo.tex')
       ui.div(dicy.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
