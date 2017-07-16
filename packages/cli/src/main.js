@@ -38,13 +38,13 @@ function cloneOptions (options) {
 
 const command = async (inputs, env) => {
   const commands = env.name().split(',')
-  const eventData = {}
   const {
     saveEvents = [],
     verbose = false,
     consoleEventOutput = false,
     ...options
   } = cloneOptions(env.opts())
+  const eventData = {}
   commands.unshift('load')
   commands.push('save')
 
@@ -226,7 +226,7 @@ DiCy.getOptionDefinitions().then(definitions => {
 
     pc = pc.option('--save-events <saveEvents>', 'List of event types to save in YAML format. By default this will save to a file <name>-events.yaml unless --console-event-output is enabled.', parseStrings, [])
     pc = pc.option('-v, --verbose', 'Be verbose in command output.')
-    pc = pc.option('-c, --console-event-output', 'Output saved events in YAML format to console. This will supress all other output.')
+    pc = pc.option('--console-event-output', 'Output saved events in YAML format to console. This will supress all other output.')
 
     return pc
   }

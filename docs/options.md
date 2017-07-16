@@ -43,6 +43,16 @@ generated file glob pattern and will only match files explicitly created by a
 rule during a command such as [build][]. For instance, `**/*.aux` will cause any
 auxiliary files created by the [LaTeX][] rule to be removed during [clean][].
 
+## consoleEventOutput
+
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** all
+-   **Command Line Interface:**  `--console-event-output`
+
+Output saved events in YAML format to console. This will supress all other
+output.
+
 ## copyTargetsToRoot
 
 -   **Type:** boolean
@@ -190,9 +200,10 @@ Output format of main generated file.
 -   **Commands:** all
 -   **Command Line Interface:** `--save-events <saveEvents>`
 
-Save a transcript of received events to `$NAME-events.yaml`. This options is
-only available from the command line interface and is primarily used to
-construct tests.
+Save a transcript of received events to `$NAME-events.yaml` unless
+[consoleEventOutput][] is enabled. This options is only available from the
+command line interface and is primarily used to construct or provide output
+parsible by a client.
 
 ## severity
 
@@ -358,7 +369,8 @@ default.
 [action]: events#action
 [build]: commands#build
 [clean]: commands#clean
-[cleanPatterns]: #cleanPatterns
+[cleanPatterns]: #cleanpatterns
+[consoleEventOutput]: #consoleeventoutput
 [copyTargetsToRoot]: #copytargetstoroot
 [DviToPdf]: rules#dvitopdf
 [engine]: #engine
