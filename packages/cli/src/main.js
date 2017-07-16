@@ -4,9 +4,10 @@
 import 'babel-polyfill'
 import _ from 'lodash'
 import chalk from 'chalk'
+import cliui from 'cliui'
 import path from 'path'
 import program from 'commander'
-import cliui from 'cliui'
+import yaml from 'js-yaml'
 
 import { DiCy, File } from '@dicy/core'
 
@@ -37,11 +38,19 @@ function cloneOptions (options) {
 
 const command = async (inputs, env) => {
   const commands = env.name().split(',')
-  const { saveEvents = [], verbose = false, ...options } = cloneOptions(env.opts())
+  const eventData = {}
+  const {
+    saveEvents = [],
+    verbose = false,
+    consoleEventOutput = false,
+    ...options
+  } = cloneOptions(env.opts())
   commands.unshift('load')
   commands.push('save')
 
   function log (message) {
+    if (consoleEventOutput) return
+
     const ui = cliui()
     const severityColumnWidth = 10
 
@@ -95,6 +104,8 @@ const command = async (inputs, env) => {
     console.log(ui.toString())
   }
 
+  let success = true
+
   for (const filePath of inputs) {
     const events = []
     const dicy = await DiCy.create(path.resolve(filePath), options)
@@ -134,7 +145,7 @@ const command = async (inputs, env) => {
     process.on('SIGTERM', () => dicy.kill())
     process.on('SIGINT', () => dicy.kill())
 
-    await dicy.run(...commands)
+    success = await dicy.run(...commands) || success
 
     for (const target of await dicy.getTargetPaths()) {
       log({
@@ -145,10 +156,21 @@ const command = async (inputs, env) => {
     }
 
     if (saveEvents.length !== 0) {
-      const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
-      await File.safeDump(eventFilePath, { types: saveEvents, events })
+      const data = { types: saveEvents, events }
+      if (consoleEventOutput) {
+        eventData[filePath] = data
+      } else {
+        const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
+        await File.safeDump(eventFilePath, data)
+      }
     }
   }
+
+  if (consoleEventOutput) {
+    console.log(yaml.safeDump(eventData))
+  }
+
+  process.exit(success ? 0 : 1)
 }
 
 program
@@ -202,8 +224,9 @@ DiCy.getOptionDefinitions().then(definitions => {
       }
     }
 
-    pc = pc.option('--save-events <saveEvents>', 'List of event types to save for test usage.', parseStrings, [])
+    pc = pc.option('--save-events <saveEvents>', 'List of event types to save in YAML format. By default this will save to a file <name>-events.yaml unless --console-event-output is enabled.', parseStrings, [])
     pc = pc.option('-v, --verbose', 'Be verbose in command output.')
+    pc = pc.option('-c, --console-event-output', 'Output saved events in YAML format to console. This will supress all other output.')
 
     return pc
   }
