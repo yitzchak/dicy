@@ -26,30 +26,35 @@ cache: packages
 r_packages:
   - patchSynctex
 
-addons:
-  apt:
-    sources:
-      - r-packages-trusty
-    packages:
-      - asymptote
-      - biber
-      - feynmf
-      - latex-xcolor
-      - lhs2tex
-      - python-pygments
-      - r-recommended
-      - texlive-bibtex-extra
-      - texlive-latex-base
-      - texlive-latex-extra
-      - texlive-latex-recommended
-      - texlive-metapost
-      - texlive-xetex
+# addons:
+#   apt:
+#     sources:
+#       - r-packages-trusty
+#     packages:
+#       - asymptote
+#       - biber
+#       - feynmf
+#       - latex-xcolor
+#       - lhs2tex
+#       - python-pygments
+#       - r-recommended
+#       - texlive-bibtex-extra
+#       - texlive-latex-base
+#       - texlive-latex-extra
+#       - texlive-latex-recommended
+#       - texlive-metapost
+#       - texlive-xetex
 
 # before_install:
 #   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
 #   - ./scripts/install-mac
 #   - ./scripts/install-r-libs
 
+install: []
+
 before_script:
   - npm run update-dependencies
   - npm run bootstrap
+
+script:
+  - npm test
