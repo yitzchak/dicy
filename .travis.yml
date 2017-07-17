@@ -54,6 +54,7 @@ install:
   - npm install
 
 before_script:
+  - tlmgr install adjustbox amsrefs asymptote biber biblatex bibtopic collectbox currfile datatool everypage filemod framed fvextra gincltex glossaries ifplatform lazylist lipsum logreq makeglos mfirstuc minted multibib nomencl polytable standalone stmaryrd subfiles substr supertabular svn-prov texware ucs xfor xstring
   - npm run update-dependencies
   - npm run bootstrap
 
