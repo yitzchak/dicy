@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
-TEX_PACKAGES = (
+TEX_PACKAGES=(
   amsrefs
   asymptote
   biber
