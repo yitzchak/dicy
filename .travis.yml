@@ -50,7 +50,8 @@ r_packages:
 #   - ./scripts/install-mac
 #   - ./scripts/install-r-libs
 
-install: []
+install:
+  - npm install
 
 before_script:
   - npm run update-dependencies
