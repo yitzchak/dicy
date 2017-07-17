@@ -2,32 +2,32 @@
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Updating homebrew...
-  brew update
+  time brew update
 
   echo Installing GhostScript...
-  brew install ghostscript
+  time brew install ghostscript
 
   echo Installing lhs2TeX...
-  brew cask install haskell-platform
-  stack update
-  sudo cabal install lhs2tex
+  time brew cask install haskell-platform
+  time stack update
+  time sudo cabal install lhs2tex
 
   echo Installing R...
-  brew tap homebrew/science
-  brew install r
+  time brew tap homebrew/science
+  time brew install r
 
   echo Installing Pygments...
-  pip install Pygments
+  time pip install Pygments
 
   echo Installing MacTeX...
-  wget http://tug.org/cgi-bin/mactex-download/BasicTeX.pkg
-  sudo installer -pkg BasicTeX.pkg -target /
+  time wget http://tug.org/cgi-bin/mactex-download/BasicTeX.pkg
+  time sudo installer -pkg BasicTeX.pkg -target /
 
   echo Installing TeX packages...
-  sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
-  sudo tlmgr update --self
-  sudo tlmgr update --all
-  sudo tlmgr install \
+  time sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
+  time sudo tlmgr update --self
+  time sudo tlmgr update --all
+  time sudo tlmgr install \
     adjustbox \
     amsrefs \
     asymptote \
