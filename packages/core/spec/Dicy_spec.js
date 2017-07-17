@@ -40,7 +40,7 @@ describe('DiCy', () => {
         dicy = await DiCy.create(filePath, { ignoreHomeOptions: true })
 
         // Load the event archive
-        const eventFilePath = dicy.resolvePath('$DIR/$NAME-events.yaml')
+        const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
         if (await File.canRead(eventFilePath)) {
           expected = await File.safeLoad(eventFilePath)
           for (const type of expected.types) {
@@ -60,10 +60,10 @@ describe('DiCy', () => {
           }
         }
 
+        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
+
         // $FlowIgnore
         if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
-
-        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
 
         done()
       // $FlowIgnore
