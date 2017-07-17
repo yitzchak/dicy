@@ -1,37 +1,38 @@
 #!/usr/bin/env bash
 
-TEX_PACKAGES = \
-  amsrefs \
-  asymptote \
-  biber \
-  bibtopic \
-  currfile \
-  datatool \
-  filemod \
-  fvextra \
-  gincltex \
-  glossaries \
-  ifplatform \
-  index \
-  lazylist \
-  makeglos \
-  mfirstuc \
-  minted \
-  multibib \
-  nomencl \
-  polytable \
-  standalone \
-  subfiles \
-  substr \
-  supertabular \
-  svn-prov \
-  texware \
+TEX_PACKAGES = (
+  amsrefs
+  asymptote
+  biber
+  bibtopic
+  currfile
+  datatool
+  filemod
+  fvextra
+  gincltex
+  glossaries
+  ifplatform
+  index
+  lazylist
+  makeglos
+  mfirstuc
+  minted
+  multibib
+  nomencl
+  polytable
+  standalone
+  subfiles
+  substr
+  supertabular
+  svn-prov
+  texware
   xfor
+)
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-  sudo tlmgr install $TEX_PACKAGES
+  sudo tlmgr install ${TEX_PACKAGES[*]}
 else
-  tlmgr install $TEX_PACKAGES
+  tlmgr install ${TEX_PACKAGES[*]}
 fi
 
 npm install
