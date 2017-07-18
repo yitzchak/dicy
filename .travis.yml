@@ -32,6 +32,7 @@ addons:
   apt:
     packages:
       - ghostscript
+      - lhs2tex
 
 # addons:
 #   apt:
@@ -61,4 +62,4 @@ before_script:
   - scripts/travis-install
 
 script:
-  - cd packages/core && npm test
+  - npm test
