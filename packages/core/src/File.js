@@ -5,6 +5,7 @@ import childProcess from 'child_process'
 import commandJoin from 'command-join'
 import crypto from 'crypto'
 import fs from 'fs-extra'
+import fso from 'fs'
 import path from 'path'
 import readline from 'readline'
 import yaml from 'js-yaml'
@@ -452,7 +453,7 @@ export default class File {
 
   static canRead (filePath: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      fs.access(filePath, fs.constants.R_OK, error => resolve(!error))
+      fs.access(filePath, fso.constants.R_OK, error => resolve(!error))
     })
   }
 

@@ -28,7 +28,7 @@
     "lint": "eslint --color packages",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
-    "test": "eslint --color packages && lerna run --stream test",
+    "test": "echo Linting sources... && eslint --color packages && echo Running core specs... && cd packages/core && npm test",
     "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
     "flow-typed-update": "flow-typed update && lerna exec -- flow-typed update"
   },

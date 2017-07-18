@@ -1,0 +1,55 @@
+#!/bin/bash
+
+TEX_PACKAGES=(
+  amsrefs
+  asymptote
+  biber
+  bibtopic
+  currfile
+  datatool
+  feynmf
+  filehook
+  filemod
+  fvextra
+  gincltex
+  glossaries
+  ifplatform
+  index
+  lazylist
+  luaotfload
+  makeglos
+  mfirstuc
+  minted
+  multibib
+  nomencl
+  polytable
+  standalone
+  subfiles
+  substr
+  supertabular
+  svn-prov
+  texware
+  xfor
+)
+
+echo Installing TeX packages...
+if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+  sudo tlmgr install ${TEX_PACKAGES[*]}
+else
+  tlmgr install ${TEX_PACKAGES[*]}
+  export PATH=~/texlive/bin:$PATH
+fi
+
+echo Installing node...
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+. $NVM_DIR/nvm.sh
+nvm install node
+nvm use node
+
+echo Installing dependencies...
+npm install
+
+echo Boostrapping...
+# Run update-dependencies in case this a GreenKeeper PR
+npm run update-dependencies
+npm run bootstrap
