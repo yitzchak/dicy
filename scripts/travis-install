@@ -50,7 +50,6 @@ echo Installing dependencies...
 npm install
 
 echo Boostrapping...
+# Run update-dependencies in case this a GreenKeeper PR
 npm run update-dependencies
 npm run bootstrap
-cp -r packages/core/spec/fixtures/builder-tests .
-npm run dicy -- bl builder-tests/test-latex.tex

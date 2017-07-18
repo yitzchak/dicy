@@ -32,39 +32,42 @@ describe('DiCy', () => {
   describe('can successfully build', () => {
     for (const name of tests) {
       const spec = it(name, async (done) => {
-        let expected = { types: [], events: [] }
-        let events = []
-        const filePath = path.resolve(fixturesPath, 'builder-tests', name)
+        try {
+          let expected = { types: [], events: [] }
+          let events = []
+          const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
-        // Initialize dicy and listen for messages
-        dicy = await DiCy.create(filePath, { ignoreHomeOptions: true })
+          // Initialize dicy and listen for messages
+          dicy = await DiCy.create(filePath, { ignoreHomeOptions: true })
 
-        // Load the event archive
-        const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
-        if (await File.canRead(eventFilePath)) {
-          expected = await File.safeLoad(eventFilePath)
-          for (const type of expected.types) {
-            dicy.on(type, event => { events.push(event) })
+          // Load the event archive
+          const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
+          if (await File.canRead(eventFilePath)) {
+            expected = await File.safeLoad(eventFilePath)
+            for (const type of expected.types) {
+              dicy.on(type, event => { events.push(event) })
+            }
           }
-        }
 
-        // Run the builder
-        expect(await dicy.run('load')).toBeTruthy()
+          // Run the builder
+          expect(await dicy.run('load')).toBeTruthy()
 
-        for (const command of dicy.options.check || []) {
-          if (!await doCheck(command)) {
-            // $FlowIgnore
-            spec.pend(`Skipped test since required program is not available (\`${command}\` was not successful).`)
-            done()
-            return
+          for (const command of dicy.options.check || []) {
+            if (!await doCheck(command)) {
+              // $FlowIgnore
+              spec.pend(`Skipped test since required program is not available (\`${command}\` was not successful).`)
+              done()
+              return
+            }
           }
+
+          expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
+
+          // $FlowIgnore
+          if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
+        } catch (e) {
+          console.log(e)
         }
-
-        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
-
-        // $FlowIgnore
-        if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
-
         done()
       // $FlowIgnore
       }, ASYNC_TIMEOUT)
