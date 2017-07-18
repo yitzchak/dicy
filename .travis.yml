@@ -23,8 +23,7 @@ cache: packages
 # brew_packages:
 #  - ghostscript
 
-r_packages:
-  - patchSynctex
+pandoc: false
 
 brew_packages:
   - ghostscript
@@ -58,7 +57,7 @@ addons:
 #   - ./scripts/install-mac
 #   - ./scripts/install-r-libs
 
-install:
+before_script:
   - scripts/travis-install
 
 script:
