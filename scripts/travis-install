@@ -52,3 +52,5 @@ npm install
 echo Boostrapping...
 npm run update-dependencies
 npm run bootstrap
+cp -r packages/core/spec/fixtures/builder-tests .
+npm run dicy -- bl builder-tests/test-latex.tex
