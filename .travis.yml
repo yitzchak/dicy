@@ -26,6 +26,9 @@ cache: packages
 r_packages:
   - patchSynctex
 
+brew_packages:
+  - ghostscript
+
 addons:
   apt:
     packages:
