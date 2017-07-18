@@ -84,9 +84,11 @@ export default class ParseBibTeXLog extends Rule {
         })
       }
     }, {
-      // Input file notifications.
+      // Input file notifications. The non-greedy pattern at the beginning is to
+      // work around a MiKTeX bug in which there is no newline after the first
+      // line.
       names: ['input'],
-      patterns: [/^(?:Database file #\d+|The style file|The top-level auxiliary file|A level-\d+ auxiliary file): (.*)$/],
+      patterns: [/^.*?(?:Database file #\d+|The style file|The top-level auxiliary file|A level-\d+ auxiliary file): (.*)$/],
       evaluate: (reference, groups) => {
         parsedLog.inputs.push(groups.input)
       }
