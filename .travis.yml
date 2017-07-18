@@ -61,4 +61,4 @@ before_script:
   - scripts/travis-install
 
 script:
-  - npm test
+  - cd packages/core && npm test
