@@ -42,12 +42,12 @@ describe('DiCy', () => {
 
           // Load the event archive
           const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
-          if (await File.canRead(eventFilePath)) {
+          try {
             expected = await File.safeLoad(eventFilePath)
             for (const type of expected.types) {
               dicy.on(type, event => { events.push(event) })
             }
-          }
+          } catch (e) {}
 
           // Run the builder
           expect(await dicy.run('load')).toBeTruthy()
