@@ -37,6 +37,7 @@ TEX_PACKAGES=(
   xfor
   xstring
 )
+HASKELL_VERSION=8.0.2
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing MacTeX...
@@ -56,7 +57,9 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   time brew install ghostscript
 
   echo Installing lhs2TeX...
-  time brew cask install haskell-platform
+  time wget "https://downloads.haskell.org/~platform/${HASKELL_VERSION}/Haskell%20Platform%20${HASKELL_VERSION}%20Minimal%2064bit-signed.pkg"
+  time sudo installer -pkg "Haskell Platform ${HASKELL_VERSION} Minimal 64bit-signed.pkg" -target /
+  # time brew cask install haskell-platform
   time stack update
   time sudo cabal install lhs2tex
 
