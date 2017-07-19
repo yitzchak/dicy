@@ -39,14 +39,16 @@ TEX_PACKAGES=(
 )
 HASKELL_VERSION=8.0.2
 GHOSTSCRIPT_VERSION=9.21
+CTAN_MIRROR=http://mirrors.concertpass.com/tex-archive
+FORTRAN_ARCHIVE=gfortran-4.8.2-darwin13.tar.bz2
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing MacTeX...
-  time wget http://tug.org/cgi-bin/mactex-download/BasicTeX.pkg
+  time wget "${CTAN_MIRROR}/systems/mac/mactex/BasicTeX.pkg"
   time sudo installer -pkg BasicTeX.pkg -target /
 
   echo Installing TeX packages...
-  time sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
+  time sudo tlmgr option repository "${CTAN_MIRROR}/systems/texlive/tlnet"
   time sudo tlmgr update --self
   time sudo tlmgr update --all
   time sudo tlmgr install ${TEX_PACKAGES[*]}
@@ -69,6 +71,8 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing R...
   time wget https://cloud.r-project.org/bin/macosx/R-latest.pkg
   time sudo installer -pkg R-latest.pkg -target /
+  time wget "http://r.research.att.com/libs/${FORTRAN_ARCHIVE}"
+  time sudo tar fvxz $FORTRAN_ARCHIVE -C /
   # time brew tap homebrew/science
   # time brew install r
 
