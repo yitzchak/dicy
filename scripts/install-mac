@@ -63,7 +63,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   time wget "https://downloads.haskell.org/~platform/${HASKELL_VERSION}/Haskell%20Platform%20${HASKELL_VERSION}%20Minimal%2064bit-signed.pkg"
   time sudo installer -pkg "Haskell Platform ${HASKELL_VERSION} Minimal 64bit-signed.pkg" -target /
   # time brew cask install haskell-platform
-  time stack update
+  # time stack update
   time sudo cabal install lhs2tex
 
   echo Installing R...
