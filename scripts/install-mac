@@ -39,7 +39,7 @@ TEX_PACKAGES=(
 )
 HASKELL_VERSION=8.0.2
 GHOSTSCRIPT_VERSION=9.21
-CTAN_MIRROR=http://mirrors.concertpass.com/tex-archive
+CTAN_MIRROR=http://ctan.mirrors.hoobly.com
 FORTRAN_ARCHIVE=gfortran-4.8.2-darwin13.tar.bz2
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
