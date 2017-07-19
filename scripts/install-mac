@@ -38,6 +38,7 @@ TEX_PACKAGES=(
   xstring
 )
 HASKELL_VERSION=8.0.2
+GHOSTSCRIPT_VERSION=9.21
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Installing MacTeX...
@@ -50,11 +51,13 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   time sudo tlmgr update --all
   time sudo tlmgr install ${TEX_PACKAGES[*]}
 
-  echo Updating homebrew...
-  time brew update
+  # echo Updating homebrew...
+  # time brew update
 
   echo Installing GhostScript...
-  time brew install ghostscript
+  time wget "http://pages.uoregon.edu/koch/Ghostscript-${GHOSTSCRIPT_VERSION}.pkg"
+  time sudo installer -pkg "Ghostscript-${GHOSTSCRIPT_VERSION}.pkg" -target /
+  # time brew install ghostscript
 
   echo Installing lhs2TeX...
   time wget "https://downloads.haskell.org/~platform/${HASKELL_VERSION}/Haskell%20Platform%20${HASKELL_VERSION}%20Minimal%2064bit-signed.pkg"
@@ -64,8 +67,10 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   time sudo cabal install lhs2tex
 
   echo Installing R...
-  time brew tap homebrew/science
-  time brew install r
+  time wget https://cloud.r-project.org/bin/macosx/R-latest.pkg
+  time sudo installer -pkg R-latest.pkg -target /
+  # time brew tap homebrew/science
+  # time brew install r
 
   echo Installing Pygments...
   time pip install Pygments
