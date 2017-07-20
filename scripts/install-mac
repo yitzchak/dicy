@@ -27,5 +27,5 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
   sudo tlmgr update --self
   sudo tlmgr update --all
-  sudo xargs --arg-file=mactex-packages tlmgr install 
+  sudo cat mactex-packages | xargs tlmgr install 
 fi
