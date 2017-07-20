@@ -34,11 +34,11 @@ export default class MakeIndex extends Rule {
     if (file) {
       const parsedLog: ?ParsedLog = file.value
       const { base, ext } = path.parse(this.firstParameter.filePath)
-      const command: string = `makeindex ${base}`
-      const isCall = call => call.command === command && call.status.startsWith('executed')
+      const commandPattern: RegExp = new RegExp(`^(makeindex|splitindex)\\b.*?\\b${base}$`)
+      const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
 
       if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
-        this.info('Skipping makeindex call since it was already executed via shell escape.', this.id)
+        this.info('Skipping makeindex call since makeindex or splitindex was already executed via shell escape.', this.id)
         const firstChar = ext[1]
 
         await this.getResolvedOutputs([
