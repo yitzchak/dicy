@@ -1,66 +1,82 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+TEX_PACKAGES=(
+  adjustbox
+  amsrefs
+  asymptote
+  biber
+  biblatex
+  bibtopic
+  collectbox
+  currfile
+  datatool
+  everypage
+  filemod
+  framed
+  fvextra
+  gincltex
+  glossaries
+  ifplatform
+  lazylist
+  lipsum
+  logreq
+  makeglos
+  mfirstuc
+  minted
+  multibib
+  nomencl
+  polytable
+  standalone
+  stmaryrd
+  subfiles
+  substr
+  supertabular
+  svn-prov
+  texware
+  ucs
+  xfor
+  xstring
+)
+HASKELL_VERSION=8.0.2
+GHOSTSCRIPT_VERSION=9.21
+CTAN_MIRROR=http://ctan.mirrors.hoobly.com
+FORTRAN_ARCHIVE=gfortran-4.8.2-darwin13.tar.bz2
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-  echo Updating homebrew...
-  brew update
-
-  echo Installing GhostScript...
-  brew install ghostscript
-
-  echo Installing lhs2TeX...
-  brew cask install haskell-platform
-  stack update
-  sudo cabal install lhs2tex
-
-  echo Installing R...
-  brew tap homebrew/science
-  brew install r
-
-  echo Installing Pygments...
-  pip install Pygments
-
   echo Installing MacTeX...
-  wget http://tug.org/cgi-bin/mactex-download/BasicTeX.pkg
-  sudo installer -pkg BasicTeX.pkg -target /
+  time wget "${CTAN_MIRROR}/systems/mac/mactex/BasicTeX.pkg"
+  time sudo installer -pkg BasicTeX.pkg -target /
 
   echo Installing TeX packages...
-  sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
-  sudo tlmgr update --self
-  sudo tlmgr update --all
-  sudo tlmgr install \
-    adjustbox \
-    amsrefs \
-    asymptote \
-    biber \
-    biblatex \
-    bibtopic \
-    collectbox \
-    currfile \
-    datatool \
-    everypage \
-    filemod \
-    framed \
-    fvextra \
-    gincltex \
-    glossaries \
-    ifplatform \
-    lazylist \
-    lipsum \
-    logreq \
-    makeglos \
-    mfirstuc \
-    minted \
-    multibib \
-    nomencl \
-    polytable \
-    standalone \
-    stmaryrd \
-    subfiles \
-    substr \
-    supertabular \
-    svn-prov \
-    texware \
-    ucs \
-    xfor \
-    xstring
+  time sudo tlmgr option repository "${CTAN_MIRROR}/systems/texlive/tlnet"
+  time sudo tlmgr update --self
+  time sudo tlmgr update --all
+  time sudo tlmgr install ${TEX_PACKAGES[*]}
+
+  # echo Updating homebrew...
+  # time brew update
+
+  echo Installing GhostScript...
+  time wget "http://pages.uoregon.edu/koch/Ghostscript-${GHOSTSCRIPT_VERSION}.pkg"
+  time sudo installer -pkg "Ghostscript-${GHOSTSCRIPT_VERSION}.pkg" -target /
+  # time brew install ghostscript
+
+  echo Installing lhs2TeX...
+  time wget "https://downloads.haskell.org/~platform/${HASKELL_VERSION}/Haskell%20Platform%20${HASKELL_VERSION}%20Minimal%2064bit-signed.pkg"
+  time sudo installer -pkg "Haskell Platform ${HASKELL_VERSION} Minimal 64bit-signed.pkg" -target /
+  # time brew cask install haskell-platform
+  # time stack update
+  time sudo cabal install lhs2tex
+
+  echo Installing R...
+  time wget https://cloud.r-project.org/bin/macosx/R-latest.pkg
+  time sudo installer -pkg R-latest.pkg -target /
+  time wget "http://r.research.att.com/libs/${FORTRAN_ARCHIVE}"
+  time sudo tar fvxz $FORTRAN_ARCHIVE -C /
+  # time brew tap homebrew/science
+  # time brew install r
+
+  echo Installing Pygments...
+  time pip install Pygments
+
 fi
