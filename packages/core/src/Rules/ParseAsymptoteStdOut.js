@@ -4,13 +4,14 @@ import path from 'path'
 
 import Rule from '../Rule'
 
-import type { ParsedLog } from '../types'
+import type { Action, ParsedLog } from '../types'
 
 export default class ParseAsymptoteStdOut extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['AsymptoteStdOut'])]
+  static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses the console output of Asymptote.'
 
-  async run () {
+  async parse () {
     const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-ParsedAsymptoteStdOut')
     if (!output) return false
 
@@ -18,7 +19,8 @@ export default class ParseAsymptoteStdOut extends Rule {
     const parsedLog: ParsedLog = {
       messages: [],
       inputs: [],
-      outputs: []
+      outputs: [],
+      calls: []
     }
 
     await this.firstParameter.parse([{

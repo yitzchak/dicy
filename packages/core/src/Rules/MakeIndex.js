@@ -2,9 +2,10 @@
 
 import path from 'path'
 
+import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, CommandOptions } from '../types'
+import type { Action, CommandOptions, ParsedLog } from '../types'
 
 export default class MakeIndex extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set([
@@ -15,7 +16,39 @@ export default class MakeIndex extends Rule {
   static description: string = 'Runs makeindex on any index files.'
 
   async getFileActions (file: File): Promise<Array<Action>> {
-    return [file.type === 'ParsedMakeIndexLog' ? 'updateDependencies' : 'run']
+    switch (file.type) {
+      case 'ParsedMakeIndexLog':
+        return ['updateDependencies']
+      case 'ParsedLaTeXLog':
+        return []
+      default:
+        return ['run']
+    }
+  }
+
+  async preEvaluate (): Promise<void> {
+    if (!this.actions.has('run')) return
+
+    const file: ?File = await this.getResolvedInput('$OUTDIR/$JOB.log-ParsedLaTeXLog')
+
+    if (file) {
+      const parsedLog: ?ParsedLog = file.value
+      const { base, ext } = path.parse(this.firstParameter.filePath)
+      const command: string = `makeindex ${base}`
+      const isCall = call => call.command === command && call.status.startsWith('executed')
+
+      if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
+        this.info('Skipping makeindex call since it was already executed via shell escape.', this.id)
+        const firstChar = ext[1]
+
+        await this.getResolvedOutputs([
+          `$DIR_0/$NAME_0.${firstChar}lg`,
+          `$DIR_0/$NAME_0.${firstChar}nd`
+        ])
+
+        this.actions.delete('run')
+      }
+    }
   }
 
   constructCommand (): CommandOptions {

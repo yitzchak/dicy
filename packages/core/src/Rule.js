@@ -15,6 +15,7 @@ export default class Rule extends StateConsumer {
   static commands: Set<Command> = new Set(['build'])
   static alwaysEvaluate: boolean = false
   static ignoreJobName: boolean = false
+  static defaultActions: Array<Action> = ['run']
   static description: string = ''
 
   id: string
@@ -30,7 +31,7 @@ export default class Rule extends StateConsumer {
     if (await this.appliesToPhase(state, command, phase, jobName)) {
       const rule = new this(state, command, phase, jobName)
       await rule.initialize()
-      if (rule.alwaysEvaluate) rule.addAction()
+      if (rule.alwaysEvaluate) rule.addActions()
       return rule
     }
   }
@@ -62,7 +63,7 @@ export default class Rule extends StateConsumer {
             if (!state.rules.has(ruleId)) {
               const rule = new this(state, command, phase, jobName, ...parameters)
               await rule.initialize()
-              if (rule.alwaysEvaluate) rule.addAction(file)
+              if (rule.alwaysEvaluate) rule.addActions(file)
               rules.push(rule)
             }
 
@@ -117,12 +118,10 @@ export default class Rule extends StateConsumer {
   async phaseInitialize (command: ?Command, phase: ?Phase) {
     if ((!command || command === this.command) && (!phase || phase === this.phase) && this.constructor.alwaysEvaluate) {
       if (this.inputs.size === 0) {
-        this.addAction()
+        this.addActions()
       } else {
         for (const input of this.inputs.values()) {
-          for (const action of await this.getFileActions(input)) {
-            this.addAction(input, action)
-          }
+          this.addActions(input, await this.getFileActions(input))
         }
       }
     }
@@ -135,22 +134,26 @@ export default class Rule extends StateConsumer {
       for (const action of await this.getFileActions(file)) {
         if (ruleNeedsUpdate) this.failures.delete(action)
         if (action === 'updateDependencies' || ruleNeedsUpdate) {
-          this.addAction(file, action)
+          this.addActions(file, [action])
         }
       }
     }
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
-    return ['run']
+    return this.constructor.defaultActions
   }
 
-  addAction (file: ?File, action: Action = 'run'): void {
-    const files: ?Set<File> = this.actions.get(action)
-    if (!files) {
-      this.actions.set(action, new Set(file ? [file] : []))
-    } else if (file) {
-      files.add(file)
+  addActions (file?: File, actions?: Array<Action>): void {
+    if (!actions) actions = this.constructor.defaultActions
+
+    for (const action of actions) {
+      const files: ?Set<File> = this.actions.get(action)
+      if (!files) {
+        this.actions.set(action, new Set(file ? [file] : []))
+      } else if (file) {
+        files.add(file)
+      }
     }
   }
 
@@ -177,14 +180,24 @@ export default class Rule extends StateConsumer {
   async preEvaluate (): Promise<void> {}
 
   async evaluate (action: Action): Promise<boolean> {
+    let success: boolean = true
+
     await this.preEvaluate()
-
     if (!this.actions.has(action)) return true
-
     this.actionTrace(action)
-    const success = (action === 'updateDependencies')
-      ? await this.updateDependencies()
-      : await this.run()
+
+    switch (action) {
+      case 'parse':
+        success = await this.parse()
+        break
+      case 'updateDependencies':
+        success = await this.updateDependencies()
+        break
+      default:
+        success = await this.run()
+        break
+    }
+
     if (success) {
       this.failures.delete(action)
     } else {
@@ -259,6 +272,10 @@ export default class Rule extends StateConsumer {
     const { error } = await this.executeCommand(commandOptions)
 
     return !error
+  }
+
+  async parse (): Promise<boolean> {
+    return true
   }
 
   addOutput (file: ?File): void {

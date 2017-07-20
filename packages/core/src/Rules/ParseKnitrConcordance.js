@@ -2,16 +2,17 @@
 
 import Rule from '../Rule'
 
-import type { Command, LineRangeMapping, SourceMap } from '../types'
+import type { Action, Command, LineRangeMapping, SourceMap } from '../types'
 
 const WRAPPED_LINE_PATTERN = /%$/
 
 export default class ParseKnitrConcordance extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['KnitrConcordance'])]
   static commands: Set<Command> = new Set(['build', 'log'])
+  static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses any knitr concordance files.'
 
-  async run () {
+  async parse () {
     const outputFile = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedSourceMap')
     if (!outputFile) return false
 

@@ -2,11 +2,14 @@
 
 import Rule from '../Rule'
 
+import type { Action } from '../types'
+
 export default class ParseLaTeXAuxilary extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LaTeXAuxilary'])]
+  static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses the aux files produced by all variants of latex.'
 
-  async run () {
+  async parse () {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedLaTeXAuxilary')
     if (!output) return false
 
