@@ -13,6 +13,9 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-bibtopic.tex
   - type: command
+    rule: BibTeX(build;execute;;btaux.aux-ParsedLaTeXAuxilary)
+    command: bibtex btaux.aux
+  - type: command
     rule: BibTeX(build;execute;;pkg-bibtopic1.aux-ParsedLaTeXAuxilary)
     command: bibtex pkg-bibtopic1.aux
   - type: command
@@ -27,6 +30,9 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-bibtopic.tex
   - type: command
+    rule: ParseBibTeXLog(build;execute;;btaux.blg)
+    command: kpsewhich btaux.aux plain.bst foo.bib bar.bib
+  - type: command
     rule: ParseBibTeXLog(build;execute;;pkg-bibtopic1.blg)
     command: kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib
   - type: command
@@ -40,6 +46,9 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-bibtopic.tex
+  - type: command
+    rule: ParseBibTeXLog(log;execute;;btaux.blg)
+    command: kpsewhich btaux.aux plain.bst foo.bib bar.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-bibtopic1.blg)
     command: kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib
