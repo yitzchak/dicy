@@ -11,6 +11,9 @@ import yaml from 'js-yaml'
 
 import { DiCy, File } from '@dicy/core'
 
+// $FlowIgnore
+const columns = Math.max(process.stdout.columns, 80)
+
 function parseStrings (value) {
   return value.split(/\s*,\s*/)
 }
@@ -71,8 +74,7 @@ const command = async (inputs, env) => {
         width: severityColumnWidth
       }, {
         text,
-        // $FlowIgnore
-        width: process.stdout.columns - severityColumnWidth
+        width: columns - severityColumnWidth
       })
     }
 
@@ -284,8 +286,7 @@ DiCy.getOptionDefinitions().then(definitions => {
     .description('List available rules')
     .option('--command <command>', 'List only rules that apply to a specific command.', null)
     .action(async (env) => {
-      // $FlowIgnore
-      const ui = cliui({ width: process.stdout.columns })
+      const ui = cliui({ width: columns })
       const { command } = cloneOptions(env.opts())
       const dicy = await DiCy.create('foo.tex')
       ui.div(dicy.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
