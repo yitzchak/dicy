@@ -14,7 +14,7 @@ events:
       -output-directory=output -jobname=job-2 pkg-splitidx.tex
   - type: command
     rule: SplitIndex(build;execute;job-1;job-1.idx;job-1.log-ParsedLaTeXLog)
-    command: splitindex -v -m '' job-1.idx
+    command: splitindex -v -m ' ' job-1.idx
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-splitidx.tex)
     command: >-
@@ -23,7 +23,7 @@ events:
   - type: command
     rule: >-
       SplitIndex(build;execute;job-2;output/job-2.idx;output/job-2.log-ParsedLaTeXLog)
-    command: splitindex -v -m '' output/job-2.idx
+    command: splitindex -v -m ' ' output/job-2.idx
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-splitidx.tex)
     command: >-
