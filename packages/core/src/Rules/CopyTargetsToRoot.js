@@ -13,12 +13,9 @@ export default class CopyTargetsToRoot extends Rule {
   static description: string = 'Copy targets to root directory.'
   static alwaysEvaluate: boolean = true
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
     return !!state.getOption('copyTargetsToRoot', jobName) &&
-      state.targets.has(file.filePath) &&
-      path.dirname(file.filePath) !== '.' &&
-      appliesToFile
+      parameters.every(file => state.targets.has(file.filePath) && path.dirname(file.filePath) !== '.')
   }
 
   async initialize () {

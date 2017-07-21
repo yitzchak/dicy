@@ -10,9 +10,8 @@ export default class PsToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['PostScript'])]
   static description: string = 'Converts PS to PDF using ps2pdf.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
-    return state.getOption('outputFormat', jobName) === 'pdf' && appliesToFile
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return state.getOption('outputFormat', jobName) === 'pdf'
   }
 
   async initialize () {

@@ -18,13 +18,13 @@ describe('DviToPdf', () => {
     rule = new DviToPdf(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
       await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'pdf' })
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToPdf.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await DviToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('DviToPdf', () => {
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToPdf.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await DviToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()
@@ -46,7 +46,7 @@ describe('DviToPdf', () => {
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToPdf.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await DviToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()

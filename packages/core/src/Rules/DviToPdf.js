@@ -10,12 +10,11 @@ export default class DviToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to PDF using (x)dvipdfm(x).'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
     const outputFormat = state.getOption('outputFormat', jobName)
     const intermediatePostScript = state.getOption('intermediatePostScript', jobName)
 
-    return outputFormat === 'pdf' && !intermediatePostScript && appliesToFile
+    return outputFormat === 'pdf' && !intermediatePostScript
   }
 
   async initialize () {

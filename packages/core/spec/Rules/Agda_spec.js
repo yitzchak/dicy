@@ -18,13 +18,13 @@ describe('Agda', () => {
     rule = new Agda(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if literateAgdaEngine is \'agda\'', async (done) => {
       await initialize(['LiterateAgda.lagda'])
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
-        expect(await Agda.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await Agda.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('Agda', () => {
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
-        expect(await Agda.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await Agda.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()

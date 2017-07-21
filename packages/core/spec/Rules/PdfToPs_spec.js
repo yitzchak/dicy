@@ -18,13 +18,13 @@ describe('PdfToPs', () => {
     rule = new PdfToPs(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
       await initialize(['PortableDocumentFormat.pdf'], { outputFormat: 'ps' })
 
       const file = await builder.getFile('PortableDocumentFormat.pdf')
       if (file) {
-        expect(await PdfToPs.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await PdfToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('PdfToPs', () => {
 
       const file = await builder.getFile('PortableDocumentFormat.pdf')
       if (file) {
-        expect(await PdfToPs.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await PdfToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()
