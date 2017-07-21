@@ -4,16 +4,31 @@ import path from 'path'
 
 import File from '../File'
 import Rule from '../Rule'
+import State from '../State'
 
-import type { Action, CommandOptions, ParsedLog } from '../types'
+import type { Action, Command, CommandOptions, ParsedLog, Phase } from '../types'
 
 export default class MakeIndex extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set([
-    'IndexControlFile',
-    'BibRefControlFile',
-    'NomenclatureControlFile'
-  ])]
+  static parameterTypes: Array<Set<string>> = [
+    new Set([
+      'IndexControlFile',
+      'BibRefControlFile',
+      'NomenclatureControlFile'
+    ]),
+    new Set(['ParsedLaTeXLog'])
+  ]
   static description: string = 'Runs makeindex on any index files.'
+
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    const base = path.basename(parameters[0].filePath)
+    const text = `Using splitted index at ${base}`
+    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
+    const parsedLog: ?ParsedLog = parameters[1].value
+
+    return !parsedLog ||
+      (parsedLog.messages.findIndex(message => message.text === text) === -1 &&
+      parsedLog.calls.findIndex(call => commandPattern.test(call.command)) === -1)
+  }
 
   async getFileActions (file: File): Promise<Array<Action>> {
     switch (file.type) {
@@ -29,25 +44,21 @@ export default class MakeIndex extends Rule {
   async preEvaluate (): Promise<void> {
     if (!this.actions.has('run')) return
 
-    const file: ?File = await this.getResolvedInput('$OUTDIR/$JOB.log-ParsedLaTeXLog')
+    const parsedLog: ?ParsedLog = this.secondParameter.value
+    const { base, ext } = path.parse(this.firstParameter.filePath)
+    const commandPattern: RegExp = new RegExp(`^makeindex\\b.*?\\b${base}$`)
+    const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
 
-    if (file) {
-      const parsedLog: ?ParsedLog = file.value
-      const { base, ext } = path.parse(this.firstParameter.filePath)
-      const commandPattern: RegExp = new RegExp(`^(makeindex|splitindex)\\b.*?\\b${base}$`)
-      const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
+    if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
+      this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
+      const firstChar = ext[1]
 
-      if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
-        this.info('Skipping makeindex call since makeindex or splitindex was already executed via shell escape.', this.id)
-        const firstChar = ext[1]
+      await this.getResolvedOutputs([
+        `$DIR_0/$NAME_0.${firstChar}lg`,
+        `$DIR_0/$NAME_0.${firstChar}nd`
+      ])
 
-        await this.getResolvedOutputs([
-          `$DIR_0/$NAME_0.${firstChar}lg`,
-          `$DIR_0/$NAME_0.${firstChar}nd`
-        ])
-
-        this.actions.delete('run')
-      }
+      this.actions.delete('run')
     }
   }
 

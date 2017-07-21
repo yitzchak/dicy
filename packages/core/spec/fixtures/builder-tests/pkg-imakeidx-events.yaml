@@ -13,7 +13,8 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -jobname=makeindex-noautomatic -shell-escape pkg-imakeidx.tex
   - type: command
-    rule: MakeIndex(build;execute;makeindex-noautomatic;persons.idx)
+    rule: >-
+      MakeIndex(build;execute;makeindex-noautomatic;persons.idx;makeindex-noautomatic.log-ParsedLaTeXLog)
     command: makeindex -t persons.ilg -o persons.ind persons.idx
   - type: command
     rule: LaTeX(build;execute;makeindex;pkg-imakeidx.tex)
@@ -21,7 +22,8 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       -jobname=makeindex -shell-escape pkg-imakeidx.tex
   - type: command
-    rule: MakeIndex(build;execute;makeindex-noautomatic;makeindex-noautomatic.idx)
+    rule: >-
+      MakeIndex(build;execute;makeindex-noautomatic;makeindex-noautomatic.idx;makeindex-noautomatic.log-ParsedLaTeXLog)
     command: >-
       makeindex -t makeindex-noautomatic.ilg -o makeindex-noautomatic.ind
       makeindex-noautomatic.idx

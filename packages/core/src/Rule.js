@@ -60,7 +60,7 @@ export default class Rule extends StateConsumer {
             const parameters = candidates.map((files, index) => files[indicies[index]])
             const ruleId = state.getRuleId(this.name, command, phase, jobName, ...parameters)
 
-            if (!state.rules.has(ruleId)) {
+            if (!state.rules.has(ruleId) && await this.appliesToParameters(state, command, phase, jobName, ...parameters)) {
               const rule = new this(state, command, phase, jobName, ...parameters)
               await rule.initialize()
               if (rule.alwaysEvaluate) rule.addActions(file)
@@ -80,6 +80,10 @@ export default class Rule extends StateConsumer {
     }
 
     return rules
+  }
+
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return true
   }
 
   static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {

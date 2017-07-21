@@ -243,6 +243,18 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
+      // makeidx/splitidx messages.
+      names: ['text'],
+      patterns: [/^(Writing index file.*|Using splitted index at.*|Started index file .*)$/],
+      evaluate: (reference, groups) => {
+        parsedLog.messages.push({
+          severity: 'info',
+          name,
+          text: groups.text,
+          log: reference
+        })
+      }
+    }, {
       // Output file message.
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
