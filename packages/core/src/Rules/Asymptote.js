@@ -9,10 +9,6 @@ export default class Asymptote extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['Asymptote'])]
   static description: string = 'Run Asymptote on any generated .asy files.'
 
-  async initialize (): Promise<void> {
-    await this.getResolvedInput('$DIR_0/$NAME_0.log-ParsedAsymptoteStdOut')
-  }
-
   async getFileActions (file: File): Promise<Array<Action>> {
     // ParsedAsymptoteLog triggers updateDependencies, all others trigger run.
     return [file.type === 'ParsedAsymptoteStdOut' ? 'updateDependencies' : 'run']
@@ -27,6 +23,9 @@ export default class Asymptote extends Rule {
       args: ['asy', '-vv', '$BASE_0'],
       cd: '$ROOTDIR_0',
       severity: 'error',
+      inputs: [
+        '$DIR_0/$NAME_0.log-ParsedAsymptoteStdOut'
+      ],
       outputs: [
         '$DIR_0/${NAME_0}_0.pdf',
         '$DIR_0/${NAME_0}_0.eps',
