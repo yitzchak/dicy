@@ -25,12 +25,16 @@ export default class MakeIndex extends Rule {
     const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
 
+    // Avoid makeindex if there is any evidence of splitindex messgesa in the
+    // log or splitindex calls.
     return !parsedLog ||
       (parsedLog.messages.findIndex(message => message.text === text) === -1 &&
       parsedLog.calls.findIndex(call => commandPattern.test(call.command)) === -1)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
+    // Only return a run action for the actual idx file and updateDependencies
+    // for the parsed makeindex log.
     switch (file.type) {
       case 'ParsedMakeIndexLog':
         return ['updateDependencies']
@@ -49,10 +53,14 @@ export default class MakeIndex extends Rule {
     const commandPattern: RegExp = new RegExp(`^makeindex\\b.*?\\b${base}$`)
     const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
 
+    // If the correct makeindex call is found in the log then delete the run
+    // action.
     if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
       this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
       const firstChar = ext[1]
 
+      // At some point we may need to parse the makeindex call to look for the
+      // -t and -o options.
       await this.getResolvedOutputs([
         `$DIR_0/$NAME_0.${firstChar}lg`,
         `$DIR_0/$NAME_0.${firstChar}nd`
