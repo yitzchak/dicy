@@ -119,9 +119,12 @@ export default class File {
 
             matched = matches.every(match => match)
             if (matched) {
+              const groups: Object = {
+                // $FlowIgnore
+                _: matches.map(match => match[0]).join('\n')
+              }
               // $FlowIgnore
               const m = [].concat(...matches.map(match => match.slice(1)))
-              const groups: Object = {}
               parser.names.map((name, index) => {
                 if (m[index] !== undefined) groups[name] = m[index]
               })
