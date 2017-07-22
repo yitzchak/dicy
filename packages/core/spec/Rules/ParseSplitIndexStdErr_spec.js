@@ -18,10 +18,6 @@ describe('ParseSplitIndexStdErr', () => {
       severity: 'error',
       name: 'splitindex',
       text: 'Cannot read raw index file foo.idx',
-      log: {
-        file: 'foo.log-SplitIndexStdErr',
-        range: { start: 1, end: 1 }
-      },
       source: {
         file: '/usr/local/bin/splitindex',
         range: { start: 86, end: 86 }

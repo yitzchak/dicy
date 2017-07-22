@@ -25,11 +25,12 @@ export default class ParseSplitIndexStdOut extends Rule {
       patterns: [/^(.*) at (.*?) line ([0-9]+)\.$/],
       evaluate: (reference, groups) => {
         const line = parseInt(groups.line, 10)
+
+        // Do not include the log reference since it is to a virtual file.
         parsedLog.messages.push({
           severity: 'error',
           name: 'splitindex',
           text: groups.text,
-          log: reference,
           source: {
             file: groups.file,
             range: {

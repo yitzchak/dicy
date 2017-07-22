@@ -23,9 +23,26 @@ export default class ParseSplitIndexStdOut extends Rule {
     }
 
     await this.firstParameter.parse([{
+      names: ['text'],
+      patterns: [/^(Close.*|New index file.*)$/],
+      evaluate: (reference, groups) => {
+        // Do not include the reference since it is to a virtual file.
+        parsedLog.messages.push({
+          severity: 'info',
+          name: 'splitindex',
+          text: groups.text
+        })
+      }
+    }, {
       names: ['filePath'],
       patterns: [/^(.*?) with [0-9]+ lines$/],
       evaluate: (reference, groups) => {
+        // Do not include the reference since it is to a virtual file.
+        parsedLog.messages.push({
+          severity: 'info',
+          name: 'splitindex',
+          text: groups._
+        })
         parsedLog.outputs.push(this.normalizePath(path.resolve(this.rootPath, groups.filePath)))
       }
     }])
