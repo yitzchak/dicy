@@ -15,7 +15,6 @@ export default class ParseSplitIndexStdOut extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-ParsedSplitIndexStdOut')
     if (!output) return false
 
-    let rootPath = this.rootPath
     const parsedLog: ParsedLog = {
       messages: [],
       inputs: [],
@@ -24,21 +23,10 @@ export default class ParseSplitIndexStdOut extends Rule {
     }
 
     await this.firstParameter.parse([{
-      names: ['text'],
-      patterns: [/^(Cannot read raw index file.*|Cannot write to file.*)$/],
-      evaluate: (reference, groups) => {
-        parsedLog.messages.push({
-          severity: 'error',
-          name: 'splitindex',
-          text: groups.text,
-          log: reference
-        })
-      }
-    }, {
       names: ['filePath'],
       patterns: [/^(.*?) with [0-9]+ lines$/],
       evaluate: (reference, groups) => {
-        parsedLog.outputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+        parsedLog.outputs.push(this.normalizePath(path.resolve(this.rootPath, groups.filePath)))
       }
     }])
 
