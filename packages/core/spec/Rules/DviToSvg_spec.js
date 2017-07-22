@@ -18,13 +18,13 @@ describe('DviToSvg', () => {
     rule = new DviToSvg(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'svg\'', async (done) => {
       await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'svg' })
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToSvg.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await DviToSvg.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('DviToSvg', () => {
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToSvg.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await DviToSvg.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()

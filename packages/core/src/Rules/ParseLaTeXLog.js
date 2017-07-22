@@ -2,7 +2,7 @@
 
 import Rule from '../Rule'
 
-import type { Command, Message, ParsedLog } from '../types'
+import type { Action, Command, Message, ParsedLog } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 
@@ -10,12 +10,13 @@ export default class ParseLaTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LaTeXLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
   static description: string = 'Parses the logs produced by all latex variants.'
+  static defaultActions: Array<Action> = ['parse']
 
   /**
    * Parse the latex log.
    * @return {Promise<boolean>}  Status of rule evaluation
    */
-  async run (): Promise<boolean> {
+  async parse (): Promise<boolean> {
     // Get the output file
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedLaTeXLog')
     if (!output) return false
@@ -23,7 +24,8 @@ export default class ParseLaTeXLog extends Rule {
     const parsedLog: ParsedLog = {
       messages: [],
       inputs: [],
-      outputs: []
+      outputs: [],
+      calls: []
     }
     let name: string
     let filePath: string
@@ -241,11 +243,33 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
+      // makeidx/splitidx messages.
+      names: ['text'],
+      patterns: [/^(Writing index file.*|Using splitted index at.*|Started index file .*)$/],
+      evaluate: (reference, groups) => {
+        parsedLog.messages.push({
+          severity: 'info',
+          name,
+          text: groups.text,
+          log: reference
+        })
+      }
+    }, {
       // Output file message.
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
       evaluate: (reference, groups) => {
         parsedLog.outputs.push(this.normalizePath(groups.filePath))
+      }
+    }, {
+      // Run system message.
+      names: ['command', 'status'],
+      patterns: [/^runsystem\((.*?)\)\.\.\.(.*?)\.$/],
+      evaluate: (reference, groups) => {
+        parsedLog.calls.push({
+          command: groups.command,
+          status: groups.status
+        })
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 

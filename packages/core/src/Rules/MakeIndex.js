@@ -2,20 +2,72 @@
 
 import path from 'path'
 
+import File from '../File'
 import Rule from '../Rule'
+import State from '../State'
 
-import type { Action, CommandOptions } from '../types'
+import type { Action, Command, CommandOptions, ParsedLog, Phase } from '../types'
 
 export default class MakeIndex extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set([
-    'IndexControlFile',
-    'BibRefControlFile',
-    'NomenclatureControlFile'
-  ])]
+  static parameterTypes: Array<Set<string>> = [
+    new Set([
+      'IndexControlFile',
+      'BibRefControlFile',
+      'NomenclatureControlFile'
+    ]),
+    new Set(['ParsedLaTeXLog'])
+  ]
   static description: string = 'Runs makeindex on any index files.'
 
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    const base = path.basename(parameters[0].filePath)
+    const text = `Using splitted index at ${base}`
+    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
+    const parsedLog: ?ParsedLog = parameters[1].value
+
+    // Avoid makeindex if there is any evidence of splitindex messgesa in the
+    // log or splitindex calls.
+    return !parsedLog ||
+      (parsedLog.messages.findIndex(message => message.text === text) === -1 &&
+      parsedLog.calls.findIndex(call => commandPattern.test(call.command)) === -1)
+  }
+
   async getFileActions (file: File): Promise<Array<Action>> {
-    return [file.type === 'ParsedMakeIndexLog' ? 'updateDependencies' : 'run']
+    // Only return a run action for the actual idx file and updateDependencies
+    // for the parsed makeindex log.
+    switch (file.type) {
+      case 'ParsedMakeIndexLog':
+        return ['updateDependencies']
+      case 'ParsedLaTeXLog':
+        return []
+      default:
+        return ['run']
+    }
+  }
+
+  async preEvaluate (): Promise<void> {
+    if (!this.actions.has('run')) return
+
+    const parsedLog: ?ParsedLog = this.secondParameter.value
+    const { base, ext } = path.parse(this.firstParameter.filePath)
+    const commandPattern: RegExp = new RegExp(`^makeindex\\b.*?\\b${base}$`)
+    const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
+
+    // If the correct makeindex call is found in the log then delete the run
+    // action.
+    if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
+      this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
+      const firstChar = ext[1]
+
+      // At some point we may need to parse the makeindex call to look for the
+      // -t and -o options.
+      await this.getResolvedOutputs([
+        `$DIR_0/$NAME_0.${firstChar}lg`,
+        `$DIR_0/$NAME_0.${firstChar}nd`
+      ])
+
+      this.actions.delete('run')
+    }
   }
 
   constructCommand (): CommandOptions {

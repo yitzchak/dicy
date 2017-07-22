@@ -1,0 +1,20 @@
+%!TeX jobNames = job-1, job-2
+%!TeX job-2:outputDirectory = output
+%!TeX check = splitindex --version
+\documentclass{article}
+
+\usepackage{splitidx}
+
+\makeindex
+
+\newindex[Index of theories]{theories}
+\newindex[Index of names]{persons}
+
+\begin{document}
+
+Special and General Relativity\sindex[theories]{relativity}...
+Einstein\sindex[persons]{Einstein, Albert}...
+And this is the end of the story.
+\printindex*
+
+\end{document}

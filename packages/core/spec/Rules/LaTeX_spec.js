@@ -18,13 +18,13 @@ describe('LaTeX', () => {
     rule = new LaTeX(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if file type is \'LaTeX\'', async (done) => {
       await initialize(['LaTeX_article.tex'])
 
       const file = await builder.getFile('LaTeX_article.tex')
       if (file) {
-        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('LaTeX', () => {
 
       const file = await builder.getFile('LaTeX_standalone.tex')
       if (file) {
-        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()
@@ -46,7 +46,7 @@ describe('LaTeX', () => {
 
       const file = await builder.getFile('LaTeX_standalone.tex')
       if (file) {
-        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()
@@ -57,7 +57,7 @@ describe('LaTeX', () => {
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
-        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -68,7 +68,7 @@ describe('LaTeX', () => {
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
-        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()
@@ -79,7 +79,7 @@ describe('LaTeX', () => {
 
       const file = await builder.getFile('LiterateHaskell.lhs')
       if (file) {
-        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -90,7 +90,7 @@ describe('LaTeX', () => {
 
       const file = await builder.getFile('LiterateHaskell.lhs')
       if (file) {
-        expect(await LaTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()

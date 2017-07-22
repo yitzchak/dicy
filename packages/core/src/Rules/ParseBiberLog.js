@@ -2,21 +2,23 @@
 
 import Rule from '../Rule'
 
-import type { Command, Message, ParsedLog } from '../types'
+import type { Action, Command, Message, ParsedLog } from '../types'
 
 export default class ParseBiberLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BiberLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
+  static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses any biber produced logs.'
 
-  async run () {
+  async parse () {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBiberLog')
     if (!output) return false
 
     const parsedLog: ParsedLog = {
       messages: [],
       inputs: [],
-      outputs: []
+      outputs: [],
+      calls: []
     }
 
     await this.firstParameter.parse([{

@@ -10,13 +10,11 @@ export default class DviToPs extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to PS using dvips.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
     const outputFormat = state.getOption('outputFormat', jobName)
     const intermediatePostScript = state.getOption('intermediatePostScript', jobName)
 
-    return appliesToFile &&
-      (outputFormat === 'ps' || (outputFormat === 'pdf' && !!intermediatePostScript))
+    return outputFormat === 'ps' || (outputFormat === 'pdf' && !!intermediatePostScript)
   }
 
   async initialize () {

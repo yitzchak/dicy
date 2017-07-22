@@ -107,6 +107,8 @@ ParsedLaTeXLog: {}
 ParsedLaTeXMagic: {}
 ParsedMakeIndexLog: {}
 ParsedSourceMap: {}
+ParsedSplitIndexStdOut: {}
+ParsedSplitIndexStdErr: {}
 ParsedYAML: {}
 PortableDocumentFormat:
   fileName: !!js/regexp /\.pdf$/i
@@ -123,6 +125,8 @@ SageOutput:
   fileName: !!js/regexp /\.sout$/i
 ScalableVectorGraphics:
   fileName: !!js/regexp /\.svg$/i
+SplitIndexStdOut: {}
+SplitIndexStdErr: {}
 StandalonePreambles:
   fileName: !!js/regexp /\.sta$/i
 StateCache:

@@ -13,10 +13,9 @@ export default class LhsToTeX extends Rule {
   ])]
   static description: string = 'Runs lhs2TeX on lhs or lagda files.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(state, command, phase, jobName, file) &&
-      ((file.type === 'LiterateHaskell' && state.getOption('literateHaskellEngine', jobName) === 'lhs2TeX') ||
-      (file.type === 'LiterateAgda' && state.getOption('literateAgdaEngine', jobName) === 'lhs2TeX'))
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return parameters.some(file => ((file.type === 'LiterateHaskell' && state.getOption('literateHaskellEngine', jobName) === 'lhs2TeX') ||
+      (file.type === 'LiterateAgda' && state.getOption('literateAgdaEngine', jobName) === 'lhs2TeX')))
   }
 
   constructCommand (): CommandOptions {

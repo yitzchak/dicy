@@ -230,7 +230,7 @@ export default class DiCy extends StateConsumer {
     for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
       let didEvaluation = false
 
-      for (const action of ['updateDependencies', 'run']) {
+      for (const action of ['parse', 'updateDependencies', 'run']) {
         await this.analyzeFiles(command, phase)
         didEvaluation = await this.evaluate(command, phase, action) || didEvaluation
       }

@@ -2,7 +2,7 @@
 
 import Rule from '../Rule'
 
-import type { Command } from '../types'
+import type { Action, Command } from '../types'
 
 const TRUE_PATTERN = /^(true|yes|enabled?)$/i
 const ITEM_SEPARATOR_PATTERN = /\s*,\s*/
@@ -15,9 +15,10 @@ export default class ParseLaTeXMagic extends Rule {
     'LiterateAgda',
     'LiterateHaskell'
   ])]
+  static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
 
-  async run () {
+  async parse () {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedLaTeXMagic')
     const magic = {}
 

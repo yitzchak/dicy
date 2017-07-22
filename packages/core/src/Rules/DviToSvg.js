@@ -10,9 +10,8 @@ export default class DviToSvg extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to SVG using dvisvgm.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
-    return state.getOption('outputFormat', jobName) === 'svg' && appliesToFile
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return state.getOption('outputFormat', jobName) === 'svg'
   }
 
   async initialize () {

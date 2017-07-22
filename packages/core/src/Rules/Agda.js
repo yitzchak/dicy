@@ -10,9 +10,8 @@ export default class Agda extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LiterateAgda'])]
   static description: string = 'Runs agda on lagda files.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(state, command, phase, jobName, file) &&
-      state.getOption('literateAgdaEngine', jobName) === 'agda'
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return state.getOption('literateAgdaEngine', jobName) === 'agda'
   }
 
   constructCommand (): CommandOptions {

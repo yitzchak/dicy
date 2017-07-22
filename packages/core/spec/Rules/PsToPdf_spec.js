@@ -18,13 +18,13 @@ describe('PsToPdf', () => {
     rule = new PsToPdf(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
       await initialize(['PostScript.ps'], { outputFormat: 'pdf' })
 
       const file = await builder.getFile('PostScript.ps')
       if (file) {
-        expect(await PsToPdf.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await PsToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('PsToPdf', () => {
 
       const file = await builder.getFile('PostScript.ps')
       if (file) {
-        expect(await PsToPdf.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await PsToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()

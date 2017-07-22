@@ -2,21 +2,23 @@
 
 import Rule from '../Rule'
 
-import type { Command, ParsedLog } from '../types'
+import type { Action, Command, ParsedLog } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
   static commands: Set<Command> = new Set(['build', 'log'])
+  static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses any bibtex produced logs.'
 
-  async run () {
+  async parse () {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBibTeXLog')
     if (!output) return false
 
     const parsedLog: ParsedLog = {
       messages: [],
       inputs: [],
-      outputs: []
+      outputs: [],
+      calls: []
     }
 
     await this.firstParameter.parse([{

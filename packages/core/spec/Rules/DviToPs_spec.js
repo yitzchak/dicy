@@ -18,13 +18,13 @@ describe('DviToPs', () => {
     rule = new DviToPs(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
       await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'ps' })
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToPs.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await DviToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('DviToPs', () => {
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToPs.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await DviToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -46,7 +46,7 @@ describe('DviToPs', () => {
 
       const file = await builder.getFile('DeviceIndependentFile.dvi')
       if (file) {
-        expect(await DviToPs.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await DviToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()

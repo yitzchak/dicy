@@ -10,9 +10,8 @@ export default class PdfToPs extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['PortableDocumentFormat'])]
   static description: string = 'Converts PDF to PS using pdf2ps. Enabled by the `pdfProducer` option.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    const appliesToFile = await super.appliesToFile(state, command, phase, jobName, file)
-    return state.getOption('outputFormat', jobName) === 'ps' && appliesToFile
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return state.getOption('outputFormat', jobName) === 'ps'
   }
 
   async initialize () {

@@ -27,40 +27,5 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
   sudo tlmgr update --self
   sudo tlmgr update --all
-  sudo tlmgr install \
-    adjustbox \
-    amsrefs \
-    asymptote \
-    biber \
-    biblatex \
-    bibtopic \
-    collectbox \
-    currfile \
-    datatool \
-    everypage \
-    filemod \
-    framed \
-    fvextra \
-    gincltex \
-    glossaries \
-    ifplatform \
-    lazylist \
-    lipsum \
-    logreq \
-    makeglos \
-    mfirstuc \
-    minted \
-    multibib \
-    nomencl \
-    polytable \
-    standalone \
-    stmaryrd \
-    subfiles \
-    substr \
-    supertabular \
-    svn-prov \
-    texware \
-    ucs \
-    xfor \
-    xstring
+  cat "`dirname $0`/mactex-packages" | xargs sudo tlmgr install 
 fi

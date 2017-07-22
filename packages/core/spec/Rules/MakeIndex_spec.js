@@ -18,9 +18,178 @@ describe('MakeIndex', () => {
     rule = new MakeIndex(builder.state, 'build', 'execute', null, ...parameters)
   }
 
+  describe('appliesToParameters', () => {
+    beforeEach(async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
+      done()
+    })
+
+    it('returns true if there are no splitindex notices in the log.', async (done) => {
+      rule.secondParameter.value = {
+        inputs: [],
+        outputs: [],
+        messages: [],
+        calls: []
+      }
+
+      expect(await MakeIndex.appliesToParameters(builder.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+
+      done()
+    })
+
+    it('returns false if there are splitindex notices in the log.', async (done) => {
+      rule.secondParameter.value = {
+        inputs: [],
+        outputs: [],
+        messages: [{
+          severity: 'info',
+          text: 'Using splitted index at IndexControlFile.idx'
+        }],
+        calls: []
+      }
+
+      expect(await MakeIndex.appliesToParameters(builder.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+
+      done()
+    })
+
+    it('returns false if there are splitindex calls in the log.', async (done) => {
+      rule.secondParameter.value = {
+        inputs: [],
+        outputs: [],
+        messages: [],
+        calls: [{
+          command: 'splitindex -m \'\' IndexControlFile.idx',
+          status: 'executed (allowed)'
+        }]
+      }
+
+      expect(await MakeIndex.appliesToParameters(builder.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+
+      done()
+    })
+  })
+
+  describe('getFileActions', () => {
+    beforeEach(async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
+      done()
+    })
+
+    it('returns a run action for a index control file.', async (done) => {
+      const file = await builder.getFile('IndexControlFile.idx')
+      if (file) {
+        const actions = await rule.getFileActions(file)
+        expect(actions).toEqual(['run'])
+      }
+
+      done()
+    })
+
+    it('returns a updateDependencies action for a makeindex log file.', async (done) => {
+      const file = await builder.getFile('IndexControlFile.ilg-ParsedMakeIndexLog')
+      if (file) {
+        const actions = await rule.getFileActions(file)
+        expect(actions).toEqual(['updateDependencies'])
+      }
+
+      done()
+    })
+
+    it('returns a no actions for a latex log file.', async (done) => {
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+      if (file) {
+        const actions = await rule.getFileActions(file)
+        expect(actions).toEqual([])
+      }
+
+      done()
+    })
+  })
+
+  describe('preEvaluate', () => {
+    beforeEach(async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
+      done()
+    })
+
+    it('retains run action if no makeindex calls present.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: []
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(true)
+      }
+
+      done()
+    })
+
+    it('removes run action if makeindex call present.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: [{
+            command: 'makeindex IndexControlFile.idx',
+            status: 'executed (allowed)'
+          }]
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(false)
+      }
+
+      done()
+    })
+
+    it('retains run action if makeindex call failed.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: [{
+            command: 'makeindex IndexControlFile.idx',
+            status: 'clobbered'
+          }]
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(true)
+      }
+
+      done()
+    })
+
+    it('retains run action if makeindex call was for another index.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: [{
+            command: 'makeindex foo.idx',
+            status: 'execute (allowed)'
+          }]
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(true)
+      }
+
+      done()
+    })
+  })
+
   describe('constructCommand', () => {
     it('returns correct arguments and command options for index file.', async (done) => {
-      await initialize(['IndexControlFile.idx'])
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -41,7 +210,7 @@ describe('MakeIndex', () => {
     })
 
     it('returns correct arguments and command options for nomenclature file.', async (done) => {
-      await initialize(['NomenclatureControlFile.nlo'])
+      await initialize(['NomenclatureControlFile.nlo', 'LaTeX.log-ParsedLaTeXLog'])
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -64,7 +233,7 @@ describe('MakeIndex', () => {
     })
 
     it('returns correct arguments and command options for bibref file.', async (done) => {
-      await initialize(['BibRefControlFile.bdx'])
+      await initialize(['BibRefControlFile.bdx', 'LaTeX.log-ParsedLaTeXLog'])
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -87,7 +256,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -c to command line when MakeIndex_compressBlanks is enabled.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_compressBlanks: true })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_compressBlanks: true })
 
       expect(rule.constructCommand().args).toContain('-c')
 
@@ -95,7 +264,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -l to command line when MakeIndex_ordering is set to \'letter\'.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_ordering: 'letter' })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_ordering: 'letter' })
 
       expect(rule.constructCommand().args).toContain('-l')
 
@@ -103,7 +272,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -g to command line when MakeIndex_sorting is set to \'german\'.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_sorting: 'german' })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_sorting: 'german' })
 
       expect(rule.constructCommand().args).toContain('-g')
 
@@ -111,7 +280,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -T to command line when MakeIndex_sorting is set to \'thai\'.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_sorting: 'thai' })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_sorting: 'thai' })
 
       expect(rule.constructCommand().args).toContain('-T')
 
@@ -119,7 +288,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -L to command line when MakeIndex_sorting is set to \'locale\'.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_sorting: 'locale' })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_sorting: 'locale' })
 
       expect(rule.constructCommand().args).toContain('-L')
 

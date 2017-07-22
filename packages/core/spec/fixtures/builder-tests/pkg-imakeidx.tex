@@ -1,0 +1,24 @@
+%!TeX jobNames = makeindex, makeindex-noautomatic
+%!TeX shellEscape = enabled
+\documentclass{article}
+
+\usepackage{xstring}
+
+\StrSubstitute{\jobname}{-}{,}[\options]
+
+\usepackage[\options]{imakeidx}
+
+\makeindex[title=Concept index]
+\makeindex[name=persons,title=Index of names,columns=3]
+
+\begin{document}
+
+Special and General Relativity\index{relativity}...
+Einstein\index[persons]{Einstein, Albert}...
+And this is the end of the story.
+\printindex
+\indexprologue{\small In this index you’ll find only
+famous people’s names}
+\printindex[persons]
+
+\end{document}

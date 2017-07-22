@@ -12,9 +12,8 @@ export default class BibTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['ParsedLaTeXAuxilary'])]
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(state, command, phase, jobName, file) &&
-      !!file.value && !!file.value.bibdata
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return parameters.some(file => !!file.value && !!file.value.bibdata)
   }
 
   async initialize () {

@@ -681,7 +681,7 @@ describe('ParseLaTeXLog', () => {
 
     const parser: ParseLaTeXLog = new ParseLaTeXLog(state, 'build', 'execute', null, logFile)
 
-    await parser.run()
+    await parser.parse()
 
     const parsedLog: ?File = parser.outputs.get(parsedLogPath)
 

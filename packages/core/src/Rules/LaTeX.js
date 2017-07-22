@@ -18,11 +18,11 @@ export default class LaTeX extends Rule {
   ])]
   static description: string = 'Runs the required latex variant.'
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
-    return await super.appliesToFile(state, command, phase, jobName, file) &&
+  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    return parameters.some(file =>
       ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))) ||
       (file.type === 'LiterateHaskell' && state.getOption('literateHaskellEngine', jobName) === 'none') ||
-      (file.type === 'LiterateAgda' && state.getOption('literateAgdaEngine', jobName) === 'none'))
+      (file.type === 'LiterateAgda' && state.getOption('literateAgdaEngine', jobName) === 'none')))
   }
 
   async initialize () {

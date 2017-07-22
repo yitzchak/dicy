@@ -9,7 +9,7 @@ export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 's
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 
-export type Action = 'run' | 'updateDependencies'
+export type Action = 'parse' | 'run' | 'updateDependencies'
 
 export type RuleInfo = {
   name: string,
@@ -130,10 +130,16 @@ export type KillToken = {
   promise: ?Promise<void>
 }
 
+export type ShellCall = {
+  command: string,
+  status: string
+}
+
 export type ParsedLog = {
   inputs: Array<string>,
   outputs: Array<string>,
-  messages: Array<Message>
+  messages: Array<Message>,
+  calls: Array<ShellCall>
 }
 
 export type CommandOptions = {

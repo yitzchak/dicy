@@ -18,13 +18,13 @@ describe('LhsToTeX', () => {
     rule = new LhsToTeX(builder.state, 'build', 'execute', null, ...parameters)
   }
 
-  describe('appliesToFile', () => {
+  describe('appliesToParameters', () => {
     it('returns true if file type is \'LiterateHaskell\'', async (done) => {
       await initialize(['LiterateHaskell.lhs'])
 
       const file = await builder.getFile('LiterateHaskell.lhs')
       if (file) {
-        expect(await LhsToTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await LhsToTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -35,7 +35,7 @@ describe('LhsToTeX', () => {
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
-        expect(await LhsToTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(true)
+        expect(await LhsToTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
       }
 
       done()
@@ -46,7 +46,7 @@ describe('LhsToTeX', () => {
 
       const file = await builder.getFile('LiterateAgda.lagda')
       if (file) {
-        expect(await LhsToTeX.appliesToFile(builder.state, 'build', 'execute', null, file)).toBe(false)
+        expect(await LhsToTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
       }
 
       done()

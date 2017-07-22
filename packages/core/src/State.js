@@ -107,7 +107,7 @@ export default class State extends EventEmitter {
 
   async addRule (rule: Rule): Promise<void> {
     this.rules.set(rule.id, rule)
-    rule.addAction()
+    rule.addActions()
   }
 
   removeRule (rule: Rule) {
@@ -137,7 +137,7 @@ export default class State extends EventEmitter {
       const outputs = await rule.getOutputs(cache.outputs)
       if (rule.constructor.alwaysEvaluate || outputs.length !== cache.outputs.length) {
         // At least one of the outputs is missing or the rule should always run.
-        rule.addAction()
+        rule.addActions()
       }
       for (const input of rule.inputs.values()) {
         await rule.addFileActions(input)
