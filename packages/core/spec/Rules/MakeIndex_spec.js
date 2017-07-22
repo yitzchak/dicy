@@ -107,6 +107,86 @@ describe('MakeIndex', () => {
     })
   })
 
+  describe('preEvaluate', () => {
+    beforeEach(async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
+      done()
+    })
+
+    it('retains run action if no makeindex calls present.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: []
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(true)
+      }
+
+      done()
+    })
+
+    it('removes run action if makeindex call present.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: [{
+            command: 'makeindex IndexControlFile.idx',
+            status: 'executed (allowed)'
+          }]
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(false)
+      }
+
+      done()
+    })
+
+    it('retains run action if makeindex call failed.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: [{
+            command: 'makeindex IndexControlFile.idx',
+            status: 'clobbered'
+          }]
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(true)
+      }
+
+      done()
+    })
+
+    it('retains run action if makeindex call was for another index.', async (done) => {
+      rule.addActions()
+      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+
+      if (file) {
+        file.value = {
+          calls: [{
+            command: 'makeindex foo.idx',
+            status: 'execute (allowed)'
+          }]
+        }
+        await rule.preEvaluate()
+
+        expect(rule.actions.has('run')).toBe(true)
+      }
+
+      done()
+    })
+  })
+
   describe('constructCommand', () => {
     it('returns correct arguments and command options for index file.', async (done) => {
       await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
