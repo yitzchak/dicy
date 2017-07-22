@@ -25,10 +25,10 @@
     "clean": "lerna clean --yes",
     "create-fixtures": "scripts/create-fixtures",
     "dicy": "node packages/cli/lib/main.js",
-    "lint": "chalk blueBright \"Linting sources...\" && eslint --color packages",
+    "lint": "chalk yellowBright \"Linting sources...\" && eslint --color packages",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
-    "specs": "chalk blueBright \"Running core specs...\" && cd packages/core && npm test",
+    "specs": "chalk yellowBright \"Running core specs...\" && cd packages/core && npm test",
     "test": "npm run lint && npm run specs",
     "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
     "flow-typed-update": "flow-typed update && lerna exec -- flow-typed update"
