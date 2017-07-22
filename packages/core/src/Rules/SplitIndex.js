@@ -21,12 +21,16 @@ export default class SplitIndex extends Rule {
     const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
 
+    // Only apply to index control files when there is some indication from the
+    // log that we need to.
     return !!parsedLog &&
       (parsedLog.messages.findIndex(message => message.text === text) !== -1 ||
       parsedLog.calls.findIndex(call => commandPattern.test(call.command)) !== -1)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
+    // Only return a run action for the actual idx file and updateDependencies
+    // for the parsed splitindex output.
     switch (file.type) {
       case 'ParsedSplitIndexStdOut':
         return ['updateDependencies']
@@ -39,7 +43,7 @@ export default class SplitIndex extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: ['splitindex', '-v', '-m', ' ', '$DIR_0/$BASE_0'],
+      args: ['splitindex', '-v', '-m', '', '$DIR_0/$BASE_0'],
       cd: '$ROOTDIR',
       severity: 'error',
       inputs: ['$DIR_0/$NAME_0.log-ParsedSplitIndexStdOut'],
