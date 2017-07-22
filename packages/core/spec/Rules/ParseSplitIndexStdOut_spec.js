@@ -14,7 +14,7 @@ describe('ParseSplitIndexStdOut', () => {
     const sourcePath = path.resolve(fixturesPath, sourceName)
     const outName = 'foo.log-SplitIndexStdOut'
     const parsedOutPath = 'foo.log-ParsedSplitIndexStdOut'
-    const outputs = ['output/job-1-theories.idx', 'output/job-1-persons.idx']
+    const outputs = ['job-1-theories.idx', 'job-1-persons.idx']
     const state: State = await State.create(sourcePath)
     const outFile: ?File = await state.getFile(outName)
 
@@ -23,13 +23,13 @@ describe('ParseSplitIndexStdOut', () => {
 
     outFile.value = `splitindex.pl 0.1
 Copyright (c) 2002 Markus Kohm <kohm@gmx.de>
-New index file output/job-1-theories.idx
-New index file output/job-1-persons.idx
-Close output/job-1-persons.idx
-Close output/job-1-theories.idx
+New index file job-1-theories.idx
+New index file job-1-persons.idx
+Close job-1-persons.idx
+Close job-1-theories.idx
 
-output/job-1-theories.idx with 1 lines
-output/job-1-persons.idx with 1 lines`
+job-1-theories.idx with 1 lines
+job-1-persons.idx with 1 lines`
 
     const parser: ParseSplitIndexStdOut = new ParseSplitIndexStdOut(state, 'build', 'execute', null, outFile)
 
