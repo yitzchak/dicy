@@ -6,11 +6,13 @@ import type { Command, Message, ParsedLog } from '../types'
 
 export default class ReportLogMessages extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set([
-    'ParsedAsymptoteLog',
+    'ParsedAsymptoteStdOut',
     'ParsedBiberLog',
     'ParsedBibTeXLog',
     'ParsedLaTeXLog',
-    'ParsedMakeIndexLog'
+    'ParsedMakeIndexLog',
+    'ParsedSplitIndexStdErr',
+    'ParsedSplitIndexStdOut'
   ])]
   static commands: Set<Command> = new Set(['log'])
   static alwaysEvaluate: boolean = true
