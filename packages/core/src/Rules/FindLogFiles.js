@@ -11,6 +11,7 @@ export default class FindLogFiles extends Rule {
   static description: string = 'Find preexisting log files.'
 
   async run () {
+    // Look for physical log files
     await this.getGlobbedFiles('$OUTDIR/$JOB.@(log|*lg)')
     return true
   }

@@ -9,16 +9,13 @@ export default class MetaPost extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['MetaPost'])]
   static description: string = 'Runs MetaPost on produced MetaPost files.'
 
-  async initialize () {
-    await this.getResolvedInput('$DIR_0/$NAME_0.fls-ParsedFileListing')
-  }
-
   async getFileActions (file: File): Promise<Array<Action>> {
     // ParsedFileListing triggers updateDependencies, all others trigger run.
     return [file.type === 'ParsedFileListing' ? 'updateDependencies' : 'run']
   }
 
   constructCommand (): CommandOptions {
+    // Force the same error options as LaTeX and capture the file listing.
     return {
       args: [
         'mpost',
@@ -29,6 +26,7 @@ export default class MetaPost extends Rule {
       ],
       cd: '$ROOTDIR_0',
       severity: 'error',
+      inputs: ['$DIR_0/$NAME_0.fls-ParsedFileListing'],
       outputs: ['$DIR_0/$NAME_0.fls', '$DIR_0/$NAME_0.log']
     }
   }

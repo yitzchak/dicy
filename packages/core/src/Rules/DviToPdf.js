@@ -14,10 +14,13 @@ export default class DviToPdf extends Rule {
     const outputFormat = state.getOption('outputFormat', jobName)
     const intermediatePostScript = state.getOption('intermediatePostScript', jobName)
 
+    // Only apply if output format is pdf and intermediate PostScript generation
+    // is off.
     return outputFormat === 'pdf' && !intermediatePostScript
   }
 
   async initialize () {
+    // Zap the previous target since we are building a pdf
     await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.pdf')
   }
 

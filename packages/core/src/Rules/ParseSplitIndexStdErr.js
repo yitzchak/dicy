@@ -21,6 +21,8 @@ export default class ParseSplitIndexStdOut extends Rule {
     }
 
     await this.firstParameter.parse([{
+      // splitindex generates error messages via Perl's die command so we just
+      // parse anything that has that form.
       names: ['text', 'file', 'line'],
       patterns: [/^(.*) at (.*?) line ([0-9]+)\.$/],
       evaluate: (reference, groups) => {

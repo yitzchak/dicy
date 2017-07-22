@@ -14,10 +14,13 @@ export default class DviToPs extends Rule {
     const outputFormat = state.getOption('outputFormat', jobName)
     const intermediatePostScript = state.getOption('intermediatePostScript', jobName)
 
+    // Only apply if output format is ps or intermediate PostScript generation
+    // is on.
     return outputFormat === 'ps' || (outputFormat === 'pdf' && !!intermediatePostScript)
   }
 
   async initialize () {
+    // Zap the previous target since we are building a ps
     await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.ps')
   }
 

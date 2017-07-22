@@ -18,6 +18,7 @@ export default class MakeGlossaries extends Rule {
     const { dir, name } = path.parse(this.firstParameter.filePath)
     const args = ['makeglossaries']
 
+    // Only push the -d option if needed.
     if (dir) args.push('-d', dir)
     args.push(name)
 
