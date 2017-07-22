@@ -112,7 +112,7 @@ describe('SplitIndex', () => {
       await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
 
       expect(rule.constructCommand()).toEqual({
-        args: ['splitindex', '-v', '-m', '', '$DIR_0/$BASE_0'],
+        args: ['splitindex', '-v', '-v', '-m', '', '$DIR_0/$BASE_0'],
         cd: '$ROOTDIR',
         severity: 'error',
         inputs: ['$DIR_0/$NAME_0.log-ParsedSplitIndexStdOut'],
