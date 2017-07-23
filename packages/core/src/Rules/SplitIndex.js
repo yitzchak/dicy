@@ -17,11 +17,11 @@ export default class SplitIndex extends Rule {
   static description: string = 'Runs splitindex on any index files.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    if (path.basename(parameters[1], '.log') !== path.basename(parameters[2], '.fls')) return false
+    if (path.basename(parameters[1].filePath, '.log-ParsedLaTeXLog') !== path.basename(parameters[2].filePath, '.fls-ParsedFileListing')) return false
 
     const base = path.basename(parameters[0].filePath)
     const text = `Using splitted index at ${base}`
-    const alt = 'Remember to run (pdf)latex again after calling `splitindex\' and processing the indices.'
+    const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
     const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
     const fileListing: ?ParsedLog = parameters[2].value
@@ -29,7 +29,7 @@ export default class SplitIndex extends Rule {
     // Only apply to index control files when there is some indication from the
     // log that we need to.
     return !!parsedLog && !!fileListing && fileListing.outputs.includes(parameters[0].filePath) &&
-      (parsedLog.messages.findIndex(message => message.text === text || message.text === alt) !== -1 ||
+      (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) !== -1 ||
       parsedLog.calls.findIndex(call => commandPattern.test(call.command)) !== -1)
   }
 
@@ -63,7 +63,6 @@ export default class SplitIndex extends Rule {
       for (const call of parsedLog.calls) {
         const match = call.command.match(makeIndexPattern)
         if (match) {
-          console.log(match[1])
           await this.getOutput(match[1].trim())
         }
       }
