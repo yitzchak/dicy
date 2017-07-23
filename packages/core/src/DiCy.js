@@ -160,7 +160,7 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     for (const file of this.files) {
-      for (const rule of file.rules.values()) {
+      for (const rule of file.inputsOf.values()) {
         await rule.addFileActions(file, command, phase)
       }
       file.hasBeenUpdated = false

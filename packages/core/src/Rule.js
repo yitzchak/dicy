@@ -113,7 +113,7 @@ export default class Rule extends StateConsumer {
       if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.filePath, file)
       // $FlowIgnore
-      file.addRule(this)
+      file.addAsInputOf(this)
     })
   }
 
@@ -235,7 +235,7 @@ export default class Rule extends StateConsumer {
     // Use ampersand as a filler for empty arguments. This is to work around
     // a bug in command-join.
     const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : (arg || '&')))
-      .replace(/(['"])&(['"])/g, '$1$2')
+      .replace(/(['"])\^?&(['"])/g, '$1$2')
 
     this.emit('command', {
       type: 'command',
@@ -288,6 +288,8 @@ export default class Rule extends StateConsumer {
   addOutput (file: ?File): void {
     if (!file) return
     if (!this.outputs.has(file.filePath)) {
+      // $FlowIgnore
+      file.addAsOutputOf(this)
       this.outputs.set(file.filePath, file)
       this.emit('outputAdded', {
         type: 'outputAdded',
@@ -337,7 +339,7 @@ export default class Rule extends StateConsumer {
     if (!file) return
     if (!this.inputs.has(file.filePath)) {
       // $FlowIgnore
-      file.addRule(this)
+      file.addAsInputOf(this)
       this.inputs.set(file.filePath, file)
       this.emit('inputAdded', {
         type: 'inputAdded',
@@ -378,13 +380,19 @@ export default class Rule extends StateConsumer {
     if (this.parameters.includes(file)) {
       for (const input of this.inputs.values()) {
         // $FlowIgnore
-        input.removeRule(this)
+        input.removeAsInputOf(this)
+      }
+      for (const output of this.outputs.values()) {
+        // $FlowIgnore
+        output.removeAsOutputOf(this)
       }
       return true
     }
 
     // $FlowIgnore
-    file.removeRule(this)
+    file.removeAsInputOf(this)
+    // $FlowIgnore
+    file.removeAsOutputOf(this)
     return false
   }
 

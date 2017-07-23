@@ -22,13 +22,16 @@ export default class MakeIndex extends Rule {
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
     const base = path.basename(parameters[0].filePath)
     const text = `Using splitted index at ${base}`
+    const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
+    const wasGeneratedBySplitIndex = parameters[0].isOutputOf('SplitIndex')
     const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
 
-    // Avoid makeindex if there is any evidence of splitindex messgesa in the
-    // log or splitindex calls.
-    return !parsedLog ||
-      (parsedLog.messages.findIndex(message => message.text === text) === -1 &&
+    // Avoid makeindex if there is any evidence of splitindex messages in the
+    // log or splitindex calls unless this index control file was generated
+    // by splitindex.
+    return !parsedLog || wasGeneratedBySplitIndex ||
+      (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) === -1 &&
       parsedLog.calls.findIndex(call => commandPattern.test(call.command)) === -1)
   }
 
