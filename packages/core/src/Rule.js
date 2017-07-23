@@ -235,7 +235,7 @@ export default class Rule extends StateConsumer {
     // Use ampersand as a filler for empty arguments. This is to work around
     // a bug in command-join.
     const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : (arg || '&')))
-      .replace(/(['"])^?&(['"])/g, '$1$2')
+      .replace(/(['"])\^?&(['"])/g, '$1$2')
 
     this.emit('command', {
       type: 'command',
