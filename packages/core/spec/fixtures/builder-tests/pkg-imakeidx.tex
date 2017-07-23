@@ -1,12 +1,25 @@
-%!TeX jobNames = makeindex, makeindex-noautomatic
-%!TeX shellEscape = enabled
+% --Job Descriptions--
+% job-1: automatic makeindex with shell escape enabled
+% job-2: automatic makeindex with shell escape disabled
+% job-3: no automatic makeindex
+% job-4: automatic splitindex with shell escape enabled
+% job-5: automatic splitindex with shell escape disabled
+% job-6: no automatic splitindex
+%
+%!TeX jobNames = job-1, job-2, job-3, job-4, job-5, job-6
+%!TeX shellEscape = disabled
+%!TeX job-1:shellEscape = enabled
+%!TeX job-4:shellEscape = enabled
 \documentclass{article}
 
 \usepackage{xstring}
 
-\StrSubstitute{\jobname}{-}{,}[\options]
-
-\usepackage[\options]{imakeidx}
+\IfStrEqCase*{\jobname}{%
+  {job-3}{\usepackage[noautomatic]{imakeidx}}%
+  {job-4}{\usepackage[splitindex]{imakeidx}}%
+  {job-5}{\usepackage[splitindex]{imakeidx}}%
+  {job-6}{\usepackage[splitindex,noautomatic]{imakeidx}}%
+}[\usepackage{imakeidx}]
 
 \makeindex[title=Concept index]
 \makeindex[name=persons,title=Index of names,columns=3]
