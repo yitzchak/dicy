@@ -113,7 +113,8 @@ export default class State extends EventEmitter {
   removeRule (rule: Rule) {
     this.rules.delete(rule.id)
     for (const file of this.files.values()) {
-      file.rules.delete(rule)
+      file.removeAsInputOf(rule)
+      file.removeAsOutputOf(rule)
     }
   }
 
@@ -293,7 +294,7 @@ export default class State extends EventEmitter {
         const newRules = new Set()
         for (const rule of rules.values()) {
           for (const output of rule.outputs.values()) {
-            for (const adj of output.rules.values()) {
+            for (const adj of output.inputsOf.values()) {
               const id = `${from.id} ${adj.id}`
               this.distances.set(id, Math.min(distance, this.distances.get(id) || Number.MAX_SAFE_INTEGER))
               newRules.add(adj)

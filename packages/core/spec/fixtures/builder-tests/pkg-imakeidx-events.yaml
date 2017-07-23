@@ -33,12 +33,10 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-6
       -no-shell-escape pkg-imakeidx.tex
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-2;persons.idx;job-2.log-ParsedLaTeXLog;job-2.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-2;persons.idx;job-2.log-ParsedLaTeXLog)
     command: makeindex -t persons.ilg -o persons.ind persons.idx
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-3;persons.idx;job-3.log-ParsedLaTeXLog;job-3.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-3;persons.idx;job-3.log-ParsedLaTeXLog)
     command: makeindex -t persons.ilg -o persons.ind persons.idx
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-imakeidx.tex)
@@ -46,8 +44,7 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       -shell-escape pkg-imakeidx.tex
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-2;job-2.idx;job-2.log-ParsedLaTeXLog;job-2.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-2;job-2.idx;job-2.log-ParsedLaTeXLog)
     command: makeindex -t job-2.ilg -o job-2.ind job-2.idx
   - type: command
     rule: LaTeX(build;execute;job-2;pkg-imakeidx.tex)
@@ -55,8 +52,7 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-2
       -no-shell-escape pkg-imakeidx.tex
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-3;job-3.idx;job-3.log-ParsedLaTeXLog;job-3.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-3;job-3.idx;job-3.log-ParsedLaTeXLog)
     command: makeindex -t job-3.ilg -o job-3.ind job-3.idx
   - type: command
     rule: LaTeX(build;execute;job-3;pkg-imakeidx.tex)
@@ -69,8 +65,7 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-4
       -shell-escape pkg-imakeidx.tex
   - type: command
-    rule: >-
-      SplitIndex(build;execute;job-5;job-5.idx;job-5.log-ParsedLaTeXLog;job-5.fls-ParsedFileListing)
+    rule: SplitIndex(build;execute;job-5;job-5.idx;job-5.log-ParsedLaTeXLog)
     command: splitindex -v -v -m '' job-5.idx
   - type: command
     rule: LaTeX(build;execute;job-5;pkg-imakeidx.tex)
@@ -78,8 +73,7 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-5
       -no-shell-escape pkg-imakeidx.tex
   - type: command
-    rule: >-
-      SplitIndex(build;execute;job-6;job-6.idx;job-6.log-ParsedLaTeXLog;job-6.fls-ParsedFileListing)
+    rule: SplitIndex(build;execute;job-6;job-6.idx;job-6.log-ParsedLaTeXLog)
     command: splitindex -v -v -m '' job-6.idx
   - type: command
     rule: LaTeX(build;execute;job-6;pkg-imakeidx.tex)
@@ -87,36 +81,16 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-6
       -no-shell-escape pkg-imakeidx.tex
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-2;persons.idx;job-2.log-ParsedLaTeXLog;job-2.fls-ParsedFileListing)
-    command: makeindex -t persons.ilg -o persons.ind persons.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-3;persons.idx;job-3.log-ParsedLaTeXLog;job-3.fls-ParsedFileListing)
-    command: makeindex -t persons.ilg -o persons.ind persons.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-2;job-2.idx;job-2.log-ParsedLaTeXLog;job-2.fls-ParsedFileListing)
-    command: makeindex -t job-2.ilg -o job-2.ind job-2.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-3;job-3.idx;job-3.log-ParsedLaTeXLog;job-3.fls-ParsedFileListing)
-    command: makeindex -t job-3.ilg -o job-3.ind job-3.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-5;job-5-job-5.idx;job-5.log-ParsedLaTeXLog;job-5.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-5;job-5-job-5.idx;job-5.log-ParsedLaTeXLog)
     command: makeindex -t job-5-job-5.ilg -o job-5-job-5.ind job-5-job-5.idx
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-5;job-5-persons.idx;job-5.log-ParsedLaTeXLog;job-5.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-5;job-5-persons.idx;job-5.log-ParsedLaTeXLog)
     command: makeindex -t job-5-persons.ilg -o job-5-persons.ind job-5-persons.idx
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-6;job-6-persons.idx;job-6.log-ParsedLaTeXLog;job-6.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-6;job-6-persons.idx;job-6.log-ParsedLaTeXLog)
     command: makeindex -t job-6-persons.ilg -o job-6-persons.ind job-6-persons.idx
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog;job-6.fls-ParsedFileListing)
+    rule: MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog)
     command: makeindex -t job-6-job-6.ilg -o job-6-job-6.ind job-6-job-6.idx
   - type: command
     rule: LaTeX(build;execute;job-5;pkg-imakeidx.tex)
@@ -128,27 +102,3 @@ events:
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-6
       -no-shell-escape pkg-imakeidx.tex
-  - type: command
-    rule: >-
-      SplitIndex(build;execute;job-5;job-5.idx;job-5.log-ParsedLaTeXLog;job-5.fls-ParsedFileListing)
-    command: splitindex -v -v -m '' job-5.idx
-  - type: command
-    rule: >-
-      SplitIndex(build;execute;job-6;job-6.idx;job-6.log-ParsedLaTeXLog;job-6.fls-ParsedFileListing)
-    command: splitindex -v -v -m '' job-6.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-5;job-5-job-5.idx;job-5.log-ParsedLaTeXLog;job-5.fls-ParsedFileListing)
-    command: makeindex -t job-5-job-5.ilg -o job-5-job-5.ind job-5-job-5.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-5;job-5-persons.idx;job-5.log-ParsedLaTeXLog;job-5.fls-ParsedFileListing)
-    command: makeindex -t job-5-persons.ilg -o job-5-persons.ind job-5-persons.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-6;job-6-persons.idx;job-6.log-ParsedLaTeXLog;job-6.fls-ParsedFileListing)
-    command: makeindex -t job-6-persons.ilg -o job-6-persons.ind job-6-persons.idx
-  - type: command
-    rule: >-
-      MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog;job-6.fls-ParsedFileListing)
-    command: makeindex -t job-6-job-6.ilg -o job-6-job-6.ind job-6-job-6.idx

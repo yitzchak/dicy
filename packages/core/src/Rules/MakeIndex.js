@@ -15,24 +15,22 @@ export default class MakeIndex extends Rule {
       'BibRefControlFile',
       'NomenclatureControlFile'
     ]),
-    new Set(['ParsedLaTeXLog']),
-    new Set(['ParsedFileListing'])
+    new Set(['ParsedLaTeXLog'])
   ]
   static description: string = 'Runs makeindex on any index files.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    if (path.basename(parameters[1].filePath, '.log-ParsedLaTeXLog') !== path.basename(parameters[2].filePath, '.fls-ParsedFileListing')) return false
-
     const base = path.basename(parameters[0].filePath)
     const text = `Using splitted index at ${base}`
     const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
+    const wasGeneratedBySplitIndex = parameters[0].isOutputOf('SplitIndex')
     const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
-    const fileListing: ?ParsedLog = parameters[2].value
 
-    // Avoid makeindex if there is any evidence of splitindex messgesa in the
-    // log or splitindex calls.
-    return !parsedLog || !fileListing || !fileListing.outputs.includes(parameters[0].filePath) ||
+    // Avoid makeindex if there is any evidence of splitindex messages in the
+    // log or splitindex calls unless this index control file was generated
+    // by splitindex.
+    return !parsedLog || wasGeneratedBySplitIndex ||
       (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) === -1 &&
       parsedLog.calls.findIndex(call => commandPattern.test(call.command)) === -1)
   }
