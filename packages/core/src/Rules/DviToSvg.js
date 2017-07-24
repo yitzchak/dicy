@@ -11,10 +11,12 @@ export default class DviToSvg extends Rule {
   static description: string = 'Converts DVI to SVG using dvisvgm.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+    // Only apply if output format is svg
     return state.getOption('outputFormat', jobName) === 'svg'
   }
 
   async initialize () {
+    // Zap the previous target since we are building a svg
     await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.svg')
   }
 

@@ -10,6 +10,7 @@ export default class GraphViz extends Rule {
   static description: string = 'Runs GraphViz on dependency graphs.'
 
   constructCommand (): CommandOptions {
+    // Right now we only call fdp. Long usefulness of this is unknown.
     return {
       args: [
         'fdp',
