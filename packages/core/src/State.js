@@ -18,7 +18,7 @@ export default class State extends EventEmitter {
   options: Object = {}
   defaultOptions: Object = {}
   optionSchema: Map<string, Option> = new Map()
-  ruleQueue: Array<Rule> = []
+  _ruleQueue: ?Array<Rule>
   // distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
@@ -112,17 +112,13 @@ export default class State extends EventEmitter {
 
   async addRule (rule: Rule): Promise<void> {
     this.rules.set(rule.id, rule)
-    this.graph.setNode(rule.id)
+    this.addNode(rule.id)
     rule.addActions()
   }
 
   removeRule (rule: Rule) {
     this.rules.delete(rule.id)
-    this.graph.removeNode(rule.id)
-    for (const file of this.files.values()) {
-      file.removeAsInputOf(rule)
-      file.removeAsOutputOf(rule)
-    }
+    this.removeNode(rule.id)
   }
 
   async addCachedRule (cache: RuleCache): Promise<void> {
@@ -139,6 +135,7 @@ export default class State extends EventEmitter {
       }
       // $FlowIgnore
       const rule = new RuleClass(this, cache.command, cache.phase, cache.jobName, ...parameters)
+      this.addNode(rule.id)
       await rule.initialize()
       this.rules.set(rule.id, rule)
       await rule.getInputs(cache.inputs)
@@ -147,7 +144,7 @@ export default class State extends EventEmitter {
         // At least one of the outputs is missing or the rule should always run.
         rule.addActions()
       }
-      for (const input of rule.inputs.values()) {
+      for (const input of rule.inputs) {
         await rule.addFileActions(input)
       }
     }
@@ -166,6 +163,30 @@ export default class State extends EventEmitter {
     return this.rules.get(id)
   }
 
+  addNode (x: string): void {
+    this.graph.setNode(x)
+    delete this._ruleQueue
+  }
+
+  removeNode (x: string): void {
+    this.graph.removeNode(x)
+    delete this._ruleQueue
+  }
+
+  hasEdge (x: string, y: string): boolean {
+    return this.graph.hasEdge(x, y)
+  }
+
+  addEdge (x: string, y: string): void {
+    this.graph.setEdge(x, y)
+    delete this._ruleQueue
+  }
+
+  removeEdge (x: string, y: string): void {
+    this.graph.removeEdge(x, y)
+    delete this._ruleQueue
+  }
+
   async getFile (filePath: string, { timeStamp, hash, value }: FileCache = {}): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.files.get(filePath)
@@ -180,7 +201,7 @@ export default class State extends EventEmitter {
         })
         return
       }
-      this.graph.setNode(filePath)
+      this.addNode(filePath)
       this.emit('fileAdded', {
         type: 'fileAdded',
         file: filePath,
@@ -206,14 +227,13 @@ export default class State extends EventEmitter {
     }
 
     for (const rule of invalidRules) {
-      this.graph.removeNode(rule.id)
-      this.rules.delete(rule.id)
+      this.removeNode(rule.id)
     }
 
     if (jobName) file.jobNames.delete(jobName)
     if (file.jobNames.size === 0) {
       if (unlink) await file.delete()
-      this.graph.removeNode(file.filePath)
+      this.removeNode(file.filePath)
       this.files.delete(file.filePath)
       this.emit('fileDeleted', {
         type: 'fileDeleted',
@@ -295,43 +315,36 @@ export default class State extends EventEmitter {
     }
   }
 
-  calculateDistances (): void {
-    const tarjan = _.flatten(alg.tarjan(this.graph))
+  get ruleQueue (): Array<Rule> {
+    if (!this._ruleQueue) {
+      const tarjan = alg.tarjan(this.graph)
 
-    tarjan.reverse()
-    // $FlowIgnore
-    this.ruleQueue = tarjan.map(x => this.rules.get(x)).filter(r => r)
+      tarjan.reverse()
+      tarjan.forEach(component => component.reverse())
+      // $FlowIgnore
+      this._ruleQueue = _.flatten(tarjan).map(x => this.rules.get(x)).filter(r => r)
+    }
+
+    return this._ruleQueue
   }
-  //   this.distances.clear()
-  //
-  //   for (const from of this.rules.values()) {
-  //     let rules = new Set([from])
-  //
-  //     for (let distance = 1; distance < 2 * this.rules.size; distance++) {
-  //       const newRules = new Set()
-  //       for (const rule of rules.values()) {
-  //         for (const output of rule.outputs.values()) {
-  //           for (const adj of output.inputsOf.values()) {
-  //             const id = `${from.id} ${adj.id}`
-  //             this.distances.set(id, Math.min(distance, this.distances.get(id) || Number.MAX_SAFE_INTEGER))
-  //             newRules.add(adj)
-  //           }
-  //         }
-  //       }
-  //       rules = newRules
-  //     }
-  //   }
-  // }
-  //
-  // getDistance (x: Rule, y: Rule): ?number {
-  //   return this.distances.get(`${x.id} ${y.id}`)
-  // }
-  //
-  // isConnected (x: Rule, y: Rule): boolean {
-  //   return this.distances.has(`${x.id} ${y.id}`) || this.distances.has(`${y.id} ${x.id}`)
-  // }
 
   isChild (x: Rule, y: Rule): boolean {
     return this.graph.predecessors(x.id).some(file => this.graph.predecessors(file).some(r => r === y.id))
+  }
+
+  getInputRules (file: File): Array<Rule> {
+    const successors = this.graph.successors(file.filePath) || []
+    // $FlowIgnore
+    return successors.map(id => this.rules.get(id)).filter(rule => rule)
+  }
+
+  getOutputRules (file: File): Array<Rule> {
+    const predecessors = this.graph.predecessors(file.filePath) || []
+    // $FlowIgnore
+    return predecessors.map(id => this.rules.get(id)).filter(rule => rule)
+  }
+
+  isOutputOf (file: File, ruleId: string): boolean {
+    return this.graph.inEdges(file.filePath).some(edge => edge.v.startsWith(ruleId))
   }
 }

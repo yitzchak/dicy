@@ -27,7 +27,7 @@ export default class Clean extends Rule {
 
     for (const rule of this.rules) {
       if (rule.jobName === this.jobName) {
-        for (const file of rule.outputs.values()) {
+        for (const file of rule.outputs) {
           if (file.virtual) continue
           if (scrub) {
             files.add(file)

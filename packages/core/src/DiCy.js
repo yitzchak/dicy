@@ -39,26 +39,19 @@ export default class DiCy extends StateConsumer {
   async analyzePhase (command: Command, phase: Phase) {
     this.checkForKill()
 
-    let rulesAdded = false
-
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
       for (const jobName of jobNames) {
         const rule = await ruleClass.analyzePhase(this.state, command, phase, jobName)
         if (rule) {
-          rulesAdded = true
           await this.addRule(rule)
         }
       }
     }
-
-    if (rulesAdded) this.calculateDistances()
   }
 
   async analyzeFiles (command: Command, phase: Phase) {
     this.checkForKill()
-
-    let rulesAdded = false
 
     while (true) {
       const file: ?File = Array.from(this.files).find(file => !file.analyzed)
@@ -70,7 +63,6 @@ export default class DiCy extends StateConsumer {
         for (const jobName of jobNames) {
           const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, jobName, file)
           for (const rule of rules) {
-            rulesAdded = true
             await this.addRule(rule)
           }
         }
@@ -78,8 +70,6 @@ export default class DiCy extends StateConsumer {
 
       file.analyzed = true
     }
-
-    if (rulesAdded) this.calculateDistances()
   }
 
   getAvailableRules (command: ?Command): Array<RuleInfo> {
@@ -103,7 +93,7 @@ export default class DiCy extends StateConsumer {
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    const rules: Array<Rule> = Array.from(this.state.ruleQueue).filter(rule => rule.actions.has(action) && rule.command === command && rule.phase === phase)
+    const rules: Array<Rule> = this.ruleQueue.filter(rule => rule.actions.has(action) && rule.command === command && rule.phase === phase)
     if (rules.length === 0) return false
 
     let didEvaluation: boolean = false
@@ -112,55 +102,6 @@ export default class DiCy extends StateConsumer {
       await this.checkUpdates(command, phase)
       didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
     }
-
-    // const ruleGroups: Array<Array<Rule>> = []
-    //
-    // for (const rule of rules) {
-    //   let notUsed = true
-    //   for (const ruleGroup of ruleGroups) {
-    //     if (this.isConnected(ruleGroup[0], rule)) {
-    //       ruleGroup.push(rule)
-    //       notUsed = false
-    //       break
-    //     }
-    //   }
-    //   if (notUsed) ruleGroups.push([rule])
-    // }
-    //
-    // const primaryCount = ruleGroup => ruleGroup.reduce(
-    //   (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
-    //   0)
-    //
-    // ruleGroups.sort((x, y) => primaryCount(x) - primaryCount(y))
-    //
-    // for (const ruleGroup of ruleGroups) {
-    //   let candidateRules = []
-    //   let dependents = []
-    //   let minimumCount = Number.MAX_SAFE_INTEGER
-    //
-    //   for (const x of ruleGroup) {
-    //     const inputCount = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
-    //     if (inputCount === 0) {
-    //       candidateRules.push(x)
-    //     } else if (inputCount === minimumCount) {
-    //       dependents.push(x)
-    //     } else if (inputCount < minimumCount) {
-    //       dependents = [x]
-    //       minimumCount = inputCount
-    //     }
-    //   }
-    //
-    //   if (candidateRules.length === 0) {
-    //     candidateRules = dependents
-    //   }
-    //
-    //   candidateRules.sort((x, y) => x.inputs.size - y.inputs.size)
-    //
-    //   for (const rule of candidateRules) {
-    //     await this.checkUpdates(command, phase)
-    //     didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
-    //   }
-    // }
 
     await this.checkUpdates(command, phase)
 
@@ -171,7 +112,7 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     for (const file of this.files) {
-      for (const rule of file.inputsOf.values()) {
+      for (const rule of this.state.getInputRules(file)) {
         await rule.addFileActions(file, command, phase)
       }
       file.hasBeenUpdated = false
@@ -212,7 +153,7 @@ export default class DiCy extends StateConsumer {
       success = Array.from(this.rules).every(rule => rule.failures.size === 0)
     } catch (error) {
       success = false
-      this.error(error.message)
+      this.error(error.stack)
     } finally {
       if (this.killToken && this.killToken.resolve) {
         success = false

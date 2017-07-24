@@ -96,7 +96,7 @@ export default class StateConsumer {
     const targets: Set<string> = new Set()
 
     for (const rule of this.rules) {
-      for (const file of rule.outputs.values()) {
+      for (const file of rule.outputs) {
         const ext = path.extname(file.filePath)
         if (ext === `.${this.options.outputFormat}` || (ext === '.xdv' && this.options.outputFormat === 'dvi')) {
           targets.add(file.filePath)
@@ -190,9 +190,13 @@ export default class StateConsumer {
     this.emit('log', { type: 'log', ...message })
   }
 
-  calculateDistances (): void {
-    this.state.calculateDistances()
+  get ruleQueue (): Array<Rule> {
+    return this.state.ruleQueue
   }
+
+  // calculateDistances (): void {
+  //   this.state.calculateDistances()
+  // }
 
   // getDistance (x: Rule, y: Rule): ?number {
   //   return this.state.getDistance(x, y)
@@ -201,6 +205,26 @@ export default class StateConsumer {
   // isConnected (x: Rule, y: Rule): boolean {
   //   return this.state.isConnected(x, y)
   // }
+
+  addNode (x: string): void {
+    this.state.addNode(x)
+  }
+
+  removeNode (x: string): void {
+    this.state.addNode(x)
+  }
+
+  hasEdge (x: string, y: string): boolean {
+    return this.state.hasEdge(x, y)
+  }
+
+  addEdge (x: string, y: string): void {
+    this.state.addEdge(x, y)
+  }
+
+  removeEdge (x: string, y: string): void {
+    this.state.removeEdge(x, y)
+  }
 
   isChild (x: Rule, y: Rule): boolean {
     return this.state.isChild(x, y)
@@ -278,5 +302,9 @@ export default class StateConsumer {
       kill(pid)
     }
     this.state.processes.clear()
+  }
+
+  isOutputOf (file: File, ruleId: string): boolean {
+    return this.state.isOutputOf(file, ruleId)
   }
 }

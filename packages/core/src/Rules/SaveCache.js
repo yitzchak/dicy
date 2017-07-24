@@ -21,7 +21,7 @@ export default class SaveCache extends Rule {
     if (await File.canRead(this.cacheFilePath)) return
 
     for (const rule of this.rules) {
-      if (Array.from(rule.outputs.values()).some(file => !file.virtual)) return
+      if (rule.outputs.some(file => !file.virtual)) return
     }
 
     this.actions.delete('run')
@@ -60,8 +60,8 @@ export default class SaveCache extends Rule {
         command: rule.command,
         phase: rule.phase,
         parameters: rule.parameters.map(file => file.filePath),
-        inputs: Array.from(rule.inputs.keys()),
-        outputs: Array.from(rule.outputs.keys())
+        inputs: rule.inputs.map(file => file.filePath),
+        outputs: rule.outputs.map(file => file.filePath)
       }
 
       if (rule.jobName) {

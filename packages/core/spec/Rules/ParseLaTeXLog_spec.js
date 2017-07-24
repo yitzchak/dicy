@@ -683,7 +683,7 @@ describe('ParseLaTeXLog', () => {
 
     await parser.parse()
 
-    const parsedLog: ?File = parser.outputs.get(parsedLogPath)
+    const parsedLog: ?File = await parser.getFile(parsedLogPath)
 
     expect(parsedLog).toBeDefined()
     if (!parsedLog) return

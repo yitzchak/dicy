@@ -23,7 +23,7 @@ export default class MakeIndex extends Rule {
     const base = path.basename(parameters[0].filePath)
     const text = `Using splitted index at ${base}`
     const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
-    const wasGeneratedBySplitIndex = parameters[0].isOutputOf('SplitIndex')
+    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
     const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
 

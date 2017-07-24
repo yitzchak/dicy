@@ -22,8 +22,6 @@ export default class Rule extends StateConsumer {
   command: Command
   phase: Phase
   parameters: Array<File> = []
-  inputs: Map<string, File> = new Map()
-  outputs: Map<string, File> = new Map()
   actions: Map<Action, Set<File>> = new Map()
   failures: Set<Action> = new Set()
 
@@ -111,10 +109,7 @@ export default class Rule extends StateConsumer {
       this.env[`EXT_${index}`] = ext
 
       if (jobName) file.jobNames.add(jobName)
-      this.inputs.set(file.filePath, file)
-      state.graph.setEdge(file.filePath, this.id)
-      // $FlowIgnore
-      file.addAsInputOf(this)
+      state.addEdge(file.filePath, this.id)
     })
   }
 
@@ -125,7 +120,7 @@ export default class Rule extends StateConsumer {
       if (this.inputs.size === 0) {
         this.addActions()
       } else {
-        for (const input of this.inputs.values()) {
+        for (const input of this.inputs) {
           this.addActions(input, await this.getFileActions(input))
         }
       }
@@ -179,7 +174,19 @@ export default class Rule extends StateConsumer {
   }
 
   get timeStamp (): ?Date {
-    return Array.from(this.outputs.values()).reduce((c, t) => !c || t.timeStamp > c ? t.timeStamp : c, null)
+    return this.outputs.reduce((c, t) => !c || t.timeStamp > c ? t.timeStamp : c, null)
+  }
+
+  get inputs (): Array<File> {
+    const predecessors = this.state.graph.predecessors(this.id) || []
+    // $FlowIgnore
+    return predecessors.map(filePath => this.state.files.get(filePath)).filter(file => file)
+  }
+
+  get outputs (): Array<File> {
+    const successors = this.state.graph.successors(this.id) || []
+    // $FlowIgnore
+    return successors.map(filePath => this.state.files.get(filePath)).filter(file => file)
   }
 
   async preEvaluate (): Promise<void> {}
@@ -286,29 +293,17 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  addOutput (file: ?File): void {
-    if (!file) return
-    if (!this.outputs.has(file.filePath)) {
-      this.state.graph.setEdge(this.id, file.filePath)
-      // $FlowIgnore
-      file.addAsOutputOf(this)
-      this.outputs.set(file.filePath, file)
+  async getOutput (filePath: string): Promise<?File> {
+    let file: ?File = await this.getFile(filePath)
+
+    if (file && !this.hasEdge(this.id, file.filePath)) {
+      this.addEdge(this.id, file.filePath)
       this.emit('outputAdded', {
         type: 'outputAdded',
         rule: this.id,
         file: file.filePath,
         virtual: file.virtual
       })
-    }
-  }
-
-  async getOutput (filePath: string): Promise<?File> {
-    filePath = this.normalizePath(filePath)
-    let file: ?File = this.outputs.get(filePath)
-
-    if (!file) {
-      file = await this.getFile(filePath)
-      this.addOutput(file)
     }
 
     return file
@@ -326,7 +321,7 @@ export default class Rule extends StateConsumer {
   }
 
   async updateOutputs () {
-    for (const file: File of this.outputs.values()) {
+    for (const file: File of this.outputs) {
       if (await file.update()) {
         this.emit('fileChanged', {
           type: 'fileChanged',
@@ -337,29 +332,17 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  addInput (file: ?File) {
-    if (!file) return
-    if (!this.inputs.has(file.filePath)) {
-      this.state.graph.setEdge(file.filePath, this.id)
-      // $FlowIgnore
-      file.addAsInputOf(this)
-      this.inputs.set(file.filePath, file)
+  async getInput (filePath: string): Promise<?File> {
+    let file: ?File = await this.getFile(filePath)
+
+    if (file && !this.hasEdge(file.filePath, this.id)) {
+      this.addEdge(file.filePath, this.id)
       this.emit('inputAdded', {
         type: 'inputAdded',
         rule: this.id,
         file: file.filePath,
         virtual: file.virtual
       })
-    }
-  }
-
-  async getInput (filePath: string): Promise<?File> {
-    filePath = this.normalizePath(filePath)
-    let file: ?File = this.inputs.get(filePath)
-
-    if (!file) {
-      file = await this.getFile(filePath)
-      this.addInput(file)
     }
 
     return file
@@ -377,28 +360,10 @@ export default class Rule extends StateConsumer {
   }
 
   async removeFile (file: File): Promise<boolean> {
-    this.state.graph.removeEdge(this.id, file.filePath)
-    this.state.graph.removeEdge(file.filePath, this.id)
-    this.inputs.delete(file.filePath)
-    this.outputs.delete(file.filePath)
+    this.state.removeEdge(this.id, file.filePath)
+    this.state.removeEdge(file.filePath, this.id)
 
-    if (this.parameters.includes(file)) {
-      for (const input of this.inputs.values()) {
-        // $FlowIgnore
-        input.removeAsInputOf(this)
-      }
-      for (const output of this.outputs.values()) {
-        // $FlowIgnore
-        output.removeAsOutputOf(this)
-      }
-      return true
-    }
-
-    // $FlowIgnore
-    file.removeAsInputOf(this)
-    // $FlowIgnore
-    file.removeAsOutputOf(this)
-    return false
+    return this.parameters.includes(file)
   }
 
   async getResolvedInput (filePath: string): Promise<?File> {

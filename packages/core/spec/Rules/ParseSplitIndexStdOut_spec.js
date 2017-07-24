@@ -64,7 +64,7 @@ job-1-persons.idx with 1 lines`
 
     await parser.parse()
 
-    const parsedLog: ?File = parser.outputs.get(parsedOutPath)
+    const parsedLog: ?File = await parser.getFile(parsedOutPath)
 
     expect(parsedLog).toBeDefined()
     if (!parsedLog) return
