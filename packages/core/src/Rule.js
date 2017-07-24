@@ -112,6 +112,7 @@ export default class Rule extends StateConsumer {
 
       if (jobName) file.jobNames.add(jobName)
       this.inputs.set(file.filePath, file)
+      state.graph.setEdge(file.filePath, this.id)
       // $FlowIgnore
       file.addAsInputOf(this)
     })
@@ -288,6 +289,7 @@ export default class Rule extends StateConsumer {
   addOutput (file: ?File): void {
     if (!file) return
     if (!this.outputs.has(file.filePath)) {
+      this.state.graph.setEdge(this.id, file.filePath)
       // $FlowIgnore
       file.addAsOutputOf(this)
       this.outputs.set(file.filePath, file)
@@ -338,6 +340,7 @@ export default class Rule extends StateConsumer {
   addInput (file: ?File) {
     if (!file) return
     if (!this.inputs.has(file.filePath)) {
+      this.state.graph.setEdge(file.filePath, this.id)
       // $FlowIgnore
       file.addAsInputOf(this)
       this.inputs.set(file.filePath, file)
@@ -374,6 +377,8 @@ export default class Rule extends StateConsumer {
   }
 
   async removeFile (file: File): Promise<boolean> {
+    this.state.graph.removeEdge(this.id, file.filePath)
+    this.state.graph.removeEdge(file.filePath, this.id)
     this.inputs.delete(file.filePath)
     this.outputs.delete(file.filePath)
 

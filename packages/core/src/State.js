@@ -1,7 +1,10 @@
 /* @flow */
 
+import _ from 'lodash'
+import { alg, Graph } from 'graphlib'
 import EventEmitter from 'events'
 import path from 'path'
+
 import File from './File'
 import Rule from './Rule'
 
@@ -15,13 +18,15 @@ export default class State extends EventEmitter {
   options: Object = {}
   defaultOptions: Object = {}
   optionSchema: Map<string, Option> = new Map()
-  distances: Map<string, number> = new Map()
+  ruleQueue: Array<Rule> = []
+  // distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set()
   env: Object
   targets: Set<string> = new Set()
   killToken: ?KillToken
+  graph: Graph = new Graph()
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
@@ -107,11 +112,13 @@ export default class State extends EventEmitter {
 
   async addRule (rule: Rule): Promise<void> {
     this.rules.set(rule.id, rule)
+    this.graph.setNode(rule.id)
     rule.addActions()
   }
 
   removeRule (rule: Rule) {
     this.rules.delete(rule.id)
+    this.graph.removeNode(rule.id)
     for (const file of this.files.values()) {
       file.removeAsInputOf(rule)
       file.removeAsOutputOf(rule)
@@ -166,12 +173,14 @@ export default class State extends EventEmitter {
     if (!file) {
       file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash, value)
       if (!file) {
+        this.graph.removeNode(filePath)
         this.emit('fileRemoved', {
           type: 'fileRemoved',
           file: filePath
         })
         return
       }
+      this.graph.setNode(filePath)
       this.emit('fileAdded', {
         type: 'fileAdded',
         file: filePath,
@@ -197,12 +206,14 @@ export default class State extends EventEmitter {
     }
 
     for (const rule of invalidRules) {
+      this.graph.removeNode(rule.id)
       this.rules.delete(rule.id)
     }
 
     if (jobName) file.jobNames.delete(jobName)
     if (file.jobNames.size === 0) {
       if (unlink) await file.delete()
+      this.graph.removeNode(file.filePath)
       this.files.delete(file.filePath)
       this.emit('fileDeleted', {
         type: 'fileDeleted',
@@ -285,36 +296,42 @@ export default class State extends EventEmitter {
   }
 
   calculateDistances (): void {
-    this.distances.clear()
+    const tarjan = _.flatten(alg.tarjan(this.graph))
 
-    for (const from of this.rules.values()) {
-      let rules = new Set([from])
-
-      for (let distance = 1; distance < 2 * this.rules.size; distance++) {
-        const newRules = new Set()
-        for (const rule of rules.values()) {
-          for (const output of rule.outputs.values()) {
-            for (const adj of output.inputsOf.values()) {
-              const id = `${from.id} ${adj.id}`
-              this.distances.set(id, Math.min(distance, this.distances.get(id) || Number.MAX_SAFE_INTEGER))
-              newRules.add(adj)
-            }
-          }
-        }
-        rules = newRules
-      }
-    }
+    tarjan.reverse()
+    // $FlowIgnore
+    this.ruleQueue = tarjan.map(x => this.rules.get(x)).filter(r => r)
   }
-
-  getDistance (x: Rule, y: Rule): ?number {
-    return this.distances.get(`${x.id} ${y.id}`)
-  }
-
-  isConnected (x: Rule, y: Rule): boolean {
-    return this.distances.has(`${x.id} ${y.id}`) || this.distances.has(`${y.id} ${x.id}`)
-  }
+  //   this.distances.clear()
+  //
+  //   for (const from of this.rules.values()) {
+  //     let rules = new Set([from])
+  //
+  //     for (let distance = 1; distance < 2 * this.rules.size; distance++) {
+  //       const newRules = new Set()
+  //       for (const rule of rules.values()) {
+  //         for (const output of rule.outputs.values()) {
+  //           for (const adj of output.inputsOf.values()) {
+  //             const id = `${from.id} ${adj.id}`
+  //             this.distances.set(id, Math.min(distance, this.distances.get(id) || Number.MAX_SAFE_INTEGER))
+  //             newRules.add(adj)
+  //           }
+  //         }
+  //       }
+  //       rules = newRules
+  //     }
+  //   }
+  // }
+  //
+  // getDistance (x: Rule, y: Rule): ?number {
+  //   return this.distances.get(`${x.id} ${y.id}`)
+  // }
+  //
+  // isConnected (x: Rule, y: Rule): boolean {
+  //   return this.distances.has(`${x.id} ${y.id}`) || this.distances.has(`${y.id} ${x.id}`)
+  // }
 
   isChild (x: Rule, y: Rule): boolean {
-    return this.getDistance(x, y) === 1
+    return this.graph.predecessors(x.id).some(file => this.graph.predecessors(file).some(r => r === y.id))
   }
 }

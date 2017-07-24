@@ -194,13 +194,13 @@ export default class StateConsumer {
     this.state.calculateDistances()
   }
 
-  getDistance (x: Rule, y: Rule): ?number {
-    return this.state.getDistance(x, y)
-  }
-
-  isConnected (x: Rule, y: Rule): boolean {
-    return this.state.isConnected(x, y)
-  }
+  // getDistance (x: Rule, y: Rule): ?number {
+  //   return this.state.getDistance(x, y)
+  // }
+  //
+  // isConnected (x: Rule, y: Rule): boolean {
+  //   return this.state.isConnected(x, y)
+  // }
 
   isChild (x: Rule, y: Rule): boolean {
     return this.state.isChild(x, y)
