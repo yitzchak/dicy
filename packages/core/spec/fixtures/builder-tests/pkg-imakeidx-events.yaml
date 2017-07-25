@@ -36,11 +36,11 @@ events:
     rule: MakeIndex(build;execute;job-2;persons.idx;job-2.log-ParsedLaTeXLog)
     command: makeindex -t persons.ilg -o persons.ind persons.idx
   - type: command
-    rule: MakeIndex(build;execute;job-3;persons.idx;job-3.log-ParsedLaTeXLog)
-    command: makeindex -t persons.ilg -o persons.ind persons.idx
-  - type: command
     rule: MakeIndex(build;execute;job-2;job-2.idx;job-2.log-ParsedLaTeXLog)
     command: makeindex -t job-2.ilg -o job-2.ind job-2.idx
+  - type: command
+    rule: MakeIndex(build;execute;job-3;persons.idx;job-3.log-ParsedLaTeXLog)
+    command: makeindex -t persons.ilg -o persons.ind persons.idx
   - type: command
     rule: MakeIndex(build;execute;job-3;job-3.idx;job-3.log-ParsedLaTeXLog)
     command: makeindex -t job-3.ilg -o job-3.ind job-3.idx
@@ -51,17 +51,17 @@ events:
     rule: SplitIndex(build;execute;job-6;job-6.idx;job-6.log-ParsedLaTeXLog)
     command: splitindex -v -v -m '' job-6.idx
   - type: command
-    rule: MakeIndex(build;execute;job-5;job-5-job-5.idx;job-5.log-ParsedLaTeXLog)
-    command: makeindex -t job-5-job-5.ilg -o job-5-job-5.ind job-5-job-5.idx
-  - type: command
     rule: MakeIndex(build;execute;job-5;job-5-persons.idx;job-5.log-ParsedLaTeXLog)
     command: makeindex -t job-5-persons.ilg -o job-5-persons.ind job-5-persons.idx
   - type: command
-    rule: MakeIndex(build;execute;job-6;job-6-persons.idx;job-6.log-ParsedLaTeXLog)
-    command: makeindex -t job-6-persons.ilg -o job-6-persons.ind job-6-persons.idx
+    rule: MakeIndex(build;execute;job-5;job-5-job-5.idx;job-5.log-ParsedLaTeXLog)
+    command: makeindex -t job-5-job-5.ilg -o job-5-job-5.ind job-5-job-5.idx
   - type: command
     rule: MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog)
     command: makeindex -t job-6-job-6.ilg -o job-6-job-6.ind job-6-job-6.idx
+  - type: command
+    rule: MakeIndex(build;execute;job-6;job-6-persons.idx;job-6.log-ParsedLaTeXLog)
+    command: makeindex -t job-6-persons.ilg -o job-6-persons.ind job-6-persons.idx
   - type: command
     rule: LaTeX(build;execute;job-5;pkg-imakeidx.tex)
     command: >-

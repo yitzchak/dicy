@@ -190,8 +190,8 @@ export default class StateConsumer {
     this.emit('log', { type: 'log', ...message })
   }
 
-  get ruleQueue (): Array<Array<Rule>> {
-    return this.state.ruleQueue
+  get components (): Array<Array<Rule>> {
+    return this.state.components
   }
 
   // calculateDistances (): void {

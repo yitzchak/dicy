@@ -1,6 +1,6 @@
 /* @flow */
 
-import { alg } from 'graphlib'
+import _ from 'lodash'
 import path from 'path'
 import readdir from 'readdir-enhanced'
 
@@ -94,54 +94,32 @@ export default class DiCy extends StateConsumer {
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    const components = alg.components(this.state.graph)
-    const findComponent = rule => components.findIndex(c => c.includes(rule.id))
-    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.actions.has(action) && rule.command === command && rule.phase === phase)
-    if (rules.length === 0) return false
-
-    let didEvaluation: boolean = false
-    const ruleGroups: Array<Array<Rule>> = []
-
-    for (const rule of rules) {
-      let notUsed = true
-      for (const ruleGroup of ruleGroups) {
-        if (findComponent(ruleGroup[0]) === findComponent(rule)) {
-          ruleGroup.push(rule)
-          notUsed = false
-          break
-        }
-      }
-      if (notUsed) ruleGroups.push([rule])
-    }
-
-    const primaryCount = ruleGroup => ruleGroup.reduce(
+    const primaryCount = (ruleGroup: Array<Rule>) => ruleGroup.reduce(
       (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
       0)
+    const evaluationNeeded = rule => rule.actions.has(action) && rule.command === command && rule.phase === phase
 
-    ruleGroups.sort((x, y) => primaryCount(x) - primaryCount(y))
+    const ruleGroups: Array<Array<Rule>> = _.sortBy(this.components
+      .map(component => _.sortBy(component.filter(evaluationNeeded), [rule => rule.inputs.length]))
+      .filter(component => component.length > 0), [primaryCount])
+
+    if (ruleGroups.length === 0) return false
+
+    let didEvaluation: boolean = false
 
     for (const ruleGroup of ruleGroups) {
       let candidateRules = []
-      let dependents = []
       let minimumCount = Number.MAX_SAFE_INTEGER
 
       for (const x of ruleGroup) {
         const inputCount = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
-        if (inputCount === 0) {
+        if (inputCount === minimumCount) {
           candidateRules.push(x)
-        } else if (inputCount === minimumCount) {
-          dependents.push(x)
         } else if (inputCount < minimumCount) {
-          dependents = [x]
+          candidateRules = [x]
           minimumCount = inputCount
         }
       }
-
-      if (candidateRules.length === 0) {
-        candidateRules = dependents
-      }
-
-      candidateRules.sort((x, y) => x.inputs.length - y.inputs.length)
 
       for (const rule of candidateRules) {
         await this.checkUpdates(command, phase)

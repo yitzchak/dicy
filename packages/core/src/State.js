@@ -10,6 +10,10 @@ import Rule from './Rule'
 
 import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
 
+type GraphProperties = {
+  components?: Array<Array<Rule>>
+}
+
 export default class State extends EventEmitter {
   filePath: string
   rootPath: string
@@ -18,7 +22,7 @@ export default class State extends EventEmitter {
   options: Object = {}
   defaultOptions: Object = {}
   optionSchema: Map<string, Option> = new Map()
-  _ruleQueue: ?Array<Array<Rule>>
+  graphProperties: GraphProperties = {}
   // distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
@@ -165,12 +169,12 @@ export default class State extends EventEmitter {
 
   addNode (x: string): void {
     this.graph.setNode(x)
-    delete this._ruleQueue
+    this.graphProperties = {}
   }
 
   removeNode (x: string): void {
     this.graph.removeNode(x)
-    delete this._ruleQueue
+    this.graphProperties = {}
   }
 
   hasEdge (x: string, y: string): boolean {
@@ -179,12 +183,12 @@ export default class State extends EventEmitter {
 
   addEdge (x: string, y: string): void {
     this.graph.setEdge(x, y)
-    delete this._ruleQueue
+    this.graphProperties = {}
   }
 
   removeEdge (x: string, y: string): void {
     this.graph.removeEdge(x, y)
-    delete this._ruleQueue
+    this.graphProperties = {}
   }
 
   async getFile (filePath: string, { timeStamp, hash, value }: FileCache = {}): Promise<?File> {
@@ -315,16 +319,14 @@ export default class State extends EventEmitter {
     }
   }
 
-  get ruleQueue (): Array<Array<Rule>> {
-    if (!this._ruleQueue) {
-      const tarjan = alg.tarjan(this.graph)
-
-      tarjan.reverse()
-      tarjan.forEach(component => component.reverse())
-      this._ruleQueue = tarjan.map(component => component.map(x => this.rules.get(x)).filter(r => r))
+  get components (): Array<Array<Rule>> {
+    if (!this.graphProperties.components) {
+      this.graphProperties.components = alg.components(this.graph)
+        .map(component => component.map(id => this.rules.get(id)).filter(rule => rule))
+        .filter(component => component.length > 0)
     }
 
-    return this._ruleQueue
+    return this.graphProperties.components
   }
 
   isChild (x: Rule, y: Rule): boolean {

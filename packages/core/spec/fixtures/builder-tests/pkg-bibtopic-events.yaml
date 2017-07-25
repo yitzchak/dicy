@@ -50,11 +50,11 @@ events:
     rule: ParseBibTeXLog(log;execute;;btaux.blg)
     command: kpsewhich btaux.aux plain.bst foo.bib bar.bib
   - type: command
-    rule: ParseBibTeXLog(log;execute;;pkg-bibtopic1.blg)
-    command: kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib
-  - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-bibtopic2.blg)
     command: kpsewhich pkg-bibtopic2.aux plain.bst bar.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-bibtopic3.blg)
     command: kpsewhich pkg-bibtopic3.aux plain.bst foo.bib bar.bib
+  - type: command
+    rule: ParseBibTeXLog(log;execute;;pkg-bibtopic1.blg)
+    command: kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib
