@@ -100,7 +100,18 @@ export default class DiCy extends StateConsumer {
     const evaluationNeeded = rule => rule.actions.has(action) && rule.command === command && rule.phase === phase
 
     const ruleGroups: Array<Array<Rule>> = _.sortBy(this.components
-      .map(component => _.sortBy(component.filter(evaluationNeeded), [rule => rule.inputs.length]))
+      .map(component => {
+        const ruleGroup = _.sortBy(component.filter(evaluationNeeded), [rule => rule.inputs.length])
+
+        return ruleGroup.reduce((current, x) => {
+          const weight = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
+
+          if (weight < current.weight) return { weight, rules: [x] }
+          if (weight === current.weight) current.rules.push(x)
+
+          return current
+        }, { weight: Number.MAX_SAFE_INTEGER, rules: [] }).rules
+      })
       .filter(component => component.length > 0), [primaryCount])
 
     if (ruleGroups.length === 0) return false
@@ -108,20 +119,7 @@ export default class DiCy extends StateConsumer {
     let didEvaluation: boolean = false
 
     for (const ruleGroup of ruleGroups) {
-      let candidateRules = []
-      let minimumCount = Number.MAX_SAFE_INTEGER
-
-      for (const x of ruleGroup) {
-        const inputCount = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
-        if (inputCount === minimumCount) {
-          candidateRules.push(x)
-        } else if (inputCount < minimumCount) {
-          candidateRules = [x]
-          minimumCount = inputCount
-        }
-      }
-
-      for (const rule of candidateRules) {
+      for (const rule of ruleGroup) {
         await this.checkUpdates(command, phase)
         didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
       }
