@@ -1,6 +1,6 @@
 /* @flow */
 
-import _ from 'lodash'
+// import _ from 'lodash'
 import { alg, Graph } from 'graphlib'
 import EventEmitter from 'events'
 import path from 'path'
@@ -18,7 +18,7 @@ export default class State extends EventEmitter {
   options: Object = {}
   defaultOptions: Object = {}
   optionSchema: Map<string, Option> = new Map()
-  _ruleQueue: ?Array<Rule>
+  _ruleQueue: ?Array<Array<Rule>>
   // distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
@@ -315,14 +315,13 @@ export default class State extends EventEmitter {
     }
   }
 
-  get ruleQueue (): Array<Rule> {
+  get ruleQueue (): Array<Array<Rule>> {
     if (!this._ruleQueue) {
       const tarjan = alg.tarjan(this.graph)
 
       tarjan.reverse()
       tarjan.forEach(component => component.reverse())
-      // $FlowIgnore
-      this._ruleQueue = _.flatten(tarjan).map(x => this.rules.get(x)).filter(r => r)
+      this._ruleQueue = tarjan.map(component => component.map(x => this.rules.get(x)).filter(r => r))
     }
 
     return this._ruleQueue

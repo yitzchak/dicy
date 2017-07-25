@@ -1,5 +1,6 @@
 /* @flow */
 
+import { alg } from 'graphlib'
 import path from 'path'
 import readdir from 'readdir-enhanced'
 
@@ -93,14 +94,59 @@ export default class DiCy extends StateConsumer {
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    const rules: Array<Rule> = this.ruleQueue.filter(rule => rule.actions.has(action) && rule.command === command && rule.phase === phase)
+    const components = alg.components(this.state.graph)
+    const findComponent = rule => components.findIndex(c => c.includes(rule.id))
+    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.actions.has(action) && rule.command === command && rule.phase === phase)
     if (rules.length === 0) return false
 
     let didEvaluation: boolean = false
+    const ruleGroups: Array<Array<Rule>> = []
 
-    for (const rule: Rule of rules) {
-      await this.checkUpdates(command, phase)
-      didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
+    for (const rule of rules) {
+      let notUsed = true
+      for (const ruleGroup of ruleGroups) {
+        if (findComponent(ruleGroup[0]) === findComponent(rule)) {
+          ruleGroup.push(rule)
+          notUsed = false
+          break
+        }
+      }
+      if (notUsed) ruleGroups.push([rule])
+    }
+
+    const primaryCount = ruleGroup => ruleGroup.reduce(
+      (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
+      0)
+
+    ruleGroups.sort((x, y) => primaryCount(x) - primaryCount(y))
+
+    for (const ruleGroup of ruleGroups) {
+      let candidateRules = []
+      let dependents = []
+      let minimumCount = Number.MAX_SAFE_INTEGER
+
+      for (const x of ruleGroup) {
+        const inputCount = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
+        if (inputCount === 0) {
+          candidateRules.push(x)
+        } else if (inputCount === minimumCount) {
+          dependents.push(x)
+        } else if (inputCount < minimumCount) {
+          dependents = [x]
+          minimumCount = inputCount
+        }
+      }
+
+      if (candidateRules.length === 0) {
+        candidateRules = dependents
+      }
+
+      candidateRules.sort((x, y) => x.inputs.length - y.inputs.length)
+
+      for (const rule of candidateRules) {
+        await this.checkUpdates(command, phase)
+        didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
+      }
     }
 
     await this.checkUpdates(command, phase)

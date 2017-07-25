@@ -190,7 +190,7 @@ export default class StateConsumer {
     this.emit('log', { type: 'log', ...message })
   }
 
-  get ruleQueue (): Array<Rule> {
+  get ruleQueue (): Array<Array<Rule>> {
     return this.state.ruleQueue
   }
 
