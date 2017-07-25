@@ -99,30 +99,43 @@ export default class DiCy extends StateConsumer {
       0)
     const evaluationNeeded = rule => rule.actions.has(action) && rule.command === command && rule.phase === phase
 
-    const ruleGroups: Array<Array<Rule>> = _.sortBy(this.components
+    // First separate the rule graph into connected components. For each
+    // component only retain rules that are pertinent to the current command,
+    // phase and action. Rank the rules in the component by the number of other
+    // rules that it is directly dependent on within the same component. Only
+    // retain those that have the lowest dependency rank. Sort the remaining
+    // rules by number of inputs in an ascending order. Finally sort the
+    // components by number of primaries in an ascending order. A rule is
+    // considered a primary is it has as an input the main source file for that
+    // job. Note: we are using lodash's sortBy because the standard sort is
+    // not guaranteed to be a stable sort.
+    const rules: Array<Rule> = _.flatten(_.sortBy(this.components
       .map(component => {
         const ruleGroup = _.sortBy(component.filter(evaluationNeeded), [rule => rule.inputs.length])
 
-        return ruleGroup.reduce((current, x) => {
-          const weight = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
+        return ruleGroup.reduce((current, rule) => {
+          // Rank the rule by how many other rules it is directly dependent on.
+          const rank = ruleGroup.reduce(
+            (count, otherRule) => this.isChild(otherRule, rule) ? count + 1 : count,
+            0)
 
-          if (weight < current.weight) return { weight, rules: [x] }
-          if (weight === current.weight) current.rules.push(x)
+          // The rank is lower than the current rank so start a new list.
+          if (rank < current.rank) return { rank, rules: [rule] }
+          // The ranks is the same as the current rank so just add us to the
+          if (rank === current.rank) current.rules.push(rule)
+          // list.
 
           return current
-        }, { weight: Number.MAX_SAFE_INTEGER, rules: [] }).rules
-      })
-      .filter(component => component.length > 0), [primaryCount])
+        }, { rank: Number.MAX_SAFE_INTEGER, rules: [] }).rules
+      }), [primaryCount]))
 
-    if (ruleGroups.length === 0) return false
+    if (rules.length === 0) return false
 
     let didEvaluation: boolean = false
 
-    for (const ruleGroup of ruleGroups) {
-      for (const rule of ruleGroup) {
-        await this.checkUpdates(command, phase)
-        didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
-      }
+    for (const rule of rules) {
+      await this.checkUpdates(command, phase)
+      didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
     }
 
     await this.checkUpdates(command, phase)
