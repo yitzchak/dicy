@@ -1,11 +1,18 @@
 /* @flow */
 
+// import _ from 'lodash'
+import { alg, Graph } from 'graphlib'
 import EventEmitter from 'events'
 import path from 'path'
+
 import File from './File'
 import Rule from './Rule'
 
 import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
+
+type GraphProperties = {
+  components?: Array<Array<Rule>>
+}
 
 export default class State extends EventEmitter {
   filePath: string
@@ -15,13 +22,15 @@ export default class State extends EventEmitter {
   options: Object = {}
   defaultOptions: Object = {}
   optionSchema: Map<string, Option> = new Map()
-  distances: Map<string, number> = new Map()
+  graphProperties: GraphProperties = {}
+  // distances: Map<string, number> = new Map()
   ruleClasses: Array<Class<Rule>> = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set()
   env: Object
   targets: Set<string> = new Set()
   killToken: ?KillToken
+  graph: Graph = new Graph()
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
@@ -107,15 +116,13 @@ export default class State extends EventEmitter {
 
   async addRule (rule: Rule): Promise<void> {
     this.rules.set(rule.id, rule)
+    this.addNode(rule.id)
     rule.addActions()
   }
 
   removeRule (rule: Rule) {
     this.rules.delete(rule.id)
-    for (const file of this.files.values()) {
-      file.removeAsInputOf(rule)
-      file.removeAsOutputOf(rule)
-    }
+    this.removeNode(rule.id)
   }
 
   async addCachedRule (cache: RuleCache): Promise<void> {
@@ -132,6 +139,7 @@ export default class State extends EventEmitter {
       }
       // $FlowIgnore
       const rule = new RuleClass(this, cache.command, cache.phase, cache.jobName, ...parameters)
+      this.addNode(rule.id)
       await rule.initialize()
       this.rules.set(rule.id, rule)
       await rule.getInputs(cache.inputs)
@@ -140,7 +148,7 @@ export default class State extends EventEmitter {
         // At least one of the outputs is missing or the rule should always run.
         rule.addActions()
       }
-      for (const input of rule.inputs.values()) {
+      for (const input of rule.inputs) {
         await rule.addFileActions(input)
       }
     }
@@ -159,6 +167,30 @@ export default class State extends EventEmitter {
     return this.rules.get(id)
   }
 
+  addNode (x: string): void {
+    this.graph.setNode(x)
+    this.graphProperties = {}
+  }
+
+  removeNode (x: string): void {
+    this.graph.removeNode(x)
+    this.graphProperties = {}
+  }
+
+  hasEdge (x: string, y: string): boolean {
+    return this.graph.hasEdge(x, y)
+  }
+
+  addEdge (x: string, y: string): void {
+    this.graph.setEdge(x, y)
+    this.graphProperties = {}
+  }
+
+  removeEdge (x: string, y: string): void {
+    this.graph.removeEdge(x, y)
+    this.graphProperties = {}
+  }
+
   async getFile (filePath: string, { timeStamp, hash, value }: FileCache = {}): Promise<?File> {
     filePath = this.normalizePath(filePath)
     let file: ?File = this.files.get(filePath)
@@ -166,12 +198,14 @@ export default class State extends EventEmitter {
     if (!file) {
       file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash, value)
       if (!file) {
+        this.graph.removeNode(filePath)
         this.emit('fileRemoved', {
           type: 'fileRemoved',
           file: filePath
         })
         return
       }
+      this.addNode(filePath)
       this.emit('fileAdded', {
         type: 'fileAdded',
         file: filePath,
@@ -197,12 +231,13 @@ export default class State extends EventEmitter {
     }
 
     for (const rule of invalidRules) {
-      this.rules.delete(rule.id)
+      this.removeNode(rule.id)
     }
 
     if (jobName) file.jobNames.delete(jobName)
     if (file.jobNames.size === 0) {
       if (unlink) await file.delete()
+      this.removeNode(file.filePath)
       this.files.delete(file.filePath)
       this.emit('fileDeleted', {
         type: 'fileDeleted',
@@ -284,37 +319,33 @@ export default class State extends EventEmitter {
     }
   }
 
-  calculateDistances (): void {
-    this.distances.clear()
-
-    for (const from of this.rules.values()) {
-      let rules = new Set([from])
-
-      for (let distance = 1; distance < 2 * this.rules.size; distance++) {
-        const newRules = new Set()
-        for (const rule of rules.values()) {
-          for (const output of rule.outputs.values()) {
-            for (const adj of output.inputsOf.values()) {
-              const id = `${from.id} ${adj.id}`
-              this.distances.set(id, Math.min(distance, this.distances.get(id) || Number.MAX_SAFE_INTEGER))
-              newRules.add(adj)
-            }
-          }
-        }
-        rules = newRules
-      }
+  get components (): Array<Array<Rule>> {
+    if (!this.graphProperties.components) {
+      this.graphProperties.components = alg.components(this.graph)
+        .map(component => component.map(id => this.rules.get(id)).filter(rule => rule))
+        .filter(component => component.length > 0)
     }
-  }
 
-  getDistance (x: Rule, y: Rule): ?number {
-    return this.distances.get(`${x.id} ${y.id}`)
-  }
-
-  isConnected (x: Rule, y: Rule): boolean {
-    return this.distances.has(`${x.id} ${y.id}`) || this.distances.has(`${y.id} ${x.id}`)
+    return this.graphProperties.components
   }
 
   isChild (x: Rule, y: Rule): boolean {
-    return this.getDistance(x, y) === 1
+    return this.graph.predecessors(x.id).some(file => this.graph.predecessors(file).some(r => r === y.id))
+  }
+
+  getInputRules (file: File): Array<Rule> {
+    const successors = this.graph.successors(file.filePath) || []
+    // $FlowIgnore
+    return successors.map(id => this.rules.get(id)).filter(rule => rule)
+  }
+
+  getOutputRules (file: File): Array<Rule> {
+    const predecessors = this.graph.predecessors(file.filePath) || []
+    // $FlowIgnore
+    return predecessors.map(id => this.rules.get(id)).filter(rule => rule)
+  }
+
+  isOutputOf (file: File, ruleId: string): boolean {
+    return this.graph.inEdges(file.filePath).some(edge => edge.v.startsWith(ruleId))
   }
 }

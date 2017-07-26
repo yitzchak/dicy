@@ -1,5 +1,6 @@
 /* @flow */
 
+import _ from 'lodash'
 import path from 'path'
 import readdir from 'readdir-enhanced'
 
@@ -53,8 +54,6 @@ export default class DiCy extends StateConsumer {
   async analyzeFiles (command: Command, phase: Phase) {
     this.checkForKill()
 
-    let rulesAdded = false
-
     while (true) {
       const file: ?File = Array.from(this.files).find(file => !file.analyzed)
 
@@ -65,7 +64,6 @@ export default class DiCy extends StateConsumer {
         for (const jobName of jobNames) {
           const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, jobName, file)
           for (const rule of rules) {
-            rulesAdded = true
             await this.addRule(rule)
           }
         }
@@ -73,8 +71,6 @@ export default class DiCy extends StateConsumer {
 
       file.analyzed = true
     }
-
-    if (rulesAdded) this.calculateDistances()
   }
 
   getAvailableRules (command: ?Command): Array<RuleInfo> {
@@ -98,57 +94,48 @@ export default class DiCy extends StateConsumer {
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    const rules: Array<Rule> = Array.from(this.rules).filter(rule => rule.actions.has(action) && rule.command === command && rule.phase === phase)
+    const primaryCount = (ruleGroup: Array<Rule>) => ruleGroup.reduce(
+      (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
+      0)
+    const evaluationNeeded = rule => rule.actions.has(action) && rule.command === command && rule.phase === phase
+
+    // First separate the rule graph into connected components. For each
+    // component only retain rules that are pertinent to the current command,
+    // phase and action. Rank the rules in the component by the number of other
+    // rules that it is directly dependent on within the same component. Only
+    // retain those that have the lowest dependency rank. Sort the remaining
+    // rules by number of inputs in an ascending order. Finally sort the
+    // components by number of primaries in an ascending order. A rule is
+    // considered a primary is it has as an input the main source file for that
+    // job. Note: we are using lodash's sortBy because the standard sort is
+    // not guaranteed to be a stable sort.
+    const rules: Array<Rule> = _.flatten(_.sortBy(this.components
+      .map(component => {
+        const ruleGroup = _.sortBy(component.filter(evaluationNeeded), [rule => rule.inputs.length])
+
+        return ruleGroup.reduce((current, rule) => {
+          // Rank the rule by how many other rules it is directly dependent on.
+          const rank = ruleGroup.reduce(
+            (count, otherRule) => this.isChild(otherRule, rule) ? count + 1 : count,
+            0)
+
+          // The rank is lower than the current rank so start a new list.
+          if (rank < current.rank) return { rank, rules: [rule] }
+          // The ranks is the same as the current rank so just add us to the
+          if (rank === current.rank) current.rules.push(rule)
+          // list.
+
+          return current
+        }, { rank: Number.MAX_SAFE_INTEGER, rules: [] }).rules
+      }), [primaryCount]))
+
     if (rules.length === 0) return false
 
     let didEvaluation: boolean = false
-    const ruleGroups: Array<Array<Rule>> = []
 
     for (const rule of rules) {
-      let notUsed = true
-      for (const ruleGroup of ruleGroups) {
-        if (this.isConnected(ruleGroup[0], rule)) {
-          ruleGroup.push(rule)
-          notUsed = false
-          break
-        }
-      }
-      if (notUsed) ruleGroups.push([rule])
-    }
-
-    const primaryCount = ruleGroup => ruleGroup.reduce(
-      (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
-      0)
-
-    ruleGroups.sort((x, y) => primaryCount(x) - primaryCount(y))
-
-    for (const ruleGroup of ruleGroups) {
-      let candidateRules = []
-      let dependents = []
-      let minimumCount = Number.MAX_SAFE_INTEGER
-
-      for (const x of ruleGroup) {
-        const inputCount = ruleGroup.reduce((count, y) => this.isChild(y, x) ? count + 1 : count, 0)
-        if (inputCount === 0) {
-          candidateRules.push(x)
-        } else if (inputCount === minimumCount) {
-          dependents.push(x)
-        } else if (inputCount < minimumCount) {
-          dependents = [x]
-          minimumCount = inputCount
-        }
-      }
-
-      if (candidateRules.length === 0) {
-        candidateRules = dependents
-      }
-
-      candidateRules.sort((x, y) => x.inputs.size - y.inputs.size)
-
-      for (const rule of candidateRules) {
-        await this.checkUpdates(command, phase)
-        didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
-      }
+      await this.checkUpdates(command, phase)
+      didEvaluation = await this.evaluateRule(rule, action) || didEvaluation
     }
 
     await this.checkUpdates(command, phase)
@@ -160,7 +147,7 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     for (const file of this.files) {
-      for (const rule of file.inputsOf.values()) {
+      for (const rule of this.state.getInputRules(file)) {
         await rule.addFileActions(file, command, phase)
       }
       file.hasBeenUpdated = false
@@ -201,7 +188,7 @@ export default class DiCy extends StateConsumer {
       success = Array.from(this.rules).every(rule => rule.failures.size === 0)
     } catch (error) {
       success = false
-      this.error(error.message)
+      this.error(error.stack)
     } finally {
       if (this.killToken && this.killToken.resolve) {
         success = false

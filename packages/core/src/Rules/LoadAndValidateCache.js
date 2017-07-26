@@ -33,8 +33,6 @@ export default class LoadAndValidateCache extends Rule {
     // This also lets the cache load test for a change in the main source file.
     await this.getFile(this.filePath)
 
-    this.calculateDistances()
-
     return true
   }
 
@@ -89,7 +87,7 @@ export default class LoadAndValidateCache extends Rule {
     }
 
     for (const rule of this.rules) {
-      for (const input of rule.inputs.values()) {
+      for (const input of rule.inputs) {
         await rule.addFileActions(input)
       }
     }

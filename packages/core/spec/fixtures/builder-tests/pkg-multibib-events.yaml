@@ -11,30 +11,30 @@ events:
     rule: BibTeX(build;execute;;pkg-multibib.aux-ParsedLaTeXAuxilary)
     command: bibtex pkg-multibib.aux
   - type: command
-    rule: LaTeX(build;execute;;pkg-multibib.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder
-      pkg-multibib.tex
-  - type: command
     rule: ParseBibTeXLog(build;execute;;pkg-multibib.blg)
     command: kpsewhich pkg-multibib.aux plain.bst foo.bib
   - type: command
     rule: BibTeX(build;execute;;other.aux-ParsedLaTeXAuxilary)
     command: bibtex other.aux
   - type: command
-    rule: BibTeX(build;execute;;pkg-multibib.aux-ParsedLaTeXAuxilary)
-    command: bibtex pkg-multibib.aux
+    rule: ParseBibTeXLog(build;execute;;other.blg)
+    command: kpsewhich other.aux alpha.bst foo.bib
   - type: command
     rule: LaTeX(build;execute;;pkg-multibib.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-multibib.tex
   - type: command
-    rule: ParseBibTeXLog(build;execute;;other.blg)
-    command: kpsewhich other.aux alpha.bst foo.bib
+    rule: BibTeX(build;execute;;pkg-multibib.aux-ParsedLaTeXAuxilary)
+    command: bibtex pkg-multibib.aux
   - type: command
     rule: BibTeX(build;execute;;other.aux-ParsedLaTeXAuxilary)
     command: bibtex other.aux
+  - type: command
+    rule: LaTeX(build;execute;;pkg-multibib.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-multibib.tex
   - type: command
     rule: ParseBibTeXLog(log;execute;;pkg-multibib.blg)
     command: kpsewhich pkg-multibib.aux plain.bst foo.bib

@@ -11,11 +11,11 @@ export default class ParseOptionsFile extends Rule {
 
   async preEvaluate () {
     await this.getResolvedInputs(['$HOME/.dicy.yaml', 'dicy.yaml', '$NAME.yaml'])
-    if (this.inputs.size === 0) this.actions.delete('run')
+    if (this.inputs.length === 0) this.actions.delete('run')
   }
 
   async parse () {
-    for (const input of this.inputs.values()) {
+    for (const input of this.inputs) {
       const output = await this.getOutput(`${input.filePath}-ParsedYAML`)
       if (output) {
         output.value = await input.safeLoad()

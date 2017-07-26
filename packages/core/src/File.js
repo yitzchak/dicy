@@ -9,8 +9,6 @@ import path from 'path'
 import readline from 'readline'
 import yaml from 'js-yaml'
 
-import Rule from './Rule'
-
 import type { FileType, Parser, Reference } from './types'
 
 export default class File {
@@ -32,10 +30,6 @@ export default class File {
   // A hash of the file contents. Used to verify that file has actually changed
   // when the timestamp changes
   hash: string
-  // Rules that have the file as a child.
-  outputsOf: Set<Rule> = new Set()
-  // Rules that have the file as a parent.
-  inputsOf: Set<Rule> = new Set()
   // Job names currently associated with the file.
   jobNames: Set<string> = new Set()
   // Has the file been analyzed in the current cycle?
@@ -318,26 +312,6 @@ export default class File {
 
   async delete (): Promise<void> {
     if (!this.virtual) await File.remove(this.realFilePath)
-  }
-
-  addAsInputOf (rule: Rule): void {
-    this.inputsOf.add(rule)
-  }
-
-  removeAsInputOf (rule: Rule): void {
-    this.inputsOf.delete(rule)
-  }
-
-  addAsOutputOf (rule: Rule): void {
-    this.outputsOf.add(rule)
-  }
-
-  removeAsOutputOf (rule: Rule): void {
-    this.outputsOf.delete(rule)
-  }
-
-  isOutputOf (name: string) {
-    return Array.from(this.outputsOf.values()).some(rule => rule.constructor.name === name)
   }
 
   /**
