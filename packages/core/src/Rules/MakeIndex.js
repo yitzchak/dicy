@@ -1,12 +1,29 @@
 /* @flow */
 
 import path from 'path'
+import yargs from 'yargs'
 
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
 import type { Action, Command, CommandOptions, ParsedLog, Phase } from '../types'
+
+const MAKE_INDEX_CALL_PARSER = yargs
+  .options({
+    c: { type: 'boolean' },
+    g: { type: 'boolean' },
+    i: { type: 'boolean' },
+    l: { type: 'boolean' },
+    o: { type: 'string' },
+    p: { type: 'string' },
+    q: { type: 'boolean' },
+    r: { type: 'boolean' },
+    s: { type: 'string' },
+    t: { type: 'string' },
+    L: { type: 'boolean' },
+    T: { type: 'boolean' }
+  })
 
 export default class MakeIndex extends Rule {
   static parameterTypes: Array<Set<string>> = [
@@ -24,7 +41,6 @@ export default class MakeIndex extends Rule {
     const text = `Using splitted index at ${base}`
     const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
     const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
-    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
 
     // Avoid makeindex if there is any evidence of splitindex messages in the
@@ -32,7 +48,7 @@ export default class MakeIndex extends Rule {
     // by splitindex.
     return !parsedLog || wasGeneratedBySplitIndex ||
       (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) === -1 &&
-      parsedLog.calls.findIndex(call => commandPattern.test(call.command)) === -1)
+      parsedLog.calls.findIndex(call => call.args[0] === 'splitindex' && call.args.includes(base)) === -1)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -53,23 +69,24 @@ export default class MakeIndex extends Rule {
 
     const parsedLog: ?ParsedLog = this.secondParameter.value
     const { base, ext } = path.parse(this.firstParameter.filePath)
-    const commandPattern: RegExp = new RegExp(`^makeindex\\b.*?\\b${base}$`)
-    const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
+    const isCall = call => call.args[0] === 'makeindex' && call.args.includes(base) && call.status.startsWith('executed')
 
     // If the correct makeindex call is found in the log then delete the run
     // action.
-    if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
-      this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
-      const firstChar = ext[1]
+    if (parsedLog) {
+      const call = parsedLog.calls.find(isCall)
+      if (call) {
+        this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
+        const firstChar = ext[1]
 
-      // At some point we may need to parse the makeindex call to look for the
-      // -t and -o options.
-      await this.getResolvedOutputs([
-        `$DIR_0/$NAME_0.${firstChar}lg`,
-        `$DIR_0/$NAME_0.${firstChar}nd`
-      ])
+        const argv = MAKE_INDEX_CALL_PARSER.parse(call.args)
+        await this.getResolvedOutputs([
+          argv.t ? `$DIR_0/${argv.t}` : `$DIR_0/$NAME_0.${firstChar}lg`,
+          argv.o ? `$DIR_0/${argv.o}` : `$DIR_0/$NAME_0.${firstChar}nd`
+        ])
 
-      this.actions.delete('run')
+        this.actions.delete('run')
+      }
     }
   }
 

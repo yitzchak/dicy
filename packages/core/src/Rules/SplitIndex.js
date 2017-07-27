@@ -20,14 +20,13 @@ export default class SplitIndex extends Rule {
     const text = `Using splitted index at ${base}`
     const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
     const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
-    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
 
     // Only apply to index control files when there is some indication from the
     // log that we need to.
     return !!parsedLog && !wasGeneratedBySplitIndex &&
       (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) !== -1 ||
-      parsedLog.calls.findIndex(call => commandPattern.test(call.command)) !== -1)
+      parsedLog.calls.findIndex(call => call.args[0] === 'splitindex' && call.args.includes(base)) !== -1)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -48,20 +47,14 @@ export default class SplitIndex extends Rule {
 
     const parsedLog: ?ParsedLog = this.secondParameter.value
     const { base } = path.parse(this.firstParameter.filePath)
-    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
-    const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
+    const isCall = call => call.args[0] === 'splitindex' && call.args.includes(base) && call.status.startsWith('executed')
 
     // If the correct makeindex call is found in the log then delete the run
     // action.
     if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
       this.info('Skipping splitindex call since splitindex was already executed via shell escape.', this.id)
-      const makeIndexPattern: RegExp = /^makeindex\b.*?\b(.*)$/
-
-      for (const call of parsedLog.calls) {
-        const match = call.command.match(makeIndexPattern)
-        if (match) {
-          await this.getOutput(match[1].trim())
-        }
+      for (const call of parsedLog.calls.filter(call => call.args[0] === 'makeindex')) {
+        await this.getOutput(call.args[call.args.length - 1])
       }
 
       this.actions.delete('run')

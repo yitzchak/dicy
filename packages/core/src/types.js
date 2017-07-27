@@ -131,7 +131,7 @@ export type KillToken = {
 }
 
 export type ShellCall = {
-  command: string,
+  args: Array<string>,
   status: string
 }
 
