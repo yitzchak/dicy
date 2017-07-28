@@ -59,7 +59,8 @@ describe('SplitIndex', () => {
         outputs: [],
         messages: [],
         calls: [{
-          command: 'splitindex -m \'\' IndexControlFile.idx',
+          args: ['splitindex', 'IndexControlFile.idx'],
+          options: { m: '' },
           status: 'executed (allowed)'
         }]
       }

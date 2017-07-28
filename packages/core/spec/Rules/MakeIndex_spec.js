@@ -59,7 +59,8 @@ describe('MakeIndex', () => {
         outputs: [],
         messages: [],
         calls: [{
-          command: 'splitindex -m \'\' IndexControlFile.idx',
+          args: ['splitindex', 'IndexControlFile.idx'],
+          options: { m: '' },
           status: 'executed (allowed)'
         }]
       }
@@ -136,7 +137,8 @@ describe('MakeIndex', () => {
       if (file) {
         file.value = {
           calls: [{
-            command: 'makeindex IndexControlFile.idx',
+            args: ['makeindex', 'IndexControlFile.idx'],
+            options: {},
             status: 'executed (allowed)'
           }]
         }
@@ -155,7 +157,8 @@ describe('MakeIndex', () => {
       if (file) {
         file.value = {
           calls: [{
-            command: 'makeindex IndexControlFile.idx',
+            args: ['makeindex', 'IndexControlFile.idx'],
+            options: {},
             status: 'clobbered'
           }]
         }
@@ -174,7 +177,8 @@ describe('MakeIndex', () => {
       if (file) {
         file.value = {
           calls: [{
-            command: 'makeindex foo.idx',
+            args: ['makeindex', 'foo.idx'],
+            options: {},
             status: 'execute (allowed)'
           }]
         }

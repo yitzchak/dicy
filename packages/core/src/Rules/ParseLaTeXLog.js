@@ -1,37 +1,11 @@
 /* @flow */
 
 import Rule from '../Rule'
+import Log from '../Log'
 
 import type { Action, Command, Message, ParsedLog } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
-
-function parseCommand (command: string) {
-  const args: Array<string> = []
-  let current: ?string
-  let quote: ?string
-
-  for (let i = 0; i < command.length; i++) {
-    const char: string = command.substr(i, 1)
-    if (char === quote) {
-      quote = null
-    } else if (char === '\'' || char === '"') {
-      quote = char
-      current = current || ''
-    } else if (char === '\\') {
-      current = `${current || ''}${command.substr(++i, 1)}`
-    } else if (!quote && /^\s$/.test(char)) {
-      if (typeof current === 'string') args.push(current)
-      current = null
-    } else {
-      current = `${current || ''}${char}`
-    }
-  }
-
-  if (typeof current === 'string') args.push(current)
-
-  return args
-}
 
 export default class ParseLaTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LaTeXLog'])]
@@ -293,10 +267,7 @@ export default class ParseLaTeXLog extends Rule {
       names: ['command', 'status'],
       patterns: [/^runsystem\((.*?)\)\.\.\.(.*?)\.$/],
       evaluate: (reference, groups) => {
-        parsedLog.calls.push({
-          args: parseCommand(groups.command),
-          status: groups.status
-        })
+        parsedLog.calls.push(Log.parseCall(groups.command, groups.status))
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 

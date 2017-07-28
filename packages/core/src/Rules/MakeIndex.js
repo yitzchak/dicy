@@ -1,29 +1,12 @@
 /* @flow */
 
 import path from 'path'
-import yargs from 'yargs'
 
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
 import type { Action, Command, CommandOptions, ParsedLog, Phase } from '../types'
-
-const MAKE_INDEX_CALL_PARSER = yargs
-  .options({
-    c: { type: 'boolean' },
-    g: { type: 'boolean' },
-    i: { type: 'boolean' },
-    l: { type: 'boolean' },
-    o: { type: 'string' },
-    p: { type: 'string' },
-    q: { type: 'boolean' },
-    r: { type: 'boolean' },
-    s: { type: 'string' },
-    t: { type: 'string' },
-    L: { type: 'boolean' },
-    T: { type: 'boolean' }
-  })
 
 export default class MakeIndex extends Rule {
   static parameterTypes: Array<Set<string>> = [
@@ -79,10 +62,9 @@ export default class MakeIndex extends Rule {
         this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
         const firstChar = ext[1]
 
-        const argv = MAKE_INDEX_CALL_PARSER.parse(call.args)
         await this.getResolvedOutputs([
-          argv.t ? `$DIR_0/${argv.t}` : `$DIR_0/$NAME_0.${firstChar}lg`,
-          argv.o ? `$DIR_0/${argv.o}` : `$DIR_0/$NAME_0.${firstChar}nd`
+          call.options.t ? `$DIR_0/${call.options.t}` : `$DIR_0/$NAME_0.${firstChar}lg`,
+          call.options.o ? `$DIR_0/${call.options.o}` : `$DIR_0/$NAME_0.${firstChar}nd`
         ])
 
         this.actions.delete('run')

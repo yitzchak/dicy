@@ -132,6 +132,7 @@ export type KillToken = {
 
 export type ShellCall = {
   args: Array<string>,
+  options: Object,
   status: string
 }
 
