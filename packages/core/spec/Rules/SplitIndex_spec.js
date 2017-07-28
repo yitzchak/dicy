@@ -60,7 +60,7 @@ describe('SplitIndex', () => {
         messages: [],
         calls: [{
           args: ['splitindex', 'IndexControlFile.idx'],
-          options: { m: '' },
+          options: { makeindex: '' },
           status: 'executed (allowed)'
         }]
       }
