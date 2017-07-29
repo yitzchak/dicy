@@ -11,10 +11,52 @@ const ARGUMENT_PARSERS = {
     string: ['o', 'p', 's', 't']
   },
   splitindex: {
-    alias: { help: 'h', makeindex: 'm', identify: 'i', resultis: 'r', suffixis: 's' },
+    alias: {
+      help: 'h',
+      makeindex: 'm',
+      identify: 'i',
+      resultis: 'r',
+      suffixis: 's'
+    },
     string: ['makeindex', 'identify', 'resultis', 'suffixis'],
     count: ['verbose'],
     boolean: ['help', 'version']
+  },
+  texindy: {
+    alias: {
+      codepage: 'C',
+      german: 'g',
+      help: 'h',
+      inputMarkup: 'I',
+      language: 'L',
+      letterOrdering: 'l',
+      logFile: 't',
+      module: 'M',
+      noRanges: 'r',
+      outFile: 'o',
+      quiet: 'q',
+      stdin: 'i',
+      verbose: 'v',
+      version: 'V'
+    },
+    boolean: [
+      'german',
+      'help',
+      'letter-ordering',
+      'no-ranges',
+      'quiet',
+      'stdin',
+      'verbose',
+      'version'
+    ],
+    string: [
+      'codepage',
+      'input-markup',
+      'language',
+      'log-file',
+      'module',
+      'out-file'
+    ]
   }
 }
 
