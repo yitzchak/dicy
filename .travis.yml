@@ -40,6 +40,8 @@ addons:
       - texlive-latex-recommended
       - texlive-metapost
       - texlive-xetex
+      - xindy
+
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
