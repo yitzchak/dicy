@@ -2,14 +2,28 @@
 % job-1: automatic makeindex with shell escape enabled
 % job-2: automatic makeindex with shell escape disabled
 % job-3: no automatic makeindex
-% job-4: automatic splitindex with shell escape enabled
-% job-5: automatic splitindex with shell escape disabled
-% job-6: no automatic splitindex
+% job-4: automatic splitindex/makeindex with shell escape enabled
+% job-5: automatic splitindex/makeindex with shell escape disabled
+% job-6: no automatic splitindex/makeindex
+% job-7: automatic texindy with shell escape enabled
+% job-8: automatic texindy with shell escape disabled
+% job-9: no automatic texindy
+% job-10: automatic splitindex/texindy with shell escape enabled
+% job-11: automatic splitindex/texindy with shell escape disabled
+% job-12: no automatic splitindex/texindy
 %
-%!TeX jobNames = job-1, job-2, job-3, job-4, job-5, job-6
+%!TeX jobNames = job-1, job-2, job-3, job-4, job-5, job-6, job-7, job-8, job-9, job-10, job-11, job-12
 %!TeX shellEscape = disabled
 %!TeX job-1:shellEscape = enabled
 %!TeX job-4:shellEscape = enabled
+%!TeX job-7:shellEscape = enabled
+%!TeX job-10:shellEscape = enabled
+%!TeX job-7:indexEngine = texindy
+%!TeX job-8:indexEngine = texindy
+%!TeX job-9:indexEngine = texindy
+%!TeX job-10:indexEngine = texindy
+%!TeX job-11:indexEngine = texindy
+%!TeX job-12:indexEngine = texindy
 %!TeX check = splitindex --version
 \documentclass{article}
 
@@ -20,6 +34,12 @@
   {job-4}{\usepackage[splitindex]{imakeidx}}%
   {job-5}{\usepackage[splitindex]{imakeidx}}%
   {job-6}{\usepackage[splitindex,noautomatic]{imakeidx}}%
+  {job-7}{\usepackage[xindy]{imakeidx}}%
+  {job-8}{\usepackage[xindy]{imakeidx}}%
+  {job-9}{\usepackage[xindy,noautomatic]{imakeidx}}%
+  {job-10}{\usepackage[xindy,splitindex]{imakeidx}}%
+  {job-11}{\usepackage[xindy,splitindex]{imakeidx}}%
+  {job-12}{\usepackage[xindy,splitindex,noautomatic]{imakeidx}}%
 }[\usepackage{imakeidx}]
 
 \makeindex[title=Concept index]

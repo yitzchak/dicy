@@ -52,14 +52,15 @@ export default class MakeIndex extends Rule {
 
     const parsedLog: ?ParsedLog = this.secondParameter.value
     const { base, ext } = path.parse(this.firstParameter.filePath)
-    const isCall = call => call.args[0] === 'makeindex' && call.args.includes(base) && call.status.startsWith('executed')
+    const engine = this.options.indexEngine
+    const isCall = call => call.args[0] === engine && call.args.includes(base) && call.status.startsWith('executed')
 
     // If the correct makeindex call is found in the log then delete the run
     // action.
     if (parsedLog) {
       const call = parsedLog.calls.find(isCall)
       if (call) {
-        this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
+        this.info(`Skipping ${engine} call since ${engine} was already executed via shell escape.`, this.id)
         const firstChar = ext[1]
 
         await this.getResolvedOutputs([
@@ -78,6 +79,7 @@ export default class MakeIndex extends Rule {
     // .brlg instead of .blg is used as extension to avoid ovewriting any
     // Biber/BibTeX logs.
     const logPath = `$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`
+    let engine = this.options.indexEngine
     let stylePath
     let outputPath
 
@@ -99,11 +101,12 @@ export default class MakeIndex extends Rule {
     // Allow the MakeIndex_style option to override the default style selection.
     if (this.options.MakeIndex_style) stylePath = this.options.MakeIndex_style
 
-    const args = [
-      'makeindex',
-      '-t', logPath,
-      '-o', outputPath
-    ]
+    if (engine !== 'makeindex' && !!stylePath) {
+      engine = 'makeindex'
+      this.info(`Ignoring index engine setting of \`${engine}\` since there is a makeindex style set.`, this.id)
+    }
+
+    const args = [engine, '-t', logPath, '-o', outputPath]
 
     if (stylePath) {
       args.push('-s', stylePath)
@@ -111,7 +114,11 @@ export default class MakeIndex extends Rule {
 
     // Remove blanks from index ids
     if (this.options.MakeIndex_compressBlanks) {
-      args.push('-c')
+      if (args[0] === 'makeindex') {
+        args.push('-c')
+      } else {
+        this.info('Ignoring compressBlanks setting since index engine is not makeindex.', this.id)
+      }
     }
 
     // Ignore spaces in grouping.
@@ -136,7 +143,11 @@ export default class MakeIndex extends Rule {
 
     // Specify the starting page.
     if (this.options.MakeIndex_startPage) {
-      args.push('-p', this.options.MakeIndex_startPage)
+      if (args[0] === 'makeindex') {
+        args.push('-p', this.options.MakeIndex_startPage)
+      } else {
+        this.info('Ignoring startPage setting since index engine is not makeindex.', this.id)
+      }
     }
 
     // Prevent automatic range construction.
@@ -146,11 +157,13 @@ export default class MakeIndex extends Rule {
 
     args.push('$DIR_0/$BASE_0')
 
+    const parsedLogName = engine === 'makeindex' ? 'ParsedMakeIndexLog' : 'ParsedXindyLog'
+
     return {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      inputs: [`${logPath}-ParsedMakeIndexLog`],
+      inputs: [`${logPath}-${parsedLogName}`],
       outputs: [outputPath, logPath]
     }
   }

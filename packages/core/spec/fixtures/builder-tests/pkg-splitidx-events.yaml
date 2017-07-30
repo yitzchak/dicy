@@ -20,23 +20,23 @@ events:
       SplitIndex(build;execute;job-2;output/job-2.idx;output/job-2.log-ParsedLaTeXLog)
     command: splitindex -v -v -m '' output/job-2.idx
   - type: command
-    rule: MakeIndex(build;execute;job-1;job-1-persons.idx;job-1.log-ParsedLaTeXLog)
-    command: makeindex -t job-1-persons.ilg -o job-1-persons.ind job-1-persons.idx
-  - type: command
     rule: MakeIndex(build;execute;job-1;job-1-theories.idx;job-1.log-ParsedLaTeXLog)
     command: makeindex -t job-1-theories.ilg -o job-1-theories.ind job-1-theories.idx
   - type: command
-    rule: >-
-      MakeIndex(build;execute;job-2;output/job-2-theories.idx;output/job-2.log-ParsedLaTeXLog)
-    command: >-
-      makeindex -t output/job-2-theories.ilg -o output/job-2-theories.ind
-      output/job-2-theories.idx
+    rule: MakeIndex(build;execute;job-1;job-1-persons.idx;job-1.log-ParsedLaTeXLog)
+    command: makeindex -t job-1-persons.ilg -o job-1-persons.ind job-1-persons.idx
   - type: command
     rule: >-
       MakeIndex(build;execute;job-2;output/job-2-persons.idx;output/job-2.log-ParsedLaTeXLog)
     command: >-
       makeindex -t output/job-2-persons.ilg -o output/job-2-persons.ind
       output/job-2-persons.idx
+  - type: command
+    rule: >-
+      MakeIndex(build;execute;job-2;output/job-2-theories.idx;output/job-2.log-ParsedLaTeXLog)
+    command: >-
+      makeindex -t output/job-2-theories.ilg -o output/job-2-theories.ind
+      output/job-2-theories.idx
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-splitidx.tex)
     command: >-

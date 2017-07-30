@@ -110,6 +110,7 @@ ParsedSourceMap: {}
 ParsedSplitIndexStdOut: {}
 ParsedSplitIndexStdErr: {}
 ParsedYAML: {}
+ParsedXindyLog: {}
 PortableDocumentFormat:
   fileName: !!js/regexp /\.pdf$/i
   hashSkip: !!js/regexp /^\/(CreationDate|ModDate|ID)/

@@ -60,6 +60,15 @@ ignoreHomeOptions:
     - graph
     - log
     - scrub
+indexEngine:
+  description: Indexing engine, e.g. makeindex or texindy.
+  type: string
+  values:
+    - makeindex
+    - texindy
+  defaultValue: makeindex
+  commands:
+    - build
 intermediatePostScript:
   aliases:
     - ps
