@@ -194,18 +194,6 @@ export default class StateConsumer {
     return this.state.components
   }
 
-  // calculateDistances (): void {
-  //   this.state.calculateDistances()
-  // }
-
-  // getDistance (x: Rule, y: Rule): ?number {
-  //   return this.state.getDistance(x, y)
-  // }
-  //
-  // isConnected (x: Rule, y: Rule): boolean {
-  //   return this.state.isConnected(x, y)
-  // }
-
   addNode (x: string): void {
     this.state.addNode(x)
   }
@@ -289,11 +277,43 @@ export default class StateConsumer {
 
   executeChildProcess (command: string, options: Object): Promise<Object> {
     return new Promise((resolve, reject) => {
-      const { pid } = childProcess.exec(command, options, (error, stdout, stderr) => {
-        this.state.processes.delete(pid)
-        resolve({ error, stdout, stderr })
+      let stdout: string
+      let stderr: string
+      let exited: boolean = false
+      const handleExit = error => {
+        if (exited) return
+        exited = true
+
+        if (child.pid) this.state.processes.delete(child.pid)
+        if (error) {
+          reject(error)
+        } else {
+          resolve({ stdout, stderr })
+        }
+      }
+      const child = childProcess.spawn(command, options)
+
+      if (child.pid) this.state.processes.add(child.pid)
+      child.on('error', handleExit)
+      child.on('close', (code, signal) => {
+        let error
+        if (code !== 0 || signal !== null) {
+          error = new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim())
+          // $FlowIgnore
+          error.code = code
+          // $FlowIgnore
+          error.signal = signal
+        }
+        handleExit(error)
       })
-      this.state.processes.add(pid)
+      if (child.stdout) {
+        child.stdout.setEncoding('utf8')
+        child.stdout.on('data', data => { stdout = `${stdout || ''}${data}` })
+      }
+      if (child.stderr) {
+        child.stderr.setEncoding('utf8')
+        child.stderr.on('data', data => { stderr = `${stderr || ''}${data}` })
+      }
     })
   }
 

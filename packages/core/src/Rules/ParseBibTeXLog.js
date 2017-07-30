@@ -96,15 +96,18 @@ export default class ParseBibTeXLog extends Rule {
       }
     }])
 
-    const { stdout } = await this.executeCommand({
-      args: ['kpsewhich'].concat(parsedLog.inputs),
-      cd: '$ROOTDIR',
-      severity: 'warning'
-    })
+    try {
+      const { stdout } = await this.executeCommand({
+        args: ['kpsewhich'].concat(parsedLog.inputs),
+        cd: '$ROOTDIR',
+        severity: 'warning',
+        stdout: true
+      })
 
-    parsedLog.inputs = stdout
-      ? stdout.split('\n').filter(file => file).map(file => this.normalizePath(file))
-      : []
+      parsedLog.inputs = stdout
+        ? stdout.split('\n').filter(file => file).map(file => this.normalizePath(file))
+        : []
+    } catch (error) {}
 
     output.value = parsedLog
 
