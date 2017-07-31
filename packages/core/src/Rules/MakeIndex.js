@@ -3,6 +3,7 @@
 import path from 'path'
 
 import File from '../File'
+import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
@@ -20,18 +21,17 @@ export default class MakeIndex extends Rule {
   static description: string = 'Runs makeindex on any index files.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    const base = path.basename(parameters[0].filePath)
-    const text = `Using splitted index at ${base}`
-    const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
-    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
     const parsedLog: ?ParsedLog = parameters[1].value
+    const base = path.basename(parameters[0].filePath)
+    const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)
+    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
+    const splitindexCall = !!parsedLog && !!Log.findCall(parsedLog, 'splitindex', base)
+    const splitindexMessage = !!parsedLog && !!Log.findMessage(parsedLog, messagePattern)
 
     // Avoid makeindex if there is any evidence of splitindex messages in the
     // log or splitindex calls unless this index control file was generated
     // by splitindex.
-    return !parsedLog || wasGeneratedBySplitIndex ||
-      (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) === -1 &&
-      parsedLog.calls.findIndex(call => call.args[0] === 'splitindex' && call.args.includes(base)) === -1)
+    return wasGeneratedBySplitIndex || (!splitindexMessage && !splitindexCall)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -53,12 +53,11 @@ export default class MakeIndex extends Rule {
     const parsedLog: ?ParsedLog = this.secondParameter.value
     const { base, ext } = path.parse(this.firstParameter.filePath)
     const engine = this.options.indexEngine
-    const isCall = call => call.args[0] === engine && call.args.includes(base) && call.status.startsWith('executed')
 
     // If the correct makeindex call is found in the log then delete the run
     // action.
     if (parsedLog) {
-      const call = parsedLog.calls.find(isCall)
+      const call = Log.findCall(parsedLog, engine, base, 'executed')
       if (call) {
         this.info(`Skipping ${engine} call since ${engine} was already executed via shell escape.`, this.id)
         const firstChar = ext[1]

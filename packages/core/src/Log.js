@@ -3,7 +3,7 @@
 import _ from 'lodash'
 import yargs from 'yargs-parser'
 
-import type { ShellCall } from './types'
+import type { Message, ParsedLog, ShellCall } from './types'
 
 const ARGUMENT_PARSERS = {
   makeindex: {
@@ -88,6 +88,22 @@ function splitCommand (command: string) {
 }
 
 export default class Log {
+  static findMessage (parsedLog: ParsedLog, pattern: string | RegExp): ?Message {
+    return parsedLog.messages.find(message => !!message.text.match(pattern))
+  }
+
+  static filterCalls (parsedLog: ParsedLog, command: string, filePath?: string, status?: string): Array<ShellCall> {
+    return parsedLog.calls.filter(call => call.args[0] === command &&
+      (!filePath || call.args.includes(filePath)) &&
+      (!status || call.status.startsWith(status)))
+  }
+
+  static findCall (parsedLog: ParsedLog, command: string, filePath?: string, status?: string): ?ShellCall {
+    return parsedLog.calls.find(call => call.args[0] === command &&
+      (!filePath || call.args.includes(filePath)) &&
+      (!status || call.status.startsWith(status)))
+  }
+
   static parseCall (command: string, status: string): ShellCall {
     const args = splitCommand(command)
     if (args[0] in ARGUMENT_PARSERS) {
