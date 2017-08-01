@@ -88,6 +88,7 @@ function splitCommand (command: string) {
 }
 
 export default class Log {
+  // BibTeX/Biber run request
   static hasRunMessage (parsedLog: ParsedLog, program: string, file: string): boolean {
     const quote = file.includes(' ') ? '"' : ''
     const text = `run ${program} on the file: ${quote}${file}${quote}`
@@ -105,14 +106,14 @@ export default class Log {
       .filter(match => match)
   }
 
-  static filterCalls (parsedLog: ParsedLog, command: string, filePath?: string, status?: string): Array<ShellCall> {
-    return parsedLog.calls.filter(call => call.args[0] === command &&
+  static filterCalls (parsedLog: ParsedLog, command: string | RegExp, filePath?: string, status?: string): Array<ShellCall> {
+    return parsedLog.calls.filter(call => !!call.args[0].match(command) &&
       (!filePath || call.args.includes(filePath)) &&
       (!status || call.status.startsWith(status)))
   }
 
-  static findCall (parsedLog: ParsedLog, command: string, filePath?: string, status?: string): ?ShellCall {
-    return parsedLog.calls.find(call => call.args[0] === command &&
+  static findCall (parsedLog: ParsedLog, command: string | RegExp, filePath?: string, status?: string): ?ShellCall {
+    return parsedLog.calls.find(call => !!call.args[0].match(command) &&
       (!filePath || call.args.includes(filePath)) &&
       (!status || call.status.startsWith(status)))
   }

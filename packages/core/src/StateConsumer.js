@@ -16,15 +16,23 @@ const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 export default class StateConsumer {
   state: State
   options: Object
+  consumerOptions: Object = {}
   jobName: ?string
   env: Object
 
   constructor (state: State, jobName: ?string) {
     this.jobName = jobName
     this.state = state
+    // $FlowIgnore
     this.options = new Proxy(this, {
-      get (target, key) {
-        return target.state.getOption(key, target.jobName)
+      get: (target, key) => {
+        return key in target.consumerOptions
+          ? target.consumerOptions[key]
+          : target.state.getOption(key, target.jobName)
+      },
+      set: (target, key, value) => {
+        target.consumerOptions[key] = value
+        return true
       }
     })
     this.env = {

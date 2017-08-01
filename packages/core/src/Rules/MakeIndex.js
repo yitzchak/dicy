@@ -34,6 +34,43 @@ export default class MakeIndex extends Rule {
     return wasGeneratedBySplitIndex || (!splitindexMessage && !splitindexCall)
   }
 
+  async initialize () {
+    const parsedLog: ?ParsedLog = this.secondParameter.value
+
+    if (parsedLog) {
+      const { base } = path.parse(this.firstParameter.filePath)
+      let call = Log.findCall(parsedLog, /(makeindex|texindy)/, base)
+
+      if (!call) {
+        call = Log.findMessageMatches(parsedLog, /after calling `((?:makeindex|texindy)[^']*)'/)
+          .map(match => Log.parseCall(match[1], 'gronk'))
+          .find(call => call.args.includes(base))
+      }
+
+      if (call) {
+        this.options.indexEngine = call.args[0]
+        this.options.MakeIndex_compressBlanks = !!call.options.c
+        this.options.MakeIndex_automaticRanges = !call.options.r
+        this.options.MakeIndex_ordering = call.options.l ? 'letter' : 'word'
+        if ('p' in call.options) {
+          this.options.MakeIndex_startPage = call.options.p
+        }
+        if ('s' in call.options) {
+          this.options.MakeIndex_style = call.options.s
+        }
+        if (call.options.g) {
+          this.options.MakeIndex_sorting = 'german'
+        } else if (call.options.T) {
+          this.options.MakeIndex_sorting = 'thai'
+        } else if (call.options.L) {
+          this.options.MakeIndex_sorting = 'locale'
+        } else {
+          this.options.MakeIndex_sorting = 'default'
+        }
+      }
+    }
+  }
+
   async getFileActions (file: File): Promise<Array<Action>> {
     // Only return a run action for the actual idx file and updateDependencies
     // for the parsed makeindex log.
