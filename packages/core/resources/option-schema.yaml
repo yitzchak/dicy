@@ -229,6 +229,11 @@ MakeIndex_compressBlanks:
   defaultValue: false
   commands:
     - build
+MakeIndex_logPath:
+  description: Log path of makeindex
+  type: string
+  commands:
+    - build
 MakeIndex_ordering:
   description: Ordering scheme where `letter` ordering ignores spaces between
     words and `word` ordering respects spaces between word.
@@ -237,6 +242,11 @@ MakeIndex_ordering:
   values:
     - word
     - letter
+  commands:
+    - build
+MakeIndex_outputPath:
+  description: Output path of makeindex
+  type: string
   commands:
     - build
 MakeIndex_sorting:

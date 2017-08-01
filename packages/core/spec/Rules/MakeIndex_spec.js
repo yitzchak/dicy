@@ -16,6 +16,7 @@ describe('MakeIndex', () => {
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
     const parameters = await builder.getFiles(parameterPaths)
     rule = new MakeIndex(builder.state, 'build', 'execute', null, ...parameters)
+    await rule.initialize()
   }
 
   describe('appliesToParameters', () => {
@@ -300,7 +301,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -r to command line when MakeIndex_automaticRanges is disabled.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_automaticRanges: false })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_automaticRanges: false })
 
       expect(rule.constructCommand().args).toContain('-r')
 
@@ -308,7 +309,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -p to command line when MakeIndex_startPage is set.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_startPage: 'odd' })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_startPage: 'odd' })
 
       expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-p', 'odd']))
 
@@ -316,7 +317,7 @@ describe('MakeIndex', () => {
     })
 
     it('add -s to command line when MakeIndex_style is set.', async (done) => {
-      await initialize(['IndexControlFile.idx'], { MakeIndex_style: 'foo.ist' })
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_style: 'foo.ist' })
 
       expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-s', 'foo.ist']))
 

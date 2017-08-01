@@ -35,7 +35,43 @@ export default class MakeIndex extends Rule {
   }
 
   async initialize () {
+    const ext = path.extname(this.firstParameter.filePath)
+    const firstChar = ext[1]
     const parsedLog: ?ParsedLog = this.secondParameter.value
+
+    // Automatically assign style based on index type.
+    if (!this.options.MakeIndex_style) {
+      switch (this.firstParameter.type) {
+        case 'NomenclatureControlFile':
+          this.options.MakeIndex_style = 'nomencl.ist'
+          break
+        case 'BibRefControlFile':
+          this.options.MakeIndex_style = 'bibref.ist'
+          break
+      }
+    }
+
+    // Automatically assign output path based on index type.
+    if (!this.options.MakeIndex_outputPath) {
+      switch (this.firstParameter.type) {
+        case 'NomenclatureControlFile':
+          this.options.MakeIndex_outputPath = '$DIR_0/$NAME_0.nls'
+          break
+        case 'BibRefControlFile':
+          this.options.MakeIndex_outputPath = '$DIR_0/$NAME_0.bnd'
+          break
+        default:
+          this.options.MakeIndex_outputPath = `$DIR_0/$NAME_0.${firstChar}nd`
+          break
+      }
+    }
+
+    // Automatically assign log path based on index type.
+    if (!this.options.MakeIndex_logPath) {
+      // .brlg instead of .blg is used as extension to avoid ovewriting any
+      // Biber/BibTeX logs.
+      this.options.MakeIndex_logPath = `$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`
+    }
 
     if (parsedLog) {
       const { base } = path.parse(this.firstParameter.filePath)
@@ -110,42 +146,24 @@ export default class MakeIndex extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const ext = path.extname(this.firstParameter.filePath)
-    const firstChar = ext[1]
-    // .brlg instead of .blg is used as extension to avoid ovewriting any
-    // Biber/BibTeX logs.
-    const logPath = `$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`
     let engine = this.options.indexEngine
-    let stylePath
-    let outputPath
+    const style = this.options.MakeIndex_style
+    const logPath = this.options.MakeIndex_logPath
+    const outputPath = this.options.MakeIndex_outputPath
 
-    // Automatically assign output path and style based on index type.
-    switch (this.firstParameter.type) {
-      case 'NomenclatureControlFile':
-        stylePath = 'nomencl.ist'
-        outputPath = '$DIR_0/$NAME_0.nls'
-        break
-      case 'BibRefControlFile':
-        stylePath = 'bibref.ist'
-        outputPath = '$DIR_0/$NAME_0.bnd'
-        break
-      default:
-        outputPath = `$DIR_0/$NAME_0.${firstChar}nd`
-        break
-    }
-
-    // Allow the MakeIndex_style option to override the default style selection.
-    if (this.options.MakeIndex_style) stylePath = this.options.MakeIndex_style
-
-    if (engine !== 'makeindex' && !!stylePath) {
+    if (engine !== 'makeindex' && !!style) {
       engine = 'makeindex'
       this.info(`Ignoring index engine setting of \`${engine}\` since there is a makeindex style set.`, this.id)
     }
 
-    const args = [engine, '-t', logPath, '-o', outputPath]
+    const args = [
+      engine,
+      '-t', logPath,
+      '-o', outputPath
+    ]
 
-    if (stylePath) {
-      args.push('-s', stylePath)
+    if (style) {
+      args.push('-s', style)
     }
 
     // Remove blanks from index ids
