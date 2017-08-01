@@ -88,8 +88,21 @@ function splitCommand (command: string) {
 }
 
 export default class Log {
+  static hasRunMessage (parsedLog: ParsedLog, program: string, file: string): boolean {
+    const quote = file.includes(' ') ? '"' : ''
+    const text = `run ${program} on the file: ${quote}${file}${quote}`
+    return parsedLog.messages.findIndex(message => message.text.includes(text)) !== -1
+  }
+
   static findMessage (parsedLog: ParsedLog, pattern: string | RegExp): ?Message {
     return parsedLog.messages.find(message => !!message.text.match(pattern))
+  }
+
+  static findMessageMatches (parsedLog: ParsedLog, pattern: RegExp): Array<Array<string>> {
+    return parsedLog.messages
+      // $FlowIgnore
+      .map(message => message.text.match(pattern))
+      .filter(match => match)
   }
 
   static filterCalls (parsedLog: ParsedLog, command: string, filePath?: string, status?: string): Array<ShellCall> {

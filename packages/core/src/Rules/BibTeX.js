@@ -2,11 +2,12 @@
 
 import path from 'path'
 
-import State from '../State'
 import File from '../File'
+import Log from '../Log'
 import Rule from '../Rule'
+import State from '../State'
 
-import type { Action, Command, CommandOptions, Message, Phase } from '../types'
+import type { Action, Command, CommandOptions, Phase } from '../types'
 
 export default class BibTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['ParsedLaTeXAuxilary'])]
@@ -28,8 +29,7 @@ export default class BibTeX extends Rule {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.filePath)
-        if (file.value && file.value.messages &&
-          file.value.messages.some((message: Message) => message.text.includes('run BibTeX') && message.text.includes(name))) {
+        if (file.value && Log.hasRunMessage(file.value, 'BibTeX', name)) {
           return ['run']
         }
         break

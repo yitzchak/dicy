@@ -3,9 +3,10 @@
 import path from 'path'
 
 import File from '../File'
+import Log from '../Log'
 import Rule from '../Rule'
 
-import type { Action, CommandOptions, Message } from '../types'
+import type { Action, CommandOptions } from '../types'
 
 export default class Biber extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BiberControlFile'])]
@@ -22,8 +23,7 @@ export default class Biber extends Rule {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.filePath)
-        if (file.value && file.value.messages &&
-          file.value.messages.some((message: Message) => message.text.includes('run Biber') && message.text.includes(name))) {
+        if (file.value && Log.hasRunMessage(file.value, 'Biber', name)) {
           return ['run']
         }
         break
