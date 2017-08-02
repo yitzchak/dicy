@@ -70,7 +70,7 @@
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "^0.51.0",
+    "flow-bin": "^0.52.0",
     "flow-typed": "^2.1.2",
     "jasmine": "^2.6.0",
     "lerna": "^2.0.0"
