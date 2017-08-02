@@ -6,6 +6,40 @@ import yargs from 'yargs-parser'
 import type { Message, ParsedLog, ShellCall } from './types'
 
 const ARGUMENT_PARSERS = {
+  epstopdf: {
+    alias: {
+      outfile: 'o'
+    },
+    default: {
+      compress: true,
+      embed: true,
+      gs: true,
+      quiet: true,
+      safer: true
+    },
+    boolean: [
+      'compress',
+      'debug',
+      'embed',
+      'exact',
+      'filter',
+      'gray',
+      'gs',
+      'hires',
+      'quiet',
+      'restricted',
+      'safer'
+    ],
+    string: [
+      'device',
+      'pdfwrite',
+      'autorotate',
+      'gscmd',
+      'gsopt',
+      'gsopts',
+      'outfile'
+    ]
+  },
   makeindex: {
     boolean: ['c', 'g', 'i', 'l', 'q', 'r', 'L', 'T'],
     string: ['o', 'p', 's', 't']
