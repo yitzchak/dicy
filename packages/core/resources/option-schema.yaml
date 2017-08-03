@@ -199,6 +199,7 @@ synctex:
 EpsToPdf_outputPath:
   description: Output path of epstopdf
   type: string
+  defaultValue: $DIR_0/$NAME_0.pdf
   commands:
     - build
 Knitr_concordance:

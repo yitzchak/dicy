@@ -44,8 +44,6 @@ export default class EpsToPdf extends Rule {
         this.options.EpsToPdf_outputPath = call.options.outfile
       } else if (call.args.length > 2) {
         this.options.EpsToPdf_outputPath = call.args[2]
-      } else {
-        this.options.EpsToPdf_outputPath = '$DIR_0/$NAME_0.pdf'
       }
     }
   }
