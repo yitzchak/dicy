@@ -196,6 +196,11 @@ synctex:
   defaultValue: false
   commands:
     - build
+EpsToPdf_outputPath:
+  description: Output path of epstopdf
+  type: string
+  commands:
+    - build
 Knitr_concordance:
   description: Enable creation of knitr concordance file used to SyncTeX
     patching and source code mapping in log messages.

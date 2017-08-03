@@ -10,11 +10,52 @@ const ARGUMENT_PARSERS = {
     alias: {
       outfile: 'o'
     },
+    configuration: {
+      'negation-prefix': 'no'
+    },
     default: {
       compress: true,
       embed: true,
       gs: true,
       quiet: true,
+      safer: true
+    },
+    boolean: [
+      'compress',
+      'debug',
+      'embed',
+      'exact',
+      'filter',
+      'gray',
+      'gs',
+      'hires',
+      'quiet',
+      'restricted',
+      'safer'
+    ],
+    string: [
+      'device',
+      'pdfwrite',
+      'autorotate',
+      'gscmd',
+      'gsopt',
+      'gsopts',
+      'outfile'
+    ]
+  },
+  repstopdf: {
+    alias: {
+      outfile: 'o'
+    },
+    configuration: {
+      'negation-prefix': 'no'
+    },
+    default: {
+      compress: true,
+      embed: true,
+      gs: true,
+      quiet: true,
+      restricted: true,
       safer: true
     },
     boolean: [
@@ -133,10 +174,10 @@ export default class Log {
     return parsedLog.messages.find(message => !!message.text.match(pattern))
   }
 
-  static findMessageMatches (parsedLog: ParsedLog, pattern: RegExp): Array<Array<string>> {
+  static findMessageMatches (parsedLog: ParsedLog, pattern: RegExp, category?: string): Array<Array<string>> {
     return parsedLog.messages
       // $FlowIgnore
-      .map(message => message.text.match(pattern))
+      .map(message => (!category || message.category === category) ? message.text.match(pattern) : null)
       .filter(match => match)
   }
 
@@ -152,7 +193,7 @@ export default class Log {
       (!status || call.status.startsWith(status)))
   }
 
-  static parseCall (command: string, status: string): ShellCall {
+  static parseCall (command: string, status: string = 'executed'): ShellCall {
     const args = splitCommand(command)
     if (args[0] in ARGUMENT_PARSERS) {
       const argv = yargs(args, ARGUMENT_PARSERS[args[0]])
