@@ -4,7 +4,7 @@ types:
 events:
   - type: command
     rule: EpsToPdf(build;execute;dicy-3;images/dicy-3.eps;x.y-Nil)
-    command: epstopdf images/dicy-3.eps images/dicy-3.pdf
+    command: epstopdf --outfile=images/dicy-3.pdf images/dicy-3.eps
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-epstopdf.tex)
     command: >-

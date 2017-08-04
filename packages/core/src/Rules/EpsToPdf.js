@@ -79,11 +79,13 @@ export default class EpsToPdf extends Rule {
   }
 
   constructCommand (): CommandOptions {
+    const outputPath = this.resolvePath(this.options.EpsToPdf_outputPath)
+
     return {
       args: [
         'epstopdf',
-        '$DIR_0/$BASE_0',
-        this.options.EpsToPdf_outputPath
+        `--outfile=${outputPath}`,
+        '$DIR_0/$BASE_0'
       ],
       cd: '$ROOTDIR',
       severity: 'error',
