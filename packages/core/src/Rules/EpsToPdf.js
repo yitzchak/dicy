@@ -53,6 +53,10 @@ export default class EpsToPdf extends Rule {
       } else if (call.args.length > 2) {
         this.options.EpsToPdf_outputPath = call.args[2]
       }
+
+      this.options.EpsToPdf_boundingBox = call.options.exact
+        ? 'exact'
+        : (call.options.hires ? 'hires' : 'default')
     }
   }
 
@@ -80,13 +84,23 @@ export default class EpsToPdf extends Rule {
 
   constructCommand (): CommandOptions {
     const outputPath = this.resolvePath(this.options.EpsToPdf_outputPath)
+    const args = [
+      'epstopdf',
+      `--outfile=${outputPath}`,
+      '$DIR_0/$BASE_0'
+    ]
+
+    switch (this.options.EpsToPdf_boundingBox) {
+      case 'exact':
+        args.push('--exact')
+        break
+      case 'hires':
+        args.push('--hires')
+        break
+    }
 
     return {
-      args: [
-        'epstopdf',
-        `--outfile=${outputPath}`,
-        '$DIR_0/$BASE_0'
-      ],
+      args,
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: [this.options.EpsToPdf_outputPath]

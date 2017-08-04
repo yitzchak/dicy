@@ -5,11 +5,11 @@
 \documentclass{article}
 
 \usepackage{xstring}
-\usepackage[pdftex]{graphicx}
 
-\IfEqCase*{\jobname}{%
-  {job-1}{\usepackage{epstopdf}}%
-  {job-2}{\usepackage{epstopdf}}}
+\IfStrEq*{\jobname}{job-3}%
+  {\newcommand{\DoNotLoadEpstopdf}{}}%
+
+\usepackage[pdftex]{graphicx}
 
 \graphicspath{{images/}}
 

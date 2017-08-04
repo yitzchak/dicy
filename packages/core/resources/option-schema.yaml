@@ -196,6 +196,16 @@ synctex:
   defaultValue: false
   commands:
     - build
+EpsToPdf_boundingBox:
+  description: The bounding box used in the original file.
+  type: string
+  defaultValue: default
+  values:
+    - default
+    - exact
+    - hires
+  commands:
+    - build
 EpsToPdf_outputPath:
   description: Output path of epstopdf
   type: string
