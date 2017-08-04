@@ -10,12 +10,19 @@ import type { Action, Command, Phase, CommandOptions, ParsedLog } from '../types
 export default class EpsToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [
     new Set(['EncapsulatedPostScript']),
-    new Set(['ParsedLaTeXLog'])
+    new Set(['ParsedLaTeXLog', 'Nil'])
   ]
   static description: string = 'Converts EPS to PDF using epstopdf.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    return !!EpsToPdf.findCall(parameters[1].value, parameters[0].filePath)
+    switch (parameters[1].type) {
+      case 'Nil':
+        return parameters[0].filePath === state.getOption('filePath', jobName)
+      case 'ParsedLaTeXLog':
+        return !!EpsToPdf.findCall(parameters[1].value, parameters[0].filePath)
+      default:
+        return false
+    }
   }
 
   static findCall (parsedLog: ?ParsedLog, filePath: string) {
@@ -30,8 +37,6 @@ export default class EpsToPdf extends Rule {
           .find(call => call.args.includes(filePath))
       }
     }
-
-    console.log(call)
 
     return call
   }

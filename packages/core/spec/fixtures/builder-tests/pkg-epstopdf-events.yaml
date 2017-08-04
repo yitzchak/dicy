@@ -3,12 +3,25 @@ types:
   - log
 events:
   - type: command
-    rule: LaTeX(build;execute;;pkg-epstopdf.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -shell-escape
-      pkg-epstopdf.tex
+    rule: EpsToPdf(build;execute;dicy-3;images/dicy-3.eps;x.y-Nil)
+    command: epstopdf images/dicy-3.eps images/dicy-3.pdf
   - type: command
-    rule: LaTeX(build;execute;;pkg-epstopdf.tex)
+    rule: LaTeX(build;execute;job-1;pkg-epstopdf.tex)
     command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -shell-escape
-      pkg-epstopdf.tex
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      -shell-escape pkg-epstopdf.tex
+  - type: command
+    rule: LaTeX(build;execute;job-3;pkg-epstopdf.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
+      -no-shell-escape pkg-epstopdf.tex
+  - type: command
+    rule: LaTeX(build;execute;job-3;pkg-epstopdf.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
+      -no-shell-escape pkg-epstopdf.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-epstopdf.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      -shell-escape pkg-epstopdf.tex

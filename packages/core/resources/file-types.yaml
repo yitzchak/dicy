@@ -95,6 +95,7 @@ NomenclatureControlFile:
   fileName: !!js/regexp /\.nlo$/i
 NomenclatureListing:
   fileName: !!js/regexp /\.nls$/i
+Nil: {}
 OUT:
   fileName: !!js/regexp /\.out$/i
 ParsedAsymptoteStdOut: {}

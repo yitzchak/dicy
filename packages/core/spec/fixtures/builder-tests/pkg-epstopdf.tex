@@ -1,13 +1,23 @@
-%!TeX shellEscape = enabled
+%!TeX jobNames = job-1, job-3, dicy-3
+%!TeX shellEscape = disabled
+%!TeX job-1:shellEscape = enabled
+%!TeX dicy-3:filePath = images/dicy-3.eps
 \documentclass{article}
 
+\usepackage{xstring}
 \usepackage[pdftex]{graphicx}
-\usepackage{epstopdf}
+
+\IfEqCase*{\jobname}{%
+  {job-1}{\usepackage{epstopdf}}%
+  {job-2}{\usepackage{epstopdf}}}
 
 \graphicspath{{images/}}
 
 \begin{document}
 
-\includegraphics{dicy}
+\IfEqCase*{\jobname}{%
+  {job-1}{\includegraphics{dicy-1}}%
+  {job-2}{\includegraphics{dicy-2}}%
+  {job-3}{\includegraphics{dicy-3}}}
 
 \end{document}

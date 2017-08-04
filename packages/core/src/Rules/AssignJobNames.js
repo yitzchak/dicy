@@ -11,12 +11,15 @@ export default class AssignJobNames extends Rule {
   static description: string = 'Assign job names to initial source file.'
 
   async run (): Promise<boolean> {
-    // Get the source file associated with this job.
-    const file = await this.getFile(this.options.filePath)
+    // Get the source file associated with this job and also make sure there
+    // is a Nil file.
+    const files = await this.getFiles([this.options.filePath, 'x.y-Nil'])
 
-    if (file && this.jobName) {
-      // If the file exists and we have a job name then add it.
-      file.jobNames.add(this.jobName)
+    if (this.jobName) {
+      // If we have a job name then add it.
+      for (const file of files) {
+        file.jobNames.add(this.jobName)
+      }
     }
 
     return true
