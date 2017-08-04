@@ -1,5 +1,7 @@
 /* @flow */
 
+import path from 'path'
+
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
@@ -17,7 +19,8 @@ export default class EpsToPdf extends Rule {
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
     switch (parameters[1].type) {
       case 'Nil':
-        return parameters[0].filePath === state.getOption('filePath', jobName)
+        const filePath = state.getOption('filePath', jobName)
+        return !!filePath && parameters[0].filePath === path.normalize(filePath)
       case 'ParsedLaTeXLog':
         return !!EpsToPdf.findCall(parameters[1].value, parameters[0].filePath)
       default:

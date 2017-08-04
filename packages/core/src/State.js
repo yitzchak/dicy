@@ -297,7 +297,7 @@ export default class State extends EventEmitter {
       }
     }
 
-    return (name === 'filePath') ? this.filePath : path.normalize(this.options[name])
+    return (name === 'filePath') ? this.filePath : this.options[name]
   }
 
   * getOptions (jobName: ?string): Iterable<[string, any]> {
