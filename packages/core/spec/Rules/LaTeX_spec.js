@@ -251,5 +251,37 @@ describe('LaTeX', () => {
 
       done()
     })
+
+    it('adds kanji option when kanji encoding is set.', async (done) => {
+      await initialize(['LaTeX_article.tex'], { engine: 'uplatex', kanji: 'uptex' })
+
+      expect(rule.constructCommand().args).toContain('-kanji=uptex')
+
+      done()
+    })
+
+    it('does not add kanji option when kanji encoding is set but engine is not a Japanese variant.', async (done) => {
+      await initialize(['LaTeX_article.tex'], { kanji: 'uptex' })
+
+      expect(rule.constructCommand().args).not.toContain('-kanji=uptex')
+
+      done()
+    })
+
+    it('adds -kanji-internal option when kanji encoding is set.', async (done) => {
+      await initialize(['LaTeX_article.tex'], { engine: 'uplatex', kanjiInternal: 'uptex' })
+
+      expect(rule.constructCommand().args).toContain('-kanji-internal=uptex')
+
+      done()
+    })
+
+    it('does not add -kanji-internal option when kanji encoding is set but engine is not a Japanese variant.', async (done) => {
+      await initialize(['LaTeX_article.tex'], { kanjiInternal: 'uptex' })
+
+      expect(rule.constructCommand().args).not.toContain('-kanji-internal=uptex')
+
+      done()
+    })
   })
 })

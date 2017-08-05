@@ -9,6 +9,8 @@ import State from '../State'
 
 import type { Action, Command, CommandOptions, Phase } from '../types'
 
+const JAPANESE_BIBTEX_PATTERN = /^u?pbibtex$/
+
 export default class BibTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [
     new Set(['LaTeXAuxilary']),
@@ -47,8 +49,22 @@ export default class BibTeX extends Rule {
   }
 
   constructCommand (): CommandOptions {
+    const engine = this.options.bibtexEngine
+    const args = [engine]
+
+    if (JAPANESE_BIBTEX_PATTERN.test(engine)) {
+      if (this.options.kanji) {
+        args.push(`-kanji=${this.options.kanji}`)
+      }
+      if (this.options.kanjiInternal) {
+        args.push(`-kanji-internal=${this.options.kanjiInternal}`)
+      }
+    }
+
+    args.push('$DIR_0/$BASE_0')
+
     return {
-      args: [this.options.bibtexEngine, '$DIR_0/$BASE_0'],
+      args,
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']

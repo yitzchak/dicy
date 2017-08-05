@@ -110,6 +110,25 @@ jobNames:
     - build
     - clean
     - scrub
+kanji:
+  description: Kanji encoding for pLaTeX, upLaTeX, pBibTeX and upBibTeX.
+  type: string
+  values:
+    - euc
+    - jis
+    - sjis
+    - utf8
+    - uptex
+  commands:
+    - build
+kanjiInternal:
+  description: Internal Kanji encoding for upLaTeX and upBibTeX.
+  type: string
+  values:
+    - euc
+    - uptex
+  commands:
+    - build
 literateAgdaEngine:
   aliases:
     - a
