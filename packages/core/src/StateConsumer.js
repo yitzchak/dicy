@@ -222,8 +222,8 @@ export default class StateConsumer {
     this.state.removeEdge(x, y)
   }
 
-  isChild (x: Rule, y: Rule): boolean {
-    return this.state.isChild(x, y)
+  isGrandparentOf (x: File | Rule, y: File | Rule): boolean {
+    return this.state.isGrandparentOf(x, y)
   }
 
   async getResolvedFile (filePath: string): Promise<?File> {

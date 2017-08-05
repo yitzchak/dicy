@@ -63,8 +63,8 @@ export default class GraphDependencies extends Rule {
           for (let i = 0; i < rules.length; i++) {
             // let connected = false
             for (let j = 0; j < rules.length; j++) {
-              const from = this.isChild(rules[i], rules[j])
-              const to = this.isChild(rules[j], rules[i])
+              const from = this.isGrandparentOf(rules[i], rules[j])
+              const to = this.isGrandparentOf(rules[j], rules[i])
 
               if (from) {
                 if (!to) {

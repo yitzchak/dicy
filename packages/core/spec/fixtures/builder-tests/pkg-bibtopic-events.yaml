@@ -13,16 +13,19 @@ events:
       pdflatex -file-line-error -interaction=batchmode -recorder
       pkg-bibtopic.tex
   - type: command
-    rule: BibTeX(build;execute;;btaux.aux-ParsedLaTeXAuxilary)
+    rule: BibTeX(build;execute;;btaux.aux;btaux.aux-ParsedLaTeXAuxilary)
     command: bibtex btaux.aux
   - type: command
-    rule: BibTeX(build;execute;;pkg-bibtopic1.aux-ParsedLaTeXAuxilary)
+    rule: >-
+      BibTeX(build;execute;;pkg-bibtopic1.aux;pkg-bibtopic1.aux-ParsedLaTeXAuxilary)
     command: bibtex pkg-bibtopic1.aux
   - type: command
-    rule: BibTeX(build;execute;;pkg-bibtopic2.aux-ParsedLaTeXAuxilary)
+    rule: >-
+      BibTeX(build;execute;;pkg-bibtopic2.aux;pkg-bibtopic2.aux-ParsedLaTeXAuxilary)
     command: bibtex pkg-bibtopic2.aux
   - type: command
-    rule: BibTeX(build;execute;;pkg-bibtopic3.aux-ParsedLaTeXAuxilary)
+    rule: >-
+      BibTeX(build;execute;;pkg-bibtopic3.aux;pkg-bibtopic3.aux-ParsedLaTeXAuxilary)
     command: bibtex pkg-bibtopic3.aux
   - type: command
     rule: ParseBibTeXLog(build;execute;;btaux.blg)

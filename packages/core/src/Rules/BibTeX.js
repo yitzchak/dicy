@@ -10,18 +10,22 @@ import State from '../State'
 import type { Action, Command, CommandOptions, Phase } from '../types'
 
 export default class BibTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['ParsedLaTeXAuxilary'])]
+  static parameterTypes: Array<Set<string>> = [
+    new Set(['LaTeXAuxilary']),
+    new Set(['ParsedLaTeXAuxilary'])
+  ]
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    return parameters.some(file => !!file.value && !!file.value.bibdata)
+    return state.isGrandparentOf(parameters[0], parameters[1]) &&
+      !!parameters[1].value && !!parameters[1].value.bibdata
   }
 
   async initialize () {
     await this.getResolvedInputs([
       '$OUTDIR/$JOB.log-ParsedLaTeXLog',
       '$DIR_0/$NAME_0.blg-ParsedBibTeXLog',
-      '$DIR_0/$NAME_0.aux'
+      '$DIR_0/$BASE_0'
     ])
   }
 
@@ -44,7 +48,7 @@ export default class BibTeX extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: ['bibtex', '$DIR_0/$NAME_0.aux'],
+      args: [this.options.bibtexEngine, '$DIR_0/$BASE_0'],
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']

@@ -99,17 +99,17 @@ events:
     rule: SplitIndex(build;execute;job-12;job-12.idx;job-12.log-ParsedLaTeXLog)
     command: splitindex -v -v -m '' job-12.idx
   - type: command
-    rule: MakeIndex(build;execute;job-5;job-5-persons.idx;job-5.log-ParsedLaTeXLog)
-    command: makeindex -t job-5-persons.ilg -o job-5-persons.ind job-5-persons.idx
-  - type: command
     rule: MakeIndex(build;execute;job-5;job-5-job-5.idx;job-5.log-ParsedLaTeXLog)
     command: makeindex -t job-5-job-5.ilg -o job-5-job-5.ind job-5-job-5.idx
   - type: command
-    rule: MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog)
-    command: makeindex -t job-6-job-6.ilg -o job-6-job-6.ind job-6-job-6.idx
+    rule: MakeIndex(build;execute;job-5;job-5-persons.idx;job-5.log-ParsedLaTeXLog)
+    command: makeindex -t job-5-persons.ilg -o job-5-persons.ind job-5-persons.idx
   - type: command
     rule: MakeIndex(build;execute;job-6;job-6-persons.idx;job-6.log-ParsedLaTeXLog)
     command: makeindex -t job-6-persons.ilg -o job-6-persons.ind job-6-persons.idx
+  - type: command
+    rule: MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog)
+    command: makeindex -t job-6-job-6.ilg -o job-6-job-6.ind job-6-job-6.idx
   - type: command
     rule: >-
       MakeIndex(build;execute;job-11;job-11-persons.idx;job-11.log-ParsedLaTeXLog)
@@ -120,12 +120,12 @@ events:
     command: texindy -t job-11-job-11.ilg -o job-11-job-11.ind job-11-job-11.idx
   - type: command
     rule: >-
-      MakeIndex(build;execute;job-12;job-12-job-12.idx;job-12.log-ParsedLaTeXLog)
-    command: texindy -t job-12-job-12.ilg -o job-12-job-12.ind job-12-job-12.idx
-  - type: command
-    rule: >-
       MakeIndex(build;execute;job-12;job-12-persons.idx;job-12.log-ParsedLaTeXLog)
     command: texindy -t job-12-persons.ilg -o job-12-persons.ind job-12-persons.idx
+  - type: command
+    rule: >-
+      MakeIndex(build;execute;job-12;job-12-job-12.idx;job-12.log-ParsedLaTeXLog)
+    command: texindy -t job-12-job-12.ilg -o job-12-job-12.ind job-12-job-12.idx
   - type: command
     rule: LaTeX(build;execute;job-5;pkg-imakeidx.tex)
     command: >-

@@ -90,7 +90,7 @@ describe('BibTeX', () => {
   describe('constructCommand', () => {
     it('returns correct arguments and command options for control file file.', async (done) => {
       expect(rule.constructCommand()).toEqual({
-        args: ['bibtex', '$DIR_0/$NAME_0.aux'],
+        args: ['bibtex', '$DIR_0/$BASE_0'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']

@@ -1,3 +1,15 @@
+bibtexEngine:
+  description: BibTeX engine, e.g. bibtex, pbibtex, upbibtex.
+  type: string
+  values:
+    - bibtex
+    - bibtex8
+    - bibtexu
+    - pbibtex
+    - upbibtex
+  defaultValue: bibtex
+  commands:
+    - build
 check:
   description: Commands to check.
   type: strings
