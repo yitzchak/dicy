@@ -33,7 +33,7 @@ describe('LhsToTeX', () => {
     })
 
     it('returns correct arguments and command options for Rnw file when concordance is off.', async (done) => {
-      await initialize(['Knitr.Rnw'], { Knitr_concordance: false })
+      await initialize(['Knitr.Rnw'], { knitrConcordance: false })
 
       expect(rule.constructCommand()).toEqual({
         args: ['Rscript', '-e', 'library(knitr);knit(\'Knitr.Rnw\')'],

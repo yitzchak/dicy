@@ -260,64 +260,64 @@ describe('MakeIndex', () => {
       done()
     })
 
-    it('add -c to command line when MakeIndex_compressBlanks is enabled.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_compressBlanks: true })
+    it('add -c to command line when indexCompressBlanks is enabled.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexCompressBlanks: true })
 
       expect(rule.constructCommand().args).toContain('-c')
 
       done()
     })
 
-    it('add -l to command line when MakeIndex_ordering is set to \'letter\'.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_ordering: 'letter' })
+    it('add -l to command line when indexOrdering is set to \'letter\'.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexOrdering: 'letter' })
 
       expect(rule.constructCommand().args).toContain('-l')
 
       done()
     })
 
-    it('add -g to command line when MakeIndex_sorting is set to \'german\'.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_sorting: 'german' })
+    it('add -g to command line when indexSorting is set to \'german\'.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexSorting: 'german' })
 
       expect(rule.constructCommand().args).toContain('-g')
 
       done()
     })
 
-    it('add -T to command line when MakeIndex_sorting is set to \'thai\'.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_sorting: 'thai' })
+    it('add -T to command line when indexSorting is set to \'thai\'.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexSorting: 'thai' })
 
       expect(rule.constructCommand().args).toContain('-T')
 
       done()
     })
 
-    it('add -L to command line when MakeIndex_sorting is set to \'locale\'.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_sorting: 'locale' })
+    it('add -L to command line when indexSorting is set to \'locale\'.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexSorting: 'locale' })
 
       expect(rule.constructCommand().args).toContain('-L')
 
       done()
     })
 
-    it('add -r to command line when MakeIndex_automaticRanges is disabled.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_automaticRanges: false })
+    it('add -r to command line when indexAutomaticRanges is disabled.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexAutomaticRanges: false })
 
       expect(rule.constructCommand().args).toContain('-r')
 
       done()
     })
 
-    it('add -p to command line when MakeIndex_startPage is set.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_startPage: 'odd' })
+    it('add -p to command line when indexStartPage is set.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexStartPage: 'odd' })
 
       expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-p', 'odd']))
 
       done()
     })
 
-    it('add -s to command line when MakeIndex_style is set.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { MakeIndex_style: 'foo.ist' })
+    it('add -s to command line when indexStyle is set.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexStyle: 'foo.ist' })
 
       expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-s', 'foo.ist']))
 

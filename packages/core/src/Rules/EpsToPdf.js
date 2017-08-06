@@ -49,12 +49,12 @@ export default class EpsToPdf extends Rule {
 
     if (call) {
       if (call.options.outfile) {
-        this.options.EpsToPdf_outputPath = call.options.outfile
+        this.options.epstopdfOutputPath = call.options.outfile
       } else if (call.args.length > 2) {
-        this.options.EpsToPdf_outputPath = call.args[2]
+        this.options.epstopdfOutputPath = call.args[2]
       }
 
-      this.options.EpsToPdf_boundingBox = call.options.exact
+      this.options.epstopdfBoundingBox = call.options.exact
         ? 'exact'
         : (call.options.hires ? 'hires' : 'default')
     }
@@ -76,21 +76,21 @@ export default class EpsToPdf extends Rule {
     if (call && call.status.startsWith('executed')) {
       this.info(`Skipping epstopdf call since epstopdf was already executed via shell escape.`, this.id)
 
-      await this.getResolvedOutput(this.options.EpsToPdf_outputPath)
+      await this.getResolvedOutput(this.options.epstopdfOutputPath)
 
       this.actions.delete('run')
     }
   }
 
   constructCommand (): CommandOptions {
-    const outputPath = this.resolvePath(this.options.EpsToPdf_outputPath)
+    const outputPath = this.resolvePath(this.options.epstopdfOutputPath)
     const args = [
       'epstopdf',
       `--outfile=${outputPath}`,
       '$DIR_0/$BASE_0'
     ]
 
-    switch (this.options.EpsToPdf_boundingBox) {
+    switch (this.options.epstopdfBoundingBox) {
       case 'exact':
         args.push('--exact')
         break
@@ -103,7 +103,7 @@ export default class EpsToPdf extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: [this.options.EpsToPdf_outputPath]
+      outputs: [this.options.epstopdfOutputPath]
     }
   }
 }

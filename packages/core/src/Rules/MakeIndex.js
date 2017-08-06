@@ -40,37 +40,37 @@ export default class MakeIndex extends Rule {
     const parsedLog: ?ParsedLog = this.secondParameter.value
 
     // Automatically assign style based on index type.
-    if (!this.options.MakeIndex_style) {
+    if (!this.options.indexStyle) {
       switch (this.firstParameter.type) {
         case 'NomenclatureControlFile':
-          this.options.MakeIndex_style = 'nomencl.ist'
+          this.options.indexStyle = 'nomencl.ist'
           break
         case 'BibRefControlFile':
-          this.options.MakeIndex_style = 'bibref.ist'
+          this.options.indexStyle = 'bibref.ist'
           break
       }
     }
 
     // Automatically assign output path based on index type.
-    if (!this.options.MakeIndex_outputPath) {
+    if (!this.options.indexOutputPath) {
       switch (this.firstParameter.type) {
         case 'NomenclatureControlFile':
-          this.options.MakeIndex_outputPath = '$DIR_0/$NAME_0.nls'
+          this.options.indexOutputPath = '$DIR_0/$NAME_0.nls'
           break
         case 'BibRefControlFile':
-          this.options.MakeIndex_outputPath = '$DIR_0/$NAME_0.bnd'
+          this.options.indexOutputPath = '$DIR_0/$NAME_0.bnd'
           break
         default:
-          this.options.MakeIndex_outputPath = `$DIR_0/$NAME_0.${firstChar}nd`
+          this.options.indexOutputPath = `$DIR_0/$NAME_0.${firstChar}nd`
           break
       }
     }
 
     // Automatically assign log path based on index type.
-    if (!this.options.MakeIndex_logPath) {
+    if (!this.options.indexLogPath) {
       // .brlg instead of .blg is used as extension to avoid ovewriting any
       // Biber/BibTeX logs.
-      this.options.MakeIndex_logPath = `$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`
+      this.options.indexLogPath = `$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`
     }
 
     if (parsedLog) {
@@ -85,23 +85,51 @@ export default class MakeIndex extends Rule {
 
       if (call) {
         this.options.indexEngine = call.args[0]
-        this.options.MakeIndex_compressBlanks = !!call.options.c
-        this.options.MakeIndex_automaticRanges = !call.options.r
-        this.options.MakeIndex_ordering = call.options.l ? 'letter' : 'word'
+        this.options.indexCompressBlanks = !!call.options.c
+        this.options.indexAutomaticRanges = !call.options.r
+        this.options.indexOrdering = call.options.l ? 'letter' : 'word'
         if ('p' in call.options) {
-          this.options.MakeIndex_startPage = call.options.p
+          this.options.indexStartPage = call.options.p
         }
         if ('s' in call.options) {
-          this.options.MakeIndex_style = call.options.s
+          this.options.indexStyle = call.options.s
         }
-        if (call.options.g) {
-          this.options.MakeIndex_sorting = 'german'
-        } else if (call.options.T) {
-          this.options.MakeIndex_sorting = 'thai'
-        } else if (call.options.L) {
-          this.options.MakeIndex_sorting = 'locale'
-        } else {
-          this.options.MakeIndex_sorting = 'default'
+        switch (call.args[0]) {
+          case 'makeindex':
+            if (call.options.g) {
+              this.options.indexSorting = 'german'
+            } else if (call.options.T) {
+              this.options.indexSorting = 'thai'
+            } else if (call.options.L) {
+              this.options.indexSorting = 'locale'
+            } else {
+              this.options.indexSorting = 'default'
+            }
+            break
+          case 'mendex':
+            if (call.options.E) {
+              this.options.kanji = 'euc'
+            } else if (call.options.J) {
+              this.options.kanji = 'jis'
+            } else if (call.options.S) {
+              this.options.kanji = 'sjis'
+            } else if (call.options.U) {
+              this.options.kanji = 'utf8'
+            }
+
+            if (call.options.I) {
+              this.options.kanjiInternal = call.options.kanjiInternal
+            }
+
+            if (call.options.d) {
+              this.options.indexDictionary = this.options.d
+            }
+
+            if (call.options.f) {
+              this.options.indexForceKanji = true
+            }
+
+            break
         }
       }
     }
@@ -147,11 +175,11 @@ export default class MakeIndex extends Rule {
 
   constructCommand (): CommandOptions {
     let engine = this.options.indexEngine
-    const style = this.options.MakeIndex_style
-    const logPath = this.options.MakeIndex_logPath
-    const outputPath = this.options.MakeIndex_outputPath
+    const style = this.options.indexStyle
+    const logPath = this.options.indexLogPath
+    const outputPath = this.options.indexOutputPath
 
-    if (engine !== 'makeindex' && !!style) {
+    if (engine === 'texindy' && !!style) {
       engine = 'makeindex'
       this.info(`Ignoring index engine setting of \`${engine}\` since there is a makeindex style set.`, this.id)
     }
@@ -167,46 +195,92 @@ export default class MakeIndex extends Rule {
     }
 
     // Remove blanks from index ids
-    if (this.options.MakeIndex_compressBlanks) {
-      if (args[0] === 'makeindex') {
-        args.push('-c')
+    if (this.options.indexCompressBlanks) {
+      if (args[0] === 'texindy') {
+        this.info('Ignoring compressBlanks setting since index engine is texindy.', this.id)
       } else {
-        this.info('Ignoring compressBlanks setting since index engine is not makeindex.', this.id)
+        args.push('-c')
       }
     }
 
     // Ignore spaces in grouping.
-    if (this.options.MakeIndex_ordering === 'letter') {
+    if (this.options.indexOrdering === 'letter') {
       args.push('-l')
     }
 
     // It is possible to have all of these enabled at the same time, but
     // inspection of the makeindex code seems to indicate that `thai` implies
     // `locale` and that `locale` prevents `german` from being used.
-    switch (this.options.MakeIndex_sorting) {
-      case 'german':
-        args.push('-g')
-        break
-      case 'thai':
-        args.push('-T')
-        break
-      case 'locale':
-        args.push('-L')
-        break
+    if (engine === 'mendex') {
+      this.info('Ignoring sorting setting since index engine is mendex.', this.id)
+    } else {
+      switch (this.options.indexSorting) {
+        case 'german':
+          args.push('-g')
+          break
+        case 'thai':
+          args.push('-T')
+          break
+        case 'locale':
+          args.push('-L')
+          break
+      }
     }
 
     // Specify the starting page.
-    if (this.options.MakeIndex_startPage) {
-      if (args[0] === 'makeindex') {
-        args.push('-p', this.options.MakeIndex_startPage)
+    if (this.options.indexStartPage) {
+      if (args[0] === 'texindy') {
+        this.info('Ignoring startPage setting since index engine is texindy.', this.id)
       } else {
-        this.info('Ignoring startPage setting since index engine is not makeindex.', this.id)
+        args.push('-p', this.options.indexStartPage)
       }
     }
 
     // Prevent automatic range construction.
-    if (!this.options.MakeIndex_automaticRanges) {
+    if (!this.options.indexAutomaticRanges) {
       args.push('-r')
+    }
+
+    if (engine === 'mendex') {
+      if (this.options.indexForceKanji) {
+        args.push('-f')
+      }
+
+      if (this.options.indexDictionary) {
+        args.push('-d', this.options.indexDictionary)
+      }
+
+      switch (this.options.kanji) {
+        case undefined:
+          break
+        case 'euc':
+          args.push('-E')
+          break
+        case 'jis':
+          args.push('-J')
+          break
+        case 'sjis':
+          args.push('-S')
+          break
+        case 'utf8':
+          args.push('-U')
+          break
+        default:
+          this.info(`Ignoring kanji setting of ${this.options.kanji} since mendex does not have that encoding.`, this.id)
+          break
+      }
+
+      switch (this.options.kanjiInternal) {
+        case undefined:
+          break
+        case 'euc':
+        case 'utf8':
+          args.push('-I', this.options.kanjiInternal)
+          break
+        default:
+          this.info(`Ignoring kanjiInternal setting of ${this.options.kanjiInternal} since mendex does not have that encoding.`, this.id)
+          break
+      }
     }
 
     args.push('$DIR_0/$BASE_0')

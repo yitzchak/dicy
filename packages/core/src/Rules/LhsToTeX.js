@@ -27,7 +27,7 @@ export default class LhsToTeX extends Rule {
     }
 
     // Add the style option. `poly` is default so omit it.
-    switch (this.options.LhsToTeX_style) {
+    switch (this.options.lhs2texStyle) {
       case 'math':
         args.push('--math')
         break

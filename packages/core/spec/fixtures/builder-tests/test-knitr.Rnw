@@ -1,6 +1,6 @@
 %!TeX jobNames = job-1, job-2, job-3, job-4
-%!TeX job-1:Knitr_concordance = no
-%!TeX job-2:Knitr_concordance = no
+%!TeX job-1:knitrConcordance = no
+%!TeX job-2:knitrConcordance = no
 %!TeX job-2:outputDirectory = output
 %!TeX job-3:synctex = yes
 %!TeX job-4:outputDirectory = output

@@ -291,7 +291,7 @@ $PATH:
 
 # Knitr Options
 
-## Knitr_concordance
+## knitrConcordance
 
 -   **Type:** boolean
 -   **Default Value:** `true`
@@ -302,7 +302,7 @@ code mapping in log messages.
 
 # LhsToTeX Options
 
-## LhsToTeX_style
+## lhs2texStyle
 
 -   **Type:** string
 -   **Values:** `poly`, `newCode`, `code`, `math`, `typewritter`, `verbatim`
@@ -312,7 +312,7 @@ Set the style that lhs2TeX will use with the default being `poly`.
 
 # MakeIndex Options
 
-## MakeIndex_automaticRanges
+## indexAutomaticRanges
 
 -   **Type:** boolean
 -   **Default Value:** `true`
@@ -321,7 +321,7 @@ Set the style that lhs2TeX will use with the default being `poly`.
 Use automatic page range formation. By default, three or more successive pages
 are automatically abbreviated as a range (e.g. 1-3).
 
-## MakeIndex_compressBlanks
+## indexCompressBlanks
 
 -   **Type:** boolean
 -   **Default Value:** `false`
@@ -329,7 +329,7 @@ are automatically abbreviated as a range (e.g. 1-3).
 
 Compress intermediate blanks including leading and trailing blanks and tabs.
 
-## MakeIndex_ordering
+## indexOrdering
 
 -   **Type:** string
 -   **Values:** `letter`, `word`
@@ -339,7 +339,7 @@ Compress intermediate blanks including leading and trailing blanks and tabs.
 Ordering scheme where `letter` ordering ignores spaces between words and `word`
 ordering respects spaces between word.
 
-## MakeIndex_sorting
+## indexSorting
 
 -   **Type:** string
 -   **Values:** `default`, `german`, `thai`, `locale`
@@ -349,7 +349,7 @@ ordering respects spaces between word.
 Set the sorting method to default (ASCII), german, thai or using the system
 locale.
 
-## MakeIndex_startPage
+## indexStartPage
 
 -   **Type:** string
 -   **Values:** `any`, `odd`, `even` or number
@@ -357,7 +357,7 @@ locale.
 
 Set the start page.
 
-## MakeIndex_style
+## indexStyle
 
 -   **Type:** string
 -   **Commands:** build
