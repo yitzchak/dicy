@@ -36,8 +36,8 @@ export default class ApplyOptions extends Rule {
       'dicy-instance.yaml-ParsedYAML'
     ]
 
-    // Remove the home path is ignoreHomeOptions is set.
-    if (this.options.ignoreHomeOptions) optionPaths.shift()
+    // Remove the home path is ignoreUserOptions is set.
+    if (this.options.ignoreUserOptions) optionPaths.shift()
 
     const inputs: Array<File> = await this.getResolvedInputs(optionPaths)
 

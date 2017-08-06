@@ -12,7 +12,7 @@ describe('DviToPdf', () => {
   let rule: DviToPdf
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreHomeOptions = true
+    options.ignoreUserOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
     const parameters = await builder.getFiles(parameterPaths)
     rule = new DviToPdf(builder.state, 'build', 'execute', null, ...parameters)

@@ -12,7 +12,7 @@ describe('BibTeX', () => {
   let rule: BibTeX
 
   async function initialize (options: Object = {}) {
-    options.ignoreHomeOptions = true
+    options.ignoreUserOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
     const parameters = await builder.getFiles(['LaTeXAuxilary.aux', 'LaTeXAuxilary.aux-ParsedLaTeXAuxilary'])
     rule = new BibTeX(builder.state, 'build', 'execute', null, ...parameters)
