@@ -25,6 +25,7 @@
     "clean": "lerna clean --yes",
     "create-fixtures": "scripts/create-fixtures",
     "dicy": "node packages/cli/lib/main.js",
+    "format-yaml": "babel-node scripts/format-yaml.js",
     "lint": "echo Linting sources... | chalk yellowBright bold && eslint --color packages",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
