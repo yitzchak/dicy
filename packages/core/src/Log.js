@@ -89,6 +89,10 @@ const ARGUMENT_PARSERS = {
     boolean: ['c', 'f', 'g', 'i', 'l', 'q', 'r', 'E', 'J', 'S', 'U'],
     string: ['d', 'o', 'p', 's', 't', 'I']
   },
+  upmendex: {
+    boolean: ['c', 'f', 'g', 'i', 'l', 'q', 'r'],
+    string: ['d', 'o', 'p', 's', 't']
+  },
   splitindex: {
     alias: {
       help: 'h',

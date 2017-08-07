@@ -213,12 +213,13 @@ indexEngine:
   commands:
     - build
   defaultValue: makeindex
-  description: 'Indexing engine, e.g. makeindex, mendex or texindy.'
+  description: Indexing engine
   type: string
   values:
     - makeindex
     - mendex
     - texindy
+    - upmendex
 indexForceKanji:
   commands:
     - build

@@ -75,10 +75,10 @@ export default class MakeIndex extends Rule {
 
     if (parsedLog) {
       const { base } = path.parse(this.firstParameter.filePath)
-      let call = Log.findCall(parsedLog, /(makeindex|texindy)/, base)
+      let call = Log.findCall(parsedLog, /(makeindex|texindy|mendex|upmendex)/, base)
 
       if (!call) {
-        call = Log.findMessageMatches(parsedLog, /after calling `((?:makeindex|texindy)[^']*)'/)
+        call = Log.findMessageMatches(parsedLog, /after calling `((?:makeindex|texindy|mendex|upmendex)[^']*)'/)
           .map(match => Log.parseCall(match[1], 'gronk'))
           .find(call => call.args.includes(base))
       }
@@ -120,7 +120,8 @@ export default class MakeIndex extends Rule {
             if (call.options.I) {
               this.options.kanjiInternal = call.options.kanjiInternal
             }
-
+            // fall through
+          case 'upmendex':
             if (call.options.d) {
               this.options.indexDictionary = this.options.d
             }
@@ -174,30 +175,33 @@ export default class MakeIndex extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    let engine = this.options.indexEngine
-    const style = this.options.indexStyle
-    const logPath = this.options.indexLogPath
-    const outputPath = this.options.indexOutputPath
-
-    if (engine === 'texindy' && !!style) {
-      engine = 'makeindex'
-      this.info(`Ignoring index engine setting of \`${engine}\` since there is a makeindex style set.`, this.id)
+    const texindy = this.options.indexEngine === 'texindy'
+    const mendex = this.options.indexEngine === 'mendex'
+    const upmendex = this.options.indexEngine === 'upmendex'
+    const makeindex = this.options.indexEngine === 'makeindex'
+    const parsedLogName = texindy ? 'ParsedXindyLog' : 'ParsedMakeIndexLog'
+    const infoIgnoreSetting = (name: string) => {
+      this.info(`Ignoring \`${name}\` setting of \`${this.options[name].toString()}\` since index engine \`${this.options.engine}\` does not support that option or setting.`, this.id)
     }
 
     const args = [
-      engine,
-      '-t', logPath,
-      '-o', outputPath
+      this.options.indexEngine,
+      '-t', this.options.indexLogPath,
+      '-o', this.options.indexOutputPath
     ]
 
-    if (style) {
-      args.push('-s', style)
+    if (this.options.indexStyle) {
+      if (texindy) {
+        infoIgnoreSetting('indexStyle')
+      } else {
+        args.push('-s', this.options.indexStyle)
+      }
     }
 
     // Remove blanks from index ids
     if (this.options.indexCompressBlanks) {
-      if (args[0] === 'texindy') {
-        this.info('Ignoring compressBlanks setting since index engine is texindy.', this.id)
+      if (texindy) {
+        infoIgnoreSetting('indexCompressBlanks')
       } else {
         args.push('-c')
       }
@@ -208,29 +212,33 @@ export default class MakeIndex extends Rule {
       args.push('-l')
     }
 
-    // It is possible to have all of these enabled at the same time, but
-    // inspection of the makeindex code seems to indicate that `thai` implies
-    // `locale` and that `locale` prevents `german` from being used.
-    if (engine === 'mendex') {
-      this.info('Ignoring sorting setting since index engine is mendex.', this.id)
-    } else {
-      switch (this.options.indexSorting) {
-        case 'german':
-          args.push('-g')
-          break
-        case 'thai':
-          args.push('-T')
-          break
-        case 'locale':
-          args.push('-L')
-          break
+    if (this.options.indexSorting !== 'default') {
+      // It is possible to have all of these enabled at the same time, but
+      // inspection of the makeindex code seems to indicate that `thai` implies
+      // `locale` and that `locale` prevents `german` from being used.
+      if (makeindex) {
+        switch (this.options.indexSorting) {
+          case 'german':
+            args.push('-g')
+            break
+          case 'thai':
+            args.push('-T')
+            break
+          case 'locale':
+            args.push('-L')
+            break
+        }
+      } else if (texindy && this.options.indexSorting === 'german') {
+        args.push('-g')
+      } else {
+        infoIgnoreSetting('indexSorting')
       }
     }
 
     // Specify the starting page.
     if (this.options.indexStartPage) {
-      if (args[0] === 'texindy') {
-        this.info('Ignoring startPage setting since index engine is texindy.', this.id)
+      if (texindy) {
+        infoIgnoreSetting('indexStartPage')
       } else {
         args.push('-p', this.options.indexStartPage)
       }
@@ -241,58 +249,66 @@ export default class MakeIndex extends Rule {
       args.push('-r')
     }
 
-    if (engine === 'mendex') {
-      if (this.options.indexForceKanji) {
+    if (this.options.kanji) {
+      if (mendex) {
+        // mendex doesn't have all of the encodings in the kanji or the
+        // kanjiInternal setting, but we at least try here.
+        switch (this.options.kanji) {
+          case 'euc':
+            args.push('-E')
+            break
+          case 'jis':
+            args.push('-J')
+            break
+          case 'sjis':
+            args.push('-S')
+            break
+          case 'utf8':
+            args.push('-U')
+            break
+          default:
+            infoIgnoreSetting('kanji')
+            break
+        }
+      } else {
+        infoIgnoreSetting('kanji')
+      }
+    }
+
+    if (this.options.kanjiInternal) {
+      if (mendex && (this.options.kanjiInternal === 'euc' || this.options.kanjiInternal === 'utf8')) {
+        args.push('-I', this.options.kanjiInternal)
+      } else {
+        infoIgnoreSetting('kanjiInternal')
+      }
+    }
+
+    if (this.options.indexForceKanji) {
+      // Both mendex and upmendex allow forcing kanji.
+      if (mendex || upmendex) {
         args.push('-f')
+      } else {
+        infoIgnoreSetting('indexForceKanji')
       }
+    }
 
-      if (this.options.indexDictionary) {
+    if (this.options.indexDictionary) {
+      // Both mendex and upmendex have a sorting based on pronounciation.
+      if (mendex || upmendex) {
         args.push('-d', this.options.indexDictionary)
-      }
-
-      switch (this.options.kanji) {
-        case undefined:
-          break
-        case 'euc':
-          args.push('-E')
-          break
-        case 'jis':
-          args.push('-J')
-          break
-        case 'sjis':
-          args.push('-S')
-          break
-        case 'utf8':
-          args.push('-U')
-          break
-        default:
-          this.info(`Ignoring kanji setting of ${this.options.kanji} since mendex does not have that encoding.`, this.id)
-          break
-      }
-
-      switch (this.options.kanjiInternal) {
-        case undefined:
-          break
-        case 'euc':
-        case 'utf8':
-          args.push('-I', this.options.kanjiInternal)
-          break
-        default:
-          this.info(`Ignoring kanjiInternal setting of ${this.options.kanjiInternal} since mendex does not have that encoding.`, this.id)
-          break
+      } else {
+        infoIgnoreSetting('indexDictionary')
       }
     }
 
     args.push('$DIR_0/$BASE_0')
 
-    const parsedLogName = engine === 'makeindex' ? 'ParsedMakeIndexLog' : 'ParsedXindyLog'
-
     return {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      inputs: [`${logPath}-${parsedLogName}`],
-      outputs: [outputPath, logPath]
+      inputs: [`${this.options.indexLogPath}-${parsedLogName}`],
+      outputs: [this.options.indexOutputPath, this.options.indexLogPath]
     }
   }
 }
