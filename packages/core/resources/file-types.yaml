@@ -80,6 +80,9 @@ LiterateHaskell:
 MakeIndexLog:
   contents: !!js/regexp /^This is makeindex,/
   fileName: !!js/regexp /\..+lg$/i
+MendexLog:
+  contents: !!js/regexp /^This is ((?:up)?mendex) /
+  fileName: !!js/regexp /\..+lg$/i
 MetaPost:
   fileName: !!js/regexp /\.mp$/i
   contents: !!js/regexp /^ *(?:end|bye)\b/
@@ -107,6 +110,8 @@ ParsedFileListing: {}
 ParsedLaTeXLog: {}
 ParsedLaTeXMagic: {}
 ParsedMakeIndexLog: {}
+ParsedMendexLog: {}
+ParsedMetaPostLog: {}
 ParsedSourceMap: {}
 ParsedSplitIndexStdOut: {}
 ParsedSplitIndexStdErr: {}

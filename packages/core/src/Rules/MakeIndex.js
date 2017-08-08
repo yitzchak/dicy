@@ -179,7 +179,9 @@ export default class MakeIndex extends Rule {
     const mendex = this.options.indexEngine === 'mendex'
     const upmendex = this.options.indexEngine === 'upmendex'
     const makeindex = this.options.indexEngine === 'makeindex'
-    const parsedLogName = texindy ? 'ParsedXindyLog' : 'ParsedMakeIndexLog'
+    const parsedLogName = texindy
+      ? 'ParsedXindyLog'
+      : (makeindex ? 'ParsedMakeIndexLog' : 'ParsedMendexLog')
     const infoIgnoreSetting = (name: string) => {
       this.info(`Ignoring \`${name}\` setting of \`${this.options[name].toString()}\` since index engine \`${this.options.engine}\` does not support that option or setting.`, this.id)
     }

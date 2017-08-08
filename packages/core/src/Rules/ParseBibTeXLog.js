@@ -20,6 +20,9 @@ export default class ParseBibTeXLog extends Rule {
       outputs: [],
       calls: []
     }
+    const name: string = (this.firstParameter.subType === '8-bit Big BibTeX')
+      ? 'BibTeX8'
+      : (this.firstParameter.subType || 'BibTeX')
 
     await this.firstParameter.parse([{
       // Missing database files or missing cross references.
@@ -28,7 +31,7 @@ export default class ParseBibTeXLog extends Rule {
       evaluate: (reference, groups) => {
         parsedLog.messages.push({
           severity: 'error',
-          name: 'BibTeX',
+          name,
           text: groups.text,
           log: reference
         })
@@ -40,7 +43,7 @@ export default class ParseBibTeXLog extends Rule {
       evaluate: (reference, groups) => {
         parsedLog.messages.push({
           severity: 'warning',
-          name: 'BibTeX',
+          name,
           text: groups.text,
           log: reference
         })
@@ -73,7 +76,7 @@ export default class ParseBibTeXLog extends Rule {
         const line = parseInt(groups.line, 10)
         parsedLog.messages.push({
           severity: 'error',
-          name: 'BibTeX',
+          name,
           text: groups.text,
           log: reference,
           source: {

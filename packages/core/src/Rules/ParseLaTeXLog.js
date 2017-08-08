@@ -28,7 +28,7 @@ export default class ParseLaTeXLog extends Rule {
       outputs: [],
       calls: []
     }
-    let name: string
+    const name: string = this.firstParameter.subType || 'LaTeX'
     let filePath: string
 
     await this.firstParameter.parse([{
@@ -40,13 +40,6 @@ export default class ParseLaTeXLog extends Rule {
         if (!filePath) {
           filePath = this.normalizePath(groups.filePath)
         }
-      }
-    }, {
-      // Program identifier
-      names: ['name'],
-      patterns: [/^This is (.*),/],
-      evaluate: (reference, groups) => {
-        name = groups.name
       }
     }, {
       // Package info message
