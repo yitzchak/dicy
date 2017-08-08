@@ -88,6 +88,12 @@ export default class MakeIndex extends Rule {
         this.options.indexCompressBlanks = !!call.options.c
         this.options.indexAutomaticRanges = !call.options.r
         this.options.indexOrdering = call.options.l ? 'letter' : 'word'
+        if ('t' in call.options) {
+          this.options.indexLogPath = call.options.t
+        }
+        if ('o' in call.options) {
+          this.options.indexOutputPath = call.options.o
+        }
         if ('p' in call.options) {
           this.options.indexStartPage = call.options.p
         }
@@ -118,12 +124,12 @@ export default class MakeIndex extends Rule {
             }
 
             if (call.options.I) {
-              this.options.kanjiInternal = call.options.kanjiInternal
+              this.options.kanjiInternal = call.options.I
             }
             // fall through
           case 'upmendex':
             if (call.options.d) {
-              this.options.indexDictionary = this.options.d
+              this.options.indexDictionary = call.options.d
             }
 
             if (call.options.f) {
@@ -141,6 +147,8 @@ export default class MakeIndex extends Rule {
     // for the parsed makeindex log.
     switch (file.type) {
       case 'ParsedMakeIndexLog':
+      case 'ParsedMendexLog':
+      case 'ParsedXindyLog':
         return ['updateDependencies']
       case 'ParsedLaTeXLog':
         return []
