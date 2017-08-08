@@ -74,7 +74,7 @@ export default class ParsedXindyLog extends Rule {
       names: ['file'],
       patterns: [/^Reading raw-index (.*?)[.]{3}$/i],
       evaluate: (reference, groups) => {
-        filePath = path.normalize(file)
+        filePath = path.normalize(groups.file)
         parsedLog.inputs.push(path.normalize(groups.file))
         parsedLog.messages.push({
           name,
