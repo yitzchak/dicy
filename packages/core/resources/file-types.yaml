@@ -83,6 +83,8 @@ MakeIndexLog:
 MendexLog:
   contents: !!js/regexp /^This is ((?:up)?mendex) /
   fileName: !!js/regexp /\..+lg$/i
+MendexStdOut: {}
+MendexStdErr: {}
 MetaPost:
   fileName: !!js/regexp /\.mp$/i
   contents: !!js/regexp /^ *(?:end|bye)\b/
@@ -111,6 +113,8 @@ ParsedLaTeXLog: {}
 ParsedLaTeXMagic: {}
 ParsedMakeIndexLog: {}
 ParsedMendexLog: {}
+ParsedMendexStdErr: {}
+ParsedMendexStdOut: {}
 ParsedMetaPostLog: {}
 ParsedSourceMap: {}
 ParsedSplitIndexStdOut: {}

@@ -313,12 +313,18 @@ export default class MakeIndex extends Rule {
 
     args.push('$DIR_0/$BASE_0')
 
-    return {
+    const commandOptions: CommandOptions = {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
       inputs: [`${this.options.indexLogPath}-${parsedLogName}`],
       outputs: [this.options.indexOutputPath, this.options.indexLogPath]
     }
+
+    if (mendex || upmendex) {
+      commandOptions.stderr = '$DIR_0/$NAME_0.log-MendexStdErr'
+    }
+
+    return commandOptions
   }
 }
