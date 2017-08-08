@@ -73,6 +73,19 @@ export default class ParsedMendexLog extends Rule {
         })
       }
     }, {
+      // Coallator failure
+      names: ['text'],
+      patterns: [/^(\[ICU\] Collator creation failed.*)$/i],
+      evaluate: (reference, groups) => {
+        parsedLog.messages.push({
+          name,
+          severity: 'error',
+          text: groups.text,
+          source: { file: filePath },
+          log: reference
+        })
+      }
+    }, {
       // Entry report
       names: ['text'],
       patterns: [/^(.*? entries accepted, .*? rejected\.)$/i],
@@ -88,9 +101,16 @@ export default class ParsedMendexLog extends Rule {
     }, {
       // Input files
       names: ['file'],
-      patterns: [/^Scanning input file (.*?)\.$/i],
+      patterns: [/^Scanning (?:dictionary|environment dictionary|input) file (.*?)\.$/i],
       evaluate: (reference, groups) => {
         parsedLog.inputs.push(path.normalize(groups.file))
+        parsedLog.messages.push({
+          name,
+          severity: 'info',
+          text: groups._,
+          source: { file: filePath },
+          log: reference
+        })
       }
     }, {
       // Output files
@@ -98,6 +118,13 @@ export default class ParsedMendexLog extends Rule {
       patterns: [/^Output written in (.*?)\.$/i],
       evaluate: (reference, groups) => {
         parsedLog.outputs.push(path.normalize(groups.file))
+        parsedLog.messages.push({
+          name,
+          severity: 'info',
+          text: groups._,
+          source: { file: filePath },
+          log: reference
+        })
       }
     }])
 
