@@ -11,10 +11,13 @@ describe('MakeIndex', () => {
   let builder: DiCy
   let rule: MakeIndex
 
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
+  async function initialize (parameterPaths: Array<string>, options: Object = {}, values: Array<?Object> = []) {
     options.ignoreUserOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
     const parameters = await builder.getFiles(parameterPaths)
+    for (let i = 0; i < values.length; i++) {
+      if (values[i]) parameters[i].value = values[i]
+    }
     rule = new MakeIndex(builder.state, 'build', 'execute', null, ...parameters)
     await rule.initialize()
   }
@@ -90,6 +93,26 @@ describe('MakeIndex', () => {
 
     it('returns a updateDependencies action for a makeindex log file.', async (done) => {
       const file = await builder.getFile('IndexControlFile.ilg-ParsedMakeIndexLog')
+      if (file) {
+        const actions = await rule.getFileActions(file)
+        expect(actions).toEqual(['updateDependencies'])
+      }
+
+      done()
+    })
+
+    it('returns a updateDependencies action for a mendex log file.', async (done) => {
+      const file = await builder.getFile('IndexControlFile.ilg-ParsedMendexLog')
+      if (file) {
+        const actions = await rule.getFileActions(file)
+        expect(actions).toEqual(['updateDependencies'])
+      }
+
+      done()
+    })
+
+    it('returns a updateDependencies action for a xindy log file.', async (done) => {
+      const file = await builder.getFile('IndexControlFile.ilg-ParsedXindyLog')
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['updateDependencies'])
@@ -192,6 +215,193 @@ describe('MakeIndex', () => {
     })
   })
 
+  describe('initialize', () => {
+    it('verifies that makeindex call overrides default options.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: {
+                c: true,
+                g: true,
+                l: true,
+                o: 'foo.ind',
+                p: 'odd',
+                r: true,
+                s: 'foo.ist',
+                t: 'foo.ilg'
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.indexAutomaticRanges).toBe(false)
+      expect(rule.options.indexCompressBlanks).toBe(true)
+      expect(rule.options.indexLogPath).toBe('foo.ilg')
+      expect(rule.options.indexOutputPath).toBe('foo.ind')
+      expect(rule.options.indexOrdering).toBe('letter')
+      expect(rule.options.indexSorting).toBe('german')
+      expect(rule.options.indexStartPage).toBe('odd')
+      expect(rule.options.indexStyle).toBe('foo.ist')
+
+      done()
+    })
+
+    it('verifies that makeindex call with -T option results in Thai sorting.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: { T: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.indexSorting).toBe('thai')
+      done()
+    })
+
+    it('verifies that makeindex call with -L option results in locale sorting.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: { L: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.indexSorting).toBe('locale')
+      done()
+    })
+
+    it('verifies that makeindex call on a different index does not override default options.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'foo.idx'],
+              options: {
+                c: true
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.indexCompressBlanks).not.toBe(false)
+
+      done()
+    })
+
+    it('verifies that mendex call overrides default options and sets indexEngine.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: {
+                d: 'foo',
+                f: true,
+                I: 'euc',
+                U: true
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.indexDictionary).toBe('foo')
+      expect(rule.options.indexEngine).toBe('mendex')
+      expect(rule.options.indexForceKanji).toBe(true)
+      expect(rule.options.kanji).toBe('utf8')
+      expect(rule.options.kanjiInternal).toBe('euc')
+
+      done()
+    })
+
+    it('verifies that mendex call with -E option results in kanji setting of euc.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: { E: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.kanji).toBe('euc')
+
+      done()
+    })
+
+    it('verifies that mendex call with -J option results in kanji setting of jis.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: { J: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.kanji).toBe('jis')
+
+      done()
+    })
+
+    it('verifies that mendex call with -S option results in kanji setting of sjis.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'],
+        {}, [
+          null, {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: { S: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        ])
+
+      expect(rule.options.kanji).toBe('sjis')
+
+      done()
+    })
+  })
+
   describe('constructCommand', () => {
     it('returns correct arguments and command options for index file.', async (done) => {
       await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
@@ -260,6 +470,14 @@ describe('MakeIndex', () => {
       done()
     })
 
+    it('use correct engine when indexEngine is set.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'texindy' })
+
+      expect(rule.constructCommand().args[0]).toBe('texindy')
+
+      done()
+    })
+
     it('add -c to command line when indexCompressBlanks is enabled.', async (done) => {
       await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexCompressBlanks: true })
 
@@ -320,6 +538,62 @@ describe('MakeIndex', () => {
       await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexStyle: 'foo.ist' })
 
       expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-s', 'foo.ist']))
+
+      done()
+    })
+
+    it('add -E to command line when kanji is set to euc.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'mendex', kanji: 'euc' })
+
+      expect(rule.constructCommand().args).toContain('-E')
+
+      done()
+    })
+
+    it('add -J to command line when kanji is set to jis.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'mendex', kanji: 'jis' })
+
+      expect(rule.constructCommand().args).toContain('-J')
+
+      done()
+    })
+
+    it('add -S to command line when kanji is set to sjis.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'mendex', kanji: 'sjis' })
+
+      expect(rule.constructCommand().args).toContain('-S')
+
+      done()
+    })
+
+    it('add -U to command line when kanji is set to utf8.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'mendex', kanji: 'utf8' })
+
+      expect(rule.constructCommand().args).toContain('-U')
+
+      done()
+    })
+
+    it('add -I to command line when kanjiInternal set.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'mendex', kanjiInternal: 'euc' })
+
+      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-I', 'euc']))
+
+      done()
+    })
+
+    it('add -d to command line when indexDictionary is set.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'mendex', indexDictionary: 'foo' })
+
+      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-d', 'foo']))
+
+      done()
+    })
+
+    it('add -f to command line when indexForceKanji is set.', async (done) => {
+      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'], { indexEngine: 'mendex', indexForceKanji: true })
+
+      expect(rule.constructCommand().args).toContain('-f')
 
       done()
     })
