@@ -62,12 +62,7 @@ export default class EpsToPdf extends Rule {
 
   async getFileActions (file: File): Promise<Array<Action>> {
     // Only return a run action for the actual eps file.
-    switch (file.type) {
-      case 'ParsedLaTeXLog':
-        return []
-      default:
-        return ['run']
-    }
+    return file.type === 'EncapsulatedPostScript' ? ['run'] : []
   }
 
   async preEvaluate () {
@@ -103,7 +98,7 @@ export default class EpsToPdf extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: [this.options.epstopdfOutputPath]
+      outputs: [outputPath]
     }
   }
 }
