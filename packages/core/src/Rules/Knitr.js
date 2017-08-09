@@ -18,7 +18,7 @@ export default class Knitr extends Rule {
     const outputs = ['$DIR_0/$NAME_0.tex']
 
     // If concordance option is enabled the add the option
-    if (this.options.Knitr_concordance) {
+    if (this.options.knitrConcordance) {
       lines.push('opts_knit$set(concordance=TRUE)')
       outputs.push('$DIR_0/$NAME_0-concordance.tex')
     }

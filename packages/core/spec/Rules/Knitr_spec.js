@@ -12,7 +12,7 @@ describe('LhsToTeX', () => {
   let rule: Knitr
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreHomeOptions = true
+    options.ignoreUserOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'Knitr.Rnw'), options)
     const parameters = await builder.getFiles(parameterPaths)
     rule = new Knitr(builder.state, 'build', 'execute', null, ...parameters)
@@ -33,7 +33,7 @@ describe('LhsToTeX', () => {
     })
 
     it('returns correct arguments and command options for Rnw file when concordance is off.', async (done) => {
-      await initialize(['Knitr.Rnw'], { Knitr_concordance: false })
+      await initialize(['Knitr.Rnw'], { knitrConcordance: false })
 
       expect(rule.constructCommand()).toEqual({
         args: ['Rscript', '-e', 'library(knitr);knit(\'Knitr.Rnw\')'],

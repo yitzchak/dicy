@@ -239,54 +239,65 @@ export default class Rule extends StateConsumer {
   }
 
   async executeCommand (commandOptions: CommandOptions): Promise<Object> {
-    const options = this.constructProcessOptions(commandOptions.cd)
-    // Use ampersand as a filler for empty arguments. This is to work around
-    // a bug in command-join.
-    const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : (arg || '&')))
-      .replace(/(['"])\^?&(['"])/g, '$1$2')
+    try {
+      // We only capture stdout and stderr if explicitly instructed to. This is
+      // possibly to conserve some memory, but mostly it is a work around for a
+      // bug in CLISP <https://sourceforge.net/p/clisp/bugs/378/> which makes it
+      // impossible to run xindy without pseudo terminal support.
+      const options = this.constructProcessOptions(commandOptions.cd,
+        false, !!commandOptions.stdout, !!commandOptions.stderr)
+      // Use ampersand as a filler for empty arguments. This is to work around
+      // a bug in command-join.
+      const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : (arg || '&')))
+        .replace(/(['"])\^?&(['"])/g, '$1$2')
 
-    this.emit('command', {
-      type: 'command',
-      rule: this.id,
-      command
-    })
+      this.emit('command', {
+        type: 'command',
+        rule: this.id,
+        command
+      })
 
-    const { stdout, stderr, error } = await this.executeChildProcess(command, options)
+      const result = await this.executeChildProcess(command, options)
 
-    if (error) {
+      if (commandOptions.inputs) await this.getResolvedInputs(commandOptions.inputs)
+
+      if (commandOptions.outputs) await this.getResolvedOutputs(commandOptions.outputs)
+
+      if (commandOptions.globbedInputs) {
+        await Promise.all(commandOptions.globbedInputs.map(pattern => this.getGlobbedInputs(pattern)))
+      }
+
+      if (commandOptions.globbedOutputs) {
+        await Promise.all(commandOptions.globbedOutputs.map(pattern => this.getGlobbedOutputs(pattern)))
+      }
+
+      if (typeof commandOptions.stdout === 'string') {
+        const output = await this.getResolvedOutput(commandOptions.stdout)
+        if (output) output.value = result.stdout
+      }
+
+      if (typeof commandOptions.stderr === 'string') {
+        const output = await this.getResolvedOutput(commandOptions.stderr)
+        if (output) output.value = result.stderr
+      }
+
+      return result
+    } catch (error) {
       this.log({ severity: commandOptions.severity, text: error.toString(), name: this.constructor.name })
+      throw error
     }
-
-    if (commandOptions.inputs) await this.getResolvedInputs(commandOptions.inputs)
-
-    if (commandOptions.outputs) await this.getResolvedOutputs(commandOptions.outputs)
-
-    if (commandOptions.globbedInputs) {
-      await Promise.all(commandOptions.globbedInputs.map(pattern => this.getGlobbedInputs(pattern)))
-    }
-
-    if (commandOptions.globbedOutputs) {
-      await Promise.all(commandOptions.globbedOutputs.map(pattern => this.getGlobbedOutputs(pattern)))
-    }
-
-    if (commandOptions.stdout) {
-      const output = await this.getResolvedOutput(commandOptions.stdout)
-      if (output) output.value = stdout
-    }
-
-    if (commandOptions.stderr) {
-      const output = await this.getResolvedOutput(commandOptions.stderr)
-      if (output) output.value = stderr
-    }
-
-    return { stdout, stderr, error }
   }
 
   async run (): Promise<boolean> {
-    const commandOptions: CommandOptions = this.constructCommand()
-    const { error } = await this.executeCommand(commandOptions)
+    try {
+      const commandOptions: CommandOptions = this.constructCommand()
 
-    return !error
+      await this.executeCommand(commandOptions)
+
+      return true
+    } catch (error) {
+      return false
+    }
   }
 
   async parse (): Promise<boolean> {
@@ -416,11 +427,16 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  constructProcessOptions (cd: string): Object {
+  constructProcessOptions (cd: string, stdin: boolean, stdout: boolean, stderr: boolean): Object {
     const processOptions = {
-      maxBuffer: 524288,
       cwd: this.resolvePath(cd),
-      env: Object.assign({}, process.env)
+      env: Object.assign({}, process.env),
+      shell: true,
+      stdio: [
+        stdin ? 'pipe' : 'ignore',
+        stdout ? 'pipe' : 'ignore',
+        stderr ? 'pipe' : 'ignore'
+      ]
     }
 
     for (const [name, value] of this.state.getOptions(this.jobName)) {

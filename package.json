@@ -25,6 +25,7 @@
     "clean": "lerna clean --yes",
     "create-fixtures": "scripts/create-fixtures",
     "dicy": "node packages/cli/lib/main.js",
+    "format-yaml": "babel-node scripts/format-yaml.js",
     "lint": "echo Linting sources... | chalk yellowBright bold && eslint --color packages",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
@@ -48,7 +49,8 @@
     "micromatch": "^3.0.1",
     "readdir-enhanced": "^1.5.2",
     "temp": "^0.8.3",
-    "tree-kill": "^1.1.0"
+    "tree-kill": "^1.1.0",
+    "yargs-parser": "^7.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

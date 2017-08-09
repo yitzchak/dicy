@@ -16,6 +16,7 @@ export default class ParseMakeIndexLog extends Rule {
     const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedMakeIndexLog')
     if (!output) return false
 
+    const name = 'makeindex'
     const parsedLog: ParsedLog = {
       messages: [],
       inputs: [],
@@ -30,6 +31,12 @@ export default class ParseMakeIndexLog extends Rule {
       ],
       evaluate: (reference, groups) => {
         parsedLog.inputs.push(this.normalizePath(groups.input))
+        parsedLog.messages.push({
+          severity: 'info',
+          name,
+          text: groups._,
+          log: reference
+        })
       }
     }, {
       names: ['output'],
@@ -38,6 +45,38 @@ export default class ParseMakeIndexLog extends Rule {
       ],
       evaluate: (reference, groups) => {
         parsedLog.outputs.push(this.normalizePath(groups.output))
+        parsedLog.messages.push({
+          severity: 'info',
+          name,
+          text: groups._,
+          log: reference
+        })
+      }
+    }, {
+      names: ['text'],
+      patterns: [
+        /^(Nothing written in .*?\.)$/
+      ],
+      evaluate: (reference, groups) => {
+        parsedLog.messages.push({
+          severity: 'warning',
+          name,
+          text: groups.text,
+          log: reference
+        })
+      }
+    }, {
+      names: ['text'],
+      patterns: [
+        /^(Sorting entries.*)$/
+      ],
+      evaluate: (reference, groups) => {
+        parsedLog.messages.push({
+          severity: 'info',
+          name,
+          text: groups.text,
+          log: reference
+        })
       }
     }, {
       names: ['inputPath', 'inputLine', 'outputPath', 'outputLine', 'text'],

@@ -35,11 +35,14 @@ addons:
       - python-pygments
       - r-recommended
       - texlive-bibtex-extra
+      - texlive-lang-cjk
       - texlive-latex-base
       - texlive-latex-extra
       - texlive-latex-recommended
       - texlive-metapost
       - texlive-xetex
+      - xindy
+
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi

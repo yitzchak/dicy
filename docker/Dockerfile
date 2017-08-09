@@ -8,7 +8,7 @@ RUN gpg -a --export E084DAB9 | sudo apt-key add -
 RUN apt-get -y update
 RUN apt-get -y upgrade
 RUN apt-get -y install build-essential libssl-dev curl git
-RUN apt-get -y install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-metapost texlive-xetex biber feynmf latex-xcolor
+RUN apt-get -y install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-metapost texlive-xetex biber feynmf latex-xcolor xindy texlive-lang-cjk
 RUN apt-get -y install python-pygments asymptote r-recommended lhs2tex
 # RUN apt-get -y install sagemath-upstream-binary
 # RUN cp -rv /usr/lib/sagemath/local/share/texmf/tex /usr/local/share/texmf

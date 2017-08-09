@@ -3,6 +3,7 @@
 import path from 'path'
 
 import File from '../File'
+import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
@@ -16,18 +17,16 @@ export default class SplitIndex extends Rule {
   static description: string = 'Runs splitindex on any index files.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    const base = path.basename(parameters[0].filePath)
-    const text = `Using splitted index at ${base}`
-    const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
-    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
-    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
+    const base = path.basename(parameters[0].filePath)
+    const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)
+    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
+    const splitindexCall = !!parsedLog && !!Log.findCall(parsedLog, 'splitindex', base)
+    const splitindexMessage = !!parsedLog && !!Log.findMessage(parsedLog, messagePattern)
 
     // Only apply to index control files when there is some indication from the
     // log that we need to.
-    return !!parsedLog && !wasGeneratedBySplitIndex &&
-      (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) !== -1 ||
-      parsedLog.calls.findIndex(call => commandPattern.test(call.command)) !== -1)
+    return !wasGeneratedBySplitIndex && (splitindexCall || splitindexMessage)
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -48,23 +47,19 @@ export default class SplitIndex extends Rule {
 
     const parsedLog: ?ParsedLog = this.secondParameter.value
     const { base } = path.parse(this.firstParameter.filePath)
-    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
-    const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
 
     // If the correct makeindex call is found in the log then delete the run
     // action.
-    if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
-      this.info('Skipping splitindex call since splitindex was already executed via shell escape.', this.id)
-      const makeIndexPattern: RegExp = /^makeindex\b.*?\b(.*)$/
-
-      for (const call of parsedLog.calls) {
-        const match = call.command.match(makeIndexPattern)
-        if (match) {
-          await this.getOutput(match[1].trim())
+    if (parsedLog) {
+      const call = Log.findCall(parsedLog, 'splitindex', base, 'executed')
+      if (call) {
+        this.info('Skipping splitindex call since splitindex was already executed via shell escape.', this.id)
+        for (const call of Log.filterCalls(parsedLog, 'makeindex')) {
+          await this.getOutputs(call.args.slice(1))
         }
-      }
 
-      this.actions.delete('run')
+        this.actions.delete('run')
+      }
     }
   }
 

@@ -12,7 +12,7 @@ describe('LhsToTeX', () => {
   let rule: LhsToTeX
 
   async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreHomeOptions = true
+    options.ignoreUserOptions = true
     builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
     const parameters = await builder.getFiles(parameterPaths)
     rule = new LhsToTeX(builder.state, 'build', 'execute', null, ...parameters)
@@ -80,40 +80,40 @@ describe('LhsToTeX', () => {
       done()
     })
 
-    it('add --math to command line when LhsToTeX_style is set to \'math\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { LhsToTeX_style: 'math' })
+    it('add --math to command line when lhs2texStyle is set to \'math\'.', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'math' })
 
       expect(rule.constructCommand().args).toContain('--math')
 
       done()
     })
 
-    it('add --newcode to command line when LhsToTeX_style is set to \'newCode\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { LhsToTeX_style: 'newCode' })
+    it('add --newcode to command line when lhs2texStyle is set to \'newCode\'.', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'newCode' })
 
       expect(rule.constructCommand().args).toContain('--newcode')
 
       done()
     })
 
-    it('add --code to command line when LhsToTeX_style is set to \'code\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { LhsToTeX_style: 'code' })
+    it('add --code to command line when lhs2texStyle is set to \'code\'.', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'code' })
 
       expect(rule.constructCommand().args).toContain('--code')
 
       done()
     })
 
-    it('add --tt to command line when LhsToTeX_style is set to \'typewriter\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { LhsToTeX_style: 'typewriter' })
+    it('add --tt to command line when lhs2texStyle is set to \'typewriter\'.', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'typewriter' })
 
       expect(rule.constructCommand().args).toContain('--tt')
 
       done()
     })
 
-    it('add --verb to command line when LhsToTeX_style is set to \'verbatim\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { LhsToTeX_style: 'verbatim' })
+    it('add --verb to command line when lhs2texStyle is set to \'verbatim\'.', async (done) => {
+      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'verbatim' })
 
       expect(rule.constructCommand().args).toContain('--verb')
 

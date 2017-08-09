@@ -1,0 +1,43 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LaTeX(build;execute;;test-uplatex.tex)
+    command: >-
+      uplatex -file-line-error -interaction=batchmode -recorder
+      -kanji-internal=euc test-uplatex.tex
+  - type: command
+    rule: DviToPdf(build;execute;;test-uplatex.dvi)
+    command: xdvipdfmx -o test-uplatex.pdf test-uplatex.dvi
+  - type: command
+    rule: >-
+      BibTeX(build;execute;;test-uplatex.aux;test-uplatex.aux-ParsedLaTeXAuxilary)
+    command: upbibtex -kanji-internal=euc test-uplatex.aux
+  - type: command
+    rule: ParseBibTeXLog(build;execute;;test-uplatex.blg)
+    command: kpsewhich test-uplatex.aux biblatex.bst test-uplatex-blx.bib baz.bib
+  - type: command
+    rule: LaTeX(build;execute;;test-uplatex.tex)
+    command: >-
+      uplatex -file-line-error -interaction=batchmode -recorder
+      -kanji-internal=euc test-uplatex.tex
+  - type: command
+    rule: DviToPdf(build;execute;;test-uplatex.dvi)
+    command: xdvipdfmx -o test-uplatex.pdf test-uplatex.dvi
+  - type: command
+    rule: >-
+      BibTeX(build;execute;;test-uplatex.aux;test-uplatex.aux-ParsedLaTeXAuxilary)
+    command: upbibtex -kanji-internal=euc test-uplatex.aux
+  - type: command
+    rule: LaTeX(build;execute;;test-uplatex.tex)
+    command: >-
+      uplatex -file-line-error -interaction=batchmode -recorder
+      -kanji-internal=euc test-uplatex.tex
+  - type: command
+    rule: >-
+      BibTeX(build;execute;;test-uplatex.aux;test-uplatex.aux-ParsedLaTeXAuxilary)
+    command: upbibtex -kanji-internal=euc test-uplatex.aux
+  - type: command
+    rule: ParseBibTeXLog(log;execute;;test-uplatex.blg)
+    command: kpsewhich test-uplatex.aux biblatex.bst test-uplatex-blx.bib baz.bib

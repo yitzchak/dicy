@@ -1,12 +1,14 @@
 /* @flow */
 
-import State from '../State'
 import File from '../File'
+import Log from '../Log'
 import Rule from '../Rule'
+import State from '../State'
 
-import type { Action, Command, CommandOptions, Message, Phase } from '../types'
+import type { Action, Command, CommandOptions, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
+const JAPANESE_LATEX_PATTERN = /^u?platex$/
 const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label\(s\) may have changed\. Rerun|No file )/i
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
@@ -43,8 +45,7 @@ export default class LaTeX extends Rule {
       case 'ParsedLaTeXLog':
         // If a rerun instruction is found then return run, otherwise just
         // return updateDependencies.
-        return (file.value && file.value.messages &&
-          file.value.messages.some((message: Message) => RERUN_LATEX_PATTERN.test(message.text)))
+        return (file.value && !!Log.findMessage(file.value, RERUN_LATEX_PATTERN))
           ? ['updateDependencies', 'run']
           : ['updateDependencies']
       default:
@@ -53,9 +54,10 @@ export default class LaTeX extends Rule {
   }
 
   constructCommand (): CommandOptions {
+    const engine = this.options.engine
     // Add engine and common options
     const args = [
-      this.options.engine,
+      engine,
       '-file-line-error',
       '-interaction=batchmode',
       '-recorder'
@@ -89,7 +91,7 @@ export default class LaTeX extends Rule {
 
     // xelatex uses a different option to specify dvi output since it runs
     // xdvipdfmx internally.
-    if (PDF_CAPABLE_LATEX_PATTERN.test(this.options.engine)) {
+    if (PDF_CAPABLE_LATEX_PATTERN.test(engine)) {
       if (this.options.outputFormat !== 'pdf') {
         switch (this.options.engine) {
           case 'xelatex':
@@ -99,6 +101,15 @@ export default class LaTeX extends Rule {
             args.push('-output-format=dvi')
             break
         }
+      }
+    }
+
+    if (JAPANESE_LATEX_PATTERN.test(engine)) {
+      if (this.options.kanji) {
+        args.push(`-kanji=${this.options.kanji}`)
+      }
+      if (this.options.kanjiInternal) {
+        args.push(`-kanji-internal=${this.options.kanjiInternal}`)
       }
     }
 

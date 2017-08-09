@@ -15,7 +15,7 @@ BibTeXControlFile:
 BibTeXFile:
   fileName: !!js/regexp /\.bib$/i
 BibTeXLog:
-  contents: !!js/regexp /^This is BibTeX,/
+  contents: !!js/regexp /^This is ((?:u?p|8-bit Big )?BibTeXu?)[,:]/
   fileName: !!js/regexp /\.blg$/i
 BibTeXStyle:
   fileName: !!js/regexp /\.bst$/i
@@ -80,6 +80,11 @@ LiterateHaskell:
 MakeIndexLog:
   contents: !!js/regexp /^This is makeindex,/
   fileName: !!js/regexp /\..+lg$/i
+MendexLog:
+  contents: !!js/regexp /^This is ((?:up)?mendex) /
+  fileName: !!js/regexp /\..+lg$/i
+MendexStdOut: {}
+MendexStdErr: {}
 MetaPost:
   fileName: !!js/regexp /\.mp$/i
   contents: !!js/regexp /^ *(?:end|bye)\b/
@@ -95,6 +100,7 @@ NomenclatureControlFile:
   fileName: !!js/regexp /\.nlo$/i
 NomenclatureListing:
   fileName: !!js/regexp /\.nls$/i
+Nil: {}
 OUT:
   fileName: !!js/regexp /\.out$/i
 ParsedAsymptoteStdOut: {}
@@ -106,10 +112,15 @@ ParsedFileListing: {}
 ParsedLaTeXLog: {}
 ParsedLaTeXMagic: {}
 ParsedMakeIndexLog: {}
+ParsedMendexLog: {}
+ParsedMendexStdErr: {}
+ParsedMendexStdOut: {}
+ParsedMetaPostLog: {}
 ParsedSourceMap: {}
 ParsedSplitIndexStdOut: {}
 ParsedSplitIndexStdErr: {}
 ParsedYAML: {}
+ParsedXindyLog: {}
 PortableDocumentFormat:
   fileName: !!js/regexp /\.pdf$/i
   hashSkip: !!js/regexp /^\/(CreationDate|ModDate|ID)/

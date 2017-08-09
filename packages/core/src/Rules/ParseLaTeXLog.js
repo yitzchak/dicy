@@ -1,6 +1,7 @@
 /* @flow */
 
 import Rule from '../Rule'
+import Log from '../Log'
 
 import type { Action, Command, Message, ParsedLog } from '../types'
 
@@ -27,7 +28,7 @@ export default class ParseLaTeXLog extends Rule {
       outputs: [],
       calls: []
     }
-    let name: string
+    const name: string = this.firstParameter.subType || 'LaTeX'
     let filePath: string
 
     await this.firstParameter.parse([{
@@ -39,13 +40,6 @@ export default class ParseLaTeXLog extends Rule {
         if (!filePath) {
           filePath = this.normalizePath(groups.filePath)
         }
-      }
-    }, {
-      // Program identifier
-      names: ['name'],
-      patterns: [/^This is (.*),/],
-      evaluate: (reference, groups) => {
-        name = groups.name
       }
     }, {
       // Package info message
@@ -266,10 +260,7 @@ export default class ParseLaTeXLog extends Rule {
       names: ['command', 'status'],
       patterns: [/^runsystem\((.*?)\)\.\.\.(.*?)\.$/],
       evaluate: (reference, groups) => {
-        parsedLog.calls.push({
-          command: groups.command,
-          status: groups.status
-        })
+        parsedLog.calls.push(Log.parseCall(groups.command, groups.status))
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 

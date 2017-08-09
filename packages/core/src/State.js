@@ -10,6 +10,10 @@ import Rule from './Rule'
 
 import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
 
+function getLabel (x: File | Rule) {
+  return (x instanceof File) ? x.filePath : x.id
+}
+
 type GraphProperties = {
   components?: Array<Array<Rule>>
 }
@@ -329,8 +333,11 @@ export default class State extends EventEmitter {
     return this.graphProperties.components
   }
 
-  isChild (x: Rule, y: Rule): boolean {
-    return this.graph.predecessors(x.id).some(file => this.graph.predecessors(file).some(r => r === y.id))
+  isGrandparentOf (x: File | Rule, y: File | Rule): boolean {
+    const xLabel = getLabel(x)
+    const yLabel = getLabel(y)
+
+    return this.graph.predecessors(yLabel).some(file => this.graph.predecessors(file).some(r => r === xLabel))
   }
 
   getInputRules (file: File): Array<Rule> {

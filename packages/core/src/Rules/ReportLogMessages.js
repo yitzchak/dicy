@@ -11,8 +11,11 @@ export default class ReportLogMessages extends Rule {
     'ParsedBibTeXLog',
     'ParsedLaTeXLog',
     'ParsedMakeIndexLog',
+    'ParsedMendexLog',
+    'ParsedMendexStdErr',
     'ParsedSplitIndexStdErr',
-    'ParsedSplitIndexStdOut'
+    'ParsedSplitIndexStdOut',
+    'ParsedXindyLog'
   ])]
   static commands: Set<Command> = new Set(['log'])
   static alwaysEvaluate: boolean = true

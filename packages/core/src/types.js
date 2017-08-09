@@ -131,7 +131,8 @@ export type KillToken = {
 }
 
 export type ShellCall = {
-  command: string,
+  args: Array<string>,
+  options: Object,
   status: string
 }
 
@@ -150,8 +151,8 @@ export type CommandOptions = {
   outputs?: Array<string>,
   globbedInputs?: Array<string>,
   globbedOutputs?: Array<string>,
-  stdout?: string,
-  stderr?: string
+  stdout?: boolean | string,
+  stderr?: boolean | string
 }
 
 export type LineRangeMapping = {

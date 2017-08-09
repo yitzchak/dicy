@@ -116,7 +116,7 @@ export default class DiCy extends StateConsumer {
         return ruleGroup.reduce((current, rule) => {
           // Rank the rule by how many other rules it is directly dependent on.
           const rank = ruleGroup.reduce(
-            (count, otherRule) => this.isChild(otherRule, rule) ? count + 1 : count,
+            (count, otherRule) => this.isGrandparentOf(rule, otherRule) ? count + 1 : count,
             0)
 
           // The rank is lower than the current rank so start a new list.

@@ -3,6 +3,7 @@
 import path from 'path'
 
 import File from '../File'
+import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
@@ -20,19 +21,125 @@ export default class MakeIndex extends Rule {
   static description: string = 'Runs makeindex on any index files.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    const base = path.basename(parameters[0].filePath)
-    const text = `Using splitted index at ${base}`
-    const alt = 'Remember to run (pdf)latex again after calling `splitindex\''
-    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
-    const commandPattern: RegExp = new RegExp(`^splitindex\\b.*?\\b${base}$`)
     const parsedLog: ?ParsedLog = parameters[1].value
+    const base = path.basename(parameters[0].filePath)
+    const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)
+    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
+    const splitindexCall = !!parsedLog && !!Log.findCall(parsedLog, 'splitindex', base)
+    const splitindexMessage = !!parsedLog && !!Log.findMessage(parsedLog, messagePattern)
 
     // Avoid makeindex if there is any evidence of splitindex messages in the
     // log or splitindex calls unless this index control file was generated
     // by splitindex.
-    return !parsedLog || wasGeneratedBySplitIndex ||
-      (parsedLog.messages.findIndex(message => message.text === text || message.text.startsWith(alt)) === -1 &&
-      parsedLog.calls.findIndex(call => commandPattern.test(call.command)) === -1)
+    return wasGeneratedBySplitIndex || (!splitindexMessage && !splitindexCall)
+  }
+
+  async initialize () {
+    const ext = path.extname(this.firstParameter.filePath)
+    const firstChar = ext[1]
+    const parsedLog: ?ParsedLog = this.secondParameter.value
+
+    // Automatically assign style based on index type.
+    if (!this.options.indexStyle) {
+      switch (this.firstParameter.type) {
+        case 'NomenclatureControlFile':
+          this.options.indexStyle = 'nomencl.ist'
+          break
+        case 'BibRefControlFile':
+          this.options.indexStyle = 'bibref.ist'
+          break
+      }
+    }
+
+    // Automatically assign output path based on index type.
+    if (!this.options.indexOutputPath) {
+      switch (this.firstParameter.type) {
+        case 'NomenclatureControlFile':
+          this.options.indexOutputPath = '$DIR_0/$NAME_0.nls'
+          break
+        case 'BibRefControlFile':
+          this.options.indexOutputPath = '$DIR_0/$NAME_0.bnd'
+          break
+        default:
+          this.options.indexOutputPath = `$DIR_0/$NAME_0.${firstChar}nd`
+          break
+      }
+    }
+
+    // Automatically assign log path based on index type.
+    if (!this.options.indexLogPath) {
+      // .brlg instead of .blg is used as extension to avoid ovewriting any
+      // Biber/BibTeX logs.
+      this.options.indexLogPath = `$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`
+    }
+
+    if (parsedLog) {
+      const { base } = path.parse(this.firstParameter.filePath)
+      let call = Log.findCall(parsedLog, /(makeindex|texindy|mendex|upmendex)/, base)
+
+      if (!call) {
+        call = Log.findMessageMatches(parsedLog, /after calling `((?:makeindex|texindy|mendex|upmendex)[^']*)'/)
+          .map(match => Log.parseCall(match[1], 'gronk'))
+          .find(call => call.args.includes(base))
+      }
+
+      if (call) {
+        this.options.indexEngine = call.args[0]
+        this.options.indexCompressBlanks = !!call.options.c
+        this.options.indexAutomaticRanges = !call.options.r
+        this.options.indexOrdering = call.options.l ? 'letter' : 'word'
+        if ('t' in call.options) {
+          this.options.indexLogPath = call.options.t
+        }
+        if ('o' in call.options) {
+          this.options.indexOutputPath = call.options.o
+        }
+        if ('p' in call.options) {
+          this.options.indexStartPage = call.options.p
+        }
+        if ('s' in call.options) {
+          this.options.indexStyle = call.options.s
+        }
+        switch (call.args[0]) {
+          case 'makeindex':
+            if (call.options.g) {
+              this.options.indexSorting = 'german'
+            } else if (call.options.T) {
+              this.options.indexSorting = 'thai'
+            } else if (call.options.L) {
+              this.options.indexSorting = 'locale'
+            } else {
+              this.options.indexSorting = 'default'
+            }
+            break
+          case 'mendex':
+            if (call.options.E) {
+              this.options.kanji = 'euc'
+            } else if (call.options.J) {
+              this.options.kanji = 'jis'
+            } else if (call.options.S) {
+              this.options.kanji = 'sjis'
+            } else if (call.options.U) {
+              this.options.kanji = 'utf8'
+            }
+
+            if (call.options.I) {
+              this.options.kanjiInternal = call.options.I
+            }
+            // fall through
+          case 'upmendex':
+            if (call.options.d) {
+              this.options.indexDictionary = call.options.d
+            }
+
+            if (call.options.f) {
+              this.options.indexForceKanji = true
+            }
+
+            break
+        }
+      }
+    }
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -40,6 +147,8 @@ export default class MakeIndex extends Rule {
     // for the parsed makeindex log.
     switch (file.type) {
       case 'ParsedMakeIndexLog':
+      case 'ParsedMendexLog':
+      case 'ParsedXindyLog':
         return ['updateDependencies']
       case 'ParsedLaTeXLog':
         return []
@@ -53,106 +162,169 @@ export default class MakeIndex extends Rule {
 
     const parsedLog: ?ParsedLog = this.secondParameter.value
     const { base, ext } = path.parse(this.firstParameter.filePath)
-    const commandPattern: RegExp = new RegExp(`^makeindex\\b.*?\\b${base}$`)
-    const isCall = call => commandPattern.test(call.command) && call.status.startsWith('executed')
+    const engine = this.options.indexEngine
 
     // If the correct makeindex call is found in the log then delete the run
     // action.
-    if (parsedLog && parsedLog.calls.findIndex(isCall) !== -1) {
-      this.info('Skipping makeindex call since makeindex was already executed via shell escape.', this.id)
-      const firstChar = ext[1]
+    if (parsedLog) {
+      const call = Log.findCall(parsedLog, engine, base, 'executed')
+      if (call) {
+        this.info(`Skipping ${engine} call since ${engine} was already executed via shell escape.`, this.id)
+        const firstChar = ext[1]
 
-      // At some point we may need to parse the makeindex call to look for the
-      // -t and -o options.
-      await this.getResolvedOutputs([
-        `$DIR_0/$NAME_0.${firstChar}lg`,
-        `$DIR_0/$NAME_0.${firstChar}nd`
-      ])
+        await this.getResolvedOutputs([
+          call.options.t ? `$DIR_0/${call.options.t}` : `$DIR_0/$NAME_0.${firstChar}lg`,
+          call.options.o ? `$DIR_0/${call.options.o}` : `$DIR_0/$NAME_0.${firstChar}nd`
+        ])
 
-      this.actions.delete('run')
+        this.actions.delete('run')
+      }
     }
   }
 
   constructCommand (): CommandOptions {
-    const ext = path.extname(this.firstParameter.filePath)
-    const firstChar = ext[1]
-    // .brlg instead of .blg is used as extension to avoid ovewriting any
-    // Biber/BibTeX logs.
-    const logPath = `$DIR_0/$NAME_0.${firstChar === 'b' ? 'br' : firstChar}lg`
-    let stylePath
-    let outputPath
-
-    // Automatically assign output path and style based on index type.
-    switch (this.firstParameter.type) {
-      case 'NomenclatureControlFile':
-        stylePath = 'nomencl.ist'
-        outputPath = '$DIR_0/$NAME_0.nls'
-        break
-      case 'BibRefControlFile':
-        stylePath = 'bibref.ist'
-        outputPath = '$DIR_0/$NAME_0.bnd'
-        break
-      default:
-        outputPath = `$DIR_0/$NAME_0.${firstChar}nd`
-        break
+    const texindy = this.options.indexEngine === 'texindy'
+    const mendex = this.options.indexEngine === 'mendex'
+    const upmendex = this.options.indexEngine === 'upmendex'
+    const makeindex = this.options.indexEngine === 'makeindex'
+    const parsedLogName = texindy
+      ? 'ParsedXindyLog'
+      : (makeindex ? 'ParsedMakeIndexLog' : 'ParsedMendexLog')
+    const infoIgnoreSetting = (name: string) => {
+      this.info(`Ignoring \`${name}\` setting of \`${this.options[name].toString()}\` since index engine \`${this.options.engine}\` does not support that option or setting.`, this.id)
     }
 
-    // Allow the MakeIndex_style option to override the default style selection.
-    if (this.options.MakeIndex_style) stylePath = this.options.MakeIndex_style
-
     const args = [
-      'makeindex',
-      '-t', logPath,
-      '-o', outputPath
+      this.options.indexEngine,
+      '-t', this.options.indexLogPath,
+      '-o', this.options.indexOutputPath
     ]
 
-    if (stylePath) {
-      args.push('-s', stylePath)
+    if (this.options.indexStyle) {
+      if (texindy) {
+        infoIgnoreSetting('indexStyle')
+      } else {
+        args.push('-s', this.options.indexStyle)
+      }
     }
 
     // Remove blanks from index ids
-    if (this.options.MakeIndex_compressBlanks) {
-      args.push('-c')
+    if (this.options.indexCompressBlanks) {
+      if (texindy) {
+        infoIgnoreSetting('indexCompressBlanks')
+      } else {
+        args.push('-c')
+      }
     }
 
     // Ignore spaces in grouping.
-    if (this.options.MakeIndex_ordering === 'letter') {
+    if (this.options.indexOrdering === 'letter') {
       args.push('-l')
     }
 
-    // It is possible to have all of these enabled at the same time, but
-    // inspection of the makeindex code seems to indicate that `thai` implies
-    // `locale` and that `locale` prevents `german` from being used.
-    switch (this.options.MakeIndex_sorting) {
-      case 'german':
+    if (this.options.indexSorting !== 'default') {
+      // It is possible to have all of these enabled at the same time, but
+      // inspection of the makeindex code seems to indicate that `thai` implies
+      // `locale` and that `locale` prevents `german` from being used.
+      if (makeindex) {
+        switch (this.options.indexSorting) {
+          case 'german':
+            args.push('-g')
+            break
+          case 'thai':
+            args.push('-T')
+            break
+          case 'locale':
+            args.push('-L')
+            break
+        }
+      } else if (texindy && this.options.indexSorting === 'german') {
         args.push('-g')
-        break
-      case 'thai':
-        args.push('-T')
-        break
-      case 'locale':
-        args.push('-L')
-        break
+      } else {
+        infoIgnoreSetting('indexSorting')
+      }
     }
 
     // Specify the starting page.
-    if (this.options.MakeIndex_startPage) {
-      args.push('-p', this.options.MakeIndex_startPage)
+    if (this.options.indexStartPage) {
+      if (texindy) {
+        infoIgnoreSetting('indexStartPage')
+      } else {
+        args.push('-p', this.options.indexStartPage)
+      }
     }
 
     // Prevent automatic range construction.
-    if (!this.options.MakeIndex_automaticRanges) {
+    if (!this.options.indexAutomaticRanges) {
       args.push('-r')
+    }
+
+    if (this.options.kanji) {
+      if (mendex) {
+        // mendex doesn't have all of the encodings in the kanji or the
+        // kanjiInternal setting, but we at least try here.
+        switch (this.options.kanji) {
+          case 'euc':
+            args.push('-E')
+            break
+          case 'jis':
+            args.push('-J')
+            break
+          case 'sjis':
+            args.push('-S')
+            break
+          case 'utf8':
+            args.push('-U')
+            break
+          default:
+            infoIgnoreSetting('kanji')
+            break
+        }
+      } else {
+        infoIgnoreSetting('kanji')
+      }
+    }
+
+    if (this.options.kanjiInternal) {
+      if (mendex && (this.options.kanjiInternal === 'euc' || this.options.kanjiInternal === 'utf8')) {
+        args.push('-I', this.options.kanjiInternal)
+      } else {
+        infoIgnoreSetting('kanjiInternal')
+      }
+    }
+
+    if (this.options.indexForceKanji) {
+      // Both mendex and upmendex allow forcing kanji.
+      if (mendex || upmendex) {
+        args.push('-f')
+      } else {
+        infoIgnoreSetting('indexForceKanji')
+      }
+    }
+
+    if (this.options.indexDictionary) {
+      // Both mendex and upmendex have a sorting based on pronounciation.
+      if (mendex || upmendex) {
+        args.push('-d', this.options.indexDictionary)
+      } else {
+        infoIgnoreSetting('indexDictionary')
+      }
     }
 
     args.push('$DIR_0/$BASE_0')
 
-    return {
+    const commandOptions: CommandOptions = {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      inputs: [`${logPath}-ParsedMakeIndexLog`],
-      outputs: [outputPath, logPath]
+      inputs: [`${this.options.indexLogPath}-${parsedLogName}`],
+      outputs: [this.options.indexOutputPath, this.options.indexLogPath]
     }
+
+    if (mendex || upmendex) {
+      commandOptions.stderr = '$DIR_0/$NAME_0.log-MendexStdErr'
+    }
+
+    return commandOptions
   }
 }

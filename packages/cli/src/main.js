@@ -191,7 +191,7 @@ DiCy.getOptionDefinitions().then(definitions => {
 
       const prefix = (option.type === 'boolean' && option.defaultValue) ? 'no-' : ''
       const flagList = [].concat((option.aliases || []).filter(alias => alias.length === 1), option.name)
-        .map(name => name.length === 1 ? `-${name}` : `--${prefix}${_.kebabCase(name)}`)
+        .map(name => name.length === 1 ? `-${name}` : `--${prefix}${_.kebabCase(name).replace('lhs-2-tex', 'lhs2tex')}`)
         .join(', ')
       const flags = (option.type === 'boolean') ? flagList : `${flagList} <${option.name}>`
       let description = option.description

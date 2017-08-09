@@ -1,0 +1,19 @@
+%!TeX engine = uplatex
+%!TeX bibtexEngine = upbibtex
+%!TeX kanjiInternal = euc
+%!TeX check = uplatex -help
+\documentclass[uplatex]{jsarticle}
+
+\usepackage[backend=bibtex,style=numeric]{biblatex}
+
+\addbibresource{baz.bib}
+
+\begin{document}
+
+\TeX の原典である\cite{jtexbook}の邦訳も，
+\LaTeX の原典である\cite{jlatexbook}の邦訳も，
+現在では入手困難となっています。
+
+\printbibliography[title=参考文献]
+
+\end{document}

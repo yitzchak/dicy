@@ -7,6 +7,7 @@ bibtopic
 collectbox
 currfile
 datatool
+epstopdf
 everypage
 filemod
 framed
@@ -34,4 +35,5 @@ svn-prov
 texware
 ucs
 xfor
+xindy
 xstring

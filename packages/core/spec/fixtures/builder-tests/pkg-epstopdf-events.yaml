@@ -1,0 +1,27 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: EpsToPdf(build;execute;dicy-3;images/dicy-3.eps;x.y-Nil)
+    command: epstopdf --outfile=images/dicy-3.pdf images/dicy-3.eps
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-epstopdf.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      -shell-escape pkg-epstopdf.tex
+  - type: command
+    rule: LaTeX(build;execute;job-3;pkg-epstopdf.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
+      -no-shell-escape pkg-epstopdf.tex
+  - type: command
+    rule: LaTeX(build;execute;job-3;pkg-epstopdf.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
+      -no-shell-escape pkg-epstopdf.tex
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-epstopdf.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
+      -shell-escape pkg-epstopdf.tex

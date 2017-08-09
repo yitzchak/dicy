@@ -29,10 +29,11 @@ events:
       makeindex -t output/job-2.brlg -o output/job-2.bnd -s bibref.ist
       output/job-2.bdx
   - type: command
-    rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
+    rule: BibTeX(build;execute;job-1;job-1.aux;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
   - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    rule: >-
+      BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
     command: bibtex output/job-2.aux
   - type: command
     rule: ParseBibTeXLog(build;execute;job-1;job-1.blg)
@@ -58,10 +59,11 @@ events:
       MakeIndex(build;execute;job-2;output/job-2.adx;output/job-2.log-ParsedLaTeXLog)
     command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
   - type: command
-    rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
+    rule: BibTeX(build;execute;job-1;job-1.aux;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
   - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    rule: >-
+      BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
     command: bibtex output/job-2.aux
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
@@ -81,10 +83,11 @@ events:
       MakeIndex(build;execute;job-2;output/job-2.adx;output/job-2.log-ParsedLaTeXLog)
     command: makeindex -t output/job-2.alg -o output/job-2.and output/job-2.adx
   - type: command
-    rule: BibTeX(build;execute;job-1;job-1.aux-ParsedLaTeXAuxilary)
+    rule: BibTeX(build;execute;job-1;job-1.aux;job-1.aux-ParsedLaTeXAuxilary)
     command: bibtex job-1.aux
   - type: command
-    rule: BibTeX(build;execute;job-2;output/job-2.aux-ParsedLaTeXAuxilary)
+    rule: >-
+      BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
     command: bibtex output/job-2.aux
   - type: command
     rule: ParseBibTeXLog(log;execute;job-1;job-1.blg)
