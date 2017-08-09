@@ -226,7 +226,7 @@ indexForceKanji:
   defaultValue: false
   description: >-
     Force to output Kanji characters even non-existent in dictionaries. Used by
-    mendex only.
+    mendex and upmendex only.
   type: boolean
 indexLogPath:
   commands:
