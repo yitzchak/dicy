@@ -12,7 +12,7 @@
   "main": "lib/main.js",
   "scripts": {
     "test": "jasmine",
-    "compile": "rm -rf lib && babel -d lib/ src/",
+    "compile": "rimraf lib && babel -d lib/ src/",
     "prepublish": "npm run compile"
   },
   "bin": {
@@ -50,6 +50,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-latest": "^6.24.1",
     "babel-register": "^6.24.1",
-    "jasmine": "^2.6.0"
+    "jasmine": "^2.6.0",
+    "rimraf": "^2.6.1"
   }
 }
