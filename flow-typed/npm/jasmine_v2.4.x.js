@@ -1,25 +1,25 @@
-// flow-typed signature: 3ca7176a59bf097ebbc671b0a514dffd
-// flow-typed version: ed54a89c37/jasmine_v2.4.x/flow_vx.x.x
+// flow-typed signature: ef26616bab1bc29529857aa721f70238
+// flow-typed version: fcaf13fb04/jasmine_v2.4.x/flow_vx.x.x
 
 type JasmineExpectType = {
-  not: JasmineExpectType;
-  toBe(value: mixed): void;
-  toBeCloseTo(num: number, delta: mixed): void;
-  toBeDefined(): void;
-  toBeFalsy(): void;
-  toBeGreaterThan(number: number): void;
-  toBeLessThan(number: number): void;
-  toBeNull(): void;
-  toBeTruthy(): void;
-  toBeUndefined(): void;
-  toContain(str: string): void;
-  toEqual(value: mixed): void;
-  toHaveBeenCalled(): void;
-  toHaveBeenCalledTimes(number: number): void;
-  toHaveBeenCalledWith(...args: Array<any>): void;
-  toMatch(regexp: RegExp): void;
-  toThrow(message?: string): void;
-  toThrowError(val: mixed): void;
+  not: JasmineExpectType,
+  toBe(value: mixed): void,
+  toBeCloseTo(num: number, delta: mixed): void,
+  toBeDefined(): void,
+  toBeFalsy(): void,
+  toBeGreaterThan(number: number): void,
+  toBeLessThan(number: number): void,
+  toBeNull(): void,
+  toBeTruthy(): void,
+  toBeUndefined(): void,
+  toContain(str: string): void,
+  toEqual(value: mixed): void,
+  toHaveBeenCalled(): void,
+  toHaveBeenCalledTimes(number: number): void,
+  toHaveBeenCalledWith(...args: Array<any>): void,
+  toMatch(regexp: RegExp): void,
+  toThrow(message?: string): void,
+  toThrowError(val: mixed): void
 };
 
 declare function describe(name: string, fn: Function): void;
@@ -43,32 +43,32 @@ declare function fail(err?: Error | string): void;
 declare function spyOn(value: mixed, method: string): Object;
 
 type JasmineCallsType = {
-  allArgs(): mixed;
-  all(): mixed;
-  mostRecent(): mixed;
-  first(): mixed;
-  any(): boolean;
-  count(): number;
-  reset(): void;
-}
+  allArgs(): mixed,
+  all(): mixed,
+  mostRecent(): mixed,
+  first(): mixed,
+  any(): boolean,
+  count(): number,
+  reset(): void
+};
 
 type JasmineSpyType = {
-  calls: JasmineCallsType;
-}
+  calls: JasmineCallsType
+};
 
 type JasmineClockType = {
-  install(): void;
-  uninstall(): void;
-  tick(): void;
-  mockDate(date: Date): void;
-}
+  install(): void,
+  uninstall(): void,
+  tick(milliseconds?: number): void,
+  mockDate(date: Date): void
+};
 
 declare var jasmine: {
-  createSpy(name: string): JasmineSpyType;
-  any(val: mixed): void;
-  anything(): void;
-  objectContaining(val: Object): void;
-  arrayContaining(val: mixed[]): void;
-  stringMatching(val: string): void;
-  clock(): JasmineClockType;
-}
+  createSpy(name?: string): JasmineSpyType,
+  any(val: mixed): void,
+  anything(): void,
+  objectContaining(val: Object): void,
+  arrayContaining(val: mixed[]): void,
+  stringMatching(val: string): void,
+  clock(): JasmineClockType
+};
