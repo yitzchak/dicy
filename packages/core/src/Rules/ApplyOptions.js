@@ -14,7 +14,7 @@ export default class ApplyOptions extends Rule {
   static phases: Set<Phase> = new Set(['initialize', 'execute'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
-  static description: string = 'Apply options from YAML file and any LaTeX magic comments found in source file.'
+  static description: string = 'Apply options from YAML files and any LaTeX magic comments found in source file.'
 
   async run (): Promise<boolean> {
     // Save the old options so we can tell if they have changed.
@@ -36,18 +36,21 @@ export default class ApplyOptions extends Rule {
       'dicy-instance.yaml-ParsedYAML'
     ]
 
-    // Remove the home path is ignoreUserOptions is set.
-    if (this.options.ignoreUserOptions) optionPaths.shift()
-
     const inputs: Array<File> = await this.getResolvedInputs(optionPaths)
+    const optionSet: Array<Object> = inputs.map(file => file.value || {})
+    const globalOptions: Object = Object.assign({}, ...optionSet)
+
+    // Remove the user options if ignoreUserOptions is set.
+    if (globalOptions.ignoreUserOptions) {
+      this.info('Ignoring user options since `ignoreUserOptions` is set.')
+      optionSet.shift()
+    }
 
     // Reset the options and assign from frrom the inputs
     this.state.resetOptions()
 
-    for (const file: File of inputs) {
-      if (file.value) {
-        this.state.assignOptions(file.value)
-      }
+    for (const options: Object of optionSet) {
+      this.state.assignOptions(options)
     }
   }
 

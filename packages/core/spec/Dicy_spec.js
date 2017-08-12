@@ -37,7 +37,7 @@ describe('DiCy', () => {
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
         // Initialize dicy and listen for messages
-        dicy = await DiCy.create(filePath, { ignoreUserOptions: true })
+        dicy = await DiCy.create(filePath)
 
         // Load the event archive
         const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
