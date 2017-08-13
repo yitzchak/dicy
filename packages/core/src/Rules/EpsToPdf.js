@@ -57,6 +57,8 @@ export default class EpsToPdf extends Rule {
       this.options.epstopdfBoundingBox = call.options.exact
         ? 'exact'
         : (call.options.hires ? 'hires' : 'default')
+
+      this.options.epstopdfRestricted = !!call.options.restricted
     }
   }
 
@@ -92,6 +94,10 @@ export default class EpsToPdf extends Rule {
       case 'hires':
         args.push('--hires')
         break
+    }
+
+    if (this.options.epstopdfRestricted) {
+      args.push('--restricted')
     }
 
     return {

@@ -164,6 +164,12 @@ epstopdfOutputPath:
   defaultValue: $DIR_0/$NAME_0.pdf
   description: Output path of epstopdf
   type: string
+epstopdfRestricted:
+  commands:
+    - build
+  defaultValue: false
+  description: Use restricted mode when calling epstopdf.
+  type: boolean
 filePath:
   commands:
     - build
