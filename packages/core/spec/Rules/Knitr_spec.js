@@ -1,26 +1,24 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import Knitr from '../../src/Rules/Knitr'
+import { initializeRule } from '../helpers'
 
-describe('LhsToTeX', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: Knitr
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: Knitr,
+    parameters: [{
+      filePath: 'Knitr.Rnw'
+    }],
+    options
+  })
+}
 
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'Knitr.Rnw'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new Knitr(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
+describe('Knitr', () => {
   describe('constructCommand', () => {
     it('returns correct arguments and command options for Rnw file.', async (done) => {
-      await initialize(['Knitr.Rnw'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'Knitr.Rnw\')'],
@@ -33,7 +31,7 @@ describe('LhsToTeX', () => {
     })
 
     it('returns correct arguments and command options for Rnw file when concordance is off.', async (done) => {
-      await initialize(['Knitr.Rnw'], { knitrConcordance: false })
+      const { rule } = await initialize({ knitrConcordance: false })
 
       expect(rule.constructCommand()).toEqual({
         args: ['Rscript', '-e', 'library(knitr);knit(\'Knitr.Rnw\')'],

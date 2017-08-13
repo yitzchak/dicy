@@ -1,31 +1,26 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import Asymptote from '../../src/Rules/Asymptote'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: Asymptote,
+    parameters: [{
+      filePath: 'Asymptote.asy'
+    }],
+    options
+  })
+}
 
 describe('Asymptote', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: Asymptote
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new Asymptote(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
-  beforeEach(async (done) => {
-    await initialize(['LaTeX_article.tex'])
-    done()
-  })
-
   describe('getFileActions', () => {
     it('returns a run action for an Aymptote file.', async (done) => {
-      const file = await builder.getFile('Asymptote.asy')
+      const { rule } = await initialize()
+      const file = await rule.getFile('Asymptote.asy')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['run'])
@@ -35,7 +30,9 @@ describe('Asymptote', () => {
     })
 
     it('returns a updateDependencies action for Asymptote stdout.', async (done) => {
-      const file = await builder.getFile('Asymptote.log-ParsedAsymptoteStdOut')
+      const { rule } = await initialize()
+      const file = await rule.getFile('Asymptote.log-ParsedAsymptoteStdOut')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['updateDependencies'])
@@ -47,6 +44,8 @@ describe('Asymptote', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for Asymptote file.', async (done) => {
+      const { rule } = await initialize()
+
       /* eslint no-template-curly-in-string: 0 */
       expect(rule.constructCommand()).toEqual({
         args: ['asy', '-vv', '$BASE_0'],

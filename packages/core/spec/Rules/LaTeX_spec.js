@@ -1,110 +1,85 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import LaTeX from '../../src/Rules/LaTeX'
+import { initializeRule } from '../helpers'
+
+async function initialize (filePath: string, options: Object = {}) {
+  return initializeRule({
+    RuleClass: LaTeX,
+    parameters: [{
+      filePath
+    }],
+    options
+  })
+}
 
 describe('LaTeX', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: LaTeX
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new LaTeX(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
     it('returns true if file type is \'LaTeX\'', async (done) => {
-      await initialize(['LaTeX_article.tex'])
+      const { rule } = await initialize('LaTeX_article.tex')
 
-      const file = await builder.getFile('LaTeX_article.tex')
-      if (file) {
-        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if file type is \'LaTeX\' and sub type is standalone is master document.', async (done) => {
-      await initialize(['LaTeX_standalone.tex'])
+      const { rule } = await initialize('LaTeX_standalone.tex')
 
-      const file = await builder.getFile('LaTeX_standalone.tex')
-      if (file) {
-        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if file type is \'LaTeX\' and sub type is standalone but not master document.', async (done) => {
-      await initialize(['LaTeX_article.tex'])
+      const { rule } = await initialize('LaTeX_article.tex')
+      const parameters = await rule.getFiles(['LaTeX_standalone.tex'])
 
-      const file = await builder.getFile('LaTeX_standalone.tex')
-      if (file) {
-        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if literateAgdaEngine is \'none\' and file type is \'LiterateAgda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'], { literateAgdaEngine: 'none' })
+      const { rule } = await initialize('LiterateAgda.lagda', { literateAgdaEngine: 'none' })
 
-      const file = await builder.getFile('LiterateAgda.lagda')
-      if (file) {
-        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'none\' and file type is \'LiterateAgda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'], { literateAgdaEngine: 'agda' })
+      const { rule } = await initialize('LiterateAgda.lagda', { literateAgdaEngine: 'agda' })
 
-      const file = await builder.getFile('LiterateAgda.lagda')
-      if (file) {
-        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if literateHaskellEngine is \'none\' and file type is \'LiterateHaskell\'', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { literateHaskellEngine: 'none' })
+      const { rule } = await initialize('LiterateHaskell.lhs', { literateHaskellEngine: 'none' })
 
-      const file = await builder.getFile('LiterateHaskell.lhs')
-      if (file) {
-        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateHaskellEngine is not \'none\' and file type is \'LiterateHaskell\'', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { literateHaskellEngine: 'lhs2TeX' })
+      const { rule } = await initialize('LiterateHaskell.lhs', { literateHaskellEngine: 'lhs2TeX' })
 
-      const file = await builder.getFile('LiterateHaskell.lhs')
-      if (file) {
-        expect(await LaTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
   })
 
   describe('getFileActions', () => {
-    beforeEach(async (done) => {
-      await initialize(['LaTeX_article.tex'])
-      done()
-    })
-
     it('returns a run action for a LaTeX file.', async (done) => {
-      const file = await builder.getFile('LaTeX_article.tex')
+      const { rule } = await initialize('LaTeX_article.tex')
+      const file = await rule.getFile('LaTeX_article.tex')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['run'])
@@ -114,7 +89,9 @@ describe('LaTeX', () => {
     })
 
     it('returns a run and updateDependencies actions for a latex log file if a rerun LaTeX instruction is found.', async (done) => {
-      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+      const { rule } = await initialize('LaTeX_article.tex')
+      const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
+
       if (file) {
         file.value = {
           messages: [{
@@ -130,7 +107,9 @@ describe('LaTeX', () => {
     })
 
     it('returns an updateDependencies action for a latex log file if no rerun LaTeX instruction is found.', async (done) => {
-      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+      const { rule } = await initialize('LaTeX_article.tex')
+      const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
+
       if (file) {
         file.value = {
           messages: [{
@@ -148,7 +127,7 @@ describe('LaTeX', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for LaTeX file.', async (done) => {
-      await initialize(['LaTeX_article.tex'])
+      const { rule } = await initialize('LaTeX_article.tex')
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -173,7 +152,7 @@ describe('LaTeX', () => {
     })
 
     it('change command name if engine is set.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { engine: 'foo' })
+      const { rule } = await initialize('LaTeX_article.tex', { engine: 'foo' })
 
       expect(rule.constructCommand().args[0]).toEqual('foo')
 
@@ -181,7 +160,7 @@ describe('LaTeX', () => {
     })
 
     it('add -output-directory to command line when outputDirectory is set.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { outputDirectory: 'foo' })
+      const { rule } = await initialize('LaTeX_article.tex', { outputDirectory: 'foo' })
 
       expect(rule.constructCommand().args).toContain('-output-directory=foo')
 
@@ -189,7 +168,7 @@ describe('LaTeX', () => {
     })
 
     it('add -jobname to command line when jobName is set.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { jobName: 'foo' })
+      const { rule } = await initialize('LaTeX_article.tex', { jobName: 'foo' })
 
       expect(rule.constructCommand().args).toContain('-jobname=foo')
 
@@ -197,7 +176,7 @@ describe('LaTeX', () => {
     })
 
     it('add -synctex to command line when synctex is enabled.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { synctex: true })
+      const { rule } = await initialize('LaTeX_article.tex', { synctex: true })
 
       expect(rule.constructCommand().args).toContain('-synctex=1')
 
@@ -205,7 +184,7 @@ describe('LaTeX', () => {
     })
 
     it('add -shell-escape to command line when shellEscape is enabled.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { shellEscape: 'enabled' })
+      const { rule } = await initialize('LaTeX_article.tex', { shellEscape: 'enabled' })
 
       expect(rule.constructCommand().args).toContain('-shell-escape')
 
@@ -213,7 +192,7 @@ describe('LaTeX', () => {
     })
 
     it('add -no-shell-escape to command line when shellEscape is disabled.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { shellEscape: 'disabled' })
+      const { rule } = await initialize('LaTeX_article.tex', { shellEscape: 'disabled' })
 
       expect(rule.constructCommand().args).toContain('-no-shell-escape')
 
@@ -221,7 +200,7 @@ describe('LaTeX', () => {
     })
 
     it('add -shell-restricted to command line when shellEscape is set to restricted.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { shellEscape: 'restricted' })
+      const { rule } = await initialize('LaTeX_article.tex', { shellEscape: 'restricted' })
 
       expect(rule.constructCommand().args).toContain('-shell-restricted')
 
@@ -229,7 +208,7 @@ describe('LaTeX', () => {
     })
 
     it('add -output-format to command line when dvi format is requested.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { outputFormat: 'dvi' })
+      const { rule } = await initialize('LaTeX_article.tex', { outputFormat: 'dvi' })
 
       expect(rule.constructCommand().args).toContain('-output-format=dvi')
 
@@ -237,7 +216,7 @@ describe('LaTeX', () => {
     })
 
     it('add -output-format to command line when ps format is requested.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { outputFormat: 'ps' })
+      const { rule } = await initialize('LaTeX_article.tex', { outputFormat: 'ps' })
 
       expect(rule.constructCommand().args).toContain('-output-format=dvi')
 
@@ -245,7 +224,7 @@ describe('LaTeX', () => {
     })
 
     it('add -no-pdf to command line when dvi format is requested for xelatex.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { engine: 'xelatex', outputFormat: 'dvi' })
+      const { rule } = await initialize('LaTeX_article.tex', { engine: 'xelatex', outputFormat: 'dvi' })
 
       expect(rule.constructCommand().args).toContain('-no-pdf')
 
@@ -253,7 +232,7 @@ describe('LaTeX', () => {
     })
 
     it('adds kanji option when kanji encoding is set.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { engine: 'uplatex', kanji: 'uptex' })
+      const { rule } = await initialize('LaTeX_article.tex', { engine: 'uplatex', kanji: 'uptex' })
 
       expect(rule.constructCommand().args).toContain('-kanji=uptex')
 
@@ -261,7 +240,7 @@ describe('LaTeX', () => {
     })
 
     it('does not add kanji option when kanji encoding is set but engine is not a Japanese variant.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { kanji: 'uptex' })
+      const { rule } = await initialize('LaTeX_article.tex', { kanji: 'uptex' })
 
       expect(rule.constructCommand().args).not.toContain('-kanji=uptex')
 
@@ -269,7 +248,7 @@ describe('LaTeX', () => {
     })
 
     it('adds -kanji-internal option when kanji encoding is set.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { engine: 'uplatex', kanjiInternal: 'uptex' })
+      const { rule } = await initialize('LaTeX_article.tex', { engine: 'uplatex', kanjiInternal: 'uptex' })
 
       expect(rule.constructCommand().args).toContain('-kanji-internal=uptex')
 
@@ -277,7 +256,7 @@ describe('LaTeX', () => {
     })
 
     it('does not add -kanji-internal option when kanji encoding is set but engine is not a Japanese variant.', async (done) => {
-      await initialize(['LaTeX_article.tex'], { kanjiInternal: 'uptex' })
+      const { rule } = await initialize('LaTeX_article.tex', { kanjiInternal: 'uptex' })
 
       expect(rule.constructCommand().args).not.toContain('-kanji-internal=uptex')
 

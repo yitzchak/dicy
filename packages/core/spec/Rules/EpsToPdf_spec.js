@@ -29,25 +29,25 @@ async function initialize ({ epsPath = 'EncapsulatedPostScript.eps', filePath = 
 describe('EpsToPdf', () => {
   describe('appliesToParameters', () => {
     it('returns true if EPS file is the main source file.', async (done) => {
-      const { dicy, rule } = await initialize({
+      const { rule } = await initialize({
         filePath: 'file-types/EncapsulatedPostScript.eps'
       })
 
-      expect(await EpsToPdf.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if EPS file is not the main source file.', async (done) => {
-      const { dicy, rule } = await initialize()
+      const { rule } = await initialize()
 
-      expect(await EpsToPdf.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if there is a matching epstopdf call in the log.', async (done) => {
-      const { dicy, rule } = await initialize({
+      const { rule } = await initialize({
         logValue: {
           inputs: [],
           outputs: [],
@@ -60,13 +60,13 @@ describe('EpsToPdf', () => {
         }
       })
 
-      expect(await EpsToPdf.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if there is a matching epstopdf call in the log.', async (done) => {
-      const { dicy, rule } = await initialize({
+      const { rule } = await initialize({
         logValue: {
           inputs: [],
           outputs: [],
@@ -79,7 +79,7 @@ describe('EpsToPdf', () => {
         }
       })
 
-      expect(await EpsToPdf.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
@@ -87,11 +87,11 @@ describe('EpsToPdf', () => {
 
   describe('getFileActions', () => {
     it('returns a run action for an EPS file.', async (done) => {
-      const { dicy, rule } = await initialize()
-      const file = await dicy.getFile('EncapsulatedPostScript.eps')
+      const { rule } = await initialize()
+      const file = await rule.getFile('EncapsulatedPostScript.eps')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = await rule.getFileActions(rule.firstParameter)
         expect(actions).toEqual(['run'])
       }
 
@@ -99,8 +99,8 @@ describe('EpsToPdf', () => {
     })
 
     it('returns a no actions for a latex log file.', async (done) => {
-      const { dicy, rule } = await initialize()
-      const file = await dicy.getFile('LaTeX.log-ParsedLaTeXLog')
+      const { rule } = await initialize()
+      const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
 
       if (file) {
         const actions = await rule.getFileActions(file)

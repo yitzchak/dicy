@@ -1,84 +1,82 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import SplitIndex from '../../src/Rules/SplitIndex'
+import { initializeRule } from '../helpers'
+
+type MakeIndexDefinition = {
+  indexPath?: string,
+  logValue?: Object,
+  options?: Object
+}
+
+async function initialize ({ indexPath = 'IndexControlFile.idx', logValue = { inputs: [], outputs: [], messages: [], calls: [] }, options = {} }: MakeIndexDefinition = {}) {
+  return initializeRule({
+    RuleClass: SplitIndex,
+    parameters: [{
+      filePath: indexPath
+    }, {
+      filePath: 'LaTeX.log-ParsedLaTeXLog',
+      value: logValue
+    }],
+    options
+  })
+}
 
 describe('SplitIndex', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: SplitIndex
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new SplitIndex(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
-    beforeEach(async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
-      done()
-    })
-
     it('returns false if there are no splitindex notices in the log.', async (done) => {
-      rule.secondParameter.value = {
-        inputs: [],
-        outputs: [],
-        messages: [],
-        calls: []
-      }
+      const { rule } = await initialize()
 
-      expect(await SplitIndex.appliesToParameters(builder.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if there are splitindex notices in the log.', async (done) => {
-      rule.secondParameter.value = {
-        inputs: [],
-        outputs: [],
-        messages: [{
-          severity: 'info',
-          text: 'Using splitted index at IndexControlFile.idx'
-        }],
-        calls: []
-      }
+      const { rule } = await initialize({
+        logValue: {
+          inputs: [],
+          outputs: [],
+          messages: [{
+            severity: 'info',
+            text: 'Using splitted index at IndexControlFile.idx'
+          }],
+          calls: []
+        }
+      })
 
-      expect(await SplitIndex.appliesToParameters(builder.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if there are splitindex calls in the log.', async (done) => {
-      rule.secondParameter.value = {
-        inputs: [],
-        outputs: [],
-        messages: [],
-        calls: [{
-          args: ['splitindex', 'IndexControlFile.idx'],
-          options: { makeindex: '' },
-          status: 'executed (allowed)'
-        }]
-      }
+      const { rule } = await initialize({
+        logValue: {
+          inputs: [],
+          outputs: [],
+          messages: [],
+          calls: [{
+            args: ['splitindex', 'IndexControlFile.idx'],
+            options: { makeindex: '' },
+            status: 'executed (allowed)'
+          }]
+        }
+      })
 
-      expect(await SplitIndex.appliesToParameters(builder.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
   })
 
   describe('getFileActions', () => {
-    beforeEach(async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
-      done()
-    })
-
     it('returns a run action for a index control file.', async (done) => {
-      const file = await builder.getFile('IndexControlFile.idx')
+      const { rule } = await initialize()
+      const file = await rule.getFile('IndexControlFile.idx')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['run'])
@@ -88,7 +86,9 @@ describe('SplitIndex', () => {
     })
 
     it('returns a updateDependencies action for a splitindex log file.', async (done) => {
-      const file = await builder.getFile('IndexControlFile.ilg-ParsedSplitIndexLog')
+      const { rule } = await initialize()
+      const file = await rule.getFile('IndexControlFile.ilg-ParsedSplitIndexLog')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['updateDependencies'])
@@ -98,7 +98,9 @@ describe('SplitIndex', () => {
     })
 
     it('returns a no actions for a latex log file.', async (done) => {
-      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+      const { rule } = await initialize()
+      const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual([])
@@ -110,7 +112,7 @@ describe('SplitIndex', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for index file.', async (done) => {
-      await initialize(['IndexControlFile.idx', 'LaTeX.log-ParsedLaTeXLog'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: ['splitindex', '-v', '-v', '-m', '', '$DIR_0/$BASE_0'],

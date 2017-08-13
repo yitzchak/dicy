@@ -1,53 +1,42 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import DviToPdf from '../../src/Rules/DviToPdf'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: DviToPdf,
+    parameters: [{
+      filePath: 'DeviceIndependentFile.dvi'
+    }],
+    options
+  })
+}
 
 describe('DviToPdf', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: DviToPdf
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new DviToPdf(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'pdf' })
+      const { rule } = await initialize({ outputFormat: 'pdf' })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'pdf\'', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'ps' })
+      const { rule } = await initialize({ outputFormat: 'ps' })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if outputFormat is \'pdf\' but intermediatePostScript is set.', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'pdf', intermediatePostScript: true })
+      const { rule } = await initialize({ outputFormat: 'pdf', intermediatePostScript: true })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
@@ -55,7 +44,7 @@ describe('DviToPdf', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for dvi file.', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: [

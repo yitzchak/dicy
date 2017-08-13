@@ -1,42 +1,34 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import Agda from '../../src/Rules/Agda'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: Agda,
+    parameters: [{
+      filePath: 'DeviceIndependentFile.dvi'
+    }],
+    options
+  })
+}
 
 describe('Agda', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: Agda
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new Agda(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
     it('returns true if literateAgdaEngine is \'agda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'])
+      const { rule } = await initialize()
 
-      const file = await builder.getFile('LiterateAgda.lagda')
-      if (file) {
-        expect(await Agda.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await Agda.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'agda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'], { literateAgdaEngine: 'lhs2TeX' })
+      const { rule } = await initialize({ literateAgdaEngine: 'lhs2TeX' })
 
-      const file = await builder.getFile('LiterateAgda.lagda')
-      if (file) {
-        expect(await Agda.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await Agda.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
@@ -44,7 +36,7 @@ describe('Agda', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for lagda file.', async (done) => {
-      await initialize(['LiterateAgda.lagda'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: ['agda', '--latex', '--latex-dir=.', '$BASE_0'],

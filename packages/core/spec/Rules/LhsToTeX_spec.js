@@ -1,53 +1,42 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import LhsToTeX from '../../src/Rules/LhsToTeX'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}, filePath = 'LiterateHaskell.lhs') {
+  return initializeRule({
+    RuleClass: LhsToTeX,
+    parameters: [{
+      filePath
+    }],
+    options
+  })
+}
 
 describe('LhsToTeX', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: LhsToTeX
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new LhsToTeX(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
     it('returns true if file type is \'LiterateHaskell\'', async (done) => {
-      await initialize(['LiterateHaskell.lhs'])
+      const { rule } = await initialize()
 
-      const file = await builder.getFile('LiterateHaskell.lhs')
-      if (file) {
-        expect(await LhsToTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if literateAgdaEngine is \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'], { literateAgdaEngine: 'lhs2TeX' })
+      const { rule } = await initialize({ literateAgdaEngine: 'lhs2TeX' }, 'LiterateAgda.lagda')
 
-      const file = await builder.getFile('LiterateAgda.lagda')
-      if (file) {
-        expect(await LhsToTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      await initialize(['LiterateAgda.lagda'])
+      const { rule } = await initialize({}, 'LiterateAgda.lagda')
 
-      const file = await builder.getFile('LiterateAgda.lagda')
-      if (file) {
-        expect(await LhsToTeX.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
@@ -55,7 +44,7 @@ describe('LhsToTeX', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for lhs file.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: ['lhs2TeX', '-o', '$DIR_0/$NAME_0.tex', '$DIR_0/$BASE_0'],
@@ -68,7 +57,7 @@ describe('LhsToTeX', () => {
     })
 
     it('returns correct arguments and command options for lagda file.', async (done) => {
-      await initialize(['LiterateAgda.lagda'])
+      const { rule } = await initialize({}, 'LiterateAgda.lagda')
 
       expect(rule.constructCommand()).toEqual({
         args: ['lhs2TeX', '--agda', '-o', '$DIR_0/$NAME_0.tex', '$DIR_0/$BASE_0'],
@@ -81,7 +70,7 @@ describe('LhsToTeX', () => {
     })
 
     it('add --math to command line when lhs2texStyle is set to \'math\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'math' })
+      const { rule } = await initialize({ lhs2texStyle: 'math' })
 
       expect(rule.constructCommand().args).toContain('--math')
 
@@ -89,7 +78,7 @@ describe('LhsToTeX', () => {
     })
 
     it('add --newcode to command line when lhs2texStyle is set to \'newCode\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'newCode' })
+      const { rule } = await initialize({ lhs2texStyle: 'newCode' })
 
       expect(rule.constructCommand().args).toContain('--newcode')
 
@@ -97,7 +86,7 @@ describe('LhsToTeX', () => {
     })
 
     it('add --code to command line when lhs2texStyle is set to \'code\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'code' })
+      const { rule } = await initialize({ lhs2texStyle: 'code' })
 
       expect(rule.constructCommand().args).toContain('--code')
 
@@ -105,7 +94,7 @@ describe('LhsToTeX', () => {
     })
 
     it('add --tt to command line when lhs2texStyle is set to \'typewriter\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'typewriter' })
+      const { rule } = await initialize({ lhs2texStyle: 'typewriter' })
 
       expect(rule.constructCommand().args).toContain('--tt')
 
@@ -113,7 +102,7 @@ describe('LhsToTeX', () => {
     })
 
     it('add --verb to command line when lhs2texStyle is set to \'verbatim\'.', async (done) => {
-      await initialize(['LiterateHaskell.lhs'], { lhs2texStyle: 'verbatim' })
+      const { rule } = await initialize({ lhs2texStyle: 'verbatim' })
 
       expect(rule.constructCommand().args).toContain('--verb')
 
