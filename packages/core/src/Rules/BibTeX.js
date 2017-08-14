@@ -61,11 +61,11 @@ export default class BibTeX extends Rule {
       }
     }
 
-    args.push('$DIR_0/$BASE_0')
+    args.push('$BASE_0')
 
     return {
       args,
-      cd: '$ROOTDIR',
+      cd: '$ROOTDIR/$DIR_0',
       severity: 'error',
       outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']
     }
