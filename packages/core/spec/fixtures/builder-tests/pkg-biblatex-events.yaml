@@ -35,13 +35,13 @@ events:
   - type: command
     rule: >-
       BibTeX(build;execute;bibtex-2;output/bibtex-2.aux;output/bibtex-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/bibtex-2.aux
+    command: bibtex bibtex-2.aux
   - type: command
     rule: ParseBibTeXLog(build;execute;bibtex-1;bibtex-1.blg)
     command: kpsewhich bibtex-1.aux biblatex.bst bibtex-1-blx.bib foo.bib
   - type: command
     rule: ParseBibTeXLog(build;execute;bibtex-2;output/bibtex-2.blg)
-    command: kpsewhich output/bibtex-2.aux biblatex.bst bibtex-2-blx.bib foo.bib
+    command: kpsewhich bibtex-2.aux biblatex.bst bibtex-2-blx.bib foo.bib
   - type: command
     rule: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
     command: >-
@@ -69,7 +69,7 @@ events:
   - type: command
     rule: >-
       BibTeX(build;execute;bibtex-2;output/bibtex-2.aux;output/bibtex-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/bibtex-2.aux
+    command: bibtex bibtex-2.aux
   - type: command
     rule: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
     command: >-
@@ -97,10 +97,10 @@ events:
   - type: command
     rule: >-
       BibTeX(build;execute;bibtex-2;output/bibtex-2.aux;output/bibtex-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/bibtex-2.aux
+    command: bibtex bibtex-2.aux
   - type: command
     rule: ParseBibTeXLog(log;execute;bibtex-1;bibtex-1.blg)
     command: kpsewhich bibtex-1.aux biblatex.bst bibtex-1-blx.bib foo.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;bibtex-2;output/bibtex-2.blg)
-    command: kpsewhich output/bibtex-2.aux biblatex.bst bibtex-2-blx.bib foo.bib
+    command: kpsewhich bibtex-2.aux biblatex.bst bibtex-2-blx.bib foo.bib
