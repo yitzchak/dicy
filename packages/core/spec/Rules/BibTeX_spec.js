@@ -103,8 +103,8 @@ describe('BibTeX', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['bibtex', '$DIR_0/$BASE_0'],
-        cd: '$ROOTDIR',
+        args: ['bibtex', '$BASE_0'],
+        cd: '$ROOTDIR/$DIR_0',
         severity: 'error',
         outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']
       })
