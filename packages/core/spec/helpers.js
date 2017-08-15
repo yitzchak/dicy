@@ -5,8 +5,8 @@ import fs from 'fs-extra'
 import path from 'path'
 import temp from 'temp'
 
-import { File } from '../src/main'
-import type { Event } from '../src/types'
+import { DiCy, File, Rule } from '../src/main'
+import type { Command, Event, Phase } from '../src/types'
 
 export async function cloneFixtures () {
   const tempPath = fs.realpathSync(temp.mkdirSync('dicy'))
@@ -90,4 +90,40 @@ export const customMatchers = {
       }
     }
   }
+}
+
+export type ParameterDefinition = {
+  filePath: string,
+  value?: Object
+}
+
+export type RuleDefinition = {
+  RuleClass: Class<Rule>,
+  command?: Command,
+  phase?: Phase,
+  jobName?: string,
+  filePath?: string,
+  parameters?: Array<ParameterDefinition>,
+  options?: Object
+}
+
+export async function initializeRule ({ RuleClass, command, phase, jobName, filePath = 'file-types/LaTeX_article.tex', parameters = [], options = {} }: RuleDefinition) {
+  options.ignoreUserOptions = true
+  const realFilePath = path.resolve(__dirname, 'fixtures', filePath)
+  const dicy = await DiCy.create(realFilePath, options)
+  const files = []
+  for (const { filePath, value } of parameters) {
+    const file = await dicy.getFile(filePath)
+    if (file && value) file.value = value
+    files.push(file)
+  }
+  if (!command) {
+    command = RuleClass.commands.values().next().value || 'build'
+  }
+  if (!phase) {
+    phase = RuleClass.phases.values().next().value || 'execute'
+  }
+  const rule = new RuleClass(dicy.state, command, phase, jobName, ...files)
+  await rule.initialize()
+  return { dicy, rule }
 }

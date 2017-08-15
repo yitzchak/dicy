@@ -1,42 +1,34 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import DviToSvg from '../../src/Rules/DviToSvg'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: DviToSvg,
+    parameters: [{
+      filePath: 'DeviceIndependentFile.dvi'
+    }],
+    options
+  })
+}
 
 describe('DviToSvg', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: DviToSvg
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new DviToSvg(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'svg\'', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'svg' })
+      const { rule } = await initialize({ outputFormat: 'svg' })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToSvg.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'svg\'', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'dvi' })
+      const { rule } = await initialize({ outputFormat: 'dvi' })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToSvg.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
@@ -44,7 +36,7 @@ describe('DviToSvg', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for dvi file.', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: [

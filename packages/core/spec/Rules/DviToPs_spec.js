@@ -1,53 +1,42 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import DviToPs from '../../src/Rules/DviToPs'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: DviToPs,
+    parameters: [{
+      filePath: 'DeviceIndependentFile.dvi'
+    }],
+    options
+  })
+}
 
 describe('DviToPs', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: DviToPs
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new DviToPs(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'ps' })
+      const { rule } = await initialize({ outputFormat: 'ps' })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if outputFormat is \'pdf\' and intermediatePostScript is set', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'pdf', intermediatePostScript: true })
+      const { rule } = await initialize({ outputFormat: 'pdf', intermediatePostScript: true })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'ps\'', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'], { outputFormat: 'dvi' })
+      const { rule } = await initialize({ outputFormat: 'dvi' })
 
-      const file = await builder.getFile('DeviceIndependentFile.dvi')
-      if (file) {
-        expect(await DviToPs.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
@@ -55,7 +44,7 @@ describe('DviToPs', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for dvi file.', async (done) => {
-      await initialize(['DeviceIndependentFile.dvi'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: [

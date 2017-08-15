@@ -1,42 +1,34 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import PsToPdf from '../../src/Rules/PsToPdf'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: PsToPdf,
+    parameters: [{
+      filePath: 'PostScript.ps'
+    }],
+    options
+  })
+}
 
 describe('PsToPdf', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: PsToPdf
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new PsToPdf(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
-      await initialize(['PostScript.ps'], { outputFormat: 'pdf' })
+      const { rule } = await initialize({ outputFormat: 'pdf' })
 
-      const file = await builder.getFile('PostScript.ps')
-      if (file) {
-        expect(await PsToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(true)
-      }
+      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'pdf\'', async (done) => {
-      await initialize(['PostScript.ps'], { outputFormat: 'ps' })
+      const { rule } = await initialize({ outputFormat: 'ps' })
 
-      const file = await builder.getFile('PostScript.ps')
-      if (file) {
-        expect(await PsToPdf.appliesToParameters(builder.state, 'build', 'execute', null, file)).toBe(false)
-      }
+      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
 
       done()
     })
@@ -44,7 +36,7 @@ describe('PsToPdf', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for ps file.', async (done) => {
-      await initialize(['PostScript.ps'])
+      const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
         args: [

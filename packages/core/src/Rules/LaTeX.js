@@ -9,7 +9,7 @@ import type { Action, Command, CommandOptions, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const JAPANESE_LATEX_PATTERN = /^u?platex$/
-const RERUN_LATEX_PATTERN = /(rerun LaTeX|Label\(s\) may have changed\. Rerun|No file )/i
+const RERUN_LATEX_PATTERN = /(rerun LaTeX|(?:Citation|Label)\(s\) may have changed\. Rerun|No file )/i
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {

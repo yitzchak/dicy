@@ -34,13 +34,13 @@ events:
   - type: command
     rule: >-
       BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
+    command: bibtex job-2.aux
   - type: command
     rule: ParseBibTeXLog(build;execute;job-1;job-1.blg)
     command: kpsewhich job-1.aux xplain.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(build;execute;job-2;output/job-2.blg)
-    command: kpsewhich output/job-2.aux xplain.bst foo.bib
+    command: kpsewhich job-2.aux xplain.bst foo.bib
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
     command: >-
@@ -64,7 +64,7 @@ events:
   - type: command
     rule: >-
       BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
+    command: bibtex job-2.aux
   - type: command
     rule: LaTeX(build;execute;job-1;pkg-autind-bibref.tex)
     command: >-
@@ -88,10 +88,10 @@ events:
   - type: command
     rule: >-
       BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
-    command: bibtex output/job-2.aux
+    command: bibtex job-2.aux
   - type: command
     rule: ParseBibTeXLog(log;execute;job-1;job-1.blg)
     command: kpsewhich job-1.aux xplain.bst foo.bib
   - type: command
     rule: ParseBibTeXLog(log;execute;job-2;output/job-2.blg)
-    command: kpsewhich output/job-2.aux xplain.bst foo.bib
+    command: kpsewhich job-2.aux xplain.bst foo.bib

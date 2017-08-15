@@ -1,16 +1,27 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import State from '../../src/State'
 import File from '../../src/File'
 import ParseLaTeXLog from '../../src/Rules/ParseLaTeXLog'
+import { initializeRule } from '../helpers'
+
+async function initialize (filePath: string, logPath: string, options: Object = {}) {
+  return initializeRule({
+    RuleClass: ParseLaTeXLog,
+    filePath,
+    parameters: [{
+      filePath: logPath
+    }],
+    options
+  })
+}
 
 describe('ParseLaTeXLog', () => {
   it('verifies that all log messages are successfully parsed.', async (done) => {
     const sourceName = 'error-warning.tex'
     const logName = 'error-warning.log'
+    const { rule } = await initialize(sourceName, logName)
     const messages = [{
       name: 'pdfTeX',
       severity: 'info',
@@ -670,20 +681,11 @@ describe('ParseLaTeXLog', () => {
         }
       }
     }]
-    const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-    const sourcePath = path.resolve(fixturesPath, sourceName)
     const parsedLogPath = 'error-warning.log-ParsedLaTeXLog'
-    const state: State = await State.create(sourcePath)
-    const logFile: ?File = await state.getFile(logName)
 
-    expect(logFile).toBeDefined()
-    if (!logFile) return
+    await rule.parse()
 
-    const parser: ParseLaTeXLog = new ParseLaTeXLog(state, 'build', 'execute', null, logFile)
-
-    await parser.parse()
-
-    const parsedLog: ?File = await parser.getFile(parsedLogPath)
+    const parsedLog: ?File = await rule.getFile(parsedLogPath)
 
     expect(parsedLog).toBeDefined()
     if (!parsedLog) return

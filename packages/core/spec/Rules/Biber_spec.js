@@ -1,31 +1,26 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import DiCy from '../../src/DiCy'
 import Biber from '../../src/Rules/Biber'
+import { initializeRule } from '../helpers'
+
+async function initialize (options: Object = {}) {
+  return initializeRule({
+    RuleClass: Biber,
+    parameters: [{
+      filePath: 'BiberControlFile.bcf'
+    }],
+    options
+  })
+}
 
 describe('Biber', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let builder: DiCy
-  let rule: Biber
-
-  async function initialize (parameterPaths: Array<string>, options: Object = {}) {
-    options.ignoreUserOptions = true
-    builder = await DiCy.create(path.resolve(fixturesPath, 'file-types', 'LaTeX_article.tex'), options)
-    const parameters = await builder.getFiles(parameterPaths)
-    rule = new Biber(builder.state, 'build', 'execute', null, ...parameters)
-  }
-
-  beforeEach(async (done) => {
-    await initialize(['BiberControlFile.bcf'])
-    done()
-  })
-
   describe('getFileActions', () => {
     it('returns a run action for a control file.', async (done) => {
-      const file = await builder.getFile('BiberControlFile.bcf')
+      const { rule } = await initialize()
+      const file = await rule.getFile('BiberControlFile.bcf')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['run'])
@@ -35,7 +30,9 @@ describe('Biber', () => {
     })
 
     it('returns a updateDependencies action for a biber log file.', async (done) => {
-      const file = await builder.getFile('BiberControlFile.blg-ParsedBiberLog')
+      const { rule } = await initialize()
+      const file = await rule.getFile('BiberControlFile.blg-ParsedBiberLog')
+
       if (file) {
         const actions = await rule.getFileActions(file)
         expect(actions).toEqual(['updateDependencies'])
@@ -45,7 +42,9 @@ describe('Biber', () => {
     })
 
     it('returns a run action for a latex log file if a rerun biber instruction is found.', async (done) => {
-      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+      const { rule } = await initialize()
+      const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
+
       if (file) {
         file.value = {
           messages: [{
@@ -61,7 +60,9 @@ describe('Biber', () => {
     })
 
     it('returns a no actions for a latex log file if no rerun biber instruction is found.', async (done) => {
-      const file = await builder.getFile('LaTeX.log-ParsedLaTeXLog')
+      const { rule } = await initialize()
+      const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
+
       if (file) {
         file.value = {
           messages: [{
@@ -79,6 +80,8 @@ describe('Biber', () => {
 
   describe('constructCommand', () => {
     it('returns correct arguments and command options for control file file.', async (done) => {
+      const { rule } = await initialize()
+
       expect(rule.constructCommand()).toEqual({
         args: ['biber', '$DIR_0/$BASE_0'],
         cd: '$ROOTDIR',

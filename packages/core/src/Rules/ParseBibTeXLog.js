@@ -27,7 +27,7 @@ export default class ParseBibTeXLog extends Rule {
     await this.firstParameter.parse([{
       // Missing database files or missing cross references.
       names: ['text'],
-      patterns: [/^(I couldn't open database file .*|A bad cross reference---entry .*)$/],
+      patterns: [/^(I couldn't open (?:auxiliary|database) file .*|A bad cross reference---entry .*)$/],
       evaluate: (reference, groups) => {
         parsedLog.messages.push({
           severity: 'error',
@@ -54,17 +54,19 @@ export default class ParseBibTeXLog extends Rule {
       patterns: [/^-+line (\d+) of file (.+)$/],
       evaluate: (reference, groups) => {
         const message = parsedLog.messages[parsedLog.messages.length - 1]
-        const line = parseInt(groups.line, 10)
+        if (message) {
+          const line = parseInt(groups.line, 10)
 
-        // Extend the log reference
-        if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.start
+          // Extend the log reference
+          if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.start
 
-        // Add a source reference
-        message.source = {
-          file: this.normalizePath(groups.file),
-          range: {
-            start: line,
-            end: line
+          // Add a source reference
+          message.source = {
+            file: this.normalizePath(groups.file),
+            range: {
+              start: line,
+              end: line
+            }
           }
         }
       }
