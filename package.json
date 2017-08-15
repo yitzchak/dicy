@@ -1,6 +1,6 @@
 {
   "name": "dicy",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A builder for LaTeX, knitr, literate Agda and literate Haskell that automatically builds dependencies.",
   "keywords": [
     "latex",
