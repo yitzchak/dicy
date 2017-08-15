@@ -119,6 +119,15 @@ Where epstopdf should its bounding box from.
 
 The output path for epstopdf.
 
+## epstopdfRestricted
+
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--epstopdf-restricted`
+
+Use restricted mode when calling epstopdf.
+
 ## filePath
 
 -   **Type:** string
