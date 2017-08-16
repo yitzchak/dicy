@@ -35,6 +35,7 @@ addons:
       - python-pygments
       - r-recommended
       - texlive-bibtex-extra
+      - texlive-extra-utils
       - texlive-lang-cjk
       - texlive-latex-base
       - texlive-latex-extra
