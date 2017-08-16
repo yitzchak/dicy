@@ -33,6 +33,7 @@ addons:
       - latex-xcolor
       - lhs2tex
       - python-pygments
+      - python3-pygments
       - r-recommended
       - texlive-bibtex-extra
       - texlive-extra-utils
