@@ -30,6 +30,7 @@ install:
   - asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
   - mkdir "%MIKTEX_HOME%\tex\latex\asymptote"
   - copy "%ASYMPTOTE_HOME%\*.sty" "%MIKTEX_HOME%\tex\latex\asymptote"
+  - pip2 install Pygments
   - pip3 install Pygments
   - initexmf --set-config-value=[MPM]AutoInstall=0
   - mpm --install-some=scripts\miktex-packages
