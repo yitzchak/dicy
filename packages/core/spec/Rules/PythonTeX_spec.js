@@ -2,6 +2,7 @@
 
 import 'babel-polyfill'
 
+// $FlowIgnore
 import PythonTeX from '../../src/Rules/PythonTeX'
 import { initializeRule } from '../helpers'
 
