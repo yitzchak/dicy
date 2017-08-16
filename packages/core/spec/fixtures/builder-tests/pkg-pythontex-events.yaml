@@ -1,0 +1,30 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-pythontex.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-1 pkg-pythontex.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-pythontex.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-2
+      pkg-pythontex.tex
+  - type: command
+    rule: PythonTeX(build;execute;job-1;output/job-1.pytxcode)
+    command: pythontex job-1
+  - type: command
+    rule: PythonTeX(build;execute;job-2;job-2.pytxcode)
+    command: pythontex job-2
+  - type: command
+    rule: LaTeX(build;execute;job-1;pkg-pythontex.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      -output-directory=output -jobname=job-1 pkg-pythontex.tex
+  - type: command
+    rule: LaTeX(build;execute;job-2;pkg-pythontex.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-2
+      pkg-pythontex.tex

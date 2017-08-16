@@ -32,6 +32,7 @@ cp output/biber.idx IndexControlFile.idx
 cp output/biber.ist IndexStyleFile.ist
 cp output/biber.log LaTeXLog_pdfTeX.log
 cp output/biber.nlo NomenclatureControlFile.nlo
+cp output/biber.pytxcode PythonTeX.pytxcode
 cp output/biber.sagetex.sage Sage.sage
 cp output/biber.synctex.gz SyncTeX.synctex.gz
 
