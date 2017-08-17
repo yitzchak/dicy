@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo Installing Pygments...
+pip2 install Pygments
+pip3 install Pygments

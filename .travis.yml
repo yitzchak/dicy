@@ -32,8 +32,6 @@ addons:
       - feynmf
       - latex-xcolor
       - lhs2tex
-      - python-pygments
-      - python3-pygments
       - r-recommended
       - texlive-bibtex-extra
       - texlive-extra-utils
@@ -48,8 +46,7 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
-  - pip2 install Pygments
-  - pythontex --version
+  - ./scripts/ci-install
   - ./scripts/install-mac
   - ./scripts/install-r-libs
 
