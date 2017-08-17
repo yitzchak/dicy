@@ -17,7 +17,7 @@
   "contributors": [],
   "homepage": "https://yitzchak.github.io/dicy/",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=7.0.0"
   },
   "license": "MIT",
   "scripts": {
@@ -55,13 +55,12 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
-    "babel-plugin-syntax-async-generators": "^6.13.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-plugin-transform-strict-mode": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
-    "babel-preset-latest": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.24.1",
     "chalk-cli": "^4.0.0",
     "eslint": "^4.4.1",
@@ -80,15 +79,21 @@
   },
   "babel": {
     "presets": [
-      "latest",
+      [
+        "env",
+        {
+          "targets": {
+            "node": "7.0.0"
+          }
+        }
+      ],
+      "stage-3",
       "flow"
     ],
     "plugins": [
       "transform-runtime",
       "transform-class-properties",
-      "transform-strict-mode",
-      "syntax-async-generators",
-      "transform-object-rest-spread"
+      "transform-strict-mode"
     ]
   },
   "eslintConfig": {
