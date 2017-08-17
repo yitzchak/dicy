@@ -20,17 +20,17 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   cinst miktex
 
   echo Installing Asymptote...
-  curl -LfsS -o asymptote-setup.exe "https://downloads.sourceforge.net/project/asymptote/${ASYMPTOTE_VERSION}/asymptote-%ASYMPTOTE_VERSION%-setup.exe"
+  curl -LfsS -o asymptote-setup.exe "https://downloads.sourceforge.net/project/asymptote/${ASYMPTOTE_VERSION}/asymptote-${ASYMPTOTE_VERSION}-setup.exe"
   asymptote-setup /S "/D=${ASYMPTOTE_HOME}"
   mkdir -p "${MIKTEX_HOME}/tex/latex/asymptote"
   cp "${ASYMPTOTE_HOME}/*.sty" "${MIKTEX_HOME}/tex/latex/asymptote"
 
   echo Installing TeX packages...
   initexmf --set-config-value=[MPM]AutoInstall=0
-  mpm --install-some=scripts\\miktex-packages
+  mpm --admin --install-some=scripts\\miktex-packages
   initexmf --admin --update-fndb
 
-  Installing package dependencies...
+  echo Installing package dependencies...
   npm install
 elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   echo Updating homebrew...
