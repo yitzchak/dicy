@@ -32,9 +32,9 @@ addons:
       - feynmf
       - latex-xcolor
       - lhs2tex
-      - python-pygments
       - r-recommended
       - texlive-bibtex-extra
+      - texlive-extra-utils
       - texlive-lang-cjk
       - texlive-latex-base
       - texlive-latex-extra
@@ -46,9 +46,7 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
-  - ./scripts/install-mac
-  - ./scripts/install-r-libs
+  - ./scripts/ci-install
 
 before_script:
-  - npm run update-dependencies
-  - npm run bootstrap
+  - ./scripts/ci-before-test

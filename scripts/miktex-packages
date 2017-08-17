@@ -1,6 +1,7 @@
 amsrefs
 biblatex
 bibtopic
+caption
 currfile
 datatool
 etoolbox
@@ -24,6 +25,9 @@ mptopdf
 multibib
 natbib
 nomencl
+pgf
+pgfopts
+pythontex
 splitindex
 standalone
 subfiles

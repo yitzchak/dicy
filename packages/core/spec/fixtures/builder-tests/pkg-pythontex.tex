@@ -1,0 +1,14 @@
+%!TeX jobNames = job-1, job-2
+%!TeX job-1:outputDirectory = output
+%!TeX check = pythontex --version
+\documentclass{article}
+
+\usepackage{pythontex}
+
+\begin{document}
+
+\begin{pycode}
+print(r'\emph{Hello}, world!')
+\end{pycode}
+
+\end{document}

@@ -24,7 +24,9 @@ mfirstuc
 minted
 multibib
 nomencl
+pgfopts
 polytable
+pythontex
 splitindex
 standalone
 stmaryrd

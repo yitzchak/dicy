@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
-  echo Installing R libraries...
-  mkdir -p "${R_LIBS_USER}"
-  Rscript -e "install.packages(c('knitr', 'patchSynctex'), repos = 'http://cran.r-project.org')"
-else
-  echo Using cached R libraries
-fi
