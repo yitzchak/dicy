@@ -5,7 +5,7 @@ pip2 install Pygments
 pip3 install Pygments
 
 echo "${APPVEYOR:-}"
-if [[ "${APPVEYOR:-}" == true ]]; then
+if [[ "${APPVEYOR:-}" == "True" ]]; then
   echo Installing node...
   PowerShell -Command Install-Product node 7 x64
 
