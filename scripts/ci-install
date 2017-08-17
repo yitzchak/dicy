@@ -4,6 +4,7 @@ echo Installing Pygments...
 pip2 install Pygments
 pip3 install Pygments
 
+echo "${APPVEYOR:-}"
 if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing node...
   PowerShell -Command Install-Product node 7 x64
@@ -30,7 +31,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
 
   Installing package dependencies...
   npm install
-elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   echo Updating homebrew...
   brew update
 
