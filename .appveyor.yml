@@ -23,19 +23,6 @@ cache:
 install:
   - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
   - sh ./scripts/ci-install
-  - ps: Install-Product node 7 x64
-  - npm install -g lerna@2.0.0
-  - cinst miktex ghostscript
-  - cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
-  - curl -LfsS -o asymptote-setup.exe https://downloads.sourceforge.net/project/asymptote/%ASYMPTOTE_VERSION%/asymptote-%ASYMPTOTE_VERSION%-setup.exe
-  - asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
-  - mkdir "%MIKTEX_HOME%\tex\latex\asymptote"
-  - copy "%ASYMPTOTE_HOME%\*.sty" "%MIKTEX_HOME%\tex\latex\asymptote"
-  - initexmf --set-config-value=[MPM]AutoInstall=0
-  - mpm --install-some=scripts\miktex-packages
-  - initexmf --admin --update-fndb
-  - sh ./scripts/install-r-libs
-  - npm install
 
 before_test:
   - sh ./scripts/ci-before-test
