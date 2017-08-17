@@ -48,6 +48,7 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
+  - pip2 install Pygments
   - pythontex --version
   - ./scripts/install-mac
   - ./scripts/install-r-libs
