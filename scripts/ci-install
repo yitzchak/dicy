@@ -4,7 +4,33 @@ echo Installing Pygments...
 pip2 install Pygments
 pip3 install Pygments
 
-if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+if [[ "${APPVEYOR:-}" == true ]]; then
+  echo Installing node...
+  PowerShell -Command Install-Product node 7 x64
+
+  echo Installing GhostScript...
+  cinst ghostscript
+
+  echo Installing R...
+  cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
+
+  echo Installing MikTeX...
+  cinst miktex
+
+  echo Installing Asymptote...
+  curl -LfsS -o asymptote-setup.exe https://downloads.sourceforge.net/project/asymptote/%ASYMPTOTE_VERSION%/asymptote-%ASYMPTOTE_VERSION%-setup.exe
+  asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
+  mkdir "%MIKTEX_HOME%\tex\latex\asymptote"
+  copy "%ASYMPTOTE_HOME%\*.sty" "%MIKTEX_HOME%\tex\latex\asymptote"
+
+  echo Installing TeX packages...
+  initexmf --set-config-value=[MPM]AutoInstall=0
+  mpm --install-some=scripts\miktex-packages
+  initexmf --admin --update-fndb
+
+  Installing package dependencies...
+  npm install
+elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo Updating homebrew...
   brew update
 
@@ -29,21 +55,6 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   sudo tlmgr update --self
   sudo tlmgr update --all
   cat "`dirname $0`/mactex-packages" | xargs sudo tlmgr install
-fi
-
-if [[ "${APPVEYOR:-}" == true ]]; then
-  ps: Install-Product node 7 x64
-  npm install -g lerna@2.0.0
-  cinst miktex ghostscript
-  cinst R.Project --allow-empty-checksums --ia="/DIR=\"%R_HOME%\""
-  curl -LfsS -o asymptote-setup.exe https://downloads.sourceforge.net/project/asymptote/%ASYMPTOTE_VERSION%/asymptote-%ASYMPTOTE_VERSION%-setup.exe
-  asymptote-setup /S "/D=%ASYMPTOTE_HOME%"
-  mkdir "%MIKTEX_HOME%\tex\latex\asymptote"
-  copy "%ASYMPTOTE_HOME%\*.sty" "%MIKTEX_HOME%\tex\latex\asymptote"
-  initexmf --set-config-value=[MPM]AutoInstall=0
-  mpm --install-some=scripts\miktex-packages
-  initexmf --admin --update-fndb
-  npm install
 fi
 
 if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
