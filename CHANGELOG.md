@@ -3,7 +3,7 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased &mdash; YYYY-MM-DD
+## [Unreleased][] &mdash; YYYY-MM-DD
 
 ### Added
 
@@ -119,6 +119,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 - Configuration parsing in YAML or TeX magic comments.
 
+[Unreleased]: https://github.com/yitzchak/dicy/compare/v0.8.0...master
 [v0.8.0]: https://github.com/yitzchak/dicy/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/yitzchak/dicy/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/yitzchak/dicy/compare/v0.5.0...v0.6.0
