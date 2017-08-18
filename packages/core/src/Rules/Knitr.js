@@ -9,21 +9,23 @@ function escapePath (filePath) {
 }
 
 export default class Knitr extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['Knitr'])]
+  static parameterTypes: Array<Set<string>> = [new Set(['RNoWeb'])]
   static description: string = 'Runs knitr on Rnw files.'
 
   constructCommand (): CommandOptions {
-    const filePath = escapePath(this.firstParameter.filePath)
+    const escapedFilePath = escapePath(this.firstParameter.filePath)
+    const outputPath = this.options.knitrOutputPath
+    const escapedDutputPath = escapePath(this.resolvePath(outputPath))
     const lines = ['library(knitr)']
-    const outputs = ['$DIR_0/$NAME_0.tex']
+    const outputs = [outputPath]
 
     // If concordance option is enabled the add the option
     if (this.options.knitrConcordance) {
       lines.push('opts_knit$set(concordance=TRUE)')
-      outputs.push('$DIR_0/$NAME_0-concordance.tex')
+      outputs.push(outputPath.replace(/\.[^.]*$/, '-concordance.tex'))
     }
 
-    lines.push(`knit('${filePath}')`)
+    lines.push(`knit('${escapedFilePath}','${escapedDutputPath}')`)
 
     return {
       args: ['Rscript', '-e', lines.join(';')],

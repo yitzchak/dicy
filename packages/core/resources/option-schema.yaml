@@ -335,6 +335,12 @@ knitrConcordance:
     Enable creation of knitr concordance file used to SyncTeX patching and
     source code mapping in log messages.
   type: boolean
+knitrOutputPath:
+  commands:
+    - build
+  defaultValue: $DIR_0/$NAME_0.tex
+  description: Output path of knit.
+  type: string
 lhs2texStyle:
   commands:
     - build
@@ -409,6 +415,29 @@ phaseCycles:
   description: The maximum number of evaluation cycles in each phase.
   noInvalidate: true
   type: number
+pweaveCacheDirectory:
+  commands:
+    - build
+  defaultValue: $DIR_0/cache
+  description: Directory used for cache.
+  type: string
+pweaveFigureDirectory:
+  commands:
+    - build
+  defaultValue: $DIR_0/figures
+  description: Directory used for figures.
+  type: string
+pweaveOutputFormat:
+  commands:
+    - build
+  defaultValue: tex
+  description: Format of code environments used by Pweave.
+  values:
+    - tex
+    - texminted
+    - texpweave
+    - texpygments
+  type: string
 severity:
   aliases:
     - s

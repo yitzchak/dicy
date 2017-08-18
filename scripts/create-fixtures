@@ -10,9 +10,9 @@ rm error-warning.aux
 cd file-types
 
 echo Creating Knitr files...
-Rscript -e "library(knitr);opts_knit\$set(concordance=TRUE);knit('Knitr.Rnw')" &>/dev/null
-rm -rf Knitr.tex figure
-mv Knitr-concordance.tex KnitrConcordance-concordance.tex
+Rscript -e "library(knitr);opts_knit\$set(concordance=TRUE);knit('RNoWeb.Rnw')" &>/dev/null
+rm -rf RNoWeb.tex figure
+mv RNoWeb-concordance.tex KnitrConcordance-concordance.tex
 
 echo Creating LaTeX files...
 mkdir output

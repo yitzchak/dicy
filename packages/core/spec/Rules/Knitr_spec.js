@@ -9,7 +9,7 @@ async function initialize (options: Object = {}) {
   return initializeRule({
     RuleClass: Knitr,
     parameters: [{
-      filePath: 'Knitr.Rnw'
+      filePath: 'RNoWeb.Rnw'
     }],
     options
   })
@@ -21,7 +21,7 @@ describe('Knitr', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'Knitr.Rnw\')'],
+        args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: ['$DIR_0/$NAME_0.tex', '$DIR_0/$NAME_0-concordance.tex']
@@ -34,7 +34,7 @@ describe('Knitr', () => {
       const { rule } = await initialize({ knitrConcordance: false })
 
       expect(rule.constructCommand()).toEqual({
-        args: ['Rscript', '-e', 'library(knitr);knit(\'Knitr.Rnw\')'],
+        args: ['Rscript', '-e', 'library(knitr);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: ['$DIR_0/$NAME_0.tex']
