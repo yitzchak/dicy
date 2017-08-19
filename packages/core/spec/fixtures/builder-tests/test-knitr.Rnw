@@ -6,7 +6,6 @@
 %!TeX job-4:outputDirectory = output
 %!TeX job-4:synctex = yes
 %!TeX cleanPatterns = /figure
-%!TeX knitrOutputPath = $DIR_0/$JOB.tex
 %!TeX check = Rscript -e "library(knitr);library(patchSynctex)"
 \documentclass{article}
 

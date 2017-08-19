@@ -8,6 +8,7 @@ import { initializeRule } from '../helpers'
 async function initialize (options: Object = {}) {
   return initializeRule({
     RuleClass: Knitr,
+    filePath: 'file-types/RNoWeb.Rnw',
     parameters: [{
       filePath: 'RNoWeb.Rnw'
     }],
@@ -24,7 +25,7 @@ describe('Knitr', () => {
         args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$DIR_0/$NAME_0.tex', '$DIR_0/$NAME_0-concordance.tex']
+        outputs: ['$JOB.tex', '$JOB-concordance.tex']
       })
 
       done()
@@ -37,7 +38,20 @@ describe('Knitr', () => {
         args: ['Rscript', '-e', 'library(knitr);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$DIR_0/$NAME_0.tex']
+        outputs: ['$JOB.tex']
+      })
+
+      done()
+    })
+
+    it('returns correct arguments and command options for Rnw file when knitrOutputPath is set.', async (done) => {
+      const { rule } = await initialize({ knitrOutputPath: 'foo.tex' })
+
+      expect(rule.constructCommand()).toEqual({
+        args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'foo.tex\')'],
+        cd: '$ROOTDIR',
+        severity: 'error',
+        outputs: ['foo.tex', 'foo-concordance.tex']
       })
 
       done()

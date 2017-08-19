@@ -338,7 +338,7 @@ knitrConcordance:
 knitrOutputPath:
   commands:
     - build
-  defaultValue: $DIR_0/$NAME_0.tex
+  defaultValue: $JOB.tex
   description: Output path of knit.
   type: string
 lhs2texStyle:
@@ -418,13 +418,20 @@ phaseCycles:
 pweaveCacheDirectory:
   commands:
     - build
-  defaultValue: $DIR_0/cache
+  defaultValue: cache
   description: Directory used for cache.
   type: string
+pweaveDocumentationMode:
+  commands:
+    - build
+  defaultValue: false
+  description: Use documentation mode for Pweave. Chunk code and results will be
+    loaded from cache and inline code will be hidden.
+  type: boolean
 pweaveFigureDirectory:
   commands:
     - build
-  defaultValue: $DIR_0/figures
+  defaultValue: figures
   description: Directory used for figures.
   type: string
 pweaveOutputFormat:
@@ -437,6 +444,12 @@ pweaveOutputFormat:
     - texminted
     - texpweave
     - texpygments
+  type: string
+pweaveOutputPath:
+  commands:
+    - build
+  defaultValue: $JOB.tex
+  description: Output path of Pweave.
   type: string
 severity:
   aliases:

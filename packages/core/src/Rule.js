@@ -192,33 +192,39 @@ export default class Rule extends StateConsumer {
   async preEvaluate (): Promise<void> {}
 
   async evaluate (action: Action): Promise<boolean> {
-    let success: boolean = true
+    try {
+      let success: boolean = true
 
-    await this.preEvaluate()
-    if (!this.actions.has(action)) return true
-    this.actionTrace(action)
+      await this.preEvaluate()
+      if (!this.actions.has(action)) return true
+      this.actionTrace(action)
 
-    switch (action) {
-      case 'parse':
-        success = await this.parse()
-        break
-      case 'updateDependencies':
-        success = await this.updateDependencies()
-        break
-      default:
-        success = await this.run()
-        break
+      switch (action) {
+        case 'parse':
+          success = await this.parse()
+          break
+        case 'updateDependencies':
+          success = await this.updateDependencies()
+          break
+        default:
+          success = await this.run()
+          break
+      }
+
+      if (success) {
+        this.failures.delete(action)
+      } else {
+        this.failures.add(action)
+      }
+      this.actions.delete(action)
+      await this.updateOutputs()
+
+      return success
+    } catch (error) {
+      this.error(error.stack, this.id)
     }
 
-    if (success) {
-      this.failures.delete(action)
-    } else {
-      this.failures.add(action)
-    }
-    this.actions.delete(action)
-    await this.updateOutputs()
-
-    return success
+    return false
   }
 
   async updateDependencies (): Promise<boolean> {

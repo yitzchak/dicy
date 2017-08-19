@@ -9,16 +9,34 @@ export default class Pweave extends Rule {
   static description: string = 'Runs Pweave on Pnw files.'
 
   constructCommand (): CommandOptions {
+    const cacheDirectory = this.options.pweaveCacheDirectory
+    const figureDirectory = this.options.pweaveFigureDirectory
+    const outputPath = this.options.pweaveOutputPath
+    const args = [
+      'pweave',
+      '--format', this.options.pweaveOutputFormat,
+      '--output', outputPath
+    ]
+
+    if (cacheDirectory !== 'cache') {
+      args.push('--cache-directory', cacheDirectory)
+    }
+
+    if (figureDirectory !== 'figures') {
+      args.push('--figure-directory', figureDirectory)
+    }
+
+    if (this.options.pweaveDocumentationMode) {
+      args.push('--documentation-mode')
+    }
+
+    args.push('$DIR_0/$BASE_0')
+
     return {
-      args: [
-        'pweave',
-        '--cache-directory', this.options.pweaveCacheDirectory,
-        '--figure-directory', this.options.pweaveFigureDirectory,
-        '--format', this.options.pweaveOutputFormat,
-        '$DIR_0/$BASE_0'],
+      args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.tex']
+      outputs: [outputPath]
     }
   }
 }
