@@ -13,7 +13,7 @@ export default class ParseLaTeXMagic extends Rule {
     'LaTeX',
     'LiterateAgda',
     'LiterateHaskell',
-    'PNoWeb',
+    'PythonNoWeb',
     'RNoWeb'
   ])]
   static defaultActions: Array<Action> = ['parse']
