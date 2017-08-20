@@ -16,17 +16,17 @@ export default class Pweave extends Rule {
     const outputPath = this.options.pweaveOutputPath
     const args = [
       'pweave',
-      '--format', this.options.pweaveOutputFormat,
-      '--output', outputPath
+      `--format=${this.options.pweaveOutputFormat}`,
+      `--output={{${outputPath}}}`
     ]
     let figureFormat = this.options.pweaveFigureFormat
 
     if (cacheDirectory !== 'cache') {
-      args.push('--cache-directory', cacheDirectory)
+      args.push(`--cache-directory={{${cacheDirectory}}}`)
     }
 
     if (figureDirectory !== 'figures') {
-      args.push('--figure-directory', figureDirectory)
+      args.push(`--figure-directory={{${figureDirectory}}}`)
     }
 
     if (this.options.pweaveDocumentationMode) {
@@ -40,10 +40,10 @@ export default class Pweave extends Rule {
     }
 
     if (figureFormat !== 'pdf') {
-      args.push('--figure-format', figureFormat)
+      args.push(`--figure-format=${figureFormat}`)
     }
 
-    args.push('$DIR_0/$BASE_0')
+    args.push('{{$FILEPATH_0}}')
 
     return {
       args,

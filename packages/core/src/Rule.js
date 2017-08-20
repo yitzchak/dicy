@@ -102,6 +102,7 @@ export default class Rule extends StateConsumer {
       const { dir, base, name, ext } = path.parse(file.filePath)
       const rootPath = path.dirname(file.realFilePath)
 
+      this.env[`FILEPATH_${index}`] = file.filePath
       this.env[`ROOTDIR_${index}`] = rootPath
       this.env[`DIR_${index}`] = dir || '.'
       this.env[`BASE_${index}`] = base
@@ -244,6 +245,10 @@ export default class Rule extends StateConsumer {
     return true
   }
 
+  resolveAllPaths (value: string): string {
+    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
+  }
+
   async executeCommand (commandOptions: CommandOptions): Promise<Object> {
     try {
       // We only capture stdout and stderr if explicitly instructed to. This is
@@ -254,7 +259,7 @@ export default class Rule extends StateConsumer {
         false, !!commandOptions.stdout, !!commandOptions.stderr)
       // Use ampersand as a filler for empty arguments. This is to work around
       // a bug in command-join.
-      const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : (arg || '&')))
+      const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : (this.resolveAllPaths(arg) || '&')))
         .replace(/(['"])\^?&(['"])/g, '$1$2')
 
       this.emit('command', {

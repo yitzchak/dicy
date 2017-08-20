@@ -5,21 +5,22 @@ events:
   - type: command
     rule: Pweave(build;execute;job-1;test-pweave.Pnw)
     command: >-
-      pweave --format tex --output job-1.tex --cache-directory
-      'pweave-cache-for-$JOB' --figure-directory 'pweave-figures-for-$JOB'
-      test-pweave.Pnw
+      pweave --format=tex --output=job-1.tex
+      --cache-directory=pweave-cache-for-job-1
+      --figure-directory=pweave-figures-for-job-1 test-pweave.Pnw
   - type: command
     rule: Pweave(build;execute;job-2;test-pweave.Pnw)
     command: >-
-      pweave --format tex --output job-2.tex --cache-directory
-      'pweave-cache-for-$JOB' --figure-directory 'pweave-figures-for-$JOB'
-      --figure-format eps test-pweave.Pnw
+      pweave --format=tex --output=job-2.tex
+      --cache-directory=pweave-cache-for-job-2
+      --figure-directory=pweave-figures-for-job-2 --figure-format=eps
+      test-pweave.Pnw
   - type: command
     rule: Pweave(build;execute;job-3;test-pweave.Pnw)
     command: >-
-      pweave --format texminted --output job-3.tex --cache-directory
-      'pweave-cache-for-$JOB' --figure-directory 'pweave-figures-for-$JOB'
-      test-pweave.Pnw
+      pweave --format=texminted --output=job-3.tex
+      --cache-directory=pweave-cache-for-job-3
+      --figure-directory=pweave-figures-for-job-3 test-pweave.Pnw
   - type: command
     rule: LaTeX(build;execute;job-1;job-1.tex)
     command: >-

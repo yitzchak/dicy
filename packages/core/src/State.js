@@ -52,6 +52,7 @@ export default class State extends EventEmitter {
     this.assignOptions(this.defaultOptions)
 
     this.env = Object.assign({}, process.env, {
+      FILEPATH: base,
       ROOTDIR: dir,
       DIR: '.',
       BASE: base,

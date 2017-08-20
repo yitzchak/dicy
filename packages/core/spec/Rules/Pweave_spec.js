@@ -27,9 +27,9 @@ describe('Pweave', () => {
       expect(rule.constructCommand()).toEqual({
         args: [
           'pweave',
-          '--format', 'tex',
-          '--output', '$JOB.tex',
-          '$DIR_0/$BASE_0'
+          '--format=tex',
+          '--output={{$JOB.tex}}',
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',
@@ -49,9 +49,9 @@ describe('Pweave', () => {
       expect(rule.constructCommand()).toEqual({
         args: [
           'pweave',
-          '--format', 'tex',
-          '--output', 'foo.tex',
-          '$DIR_0/$BASE_0'
+          '--format=tex',
+          '--output={{foo.tex}}',
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',
@@ -65,7 +65,7 @@ describe('Pweave', () => {
   it('adds --cache-directory to args when pweaveCacheDirectory is set.', async (done) => {
     const { rule } = await initialize({ pweaveCacheDirectory: 'foo' })
 
-    expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['--cache-directory', 'foo']))
+    expect(rule.constructCommand().args).toContain('--cache-directory={{foo}}')
 
     done()
   })
@@ -81,7 +81,7 @@ describe('Pweave', () => {
   it('adds --figure-directory to args when pweaveFigureDirectory is set.', async (done) => {
     const { rule } = await initialize({ pweaveFigureDirectory: 'foo' })
 
-    expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['--figure-directory', 'foo']))
+    expect(rule.constructCommand().args).toContain('--figure-directory={{foo}}')
 
     done()
   })
@@ -89,7 +89,7 @@ describe('Pweave', () => {
   it('adds --format to args when pweaveOutputFormat is set.', async (done) => {
     const { rule } = await initialize({ pweaveOutputFormat: 'texminted' })
 
-    expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['--format', 'texminted']))
+    expect(rule.constructCommand().args).toContain('--format=texminted')
 
     done()
   })
