@@ -47,7 +47,7 @@ describe('LhsToTeX', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['lhs2TeX', '-o', '$DIR_0/$NAME_0.tex', '$DIR_0/$BASE_0'],
+        args: ['lhs2TeX', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: ['$DIR_0/$NAME_0.tex']
@@ -60,7 +60,7 @@ describe('LhsToTeX', () => {
       const { rule } = await initialize({}, 'LiterateAgda.lagda')
 
       expect(rule.constructCommand()).toEqual({
-        args: ['lhs2TeX', '--agda', '-o', '$DIR_0/$NAME_0.tex', '$DIR_0/$BASE_0'],
+        args: ['lhs2TeX', '--agda', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: ['$DIR_0/$NAME_0.tex']

@@ -196,8 +196,8 @@ export default class MakeIndex extends Rule {
 
     const args = [
       this.options.indexEngine,
-      '-t', this.options.indexLogPath,
-      '-o', this.options.indexOutputPath
+      '-t', `{{${this.options.indexLogPath}}}`,
+      '-o', `{{${this.options.indexOutputPath}}}`
     ]
 
     if (this.options.indexStyle) {
@@ -305,13 +305,13 @@ export default class MakeIndex extends Rule {
     if (this.options.indexDictionary) {
       // Both mendex and upmendex have a sorting based on pronounciation.
       if (mendex || upmendex) {
-        args.push('-d', this.options.indexDictionary)
+        args.push('-d', `{{${this.options.indexDictionary}}}`)
       } else {
         infoIgnoreSetting('indexDictionary')
       }
     }
 
-    args.push('$DIR_0/$BASE_0')
+    args.push('{{$FILEPATH_0}}')
 
     const commandOptions: CommandOptions = {
       args,

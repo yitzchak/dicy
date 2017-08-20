@@ -11,7 +11,7 @@ export default class ParseBibTeXLog extends Rule {
   static description: string = 'Parses any bibtex produced logs.'
 
   async parse () {
-    const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBibTeXLog')
+    const output = await this.getResolvedOutput('$FILEPATH_0-ParsedBibTeXLog')
     if (!output) return false
 
     const parsedLog: ParsedLog = {

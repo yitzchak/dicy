@@ -17,7 +17,7 @@ export default class DviToSvg extends Rule {
 
   async initialize () {
     // Zap the previous target since we are building a svg
-    await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.svg')
+    await this.replaceResolvedTarget('$FILEPATH_0', '$DIR_0/$NAME_0.svg')
   }
 
   constructCommand (): CommandOptions {
@@ -25,8 +25,8 @@ export default class DviToSvg extends Rule {
       args: [
         'dvisvgm',
         '-o',
-        '$DIR_0/$NAME_0.svg',
-        '$DIR_0/$BASE_0'
+        '{{$DIR_0/$NAME_0.svg}}',
+        '{{$FILEPATH_0}}'
       ],
       cd: '$ROOTDIR',
       severity: 'error',

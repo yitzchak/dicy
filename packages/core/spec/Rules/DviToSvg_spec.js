@@ -42,8 +42,8 @@ describe('DviToSvg', () => {
         args: [
           'dvisvgm',
           '-o',
-          '$DIR_0/$NAME_0.svg',
-          '$DIR_0/$BASE_0'
+          '{{$DIR_0/$NAME_0.svg}}',
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',

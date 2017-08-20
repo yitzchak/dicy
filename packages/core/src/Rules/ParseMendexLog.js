@@ -18,7 +18,7 @@ export default class ParsedMendexLog extends Rule {
    */
   async parse (): Promise<boolean> {
     // Get the output file
-    const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedMendexLog')
+    const output = await this.getResolvedOutput('$FILEPATH_0-ParsedMendexLog')
     if (!output) return false
 
     const parsedLog: ParsedLog = {

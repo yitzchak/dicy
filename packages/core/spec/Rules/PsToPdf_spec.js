@@ -41,8 +41,8 @@ describe('PsToPdf', () => {
       expect(rule.constructCommand()).toEqual({
         args: [
           'ps2pdf',
-          '$DIR_0/$BASE_0',
-          '$DIR_0/$NAME_0.pdf'
+          '{{$FILEPATH_0}}',
+          '{{$DIR_0/$NAME_0.pdf}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',

@@ -50,8 +50,8 @@ describe('DviToPdf', () => {
         args: [
           'xdvipdfmx',
           '-o',
-          '$DIR_0/$NAME_0.pdf',
-          '$DIR_0/$BASE_0'
+          '{{$DIR_0/$NAME_0.pdf}}',
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',

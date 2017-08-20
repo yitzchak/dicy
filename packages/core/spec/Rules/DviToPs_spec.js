@@ -50,8 +50,8 @@ describe('DviToPs', () => {
         args: [
           'dvips',
           '-o',
-          '$DIR_0/$NAME_0.ps',
-          '$DIR_0/$BASE_0'
+          '{{$DIR_0/$NAME_0.ps}}',
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',

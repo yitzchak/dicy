@@ -16,11 +16,12 @@ export default class GraphViz extends Rule {
         'fdp',
         `-T${this.options.outputFormat}`,
         '-o',
-        '$DIR_0/$NAME_0.$OUTEXT',
-        '$DIR_0/$BASE_0'
+        '{{$DIR_0/$NAME_0.$OUTEXT}}',
+        '{{$FILEPATH_0}}'
       ],
       cd: '$ROOTDIR',
-      severity: 'error'
+      severity: 'error',
+      outputs: ['$DIR_0/$NAME_0.$OUTEXT']
     }
   }
 }

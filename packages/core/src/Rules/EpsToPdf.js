@@ -98,12 +98,12 @@ export default class EpsToPdf extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const outputPath = this.resolvePath(this.options.epstopdfOutputPath)
+    const outputPath = this.options.epstopdfOutputPath
     // Newer versions of epstopdf support the dvipdfm style "epstopdf in out"
     // but for backward compatability we use `--outfile` instead.
     const args = [
       'epstopdf',
-      `--outfile=${outputPath}`
+      `--outfile={{${outputPath}}}`
     ]
 
     // Look for a bounding box setting.
@@ -122,7 +122,7 @@ export default class EpsToPdf extends Rule {
       args.push('--restricted')
     }
 
-    args.push('$DIR_0/$BASE_0')
+    args.push('{{$FILEPATH_0}}')
 
     return {
       args,

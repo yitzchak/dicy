@@ -37,7 +37,7 @@ export default class Biber extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: ['biber', '$DIR_0/$BASE_0'],
+      args: ['biber', '{{$FILEPATH_0}}'],
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']

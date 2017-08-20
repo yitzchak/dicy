@@ -48,7 +48,7 @@ describe('Asymptote', () => {
 
       /* eslint no-template-curly-in-string: 0 */
       expect(rule.constructCommand()).toEqual({
-        args: ['asy', '-vv', '$BASE_0'],
+        args: ['asy', '-vv', '{{$BASE_0}}'],
         cd: '$ROOTDIR_0',
         severity: 'error',
         inputs: [
