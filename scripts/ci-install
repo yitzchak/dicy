@@ -51,13 +51,9 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   cat "`dirname $0`/mactex-packages" | xargs sudo tlmgr install
 fi
 
-if ! (pygmentize -V &>/dev/null && pweave --version &>/dev/null); then
-  echo Installing Python libraries...
-  pip2 install Pygments Pweave matplotlib
-  pip3 install Pygments
-else
-  echo Using cached Python libraries
-fi
+echo Installing Python libraries...
+pip2 install Pygments Pweave matplotlib
+pip3 install Pygments
 
 if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
   echo Installing R libraries...
