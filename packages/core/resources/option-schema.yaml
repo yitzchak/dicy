@@ -419,7 +419,7 @@ pweaveCacheDirectory:
   commands:
     - build
   defaultValue: pweave-cache-for-$JOB
-  description: Directory used for cache.
+  description: Directory used for pweave cache.
   type: string
 pweaveDocumentationMode:
   commands:

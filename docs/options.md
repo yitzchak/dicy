@@ -320,17 +320,24 @@ Internal kanji encoding for pLaTeX, upLaTeX, pBibTeX, upBibTeX and mendex.
 
 -   **Type:** boolean
 -   **Default Value:** `true`
--   **Commands:** build
+-   **Commands:** [build][]
 -   **Command Line Interface:**  `--knitr-concordance <knitrConcordance>`
 
 Enable creation of knitr concordance file used to SyncTeX patching and source
 code mapping in log messages.
 
+## knitrOutputPath
+
+-   **Type:** string
+-   **Default Value:** `$JOB.tex`
+-   **Commands:** [build][]
+-   **Command Line Interface:**  `--knitr-output-path <knitrOutputPath>`
+
 ## lhs2texStyle
 
 -   **Type:** string
 -   **Values:** `poly`, `newCode`, `code`, `math`, `typewritter`, `verbatim`
--   **Commands:** build
+-   **Commands:** [build][]
 -   **Command Line Interface:**  `--lhs2tex-style <lhs2texStyle>`
 
 Set the style that lhs2TeX will use with the default being `poly`.
@@ -388,6 +395,63 @@ Name of directory for output files.
     `-f <outputFormat>`
 
 Output format of main generated file.
+
+## pweaveCacheDirectory
+
+-   **Type:** string
+-   **Default Value:** `pweave-cache-for-$JOB`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--pweave-cache-directory <pweaveCacheDirectory>`
+
+Directory used for Pweave cache.
+
+## pweaveDocumentationMode
+
+-   **Type:** boolean
+-   **Default Value:** `false`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--pweave-documentation-mode`
+
+Use documentation mode for Pweave. Chunk code and results will be loaded from
+cache and inline code will be hidden.
+
+## pweaveFigureDirectory
+
+-   **Type:** string
+-   **Default Value:** `pweave-figures-for-$JOB`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--pweave-figure-directory <pweaveFigureDirectory>`
+
+Directory used for Pweave figures.
+
+## pweaveFigureFormat
+
+-   **Type:** string
+-   **Default Value:** `auto`
+-   **Values:** `auto`, `pdf`, `eps`, `svg`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--pweave-figure-format <pweaveFigureFormat>`
+
+Format used for Pweave figures.
+
+## pweaveOutputFormat
+
+-   **Type:** string
+-   **Default Value:** `tex`
+-   **Values:** `tex`, `texminted`, `texpygments`, `texpweave`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--pweave-output-format <pweaveOutputFormat>`
+
+Format of code environments used by Pweave.
+
+## pweaveOutputPath
+
+-   **Type:** string
+-   **Default Value:** `$JOB.tex`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--pweave-output-path <pweaveOutputPath>`
+
+Output path of Pweave.
 
 ## saveEvents
 
