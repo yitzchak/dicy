@@ -418,7 +418,7 @@ phaseCycles:
 pweaveCacheDirectory:
   commands:
     - build
-  defaultValue: cache
+  defaultValue: pweave-cache-for-$JOB
   description: Directory used for cache.
   type: string
 pweaveDocumentationMode:
@@ -431,8 +431,19 @@ pweaveDocumentationMode:
 pweaveFigureDirectory:
   commands:
     - build
-  defaultValue: figures
+  defaultValue: pweave-figures-for-$JOB
   description: Directory used for figures.
+  type: string
+pweaveFigureFormat:
+  commands:
+    - build
+  defaultValue: auto
+  description:
+  values:
+    - auto
+    - pdf
+    - eps
+    - svg
   type: string
 pweaveOutputFormat:
   commands:

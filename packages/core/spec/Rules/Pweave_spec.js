@@ -19,7 +19,10 @@ async function initialize (options: Object = {}) {
 describe('Pweave', () => {
   describe('constructCommand', () => {
     it('returns correct arguments and command options for Pnw file.', async (done) => {
-      const { rule } = await initialize()
+      const { rule } = await initialize({
+        pweaveCacheDirectory: 'cache',
+        pweaveFigureDirectory: 'figures'
+      })
 
       expect(rule.constructCommand()).toEqual({
         args: [
@@ -37,7 +40,11 @@ describe('Pweave', () => {
     })
 
     it('returns correct arguments and command options for Pnw file when pweaveOutputPath is set.', async (done) => {
-      const { rule } = await initialize({ pweaveOutputPath: 'foo.tex' })
+      const { rule } = await initialize({
+        pweaveCacheDirectory: 'cache',
+        pweaveFigureDirectory: 'figures',
+        pweaveOutputPath: 'foo.tex'
+      })
 
       expect(rule.constructCommand()).toEqual({
         args: [
