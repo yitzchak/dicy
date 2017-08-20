@@ -2,6 +2,7 @@
 %!TeX job-2:engine = latex
 %!TeX job-3:pweaveOutputFormat = texminted
 %!TeX job-3:shellEscape = enabled
+%!TeX check = pweave --version
 \documentclass{article}
 
 \usepackage{color}
