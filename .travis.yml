@@ -21,6 +21,7 @@ env:
 cache:
   directories:
     - ${R_LIBS_USER}
+    - ${HOME}/.cache/pip
 
 addons:
   apt:

@@ -3,11 +3,6 @@
 shopt -s nocasematch
 
 echo Installing Pygments...
-pip2 install Pygments
-pip3 install Pygments
-
-echo Installing Pweave...
-pip2 install Pweave matplotlib
 
 if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing node...
@@ -54,6 +49,14 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   sudo tlmgr update --self
   sudo tlmgr update --all
   cat "`dirname $0`/mactex-packages" | xargs sudo tlmgr install
+fi
+
+if ! (pygmentize -V &>/dev/null && pweave --version &>/dev/null); then
+  echo Installing Python libraries...
+  pip2 install Pygments Pweave matplotlib
+  pip3 install Pygments
+else
+  echo Using cached Python libraries
 fi
 
 if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
