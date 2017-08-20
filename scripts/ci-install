@@ -7,7 +7,7 @@ pip2 install Pygments
 pip3 install Pygments
 
 echo Installing Pweave...
-pip2 install Pweave
+pip2 install Pweave matplotlib
 
 if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing node...
