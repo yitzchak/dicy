@@ -46,7 +46,7 @@ export default class LhsToTeX extends Rule {
     }
 
     // Add the output file and source files.
-    args.push('-o', '$DIR_0/$NAME_0.tex', '$DIR_0/$BASE_0')
+    args.push('-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}')
 
     return {
       args,

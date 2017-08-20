@@ -17,15 +17,15 @@ export default class PsToPdf extends Rule {
 
   async initialize () {
     // Zap the previous target since we are building a pdf
-    await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.pdf')
+    await this.replaceResolvedTarget('$FILEPATH_0', '$DIR_0/$NAME_0.pdf')
   }
 
   constructCommand (): CommandOptions {
     return {
       args: [
         'ps2pdf',
-        '$DIR_0/$BASE_0',
-        '$DIR_0/$NAME_0.pdf'
+        '{{$FILEPATH_0}}',
+        '{{$DIR_0/$NAME_0.pdf}}'
       ],
       cd: '$ROOTDIR',
       severity: 'error',

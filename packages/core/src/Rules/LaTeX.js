@@ -114,7 +114,7 @@ export default class LaTeX extends Rule {
     }
 
     // Add the source file.
-    args.push('$DIR_0/$BASE_0')
+    args.push('{{$FILEPATH_0}}')
 
     return {
       args,

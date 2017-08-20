@@ -21,6 +21,10 @@ env:
 cache:
   directories:
     - ${R_LIBS_USER}
+    - ${HOME}/.cache/pip
+
+before_cache:
+  - rm -f ${HOME}/.cache/pip/log/debug.log
 
 addons:
   apt:

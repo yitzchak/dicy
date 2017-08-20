@@ -11,7 +11,7 @@ export default class ParseBiberLog extends Rule {
   static description: string = 'Parses any biber produced logs.'
 
   async parse () {
-    const output = await this.getResolvedOutput('$DIR_0/$BASE_0-ParsedBiberLog')
+    const output = await this.getResolvedOutput('$FILEPATH_0-ParsedBiberLog')
     if (!output) return false
 
     const parsedLog: ParsedLog = {

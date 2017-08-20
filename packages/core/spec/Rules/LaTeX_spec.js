@@ -135,7 +135,7 @@ describe('LaTeX', () => {
           '-file-line-error',
           '-interaction=batchmode',
           '-recorder',
-          '$DIR_0/$BASE_0'
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',

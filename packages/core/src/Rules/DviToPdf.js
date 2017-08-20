@@ -21,7 +21,7 @@ export default class DviToPdf extends Rule {
 
   async initialize () {
     // Zap the previous target since we are building a pdf
-    await this.replaceResolvedTarget('$DIR_0/$BASE_0', '$DIR_0/$NAME_0.pdf')
+    await this.replaceResolvedTarget('$FILEPATH_0', '$DIR_0/$NAME_0.pdf')
   }
 
   constructCommand (): CommandOptions {
@@ -29,8 +29,8 @@ export default class DviToPdf extends Rule {
       args: [
         'xdvipdfmx',
         '-o',
-        '$DIR_0/$NAME_0.pdf',
-        '$DIR_0/$BASE_0'
+        '{{$DIR_0/$NAME_0.pdf}}',
+        '{{$FILEPATH_0}}'
       ],
       cd: '$ROOTDIR',
       severity: 'error',

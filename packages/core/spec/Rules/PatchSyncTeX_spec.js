@@ -9,11 +9,9 @@ async function initialize (options: Object = {}) {
   return initializeRule({
     RuleClass: PatchSyncTeX,
     parameters: [{
-      filePath: 'Knitr.Rnw'
+      filePath: 'KnitrConcordance-concordance.tex'
     }, {
       filePath: 'SyncTeX.synctex.gz'
-    }, {
-      filePath: 'KnitrConcordance-concordance.tex'
     }],
     options
   })
@@ -25,7 +23,7 @@ describe('PatchSyncTeX', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['Rscript', '-e', 'library(patchSynctex);patchSynctex(\'Knitr.Rnw\',syncfile=\'SyncTeX\')'],
+        args: ['Rscript', '-e', 'library(patchSynctex);patchSynctex(\'KnitrConcordance.tex\',syncfile=\'SyncTeX\')'],
         cd: '$ROOTDIR',
         severity: 'warning',
         outputs: ['$DIR_1/BASE_1']

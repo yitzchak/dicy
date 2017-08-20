@@ -20,7 +20,7 @@ export default class Asymptote extends Rule {
     // file from the output.
     /* eslint no-template-curly-in-string: 0 */
     return {
-      args: ['asy', '-vv', '$BASE_0'],
+      args: ['asy', '-vv', '{{$BASE_0}}'],
       cd: '$ROOTDIR_0',
       severity: 'error',
       inputs: [

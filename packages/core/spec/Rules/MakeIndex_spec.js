@@ -403,10 +403,10 @@ describe('MakeIndex', () => {
         args: [
           'makeindex',
           '-t',
-          '$DIR_0/$NAME_0.ilg',
+          '{{$DIR_0/$NAME_0.ilg}}',
           '-o',
-          '$DIR_0/$NAME_0.ind',
-          '$DIR_0/$BASE_0'
+          '{{$DIR_0/$NAME_0.ind}}',
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',
@@ -426,12 +426,12 @@ describe('MakeIndex', () => {
         args: [
           'makeindex',
           '-t',
-          '$DIR_0/$NAME_0.nlg',
+          '{{$DIR_0/$NAME_0.nlg}}',
           '-o',
-          '$DIR_0/$NAME_0.nls',
+          '{{$DIR_0/$NAME_0.nls}}',
           '-s',
           'nomencl.ist',
-          '$DIR_0/$BASE_0'
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',
@@ -451,12 +451,12 @@ describe('MakeIndex', () => {
         args: [
           'makeindex',
           '-t',
-          '$DIR_0/$NAME_0.brlg',
+          '{{$DIR_0/$NAME_0.brlg}}',
           '-o',
-          '$DIR_0/$NAME_0.bnd',
+          '{{$DIR_0/$NAME_0.bnd}}',
           '-s',
           'bibref.ist',
-          '$DIR_0/$BASE_0'
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',
@@ -612,7 +612,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', indexDictionary: 'foo' }
       })
 
-      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-d', 'foo']))
+      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-d', '{{foo}}']))
 
       done()
     })

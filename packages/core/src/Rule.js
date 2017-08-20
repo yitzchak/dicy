@@ -102,6 +102,7 @@ export default class Rule extends StateConsumer {
       const { dir, base, name, ext } = path.parse(file.filePath)
       const rootPath = path.dirname(file.realFilePath)
 
+      this.env[`FILEPATH_${index}`] = file.filePath
       this.env[`ROOTDIR_${index}`] = rootPath
       this.env[`DIR_${index}`] = dir || '.'
       this.env[`BASE_${index}`] = base
@@ -192,33 +193,39 @@ export default class Rule extends StateConsumer {
   async preEvaluate (): Promise<void> {}
 
   async evaluate (action: Action): Promise<boolean> {
-    let success: boolean = true
+    try {
+      let success: boolean = true
 
-    await this.preEvaluate()
-    if (!this.actions.has(action)) return true
-    this.actionTrace(action)
+      await this.preEvaluate()
+      if (!this.actions.has(action)) return true
+      this.actionTrace(action)
 
-    switch (action) {
-      case 'parse':
-        success = await this.parse()
-        break
-      case 'updateDependencies':
-        success = await this.updateDependencies()
-        break
-      default:
-        success = await this.run()
-        break
+      switch (action) {
+        case 'parse':
+          success = await this.parse()
+          break
+        case 'updateDependencies':
+          success = await this.updateDependencies()
+          break
+        default:
+          success = await this.run()
+          break
+      }
+
+      if (success) {
+        this.failures.delete(action)
+      } else {
+        this.failures.add(action)
+      }
+      this.actions.delete(action)
+      await this.updateOutputs()
+
+      return success
+    } catch (error) {
+      this.error(error.stack, this.id)
     }
 
-    if (success) {
-      this.failures.delete(action)
-    } else {
-      this.failures.add(action)
-    }
-    this.actions.delete(action)
-    await this.updateOutputs()
-
-    return success
+    return false
   }
 
   async updateDependencies (): Promise<boolean> {
@@ -238,6 +245,10 @@ export default class Rule extends StateConsumer {
     return true
   }
 
+  resolveAllPaths (value: string): string {
+    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
+  }
+
   async executeCommand (commandOptions: CommandOptions): Promise<Object> {
     try {
       // We only capture stdout and stderr if explicitly instructed to. This is
@@ -248,7 +259,7 @@ export default class Rule extends StateConsumer {
         false, !!commandOptions.stdout, !!commandOptions.stderr)
       // Use ampersand as a filler for empty arguments. This is to work around
       // a bug in command-join.
-      const command = commandJoin(commandOptions.args.map(arg => arg.startsWith('$') ? this.resolvePath(arg) : (arg || '&')))
+      const command = commandJoin(commandOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
         .replace(/(['"])\^?&(['"])/g, '$1$2')
 
       this.emit('command', {

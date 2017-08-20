@@ -27,7 +27,7 @@ export default class BibTeX extends Rule {
     await this.getResolvedInputs([
       '$OUTDIR/$JOB.log-ParsedLaTeXLog',
       '$DIR_0/$NAME_0.blg-ParsedBibTeXLog',
-      '$DIR_0/$BASE_0'
+      '$FILEPATH_0'
     ])
   }
 
@@ -61,7 +61,7 @@ export default class BibTeX extends Rule {
       }
     }
 
-    args.push('$BASE_0')
+    args.push('{{$BASE_0}}')
 
     return {
       args,

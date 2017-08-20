@@ -21,14 +21,14 @@ describe('Sage', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['sage', '$BASE_0'],
+        args: ['sage', '{{$BASE_0}}'],
         cd: '$ROOTDIR_0',
         severity: 'error',
         outputs: [
           '$DIR_0/$NAME_0.sout',
           '$DIR_0/$NAME_0.sage.cmd',
           '$DIR_0/$NAME_0.scmd',
-          '$DIR_0/$BASE_0.py'
+          '$FILEPATH_0.py'
         ],
         globbedOutputs: ['$DIR_0/sage-plots-for-$JOB.tex/*']
       })

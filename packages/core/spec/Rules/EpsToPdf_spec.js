@@ -241,12 +241,12 @@ describe('EpsToPdf', () => {
       expect(rule.constructCommand()).toEqual({
         args: [
           'epstopdf',
-          '--outfile=EncapsulatedPostScript.pdf',
-          '$DIR_0/$BASE_0'
+          '--outfile={{$DIR_0/$NAME_0.pdf}}',
+          '{{$FILEPATH_0}}'
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['EncapsulatedPostScript.pdf']
+        outputs: ['$DIR_0/$NAME_0.pdf']
       })
 
       done()
@@ -257,7 +257,7 @@ describe('EpsToPdf', () => {
         options: { epstopdfOutputPath: 'foo.pdf' }
       })
 
-      expect(rule.constructCommand().args).toContain('--outfile=foo.pdf')
+      expect(rule.constructCommand().args).toContain('--outfile={{foo.pdf}}')
 
       done()
     })

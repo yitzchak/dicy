@@ -4,69 +4,68 @@ types:
 events:
   - type: command
     rule: Knitr(build;execute;job-1;test-knitr.Rnw)
-    command: Rscript -e 'library(knitr);knit('\''test-knitr.Rnw'\'')'
+    command: 'Rscript -e ''library(knitr);knit(''\''''test-knitr.Rnw''\'''',''\''''job-1.tex''\'''')'''
   - type: command
     rule: Knitr(build;execute;job-2;test-knitr.Rnw)
-    command: Rscript -e 'library(knitr);knit('\''test-knitr.Rnw'\'')'
+    command: 'Rscript -e ''library(knitr);knit(''\''''test-knitr.Rnw''\'''',''\''''job-2.tex''\'''')'''
   - type: command
     rule: Knitr(build;execute;job-3;test-knitr.Rnw)
     command: >-
       Rscript -e
-      'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'')'
+      'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'','\''job-3.tex'\'')'
   - type: command
     rule: Knitr(build;execute;job-4;test-knitr.Rnw)
     command: >-
       Rscript -e
-      'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'')'
+      'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'','\''job-4.tex'\'')'
   - type: command
-    rule: LaTeX(build;execute;job-1;test-knitr.tex)
+    rule: LaTeX(build;execute;job-1;job-1.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
-      test-knitr.tex
+      job-1.tex
   - type: command
-    rule: LaTeX(build;execute;job-2;test-knitr.tex)
+    rule: LaTeX(build;execute;job-2;job-2.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 test-knitr.tex
+      -output-directory=output -jobname=job-2 job-2.tex
   - type: command
-    rule: LaTeX(build;execute;job-3;test-knitr.tex)
+    rule: LaTeX(build;execute;job-3;job-3.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
-      -synctex=1 test-knitr.tex
+      -synctex=1 job-3.tex
   - type: command
-    rule: LaTeX(build;execute;job-4;test-knitr.tex)
+    rule: LaTeX(build;execute;job-4;job-4.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-4 -synctex=1 test-knitr.tex
+      -output-directory=output -jobname=job-4 -synctex=1 job-4.tex
   - type: command
-    rule: LaTeX(build;execute;job-1;test-knitr.tex)
+    rule: LaTeX(build;execute;job-1;job-1.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
-      test-knitr.tex
+      job-1.tex
   - type: command
-    rule: LaTeX(build;execute;job-2;test-knitr.tex)
+    rule: LaTeX(build;execute;job-2;job-2.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-2 test-knitr.tex
+      -output-directory=output -jobname=job-2 job-2.tex
   - type: command
-    rule: LaTeX(build;execute;job-3;test-knitr.tex)
+    rule: LaTeX(build;execute;job-3;job-3.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
-      -synctex=1 test-knitr.tex
+      -synctex=1 job-3.tex
   - type: command
-    rule: LaTeX(build;execute;job-4;test-knitr.tex)
+    rule: LaTeX(build;execute;job-4;job-4.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder
-      -output-directory=output -jobname=job-4 -synctex=1 test-knitr.tex
+      -output-directory=output -jobname=job-4 -synctex=1 job-4.tex
   - type: command
-    rule: >-
-      PatchSyncTeX(build;finalize;job-4;test-knitr.Rnw;output/job-4.synctex.gz;test-knitr-concordance.tex)
+    rule: PatchSyncTeX(build;finalize;job-3;job-3-concordance.tex;job-3.synctex.gz)
     command: >-
       Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''output/job-4'\'')'
+      'library(patchSynctex);patchSynctex('\''job-3.tex'\'',syncfile='\''job-3'\'')'
   - type: command
     rule: >-
-      PatchSyncTeX(build;finalize;job-3;test-knitr.Rnw;job-3.synctex.gz;test-knitr-concordance.tex)
+      PatchSyncTeX(build;finalize;job-4;job-4-concordance.tex;output/job-4.synctex.gz)
     command: >-
       Rscript -e
-      'library(patchSynctex);patchSynctex('\''test-knitr.Rnw'\'',syncfile='\''job-3'\'')'
+      'library(patchSynctex);patchSynctex('\''job-4.tex'\'',syncfile='\''output/job-4'\'')'
