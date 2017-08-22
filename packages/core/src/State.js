@@ -9,6 +9,8 @@ import File from './File'
 import Rule from './Rule'
 
 import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
+// $FlowIgnore
+import type { JobOptions, StateOptions } from './types-auto'
 
 function getLabel (x: File | Rule) {
   return (x instanceof File) ? x.filePath : x.id
@@ -23,7 +25,7 @@ export default class State extends EventEmitter {
   rootPath: string
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
-  options: Object = {}
+  options: StateOptions
   defaultOptions: Object = {}
   optionSchema: Map<string, Option> = new Map()
   graphProperties: GraphProperties = {}
@@ -284,6 +286,9 @@ export default class State extends EventEmitter {
     }
 
     this.assignOptions(this.defaultOptions)
+  }
+
+  getJobOptions (jobName: ?string): JobOptions {
   }
 
   getOption (name: string, jobName: ?string): ?any {
