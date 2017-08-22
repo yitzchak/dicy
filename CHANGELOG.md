@@ -9,7 +9,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Support for PythonTeX \[[#69][]].
 - Support for Pweave \[[#71][]].
-- `knitrOutputPath` option to allow job specific output paths for knitr \[[#71][]].
+- `knitrOutputPath` option to allow job specific output paths for knitr
+  \[[#71][]].
+- `dviToPdfEngine` option to allow setting the program to use for DVI to PDF
+  conversion \[[#72][]].
 
 ## [v0.8.0][] &mdash; 2017-08-15
 
@@ -136,6 +139,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
+[#72]: https://github.com/yitzchak/dicy/pull/72
 [#71]: https://github.com/yitzchak/dicy/pull/71
 [#69]: https://github.com/yitzchak/dicy/pull/69
 [#53]: https://github.com/yitzchak/dicy/pull/53
