@@ -85,6 +85,16 @@ preserved so that the dependency tree will not be broken.
 
 Disable specific rules when processing.
 
+## dviToPdfEngine
+
+-   **Type:** string
+-   **Default Value:** `xdvipdfmx`
+-   **Values:** `dvipdfm`, `dvipdfmx`, `xdvipdfmx`
+-   **Commands:** [build][]
+-   **COmmand Line Interface:** `--dvi-to-pdf-engine <dviToPdfEngine>`
+
+Program to use for DVI to PDF conversion.
+
 ## engine
 
 -   **Type:** string

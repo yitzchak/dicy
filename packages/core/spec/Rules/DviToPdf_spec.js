@@ -60,5 +60,13 @@ describe('DviToPdf', () => {
 
       done()
     })
+
+    it('uses correct dvipdf program when dviToPdfEngine is set.', async (done) => {
+      const { rule } = await initialize({ dviToPdfEngine: 'dvipdfm' })
+
+      expect(rule.constructCommand().args[0]).toEqual('dvipdfm')
+
+      done()
+    })
   })
 })

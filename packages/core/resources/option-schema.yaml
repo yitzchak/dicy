@@ -138,6 +138,16 @@ disableRules:
   defaultValue: []
   description: Rules to ignore when processing.
   type: strings
+dviToPdfEngine:
+  commands:
+    - build
+  defaultValue: xdvipdfmx
+  values:
+    - dvipdfm
+    - xdvipdfmx
+    - dvipdfmx
+  description: Program to use for DVI to PDF conversion.
+  type: string
 engine:
   aliases:
     - e
