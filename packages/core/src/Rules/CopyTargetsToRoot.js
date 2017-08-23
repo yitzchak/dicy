@@ -15,15 +15,17 @@ export default class CopyTargetsToRoot extends Rule {
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     return !!options.copyTargetsToRoot &&
-      parameters.every(file => state.targets.has(file.filePath) && path.dirname(file.filePath) !== '.')
+      parameters.every(file => !file.virtual && state.targets.has(file.filePath) && path.dirname(file.filePath) !== '.')
   }
 
   async initialize () {
+    // Remove the old target and replace with the new one.
     this.removeTarget(this.firstParameter.filePath)
     await this.addResolvedTarget('$BASE_0')
   }
 
   async run () {
+    // Copy the target to it's new location and add the result as an output.
     const filePath = this.resolvePath('$ROOTDIR/$BASE_0')
     await this.firstParameter.copy(filePath)
     await this.getOutput(filePath)
