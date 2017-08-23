@@ -21,12 +21,13 @@ describe('ParseLaTeXMagic', () => {
   it('verifies that all log messages are successfully parsed.', async (done) => {
     const { rule } = await initialize()
     const magic = {
-      jobNames: [ 'job-1', 'job 2', 'job-3' ],
+      jobNames: ['job-1', 'job 2', 'job-3'],
       jobs: {
         'job-2': { outputDirectory: 'output' },
         'job 2': { shellEscape: 'enabled' }
       },
-      syncTeX: 'yes'
+      syncTeX: 'yes',
+      '$PATH': ['wibble', '']
     }
 
     await rule.parse()
