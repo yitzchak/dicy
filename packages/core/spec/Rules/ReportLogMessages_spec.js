@@ -6,17 +6,13 @@ import ReportLogMessages from '../../src/Rules/ReportLogMessages'
 import { initializeRule } from '../helpers'
 
 async function initialize (value?: Object) {
-  const { rule } = await initializeRule({
+  return initializeRule({
     RuleClass: ReportLogMessages,
     parameters: [{
       filePath: 'LaTeXLog_pdfTeX.log-ParsedLaTeXLog',
       value
     }]
   })
-
-  spyOn(rule, 'log')
-
-  return { rule }
 }
 
 describe('ReportLogMessages', () => {
