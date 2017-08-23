@@ -23,7 +23,7 @@ describe('ParseLaTeXMagic', () => {
     const magic = {
       jobNames: ['job-1', 'job 2', 'job-3'],
       jobs: {
-        'job-2': { outputDirectory: 'output' },
+        'job-1': { outputDirectory: 'output' },
         'job 2': { shellEscape: 'enabled' }
       },
       syncTeX: 'yes',
