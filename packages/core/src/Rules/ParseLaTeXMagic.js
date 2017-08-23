@@ -25,7 +25,7 @@ export default class ParseLaTeXMagic extends Rule {
 
     await this.firstParameter.parse([{
       names: ['jobName', 'name', 'value'],
-      patterns: [/^%\s*!T[eE]X\s+(?:([^:]+)\s*:\s*)?(\w+)\s*=\s*(.*)$/],
+      patterns: [/^%\s*!T[eE]X\s+(?:([^:]+?)\s*:\s*)?(\w+)\s*=\s*(.*)$/],
       evaluate: (reference, groups) => {
         const schema = this.state.optionSchema.get(groups.name)
         let value = groups.value.trim()

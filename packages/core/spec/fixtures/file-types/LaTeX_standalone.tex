@@ -1,5 +1,11 @@
-%!TeX jobNames = job-1, job-2
-%!TeX job-2:outputDirectory = output
+%!TeX jobNames = job-1, job 2, job-3
+% !TeX job-2:outputDirectory = output
+% !TEX job 2 : shellEscape = enabled
+%%!TeX $BIBINPUTS = foo, bar
+%!tex bibtexEngine = mendex
+%! TeX engine = baffle
+%!TeX $PATH=wibble,quux
+%!TEX syncTeX = yes
 \documentclass[class=article]{standalone}
 
 \usepackage{lipsum}
