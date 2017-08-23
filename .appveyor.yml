@@ -19,7 +19,7 @@ environment:
 
 cache:
   - '%R_LIBS_USER%'
-  - '%USERPROFILE%\.cache\pip'
+  - '%LOCALAPPDATA%\pip\Cache'
 
 install:
   - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
