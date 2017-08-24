@@ -32,7 +32,7 @@
     "specs": "echo Running core specs... | chalk yellowBright bold && cd packages/core && npm test",
     "test": "npm run lint && npm run specs",
     "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
-    "update-types": "babel-node scripts/update-types.js && eslint --fix packages/core/src/types-auto.js",
+    "update-types": "babel-node scripts/update-types.js && eslint --fix packages/core/src/types.js",
     "flow-typed-update": "flow-typed install --overwrite --skip"
   },
   "dependencies": {

@@ -7,7 +7,7 @@ import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, Command, CommandOptions, ParsedLog, Phase } from '../types'
+import type { Action, Command, CommandOptions, OptionsInterface, ParsedLog, Phase } from '../types'
 
 export default class MakeIndex extends Rule {
   static parameterTypes: Array<Set<string>> = [
@@ -20,7 +20,7 @@ export default class MakeIndex extends Rule {
   ]
   static description: string = 'Runs makeindex on any index files.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     const parsedLog: ?ParsedLog = parameters[1].value
     const base = path.basename(parameters[0].filePath)
     const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)

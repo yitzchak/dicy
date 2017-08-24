@@ -5,7 +5,7 @@ import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, Command, CommandOptions, Phase } from '../types'
+import type { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const JAPANESE_LATEX_PATTERN = /^u?platex$/
@@ -20,11 +20,11 @@ export default class LaTeX extends Rule {
   ])]
   static description: string = 'Runs the required latex variant.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     return parameters.some(file =>
       ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))) ||
-      (file.type === 'LiterateHaskell' && state.getOption('literateHaskellEngine', jobName) === 'none') ||
-      (file.type === 'LiterateAgda' && state.getOption('literateAgdaEngine', jobName) === 'none')))
+      (file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'none') ||
+      (file.type === 'LiterateAgda' && options.literateAgdaEngine === 'none')))
   }
 
   async initialize () {

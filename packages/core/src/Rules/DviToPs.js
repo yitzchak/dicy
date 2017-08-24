@@ -4,19 +4,16 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, CommandOptions, Phase } from '../types'
+import type { Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 export default class DviToPs extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to PS using dvips.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    const outputFormat = state.getOption('outputFormat', jobName)
-    const intermediatePostScript = state.getOption('intermediatePostScript', jobName)
-
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     // Only apply if output format is ps or intermediate PostScript generation
     // is on.
-    return outputFormat === 'ps' || (outputFormat === 'pdf' && !!intermediatePostScript)
+    return options.outputFormat === 'ps' || (options.outputFormat === 'pdf' && !!options.intermediatePostScript)
   }
 
   async initialize () {

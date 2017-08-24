@@ -18,58 +18,58 @@ async function initialize (filePath: string, options: Object = {}) {
 describe('LaTeX', () => {
   describe('appliesToParameters', () => {
     it('returns true if file type is \'LaTeX\'', async (done) => {
-      const { rule } = await initialize('LaTeX_article.tex')
+      const { rule, options } = await initialize('LaTeX_article.tex')
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if file type is \'LaTeX\' and sub type is standalone is master document.', async (done) => {
-      const { rule } = await initialize('LaTeX_standalone.tex')
+      const { rule, options } = await initialize('LaTeX_standalone.tex')
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if file type is \'LaTeX\' and sub type is standalone but not master document.', async (done) => {
-      const { rule } = await initialize('LaTeX_article.tex')
+      const { rule, options } = await initialize('LaTeX_article.tex')
       const parameters = await rule.getFiles(['LaTeX_standalone.tex'])
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...parameters)).toBe(false)
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if literateAgdaEngine is \'none\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule } = await initialize('LiterateAgda.lagda', { literateAgdaEngine: 'none' })
+      const { rule, options } = await initialize('LiterateAgda.lagda', { literateAgdaEngine: 'none' })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'none\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule } = await initialize('LiterateAgda.lagda', { literateAgdaEngine: 'agda' })
+      const { rule, options } = await initialize('LiterateAgda.lagda', { literateAgdaEngine: 'agda' })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if literateHaskellEngine is \'none\' and file type is \'LiterateHaskell\'', async (done) => {
-      const { rule } = await initialize('LiterateHaskell.lhs', { literateHaskellEngine: 'none' })
+      const { rule, options } = await initialize('LiterateHaskell.lhs', { literateHaskellEngine: 'none' })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateHaskellEngine is not \'none\' and file type is \'LiterateHaskell\'', async (done) => {
-      const { rule } = await initialize('LiterateHaskell.lhs', { literateHaskellEngine: 'lhs2TeX' })
+      const { rule, options } = await initialize('LiterateHaskell.lhs', { literateHaskellEngine: 'lhs2TeX' })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
