@@ -148,7 +148,7 @@ export default class StateConsumer {
 
   async globPath (pattern: string, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
     try {
-      return await fastGlob(this.resolvePath(pattern), {
+      return await fastGlob(this.expandVariables(pattern), {
         cwd: this.rootPath,
         bashNative: [],
         onlyFiles: types === 'files',
