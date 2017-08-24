@@ -27,15 +27,15 @@ async function initialize ({ indexPath = 'IndexControlFile.idx', logValue = { in
 describe('SplitIndex', () => {
   describe('appliesToParameters', () => {
     it('returns false if there are no splitindex notices in the log.', async (done) => {
-      const { rule } = await initialize()
+      const { rule, options } = await initialize()
 
-      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if there are splitindex notices in the log.', async (done) => {
-      const { rule } = await initialize({
+      const { rule, options } = await initialize({
         logValue: {
           inputs: [],
           outputs: [],
@@ -47,13 +47,13 @@ describe('SplitIndex', () => {
         }
       })
 
-      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if there are splitindex calls in the log.', async (done) => {
-      const { rule } = await initialize({
+      const { rule, options } = await initialize({
         logValue: {
           inputs: [],
           outputs: [],
@@ -66,7 +66,7 @@ describe('SplitIndex', () => {
         }
       })
 
-      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })

@@ -18,25 +18,25 @@ async function initialize (options: Object = {}) {
 describe('DviToPdf', () => {
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
-      const { rule } = await initialize({ outputFormat: 'pdf' })
+      const { rule, options } = await initialize({ outputFormat: 'pdf' })
 
-      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'pdf\'', async (done) => {
-      const { rule } = await initialize({ outputFormat: 'ps' })
+      const { rule, options } = await initialize({ outputFormat: 'ps' })
 
-      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if outputFormat is \'pdf\' but intermediatePostScript is set.', async (done) => {
-      const { rule } = await initialize({ outputFormat: 'pdf', intermediatePostScript: true })
+      const { rule, options } = await initialize({ outputFormat: 'pdf', intermediatePostScript: true })
 
-      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })

@@ -4,15 +4,15 @@ import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, CommandOptions, Phase } from '../types'
+import type { Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 export default class DviToSvg extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to SVG using dvisvgm.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     // Only apply if output format is svg
-    return state.getOption('outputFormat', jobName) === 'svg'
+    return options.outputFormat === 'svg'
   }
 
   async initialize () {

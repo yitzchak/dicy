@@ -8,7 +8,8 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
+import type { Command, FileCache, RuleCache, Phase, Option, OptionsInterface, KillToken } from './types'
+import { DEFAULT_OPTIONS } from './types'
 
 function getLabel (x: File | Rule) {
   return (x instanceof File) ? x.filePath : x.id
@@ -16,6 +17,33 @@ function getLabel (x: File | Rule) {
 
 type GraphProperties = {
   components?: Array<Array<Rule>>
+}
+
+function createOptionProxy (options: OptionsInterface, parent?: OptionsInterface, jobName?: string): OptionsInterface {
+  return new Proxy(options, {
+    get: (target, key) => {
+      if (key in target) return target[key]
+
+      switch (key) {
+        case 'jobName':
+          return jobName || (parent ? parent.jobName : undefined)
+        case 'jobNames':
+          if (parent) {
+            return parent.jobNames
+          } else {
+            if ('jobName' in target) return [target.jobName]
+            if ('jobNames' in target) return target.jobNames
+            return [undefined]
+          }
+        default:
+          return parent && key in parent ? parent[key] : DEFAULT_OPTIONS[key]
+      }
+    },
+    set: (target, key, value) => {
+      target[key] = value
+      return true
+    }
+  })
 }
 
 export default class State extends EventEmitter {
@@ -35,12 +63,17 @@ export default class State extends EventEmitter {
   targets: Set<string> = new Set()
   killToken: ?KillToken
   graph: Graph = new Graph()
+  jobOptionProxies: { [jobName: string]: OptionsInterface } = {}
+  optionProxy: OptionsInterface
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
+    this.optionProxy = createOptionProxy(this.options)
+
     const resolveFilePath = path.resolve(filePath)
     const { dir, base, name, ext } = path.parse(resolveFilePath)
     this.filePath = base
+    this.options.filePath = base
     this.rootPath = dir
     for (const option of schema) {
       this.optionSchema.set(option.name, option)
@@ -284,6 +317,21 @@ export default class State extends EventEmitter {
     }
 
     this.assignOptions(this.defaultOptions)
+  }
+
+  getJobOptions (jobName: ?string): OptionsInterface {
+    if (!jobName) return this.optionProxy
+
+    let optionProxy = this.jobOptionProxies[jobName]
+
+    if (!optionProxy) {
+      if (!this.options.jobs) this.options.jobs = {}
+      if (!(jobName in this.options.jobs)) this.options.jobs[jobName] = {}
+      optionProxy = createOptionProxy(this.options.jobs[jobName], this.optionProxy, jobName)
+      this.jobOptionProxies[jobName] = optionProxy
+    }
+
+    return optionProxy
   }
 
   getOption (name: string, jobName: ?string): ?any {
