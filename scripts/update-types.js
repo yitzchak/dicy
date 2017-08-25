@@ -15,7 +15,7 @@ async function main () {
   const properties = ['[name: string]: string | Array<string>'].concat(options.filter(option => !option.name.startsWith('$')).map(option => {
     let property: string = option.name.includes('$') ? `'${option.name}'` : option.name
 
-    if (!option.defaultValue && !/^(filePath|jobNames)$/.test(option.name)) {
+    if (option.type !== 'boolean' && !option.defaultValue && !/^(filePath|jobNames)$/.test(option.name)) {
       property += '?'
     }
 

@@ -4,14 +4,14 @@ import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { CommandOptions, Command, Phase } from '../types'
+import type { CommandOptions, Command, OptionsInterface, Phase } from '../types'
 
 export default class Agda extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LiterateAgda'])]
   static description: string = 'Runs agda on lagda files.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
-    return state.getOption('literateAgdaEngine', jobName) === 'agda'
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+    return options.literateAgdaEngine === 'agda'
   }
 
   constructCommand (): CommandOptions {

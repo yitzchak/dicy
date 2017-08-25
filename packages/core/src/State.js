@@ -314,7 +314,7 @@ export default class State extends EventEmitter {
     return (name === 'filePath') ? this.filePath : this.options[name]
   }
 
-  getJobOptions (jobName?: string): OptionsInterface {
+  getJobOptions (jobName: ?string): OptionsInterface {
     let optionProxy = this.optionProxies[jobName]
 
     if (!optionProxy) {
@@ -333,6 +333,10 @@ export default class State extends EventEmitter {
               const jobOptions = target.jobs[jobName]
               if (jobOptions && name in jobOptions) return jobOptions[name]
             }
+          }
+
+          if (this.optionSchema.get(name) === 'boolean') {
+            return !!target[name]
           }
 
           return (name === 'filePath') ? this.filePath : target[name]

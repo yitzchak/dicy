@@ -7,7 +7,14 @@ import State from './State'
 import File from './File'
 import StateConsumer from './StateConsumer'
 
-import type { Action, Command, Phase, CommandOptions, ParsedLog } from './types'
+import type {
+  Action,
+  Command,
+  CommandOptions,
+  OptionsInterface,
+  ParsedLog,
+  Phase
+} from './types'
 
 export default class Rule extends StateConsumer {
   static parameterTypes: Array<Set<string>> = []
@@ -42,6 +49,7 @@ export default class Rule extends StateConsumer {
 
   static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<Array<Rule>> {
     const rules = []
+    const options = state.getJobOptions(jobName)
 
     if (await this.appliesToFile(state, command, phase, jobName, file)) {
       const files = Array.from(state.files.values()).filter(file => !jobName || file.jobNames.has(jobName))
@@ -58,7 +66,7 @@ export default class Rule extends StateConsumer {
             const parameters = candidates.map((files, index) => files[indicies[index]])
             const ruleId = state.getRuleId(this.name, command, phase, jobName, ...parameters)
 
-            if (!state.rules.has(ruleId) && await this.appliesToParameters(state, command, phase, jobName, ...parameters)) {
+            if (!state.rules.has(ruleId) && await this.appliesToParameters(state, command, phase, options, ...parameters)) {
               const rule = new this(state, command, phase, jobName, ...parameters)
               await rule.initialize()
               if (rule.alwaysEvaluate) rule.addActions(file)
@@ -80,7 +88,7 @@ export default class Rule extends StateConsumer {
     return rules
   }
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     return true
   }
 

@@ -7,7 +7,7 @@ import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, ShellCall, Command, Phase, CommandOptions, ParsedLog } from '../types'
+import type { Action, ShellCall, Command, Phase, CommandOptions, OptionsInterface, ParsedLog } from '../types'
 
 export default class EpsToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [
@@ -16,13 +16,12 @@ export default class EpsToPdf extends Rule {
   ]
   static description: string = 'Converts EPS to PDF using epstopdf.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     switch (parameters[1].type) {
       case 'Nil':
         // If there is not a LaTeX log present then only apply epstopdf when the
         // main source file is an EPS.
-        const filePath = state.getOption('filePath', jobName)
-        return !!filePath && parameters[0].filePath === path.normalize(filePath)
+        return parameters[0].filePath === path.normalize(options.filePath)
       case 'ParsedLaTeXLog':
         // When there is a LaTeX log present only apply epstopdf if there are
         // specific calls present, usually from the epstopdf package.

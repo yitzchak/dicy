@@ -18,17 +18,17 @@ async function initialize (options: Object = {}) {
 describe('DviToSvg', () => {
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'svg\'', async (done) => {
-      const { rule } = await initialize({ outputFormat: 'svg' })
+      const { rule, options } = await initialize({ outputFormat: 'svg' })
 
-      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'svg\'', async (done) => {
-      const { rule } = await initialize({ outputFormat: 'dvi' })
+      const { rule, options } = await initialize({ outputFormat: 'dvi' })
 
-      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })

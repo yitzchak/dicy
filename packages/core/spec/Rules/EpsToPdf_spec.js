@@ -29,19 +29,19 @@ async function initialize ({ epsPath = 'EncapsulatedPostScript.eps', filePath = 
 describe('EpsToPdf', () => {
   describe('appliesToParameters', () => {
     it('returns true if EPS file is the main source file.', async (done) => {
-      const { rule } = await initialize({
+      const { rule, options } = await initialize({
         filePath: 'file-types/EncapsulatedPostScript.eps'
       })
 
-      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if EPS file is not the main source file.', async (done) => {
-      const { rule } = await initialize()
+      const { rule, options } = await initialize()
 
-      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
