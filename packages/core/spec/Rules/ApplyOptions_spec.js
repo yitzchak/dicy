@@ -32,7 +32,7 @@ describe('ApplyOptions', () => {
       commands: []
     }])
     state.env.HOME = fixturesPath
-    applyOptions = new ApplyOptions(state, 'load', 'execute')
+    applyOptions = new ApplyOptions(state, 'load', 'execute', state.getJobOptions())
     done()
   })
 
@@ -76,13 +76,13 @@ describe('ApplyOptions', () => {
         b: 'foo'
       }
 
-      loadRule = new Rule(state, 'load', 'execute')
+      loadRule = new Rule(state, 'load', 'execute', state.getJobOptions())
       state.addRule(loadRule)
 
-      finalizeRule = new Rule(state, 'load', 'finalize')
+      finalizeRule = new Rule(state, 'load', 'finalize', state.getJobOptions())
       state.addRule(finalizeRule)
 
-      otherRule = new Rule(state, 'build', 'execute')
+      otherRule = new Rule(state, 'build', 'execute', state.getJobOptions())
       state.addRule(otherRule)
     })
 

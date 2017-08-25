@@ -304,7 +304,7 @@ describe('MakeIndex', () => {
         }
       })
 
-      expect(rule.options.indexCompressBlanks).not.toBe(false)
+      expect(rule.options.indexCompressBlanks).toBe(false)
 
       done()
     })

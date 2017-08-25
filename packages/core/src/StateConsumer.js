@@ -20,11 +20,9 @@ export default class StateConsumer {
   jobName: ?string
   env: Object
 
-  constructor (state: State, jobName: ?string) {
-    this.jobName = jobName
+  constructor (state: State, options: OptionsInterface) {
     this.state = state
-    // $FlowIgnore
-    this.options = new Proxy(state.getJobOptions(jobName), {
+    this.options = new Proxy(options, {
       get: (target, key) => {
         return key in this.consumerOptions
           ? this.consumerOptions[key]
@@ -39,7 +37,7 @@ export default class StateConsumer {
       OUTDIR: this.options.outputDirectory || '.',
       // $FlowIgnore
       OUTEXT: `.${this.options.outputFormat}`,
-      JOB: this.jobName || this.options.jobName || this.state.env.NAME
+      JOB: this.options.jobName || this.state.env.NAME
     }
   }
 
@@ -157,7 +155,7 @@ export default class StateConsumer {
 
   async getFile (filePath: string): Promise<?File> {
     const file: ?File = await this.state.getFile(filePath)
-    if (file && this.jobName) file.jobNames.add(this.jobName)
+    if (file && this.options.jobName) file.jobNames.add(this.options.jobName)
     return file
   }
 

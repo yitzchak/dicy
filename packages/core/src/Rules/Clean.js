@@ -26,7 +26,7 @@ export default class Clean extends Rule {
     }
 
     for (const rule of this.rules) {
-      if (rule.jobName === this.jobName) {
+      if (rule.options.jobName === this.options.jobName) {
         for (const file of rule.outputs) {
           if (file.virtual) continue
           if (scrub) {
@@ -60,7 +60,7 @@ export default class Clean extends Rule {
     }
 
     for (const file of files.values()) {
-      await this.state.deleteFile(file, this.jobName)
+      await this.state.deleteFile(file, this.options.jobName)
     }
 
     for (const filePath of directories) {

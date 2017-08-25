@@ -54,7 +54,7 @@ export default class GraphDependencies extends Rule {
             break
         }
         startGraph(`${command};${phase}`, `${phase} phase`)
-        const rulesByJobName = _.groupBy(rulesByPhase[phase], rule => rule.jobName)
+        const rulesByJobName = _.groupBy(rulesByPhase[phase], rule => rule.options.jobName)
         for (const jobName in rulesByJobName) {
           if (jobName !== 'undefined') {
             startGraph(`${command};${phase};${jobName}`, `\\"${jobName}\\" job`)

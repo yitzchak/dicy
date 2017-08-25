@@ -295,25 +295,6 @@ export default class State extends EventEmitter {
     this.assignOptions(this.defaultOptions)
   }
 
-  getOption (name: string, jobName: ?string): ?any {
-    if (name === 'jobNames') {
-      if ('jobName' in this.options) return [this.options.jobName]
-      if ('jobNames' in this.options) return this.options.jobNames
-      if ('jobs' in this.options) return Object.keys(this.options.jobs)
-      return [undefined]
-    }
-
-    if (jobName) {
-      if (name === 'jobName') return jobName
-      if ('jobs' in this.options) {
-        const jobOptions = this.options.jobs[jobName]
-        if (jobOptions && name in jobOptions) return jobOptions[name]
-      }
-    }
-
-    return (name === 'filePath') ? this.filePath : this.options[name]
-  }
-
   getJobOptions (jobName: ?string): OptionsInterface {
     let optionProxy = this.optionProxies[jobName]
 
@@ -335,7 +316,9 @@ export default class State extends EventEmitter {
             }
           }
 
-          if (this.optionSchema.get(name) === 'boolean') {
+          const schema = this.optionSchema.get(name)
+
+          if (schema && schema.type === 'boolean') {
             return !!target[name]
           }
 

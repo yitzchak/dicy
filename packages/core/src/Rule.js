@@ -32,27 +32,26 @@ export default class Rule extends StateConsumer {
   actions: Map<Action, Set<File>> = new Map()
   failures: Set<Action> = new Set()
 
-  static async analyzePhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<?Rule> {
-    if (await this.appliesToPhase(state, command, phase, jobName)) {
-      const rule = new this(state, command, phase, jobName)
+  static async analyzePhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<?Rule> {
+    if (await this.appliesToPhase(state, command, phase, options)) {
+      const rule = new this(state, command, phase, options)
       await rule.initialize()
       if (rule.alwaysEvaluate) rule.addActions()
       return rule
     }
   }
 
-  static async appliesToPhase (state: State, command: Command, phase: Phase, jobName: ?string): Promise<boolean> {
+  static async appliesToPhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
       this.parameterTypes.length === 0
   }
 
-  static async analyzeFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<Array<Rule>> {
+  static async analyzeFile (state: State, command: Command, phase: Phase, options: OptionsInterface, file: File): Promise<Array<Rule>> {
     const rules = []
-    const options = state.getJobOptions(jobName)
 
-    if (await this.appliesToFile(state, command, phase, jobName, file)) {
-      const files = Array.from(state.files.values()).filter(file => !jobName || file.jobNames.has(jobName))
+    if (await this.appliesToFile(state, command, phase, options, file)) {
+      const files = Array.from(state.files.values()).filter(file => !options.jobName || file.jobNames.has(options.jobName))
 
       for (let i = 0; i < this.parameterTypes.length; i++) {
         if (file.inTypeSet(this.parameterTypes[i])) {
@@ -64,10 +63,10 @@ export default class Rule extends StateConsumer {
 
           while (indicies.every(index => index > -1)) {
             const parameters = candidates.map((files, index) => files[indicies[index]])
-            const ruleId = state.getRuleId(this.name, command, phase, jobName, ...parameters)
+            const ruleId = state.getRuleId(this.name, command, phase, options.jobName, ...parameters)
 
             if (!state.rules.has(ruleId) && await this.appliesToParameters(state, command, phase, options, ...parameters)) {
-              const rule = new this(state, command, phase, jobName, ...parameters)
+              const rule = new this(state, command, phase, options, ...parameters)
               await rule.initialize()
               if (rule.alwaysEvaluate) rule.addActions(file)
               rules.push(rule)
@@ -92,19 +91,19 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, jobName: ?string, file: File): Promise<boolean> {
+  static async appliesToFile (state: State, command: Command, phase: Phase, options: OptionsInterface, file: File): Promise<boolean> {
     return this.commands.has(command) &&
       this.phases.has(phase) &&
       this.parameterTypes.some(types => file.inTypeSet(types))
   }
 
-  constructor (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>) {
-    super(state, jobName)
+  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>) {
+    super(state, options)
 
     this.parameters = parameters
     this.command = command
     this.phase = phase
-    this.id = state.getRuleId(this.constructor.name, command, phase, jobName, ...parameters)
+    this.id = state.getRuleId(this.constructor.name, command, phase, options.jobName, ...parameters)
 
     this.parameters.forEach((file, index) => {
       const { dir, base, name, ext } = path.parse(file.filePath)
@@ -117,7 +116,7 @@ export default class Rule extends StateConsumer {
       this.env[`NAME_${index}`] = name
       this.env[`EXT_${index}`] = ext
 
-      if (jobName) file.jobNames.add(jobName)
+      if (options.jobName) file.jobNames.add(options.jobName)
       state.addEdge(file.filePath, this.id)
     })
   }
@@ -458,7 +457,7 @@ export default class Rule extends StateConsumer {
       ]
     }
 
-    for (const [name, value] of this.state.getOptions(this.jobName)) {
+    for (const [name, value] of this.state.getOptions(this.options.jobName)) {
       if (!name.startsWith('$')) continue
       const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
       if (Array.isArray(value)) {
