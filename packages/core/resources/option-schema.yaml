@@ -8,7 +8,7 @@ $BIBINPUTS:
   defaultValue:
     - $ROOTDIR
     - $ROOTDIR/$OUTDIR
-    - null
+    - ''
   description: BibTeX bibliography source search path
   type: strings
 $BLTXMLINPUTS:
@@ -87,7 +87,7 @@ $TEXINPUTS:
   defaultValue:
     - $ROOTDIR
     - $ROOTDIR/$OUTDIR
-    - null
+    - ''
   description: TeX source search path
   type: strings
 $TEXPICTS:

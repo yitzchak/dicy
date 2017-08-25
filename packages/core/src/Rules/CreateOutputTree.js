@@ -19,7 +19,7 @@ export default class CreateOutputTree extends Rule {
         ignorePattern: `${this.options.outputDirectory}/**`
       })
       directories.unshift('.')
-      await Promise.all(directories.map(directory => File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory, directory))))
+      await Promise.all(directories.map(directory => File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory || '.', directory))))
     }
     return true
   }

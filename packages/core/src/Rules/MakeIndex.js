@@ -75,7 +75,7 @@ export default class MakeIndex extends Rule {
 
     if (parsedLog) {
       const { base } = path.parse(this.firstParameter.filePath)
-      let call = Log.findCall(parsedLog, /(makeindex|texindy|mendex|upmendex)/, base)
+      let call = Log.findCall(parsedLog, /^(makeindex|texindy|mendex|upmendex)$/, base)
 
       if (!call) {
         call = Log.findMessageMatches(parsedLog, /after calling `((?:makeindex|texindy|mendex|upmendex)[^']*)'/)
@@ -84,7 +84,16 @@ export default class MakeIndex extends Rule {
       }
 
       if (call) {
-        this.options.indexEngine = call.args[0]
+        switch (call.args[0]) {
+          case 'makeindex':
+          case 'texindy':
+          case 'mendex':
+          case 'upmendex':
+            this.options.indexEngine = call.args[0]
+            break
+          default:
+            this.info(`Ignoring unknown index engine \`${call.args[0]}\``)
+        }
         this.options.indexCompressBlanks = !!call.options.c
         this.options.indexAutomaticRanges = !call.options.r
         this.options.indexOrdering = call.options.l ? 'letter' : 'word'
@@ -187,6 +196,8 @@ export default class MakeIndex extends Rule {
     const mendex = this.options.indexEngine === 'mendex'
     const upmendex = this.options.indexEngine === 'upmendex'
     const makeindex = this.options.indexEngine === 'makeindex'
+    const logPath = this.options.indexLogPath || '$DIR_0/$NAME_0.ilg'
+    const outputPath = this.options.indexOutputPath || '$DIR_0/$NAME_0.ind'
     const parsedLogName = texindy
       ? 'ParsedXindyLog'
       : (makeindex ? 'ParsedMakeIndexLog' : 'ParsedMendexLog')
@@ -196,8 +207,8 @@ export default class MakeIndex extends Rule {
 
     const args = [
       this.options.indexEngine,
-      '-t', `{{${this.options.indexLogPath}}}`,
-      '-o', `{{${this.options.indexOutputPath}}}`
+      '-t', `{{${logPath}}}`,
+      '-o', `{{${outputPath}}}`
     ]
 
     if (this.options.indexStyle) {
@@ -317,8 +328,8 @@ export default class MakeIndex extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      inputs: [`${this.options.indexLogPath}-${parsedLogName}`],
-      outputs: [this.options.indexOutputPath, this.options.indexLogPath]
+      inputs: [`${logPath}-${parsedLogName}`],
+      outputs: [outputPath, logPath]
     }
 
     if (mendex || upmendex) {

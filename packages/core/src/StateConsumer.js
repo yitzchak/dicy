@@ -9,13 +9,13 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 
-import type { globOptions, Message, KillToken } from './types'
+import type { globOptions, Message, KillToken, OptionsInterface } from './types'
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
 export default class StateConsumer {
   state: State
-  options: Object
+  options: OptionsInterface
   consumerOptions: Object = {}
   jobName: ?string
   env: Object
@@ -24,14 +24,14 @@ export default class StateConsumer {
     this.jobName = jobName
     this.state = state
     // $FlowIgnore
-    this.options = new Proxy(this, {
+    this.options = new Proxy(state.getJobOptions(jobName), {
       get: (target, key) => {
-        return key in target.consumerOptions
-          ? target.consumerOptions[key]
-          : target.state.getOption(key, target.jobName)
+        return key in this.consumerOptions
+          ? this.consumerOptions[key]
+          : target[key]
       },
       set: (target, key, value) => {
-        target.consumerOptions[key] = value
+        this.consumerOptions[key] = value
         return true
       }
     })

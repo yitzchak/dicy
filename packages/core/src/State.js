@@ -8,7 +8,15 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
+import type {
+  Command,
+  FileCache,
+  KillToken,
+  Option,
+  OptionsInterface,
+  Phase,
+  RuleCache
+} from './types'
 
 function getLabel (x: File | Rule) {
   return (x instanceof File) ? x.filePath : x.id
@@ -35,6 +43,7 @@ export default class State extends EventEmitter {
   targets: Set<string> = new Set()
   killToken: ?KillToken
   graph: Graph = new Graph()
+  optionProxies: { [jobName: ?string]: OptionsInterface } = {}
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
@@ -303,6 +312,35 @@ export default class State extends EventEmitter {
     }
 
     return (name === 'filePath') ? this.filePath : this.options[name]
+  }
+
+  getJobOptions (jobName?: string): OptionsInterface {
+    let optionProxy = this.optionProxies[jobName]
+
+    if (!optionProxy) {
+      this.optionProxies[jobName] = optionProxy = new Proxy(this.options, {
+        get: (target, name) => {
+          if (name === 'jobNames') {
+            if ('jobName' in target) return [target.jobName]
+            if ('jobNames' in target) return target.jobNames
+            if ('jobs' in target) return Object.keys(target.jobs)
+            return [undefined]
+          }
+
+          if (jobName) {
+            if (name === 'jobName') return jobName
+            if ('jobs' in target) {
+              const jobOptions = target.jobs[jobName]
+              if (jobOptions && name in jobOptions) return jobOptions[name]
+            }
+          }
+
+          return (name === 'filePath') ? this.filePath : target[name]
+        }
+      })
+    }
+
+    return optionProxy
   }
 
   * getOptions (jobName: ?string): Iterable<[string, any]> {
