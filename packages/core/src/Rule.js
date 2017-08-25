@@ -457,12 +457,13 @@ export default class Rule extends StateConsumer {
       ]
     }
 
-    for (const [name, value] of this.state.getOptions(this.options.jobName)) {
+    for (const name in this.options) {
       if (!name.startsWith('$')) continue
+      const value = this.options[name]
       const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
       if (Array.isArray(value)) {
-        const emptyPath = (name === '$PATH') ? process.env[envName] : ''
-        const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath) : emptyPath)
+        const emptyPath = (name === '$PATH') ? process.env[envName] || '' : ''
+        const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath.toString()) : emptyPath)
 
         if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
           paths[paths.length - 1] = processOptions.env[envName]

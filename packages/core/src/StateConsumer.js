@@ -31,6 +31,13 @@ export default class StateConsumer {
       set: (target, key, value) => {
         this.consumerOptions[key] = value
         return true
+      },
+      ownKeys: target => {
+        const keys = new Set(Object.keys(this.consumerOptions))
+
+        Object.keys(target).forEach(key => keys.add(key))
+
+        return Array.from(keys.values())
       }
     })
     this.env = {

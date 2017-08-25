@@ -323,30 +323,29 @@ export default class State extends EventEmitter {
           }
 
           return (name === 'filePath') ? this.filePath : target[name]
+        },
+        ownKeys: target => {
+          const keys = new Set(['filePath', 'jobNames'])
+
+          if (jobName && 'jobs' in target) {
+            const jobOptions = target.jobs[jobName]
+            if (jobOptions) Object.keys(jobOptions).forEach(key => keys.add(key))
+          }
+
+          this.optionSchema.forEach(option => {
+            if (option.type === 'boolean') keys.add(option.name)
+          })
+
+          Object.keys(target).forEach(key => keys.add(key))
+
+          keys.delete('jobs')
+
+          return Array.from(keys.values())
         }
       })
     }
 
     return optionProxy
-  }
-
-  * getOptions (jobName: ?string): Iterable<[string, any]> {
-    if (jobName && 'jobs' in this.options && jobName in this.options.jobs) {
-      const jobOptions = this.options.jobs[jobName]
-
-      for (const name in jobOptions) {
-        yield [name, jobOptions]
-      }
-
-      for (const name in this.options) {
-        if (name === 'jobs' || name in jobOptions) continue
-        yield [name, this.options[name]]
-      }
-    } else {
-      for (const name in this.options) {
-        if (name !== 'jobs') yield [name, this.options[name]]
-      }
-    }
   }
 
   get components (): Array<Array<Rule>> {
