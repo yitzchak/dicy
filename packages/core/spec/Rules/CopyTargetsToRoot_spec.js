@@ -21,47 +21,47 @@ async function initialize (options = {}, filePath = 'file-types/PortableDocument
 describe('CopyTargetsToRoot', () => {
   describe('appliesToParameters', () => {
     it('returns true if parameter is a target', async (done) => {
-      const { rule } = await initialize({ copyTargetsToRoot: true })
+      const { rule, options } = await initialize({ copyTargetsToRoot: true })
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if parameter is a virtual file', async (done) => {
       const filePath = 'file-types/foo.bar-ParsedLaTeXLog'
-      const { rule } = await initialize({ copyTargetsToRoot: true }, filePath)
+      const { rule, options } = await initialize({ copyTargetsToRoot: true }, filePath)
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if parameter is already in the root', async (done) => {
       const filePath = 'error-warning.log'
-      const { rule } = await initialize({ copyTargetsToRoot: true }, filePath)
+      const { rule, options } = await initialize({ copyTargetsToRoot: true }, filePath)
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if parameter is not a target', async (done) => {
-      const { rule } = await initialize({ copyTargetsToRoot: true })
+      const { rule, options } = await initialize({ copyTargetsToRoot: true })
 
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if copyTargetsToRoot is not set', async (done) => {
-      const { rule } = await initialize()
+      const { rule, options } = await initialize()
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
