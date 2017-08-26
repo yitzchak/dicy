@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import Rule from '../Rule'
 
-import type { Command, SourceMap, LineRange, LineRangeMapping } from '../types'
+import type { Command, SourceMap, LineRange, LineRangeMapping, ParsedLog, SourceMaps } from '../types'
 
 function inRange (range: LineRange, line: number) {
   return range.start <= line && range.end >= line
@@ -25,40 +25,39 @@ export default class ApplySourceMaps extends Rule {
   static description: string = 'Applies source maps to log files.'
 
   async initialize () {
+    // We are going to modify the log so add it as an output
     await this.getOutput(this.secondParameter.filePath)
   }
 
   async run () {
-    const { sourceMaps } = this.firstParameter.value || {}
-    let { messages } = this.secondParameter.value || {}
+    if (!this.secondParameter.value || !this.firstParameter.value) return true
 
-    messages = _.cloneDeep(messages)
+    const sourceMaps: SourceMaps = this.firstParameter.value
+    const parsedLog: ParsedLog = _.cloneDeep(this.secondParameter.value)
 
-    if (sourceMaps && messages) {
-      for (const sourceMap: SourceMap of sourceMaps) {
-        for (const message of messages) {
-          if (!message.source || message.source.file !== sourceMap.output) continue
+    for (const sourceMap: SourceMap of sourceMaps.maps) {
+      for (const message of parsedLog.messages) {
+        if (!message.source || message.source.file !== sourceMap.output) continue
 
-          if (message.source.range) {
-            const startMapping: ?LineRangeMapping = sourceMap.mappings.find(mapping => inRange(mapping.output, message.source.range.start))
-            const endMapping: ?LineRangeMapping = sourceMap.mappings.find(mapping => inRange(mapping.output, message.source.range.end))
-            if (startMapping && endMapping) {
-              message.source = {
-                file: sourceMap.input,
-                range: {
-                  start: startMapping.input.start,
-                  end: endMapping.input.end
-                }
+        if (message.source && message.source.range) {
+          const startMapping: ?LineRangeMapping = sourceMap.mappings.find(mapping => message.source && message.source.range && inRange(mapping.output, message.source.range.start))
+          const endMapping: ?LineRangeMapping = sourceMap.mappings.find(mapping => message.source && message.source.range && inRange(mapping.output, message.source.range.end))
+          if (startMapping && endMapping) {
+            message.source = {
+              file: sourceMap.input,
+              range: {
+                start: startMapping.input.start,
+                end: endMapping.input.end
               }
             }
-          } else {
-            message.source = { file: sourceMap.input }
           }
+        } else {
+          message.source = { file: sourceMap.input }
         }
       }
     }
 
-    this.secondParameter.value = { messages }
+    this.secondParameter.value = parsedLog
 
     return true
   }
