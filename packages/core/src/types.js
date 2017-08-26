@@ -166,6 +166,10 @@ export type SourceMap = {
   mappings: Array<LineRangeMapping>
 }
 
+export type SourceMaps = {
+  maps: Array<SourceMap>
+}
+
 // START_AUTO
 
 export interface OptionsInterface {
