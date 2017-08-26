@@ -18,25 +18,25 @@ async function initialize (options: Object = {}, filePath = 'LiterateHaskell.lhs
 describe('LhsToTeX', () => {
   describe('appliesToParameters', () => {
     it('returns true if file type is \'LiterateHaskell\'', async (done) => {
-      const { rule } = await initialize()
+      const { rule, options } = await initialize()
 
-      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if literateAgdaEngine is \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule } = await initialize({ literateAgdaEngine: 'lhs2TeX' }, 'LiterateAgda.lagda')
+      const { rule, options } = await initialize({ literateAgdaEngine: 'lhs2TeX' }, 'LiterateAgda.lagda')
 
-      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule } = await initialize({}, 'LiterateAgda.lagda')
+      const { rule, options } = await initialize({}, 'LiterateAgda.lagda')
 
-      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })

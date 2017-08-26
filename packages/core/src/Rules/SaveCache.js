@@ -64,8 +64,8 @@ export default class SaveCache extends Rule {
         outputs: rule.outputs.map(file => file.filePath)
       }
 
-      if (rule.jobName) {
-        ruleCache.jobName = rule.jobName
+      if (rule.options.jobName) {
+        ruleCache.jobName = rule.options.jobName
       }
 
       cache.rules.push(ruleCache)

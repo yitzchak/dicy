@@ -9,37 +9,42 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 
-import type { globOptions, Message, KillToken } from './types'
+import type { globOptions, Message, KillToken, OptionsInterface } from './types'
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
 export default class StateConsumer {
   state: State
-  options: Object
+  options: OptionsInterface
   consumerOptions: Object = {}
   jobName: ?string
   env: Object
 
-  constructor (state: State, jobName: ?string) {
-    this.jobName = jobName
+  constructor (state: State, options: OptionsInterface) {
     this.state = state
-    // $FlowIgnore
-    this.options = new Proxy(this, {
+    this.options = new Proxy(options, {
       get: (target, key) => {
-        return key in target.consumerOptions
-          ? target.consumerOptions[key]
-          : target.state.getOption(key, target.jobName)
+        return key in this.consumerOptions
+          ? this.consumerOptions[key]
+          : target[key]
       },
       set: (target, key, value) => {
-        target.consumerOptions[key] = value
+        this.consumerOptions[key] = value
         return true
+      },
+      ownKeys: target => {
+        const keys = new Set(Object.keys(this.consumerOptions))
+
+        Object.keys(target).forEach(key => keys.add(key))
+
+        return Array.from(keys.values())
       }
     })
     this.env = {
       OUTDIR: this.options.outputDirectory || '.',
       // $FlowIgnore
       OUTEXT: `.${this.options.outputFormat}`,
-      JOB: this.jobName || this.options.jobName || this.state.env.NAME
+      JOB: this.options.jobName || this.state.env.NAME
     }
   }
 
@@ -157,7 +162,7 @@ export default class StateConsumer {
 
   async getFile (filePath: string): Promise<?File> {
     const file: ?File = await this.state.getFile(filePath)
-    if (file && this.jobName) file.jobNames.add(this.jobName)
+    if (file && this.options.jobName) file.jobNames.add(this.options.jobName)
     return file
   }
 

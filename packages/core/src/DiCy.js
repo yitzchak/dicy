@@ -15,7 +15,7 @@ export default class DiCy extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
     const schema = await DiCy.getOptionDefinitions()
     const state = await State.create(filePath, schema)
-    const builder = new DiCy(state)
+    const builder = new DiCy(state, state.getJobOptions())
 
     await builder.initialize()
     await builder.setInstanceOptions(options)
@@ -43,7 +43,7 @@ export default class DiCy extends StateConsumer {
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
       for (const jobName of jobNames) {
-        const rule = await ruleClass.analyzePhase(this.state, command, phase, jobName)
+        const rule = await ruleClass.analyzePhase(this.state, command, phase, this.state.getJobOptions(jobName))
         if (rule) {
           await this.addRule(rule)
         }
@@ -62,7 +62,7 @@ export default class DiCy extends StateConsumer {
       for (const ruleClass: Class<Rule> of this.ruleClasses) {
         const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, jobName, file)
+          const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, this.state.getJobOptions(jobName), file)
           for (const rule of rules) {
             await this.addRule(rule)
           }

@@ -123,7 +123,8 @@ export async function initializeRule ({ RuleClass, command, phase, jobName, file
   if (!phase) {
     phase = RuleClass.phases.values().next().value || 'execute'
   }
-  const rule = new RuleClass(dicy.state, command, phase, jobName, ...files)
+  const jobOptions = dicy.state.getJobOptions(jobName)
+  const rule = new RuleClass(dicy.state, command, phase, jobOptions, ...files)
   await rule.initialize()
-  return { dicy, rule }
+  return { dicy, rule, options: jobOptions }
 }

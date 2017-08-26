@@ -18,17 +18,17 @@ async function initialize (options: Object = {}) {
 describe('PsToPdf', () => {
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
-      const { rule } = await initialize({ outputFormat: 'pdf' })
+      const { rule, options } = await initialize({ outputFormat: 'pdf' })
 
-      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'pdf\'', async (done) => {
-      const { rule } = await initialize({ outputFormat: 'ps' })
+      const { rule, options } = await initialize({ outputFormat: 'ps' })
 
-      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })

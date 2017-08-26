@@ -8,7 +8,15 @@ import path from 'path'
 import File from './File'
 import Rule from './Rule'
 
-import type { Command, FileCache, RuleCache, Phase, Option, KillToken } from './types'
+import type {
+  Command,
+  FileCache,
+  KillToken,
+  Option,
+  OptionsInterface,
+  Phase,
+  RuleCache
+} from './types'
 
 function getLabel (x: File | Rule) {
   return (x instanceof File) ? x.filePath : x.id
@@ -35,6 +43,7 @@ export default class State extends EventEmitter {
   targets: Set<string> = new Set()
   killToken: ?KillToken
   graph: Graph = new Graph()
+  optionProxies: { [jobName: ?string]: OptionsInterface } = {}
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
@@ -286,42 +295,57 @@ export default class State extends EventEmitter {
     this.assignOptions(this.defaultOptions)
   }
 
-  getOption (name: string, jobName: ?string): ?any {
-    if (name === 'jobNames') {
-      if ('jobName' in this.options) return [this.options.jobName]
-      if ('jobNames' in this.options) return this.options.jobNames
-      if ('jobs' in this.options) return Object.keys(this.options.jobs)
-      return [undefined]
+  getJobOptions (jobName: ?string): OptionsInterface {
+    let optionProxy = this.optionProxies[jobName]
+
+    if (!optionProxy) {
+      this.optionProxies[jobName] = optionProxy = new Proxy(this.options, {
+        get: (target, name) => {
+          if (name === 'jobNames') {
+            if ('jobName' in target) return [target.jobName]
+            if ('jobNames' in target) return target.jobNames
+            if ('jobs' in target) return Object.keys(target.jobs)
+            return [undefined]
+          }
+
+          if (jobName) {
+            if (name === 'jobName') return jobName
+            if ('jobs' in target) {
+              const jobOptions = target.jobs[jobName]
+              if (jobOptions && name in jobOptions) return jobOptions[name]
+            }
+          }
+
+          const schema = this.optionSchema.get(name)
+
+          if (schema && schema.type === 'boolean') {
+            return !!target[name]
+          }
+
+          return (name === 'filePath') ? this.filePath : target[name]
+        },
+        ownKeys: target => {
+          const keys = new Set(['filePath', 'jobNames'])
+
+          if (jobName && 'jobs' in target) {
+            const jobOptions = target.jobs[jobName]
+            if (jobOptions) Object.keys(jobOptions).forEach(key => keys.add(key))
+          }
+
+          this.optionSchema.forEach(option => {
+            if (option.type === 'boolean') keys.add(option.name)
+          })
+
+          Object.keys(target).forEach(key => keys.add(key))
+
+          keys.delete('jobs')
+
+          return Array.from(keys.values())
+        }
+      })
     }
 
-    if (jobName) {
-      if (name === 'jobName') return jobName
-      if ('jobs' in this.options) {
-        const jobOptions = this.options.jobs[jobName]
-        if (jobOptions && name in jobOptions) return jobOptions[name]
-      }
-    }
-
-    return (name === 'filePath') ? this.filePath : this.options[name]
-  }
-
-  * getOptions (jobName: ?string): Iterable<[string, any]> {
-    if (jobName && 'jobs' in this.options && jobName in this.options.jobs) {
-      const jobOptions = this.options.jobs[jobName]
-
-      for (const name in jobOptions) {
-        yield [name, jobOptions]
-      }
-
-      for (const name in this.options) {
-        if (name === 'jobs' || name in jobOptions) continue
-        yield [name, this.options[name]]
-      }
-    } else {
-      for (const name in this.options) {
-        if (name !== 'jobs') yield [name, this.options[name]]
-      }
-    }
+    return optionProxy
   }
 
   get components (): Array<Array<Rule>> {

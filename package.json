@@ -25,14 +25,15 @@
     "clean": "lerna clean --yes",
     "create-fixtures": "scripts/create-fixtures",
     "dicy": "node packages/cli/lib/main.js",
+    "flow-typed-update": "flow-typed install --overwrite --skip",
     "format-yaml": "babel-node scripts/format-yaml.js",
-    "lint": "echo Linting sources... | chalk yellowBright bold && eslint --color packages",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
+    "lint": "echo Linting sources... | chalk yellowBright bold && eslint --color packages",
     "specs": "echo Running core specs... | chalk yellowBright bold && cd packages/core && npm test",
     "test": "npm run lint && npm run specs",
     "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
-    "flow-typed-update": "flow-typed install --overwrite --skip"
+    "update-types": "babel-node scripts/update-types && eslint --fix packages/core/src/types.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
@@ -75,7 +76,8 @@
     "flow-typed": "^2.1.5",
     "jasmine": "^2.7.0",
     "lerna": "^2.0.0",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "tosource": "^1.0.0"
   },
   "babel": {
     "presets": [

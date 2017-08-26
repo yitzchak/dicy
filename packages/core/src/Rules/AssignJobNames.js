@@ -15,10 +15,10 @@ export default class AssignJobNames extends Rule {
     // is a Nil file.
     const files = await this.getFiles([this.options.filePath, 'x.y-Nil'])
 
-    if (this.jobName) {
+    if (this.options.jobName) {
       // If we have a job name then add it.
       for (const file of files) {
-        file.jobNames.add(this.jobName)
+        file.jobNames.add(this.options.jobName)
       }
     }
 

@@ -7,7 +7,7 @@ import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, Command, CommandOptions, Phase } from '../types'
+import type { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 const JAPANESE_BIBTEX_PATTERN = /^u?pbibtex$/
 
@@ -18,7 +18,7 @@ export default class BibTeX extends Rule {
   ]
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File>): Promise<boolean> {
+  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     return state.isGrandparentOf(parameters[0], parameters[1]) &&
       !!parameters[1].value && !!parameters[1].value.bibdata
   }

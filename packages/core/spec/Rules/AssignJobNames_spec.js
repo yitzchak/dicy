@@ -21,7 +21,7 @@ describe('AssignJobNames', () => {
       commands: []
     }])
     state.env.HOME = fixturesPath
-    assignJobNames = new AssignJobNames(state, 'load', 'finalize')
+    assignJobNames = new AssignJobNames(state, 'load', 'finalize', state.getJobOptions())
     source = await assignJobNames.getFile('file.tex')
     done()
   })
@@ -36,7 +36,7 @@ describe('AssignJobNames', () => {
     })
 
     it('verifies that job name is attached to file.', async (done) => {
-      assignJobNames.jobName = 'foo'
+      assignJobNames.options.jobName = 'foo'
 
       await assignJobNames.run()
 

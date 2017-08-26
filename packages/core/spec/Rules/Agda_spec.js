@@ -18,17 +18,17 @@ async function initialize (options: Object = {}) {
 describe('Agda', () => {
   describe('appliesToParameters', () => {
     it('returns true if literateAgdaEngine is \'agda\'', async (done) => {
-      const { rule } = await initialize()
+      const { rule, options } = await initialize()
 
-      expect(await Agda.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await Agda.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'agda\'', async (done) => {
-      const { rule } = await initialize({ literateAgdaEngine: 'lhs2TeX' })
+      const { rule, options } = await initialize({ literateAgdaEngine: 'lhs2TeX' })
 
-      expect(await Agda.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await Agda.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
