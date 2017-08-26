@@ -11,10 +11,12 @@ export default class Agda extends Rule {
   static description: string = 'Runs agda on lagda files.'
 
   static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+    // Only apply if the literate Agda engince is set to agda
     return options.literateAgdaEngine === 'agda'
   }
 
   constructCommand (): CommandOptions {
+    // Force latex mode and save all file to root directory.
     return {
       args: ['agda', '--latex', '--latex-dir=.', '{{$BASE_0}}'],
       cd: '$ROOTDIR/$DIR_0',

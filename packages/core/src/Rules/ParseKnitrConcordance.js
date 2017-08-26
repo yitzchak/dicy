@@ -2,7 +2,7 @@
 
 import Rule from '../Rule'
 
-import type { Action, Command, LineRangeMapping, SourceMap } from '../types'
+import type { Action, Command, LineRangeMapping, SourceMaps } from '../types'
 
 const WRAPPED_LINE_PATTERN = /%$/
 
@@ -16,17 +16,21 @@ export default class ParseKnitrConcordance extends Rule {
     const outputFile = await this.getResolvedOutput('$FILEPATH_0-ParsedSourceMap')
     if (!outputFile) return false
 
-    const sourceMaps: Array<SourceMap> = []
+    const sourceMaps: SourceMaps = {
+      maps: []
+    }
 
     await this.firstParameter.parse([{
       names: ['output', 'input', 'indicies'],
       patterns: [/^\\Sconcordance\{concordance:([^:]*):([^:]*):([^}]*)\}$/],
       evaluate: (references, groups) => {
+        // Split up the indicies in preparation to decode the RLE array.
         const encodedIndicies: Array<number> = groups.indicies.split(/\s+/).map(x => parseInt(x))
         const mappings: Array<LineRangeMapping> = []
         let inputLine: number = 1
         let outputLine: number = 1
 
+        // Decode the RLE into input/output ranges
         for (let i = 1; i < encodedIndicies.length; i += 2) {
           for (let j = 0; j < encodedIndicies[i]; j++, outputLine++, inputLine += encodedIndicies[i + 1]) {
             const start = inputLine
@@ -41,7 +45,7 @@ export default class ParseKnitrConcordance extends Rule {
           }
         }
 
-        sourceMaps.push({
+        sourceMaps.maps.push({
           input: groups.input,
           output: groups.output,
           mappings
@@ -49,7 +53,7 @@ export default class ParseKnitrConcordance extends Rule {
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 
-    outputFile.value = { sourceMaps }
+    outputFile.value = sourceMaps
 
     return true
   }
