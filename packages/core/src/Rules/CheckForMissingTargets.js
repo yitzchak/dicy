@@ -13,9 +13,11 @@ export default class CheckForMissingTargets extends Rule {
     const files = await this.getTargetFiles()
     const jobName = this.options.jobName
 
+    // If targets found for this job then just return true.
     if ((!jobName && files.length !== 0) ||
       (jobName && files.some(file => file.jobNames.has(jobName)))) return true
 
+    // No targets found so log an error message and cause rule failure.
     const jobText = jobName ? ` with job name of \`${jobName}\`` : ''
     this.error(`No rule produced or was capable of producing a target for main source file \`${this.options.filePath}\`${jobText}.`)
 
