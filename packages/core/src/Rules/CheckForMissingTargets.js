@@ -13,12 +13,12 @@ export default class CheckForMissingTargets extends Rule {
     const files = await this.getTargetFiles()
     const jobName = this.options.jobName
 
-    if (!files.some(file => (!jobName && file.jobNames.size === 0) ||
-      (jobName && file.jobNames.has(jobName)))) {
-      const jobText = jobName ? ` with job name of \`${jobName}\`` : ''
-      this.error(`No rule capable of producing a target for main source file \`${this.options.filePath}\`${jobText}.`)
-    }
+    if ((!jobName && files.length !== 0) ||
+      (jobName && files.some(file => file.jobNames.has(jobName)))) return true
 
-    return true
+    const jobText = jobName ? ` with job name of \`${jobName}\`` : ''
+    this.error(`No rule produced or was capable of producing a target for main source file \`${this.options.filePath}\`${jobText}.`)
+
+    return false
   }
 }
