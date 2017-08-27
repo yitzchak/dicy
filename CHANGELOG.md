@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   \[[#71][]].
 - `dviToPdfEngine` option to allow setting the program to use for DVI to PDF
   conversion \[[#72][]].
+- Verification of the existence of output targets \[[#76][]].
 
 ## [v0.8.0][] &mdash; 2017-08-15
 
@@ -139,6 +140,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
+[#76]: https://github.com/yitzchak/dicy/pull/76
 [#72]: https://github.com/yitzchak/dicy/pull/72
 [#71]: https://github.com/yitzchak/dicy/pull/71
 [#69]: https://github.com/yitzchak/dicy/pull/69
