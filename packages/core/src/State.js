@@ -140,6 +140,7 @@ export default class State extends EventEmitter {
   }
 
   async addCachedRule (cache: RuleCache): Promise<void> {
+    const options = this.getJobOptions(cache.jobName)
     const id = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, ...cache.parameters)
     if (this.rules.has(id)) return
 
@@ -152,7 +153,7 @@ export default class State extends EventEmitter {
         parameters.push(parameter)
       }
       // $FlowIgnore
-      const rule = new RuleClass(this, cache.command, cache.phase, cache.jobName, ...parameters)
+      const rule = new RuleClass(this, cache.command, cache.phase, options, ...parameters)
       this.addNode(rule.id)
       await rule.initialize()
       this.rules.set(rule.id, rule)

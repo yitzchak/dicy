@@ -21,7 +21,8 @@ export default class EpsToPdf extends Rule {
       case 'Nil':
         // If there is not a LaTeX log present then only apply epstopdf when the
         // main source file is an EPS.
-        return parameters[0].filePath === path.normalize(options.filePath)
+        return parameters[0].filePath === path.normalize(options.filePath) &&
+          options.outputFormat === 'pdf'
       case 'ParsedLaTeXLog':
         // When there is a LaTeX log present only apply epstopdf if there are
         // specific calls present, usually from the epstopdf package.
@@ -59,21 +60,25 @@ export default class EpsToPdf extends Rule {
   }
 
   async initialize () {
-    const call = EpsToPdf.findCall(this.parameters[1].value, this.parameters[0].filePath)
+    if (this.secondParameter.type === 'Nil') {
+      this.addResolvedTarget('$DIR_0/$NAME_0.pdf')
+    } else {
+      const call = EpsToPdf.findCall(this.parameters[1].value, this.parameters[0].filePath)
 
-    if (call) {
-      // There is a matching call so scrape the options from it.
-      if (call.options.outfile) {
-        this.options.epstopdfOutputPath = call.options.outfile
-      } else if (call.args.length > 2) {
-        this.options.epstopdfOutputPath = call.args[2]
+      if (call) {
+        // There is a matching call so scrape the options from it.
+        if (call.options.outfile) {
+          this.options.epstopdfOutputPath = call.options.outfile
+        } else if (call.args.length > 2) {
+          this.options.epstopdfOutputPath = call.args[2]
+        }
+
+        this.options.epstopdfBoundingBox = call.options.exact
+          ? 'exact'
+          : (call.options.hires ? 'hires' : 'default')
+
+        this.options.epstopdfRestricted = !!call.options.restricted
       }
-
-      this.options.epstopdfBoundingBox = call.options.exact
-        ? 'exact'
-        : (call.options.hires ? 'hires' : 'default')
-
-      this.options.epstopdfRestricted = !!call.options.restricted
     }
   }
 
