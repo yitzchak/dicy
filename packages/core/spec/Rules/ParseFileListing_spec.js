@@ -1,6 +1,7 @@
 /* @flow */
 
 import 'babel-polyfill'
+import path from 'path'
 
 import File from '../../src/File'
 import ParseFileListing from '../../src/Rules/ParseFileListing'
@@ -58,14 +59,14 @@ describe('ParseFileListing', () => {
         '/usr/local/texlive/2016/texmf-dist/web2c/texmf.cnf',
         '/usr/local/texlive/2016/texmf-var/web2c/pdftex/latex.fmt',
         '/usr/local/texlive/2016/texmf.cnf'
-      ].map(filePath => rule.normalizePath(filePath)),
+      ].map(filePath => rule.normalizePath(path.resolve(rule.rootPath, filePath))),
       outputs: [
         '/home/tburton/Documents/git/dicy/spec/fixtures/file-types/output/biber.aux',
         '/home/tburton/Documents/git/dicy/spec/fixtures/file-types/output/biber.bcf',
         '/home/tburton/Documents/git/dicy/spec/fixtures/file-types/output/biber.dvi',
         '/home/tburton/Documents/git/dicy/spec/fixtures/file-types/output/biber.log',
         '/home/tburton/Documents/git/dicy/spec/fixtures/file-types/output/biber.run.xml'
-      ].map(filePath => rule.normalizePath(filePath)),
+      ].map(filePath => rule.normalizePath(path.resolve(rule.rootPath, filePath))),
       messages: []
     }
 
