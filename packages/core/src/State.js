@@ -296,7 +296,7 @@ export default class State extends EventEmitter {
     this.assignOptions(this.defaultOptions)
   }
 
-  getJobOptions (jobName: ?string): OptionsInterface {
+  getJobOptions (jobName: ?string = null): OptionsInterface {
     let optionProxy = this.optionProxies[jobName]
 
     if (!optionProxy) {
@@ -306,7 +306,7 @@ export default class State extends EventEmitter {
             if ('jobName' in target) return [target.jobName]
             if ('jobNames' in target) return target.jobNames
             if ('jobs' in target) return Object.keys(target.jobs)
-            return [undefined]
+            return [null]
           }
 
           if (jobName) {
