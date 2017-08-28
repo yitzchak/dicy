@@ -249,11 +249,13 @@ export default class ParseLaTeXLog extends Rule {
         })
       }
     }, {
-      // Output file message.
+      // Output file message. This is especially important for XeLaTeX since
+      // it does not put the output PDF file name into the FLS file.
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
       evaluate: (reference, groups) => {
-        parsedLog.outputs.push(this.normalizePath(groups.filePath))
+        // Sometimes XeLaTeX uses astricks instead of spaces in output path.
+        parsedLog.outputs.push(this.normalizePath(groups.filePath.replace(/\*/g, ' ')))
       }
     }, {
       // Run system message.
