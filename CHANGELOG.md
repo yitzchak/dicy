@@ -18,7 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Parsing of LaTeX magic comments to allow environment variables (`$PATH`) to
   appear \[[#73][]].
-- Path globbing used searching for log files and `clean` command on Windows by
+- Path globbing used in searching for log files and `clean` command on Windows by
   not normalizing path before pattern application \[[#73][]].
 
 ## [v0.8.0][] &mdash; 2017-08-15
