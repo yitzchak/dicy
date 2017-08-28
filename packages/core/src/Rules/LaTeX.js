@@ -9,7 +9,7 @@ import type { Action, Command, CommandOptions, OptionsInterface, Phase } from '.
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const JAPANESE_LATEX_PATTERN = /^u?platex$/
-const RERUN_LATEX_PATTERN = /(rerun LaTeX|(?:Citation|Label)\(s\) may have changed\. Rerun|No file )/i
+const RERUN_LATEX_PATTERN = /(rerun LaTeX|(?:Citation|Label)\(s\) may have changed\. Rerun|No file |Point totals have changed. Rerun to get point totals right.)/i
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
