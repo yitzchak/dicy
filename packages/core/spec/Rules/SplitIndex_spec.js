@@ -5,23 +5,17 @@ import 'babel-polyfill'
 import SplitIndex from '../../src/Rules/SplitIndex'
 import { initializeRule } from '../helpers'
 
-type MakeIndexDefinition = {
-  indexPath?: string,
-  logValue?: Object,
-  options?: Object
-}
+import type { RuleDefinition } from '../helpers'
 
-async function initialize ({ indexPath = 'IndexControlFile.idx', logValue = { inputs: [], outputs: [], messages: [], calls: [] }, options = {} }: MakeIndexDefinition = {}) {
-  return initializeRule({
-    RuleClass: SplitIndex,
-    parameters: [{
-      filePath: indexPath
-    }, {
-      filePath: 'LaTeX.log-ParsedLaTeXLog',
-      value: logValue
-    }],
-    options
-  })
+async function initialize ({
+  RuleClass = SplitIndex,
+  parameters = [{
+    filePath: 'IndexControlFile.idx'
+  }, {
+    filePath: 'LaTeX.log-ParsedLaTeXLog'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('SplitIndex', () => {
@@ -36,15 +30,20 @@ describe('SplitIndex', () => {
 
     it('returns true if there are splitindex notices in the log.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [{
-            severity: 'info',
-            text: 'Using splitted index at IndexControlFile.idx'
-          }],
-          calls: []
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [{
+              severity: 'info',
+              text: 'Using splitted index at IndexControlFile.idx'
+            }],
+            calls: []
+          }
+        }]
       })
 
       expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
@@ -54,16 +53,21 @@ describe('SplitIndex', () => {
 
     it('returns true if there are splitindex calls in the log.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['splitindex', 'IndexControlFile.idx'],
-            options: { makeindex: '' },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['splitindex', 'IndexControlFile.idx'],
+              options: { makeindex: '' },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)

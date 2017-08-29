@@ -6,14 +6,15 @@ import 'babel-polyfill'
 import PythonTeX from '../../src/Rules/PythonTeX'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: PythonTeX,
-    parameters: [{
-      filePath: 'PythonTeX.pytxcode'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = PythonTeX,
+  parameters = [{
+    filePath: 'PythonTeX.pytxcode'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('PythonTeX', () => {

@@ -5,29 +5,35 @@ import 'babel-polyfill'
 import ReportLogMessages from '../../src/Rules/ReportLogMessages'
 import { initializeRule } from '../helpers'
 
-async function initialize (value?: Object) {
-  return initializeRule({
-    RuleClass: ReportLogMessages,
-    parameters: [{
-      filePath: 'LaTeXLog_pdfTeX.log-ParsedLaTeXLog',
-      value
-    }]
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = ReportLogMessages,
+  parameters = [{
+    filePath: 'LaTeXLog_pdfTeX.log-ParsedLaTeXLog'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('ReportLogMessages', () => {
   describe('run', () => {
     it('logs all messages in a parsed log file.', async (done) => {
       const { rule } = await initialize({
-        inputs: [],
-        outputs: [],
-        calls: [],
-        messages: [{
-          severity: 'info',
-          text: 'foo'
-        }, {
-          severity: 'warning',
-          text: 'bar'
+        parameters: [{
+          filePath: 'LaTeXLog_pdfTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            calls: [],
+            messages: [{
+              severity: 'info',
+              text: 'foo'
+            }, {
+              severity: 'warning',
+              text: 'bar'
+            }]
+          }
         }]
       })
 
