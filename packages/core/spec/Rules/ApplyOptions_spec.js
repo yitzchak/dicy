@@ -1,64 +1,43 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import State from '../../src/State'
 import File from '../../src/File'
 import Rule from '../../src/Rule'
 import ApplyOptions from '../../src/Rules/ApplyOptions'
+import { initializeRule } from '../helpers'
+
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({ RuleClass = ApplyOptions, ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, ...rest })
+}
 
 describe('ApplyOptions', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let state: State
-  let applyOptions: ApplyOptions
-
-  beforeEach(async (done) => {
-    state = await State.create(path.resolve(fixturesPath, 'file.tex'), [{
-      name: 'a',
-      type: 'boolean',
-      description: 'A',
-      commands: [],
-      noInvalidate: true
-    }, {
-      name: 'b',
-      type: 'string',
-      description: 'B',
-      commands: []
-    }, {
-      name: 'c',
-      type: 'number',
-      description: 'C',
-      commands: []
-    }])
-    state.env.HOME = fixturesPath
-    applyOptions = new ApplyOptions(state, 'load', 'execute', state.getJobOptions())
-    done()
-  })
-
   describe('assignOptions', () => {
     it('verifies that high priority configuration overrides low priority configuration.', async (done) => {
-      const yaml: ?File = await applyOptions.getResolvedFile('$NAME.yaml-ParsedYAML')
-      const magic: ?File = await applyOptions.getResolvedFile('$BASE-ParsedLaTeXMagic')
+      const { rule } = await initialize()
+      const yaml: ?File = await rule.getResolvedFile('$NAME.yaml-ParsedYAML')
+      const magic: ?File = await rule.getResolvedFile('$BASE-ParsedLaTeXMagic')
 
       expect(yaml).toBeDefined()
       expect(magic).toBeDefined()
 
       if (yaml && magic) {
         yaml.value = {
-          a: true,
-          b: 'foo'
+          engine: 'foo',
+          indexStyle: 'baz.ist'
         }
         magic.value = {
-          a: false,
-          c: 743
+          engine: 'bar',
+          outputDirectory: 'gronk'
         }
 
-        await applyOptions.assignOptions()
+        await rule.assignOptions()
 
-        expect(state.options.a).toBe(false)
-        expect(state.options.b).toBe('foo')
-        expect(state.options.c).toBe(743)
+        expect(rule.state.options.engine).toBe('bar')
+        expect(rule.state.options.indexStyle).toBe('baz.ist')
+        expect(rule.state.options.outputDirectory).toBe('gronk')
       }
 
       done()
@@ -69,27 +48,30 @@ describe('ApplyOptions', () => {
     let loadRule: Rule
     let finalizeRule: Rule
     let otherRule: Rule
+    let applyOptions: ApplyOptions
 
-    beforeEach(() => {
-      state.options = {
-        a: true,
-        b: 'foo'
-      }
+    beforeEach(async (done) => {
+      const { dicy, rule } = await initialize()
+      const options = rule.state.getJobOptions()
 
-      loadRule = new Rule(state, 'load', 'execute', state.getJobOptions())
-      state.addRule(loadRule)
+      loadRule = new Rule(rule.state, 'load', 'execute', options)
+      dicy.addRule(loadRule)
 
-      finalizeRule = new Rule(state, 'load', 'finalize', state.getJobOptions())
-      state.addRule(finalizeRule)
+      finalizeRule = new Rule(rule.state, 'load', 'finalize', options)
+      dicy.addRule(finalizeRule)
 
-      otherRule = new Rule(state, 'build', 'execute', state.getJobOptions())
-      state.addRule(otherRule)
+      otherRule = new Rule(rule.state, 'build', 'execute', options)
+      dicy.addRule(otherRule)
+
+      applyOptions = rule
+
+      done()
     })
 
     it('verifies that not changing options does not remove any rules.', () => {
-      applyOptions.checkForConfigurationChange(state.options)
+      applyOptions.checkForConfigurationChange({})
 
-      expect(Array.from(state.rules.keys())).toEqual([
+      expect(Array.from(applyOptions.state.rules.keys())).toEqual([
         loadRule.id,
         finalizeRule.id,
         otherRule.id
@@ -97,9 +79,9 @@ describe('ApplyOptions', () => {
     })
 
     it('verifies that setting an option with `noInvalidate` does not remove any rules.', () => {
-      applyOptions.checkForConfigurationChange({ a: false, b: 'foo' })
+      applyOptions.checkForConfigurationChange({ phaseCycles: 20 })
 
-      expect(Array.from(state.rules.keys())).toEqual([
+      expect(Array.from(applyOptions.state.rules.keys())).toEqual([
         loadRule.id,
         finalizeRule.id,
         otherRule.id
@@ -107,9 +89,9 @@ describe('ApplyOptions', () => {
     })
 
     it('verifies that setting an option without `noInvalidate` removes appropriate rules.', () => {
-      applyOptions.checkForConfigurationChange({ a: true, b: 'bar' })
+      applyOptions.checkForConfigurationChange({ engine: 'foo' })
 
-      expect(Array.from(state.rules.keys())).toEqual([
+      expect(Array.from(applyOptions.state.rules.keys())).toEqual([
         loadRule.id
       ])
     })
