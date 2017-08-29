@@ -5,14 +5,15 @@ import 'babel-polyfill'
 import Agda from '../../src/Rules/Agda'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: Agda,
-    parameters: [{
-      filePath: 'DeviceIndependentFile.dvi'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = Agda,
+  parameters = [{
+    filePath: 'LiterateAgda.lagda'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('Agda', () => {
@@ -26,7 +27,9 @@ describe('Agda', () => {
     })
 
     it('returns false if literateAgdaEngine is not \'agda\'', async (done) => {
-      const { rule, options } = await initialize({ literateAgdaEngine: 'lhs2TeX' })
+      const { rule, options } = await initialize({
+        options: { literateAgdaEngine: 'lhs2TeX' }
+      })
 
       expect(await Agda.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 

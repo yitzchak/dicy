@@ -41,7 +41,7 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     for (const ruleClass: Class<Rule> of this.ruleClasses) {
-      const jobNames = ruleClass.ignoreJobName ? [undefined] : this.options.jobNames
+      const jobNames = ruleClass.ignoreJobName ? [null] : this.options.jobNames
       for (const jobName of jobNames) {
         const rule = await ruleClass.analyzePhase(this.state, command, phase, this.state.getJobOptions(jobName))
         if (rule) {
@@ -60,7 +60,7 @@ export default class DiCy extends StateConsumer {
       if (!file) break
 
       for (const ruleClass: Class<Rule> of this.ruleClasses) {
-        const jobNames = file.jobNames.size === 0 ? [undefined] : Array.from(file.jobNames.values())
+        const jobNames = file.jobNames.size === 0 ? [null] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
           const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, this.state.getJobOptions(jobName), file)
           for (const rule of rules) {

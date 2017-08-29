@@ -5,20 +5,23 @@ import 'babel-polyfill'
 import PdfToPs from '../../src/Rules/PdfToPs'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: PdfToPs,
-    parameters: [{
-      filePath: 'PortableDocumentFormat.pdf'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = PdfToPs,
+  parameters = [{
+    filePath: 'PortableDocumentFormat.pdf'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('PdfToPs', () => {
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'ps' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'ps' }
+      })
 
       expect(await PdfToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
@@ -26,7 +29,9 @@ describe('PdfToPs', () => {
     })
 
     it('returns false if outputFormat is not \'ps\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'pdf' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'pdf' }
+      })
 
       expect(await PdfToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 

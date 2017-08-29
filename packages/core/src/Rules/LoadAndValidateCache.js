@@ -9,6 +9,7 @@ export default class LoadAndValidateCache extends Rule {
   static phases: Set<Phase> = new Set(['initialize'])
   static commands: Set<Command> = new Set(['load'])
   static alwaysEvaluate: boolean = true
+  static ignoreJobName: boolean = true
   static description: string = 'Loads the file/rule cache from a previous build.'
 
   cacheFilePath: string
@@ -52,7 +53,7 @@ export default class LoadAndValidateCache extends Rule {
 
     if (!cache) return true
 
-    this.state.options = cache.options
+    this.state.assignOptions(cache.options)
 
     if (cache.files) {
       for (const filePath in cache.files) {

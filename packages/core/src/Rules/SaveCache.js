@@ -18,13 +18,10 @@ export default class SaveCache extends Rule {
   }
 
   async preEvaluate () {
-    if (await File.canRead(this.cacheFilePath)) return
-
-    for (const rule of this.rules) {
-      if (rule.outputs.some(file => !file.virtual)) return
+    // If all output files are virtual the don't bother saving.
+    if (Array.from(this.rules).every(rule => rule.outputs.every(file => file.virtual))) {
+      this.actions.delete('run')
     }
-
-    this.actions.delete('run')
   }
 
   async run () {
@@ -35,6 +32,7 @@ export default class SaveCache extends Rule {
       rules: []
     }
 
+    // Loop through all the files and add them to the cache.
     for (const file: File of this.files) {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
@@ -54,6 +52,7 @@ export default class SaveCache extends Rule {
       cache.files[file.filePath] = fileCache
     }
 
+    // Loop through all the rules and add them to the cache.
     for (const rule of this.rules) {
       const ruleCache: RuleCache = {
         name: rule.constructor.name,
@@ -71,6 +70,7 @@ export default class SaveCache extends Rule {
       cache.rules.push(ruleCache)
     }
 
+    // Save the cache and update the timestamp.
     await File.safeDump(this.cacheFilePath, cache)
     this.state.cacheTimeStamp = await File.getModifiedTime(this.cacheFilePath)
 

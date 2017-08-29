@@ -25,12 +25,13 @@ export default class ParseLaTeXMagic extends Rule {
 
     await this.firstParameter.parse([{
       names: ['jobName', 'name', 'value'],
-      patterns: [/^%\s*!T[eE]X\s+(?:([^:]+)\s*:\s*)?(\w+)\s*=\s*(.*)$/],
+      patterns: [/^%\s*!T[eE]X\s+(?:([^:]+?)\s*:\s*)?(\$?\w+)\s*=\s*(.*?)\s*$/],
       evaluate: (reference, groups) => {
         const schema = this.state.optionSchema.get(groups.name)
-        let value = groups.value.trim()
+        let value = groups.value
 
         if (schema) {
+          // If we have a schema definition then use it to parse the value
           switch (schema.type) {
             case 'strings':
               value = value.split(ITEM_SEPARATOR_PATTERN)
@@ -50,6 +51,7 @@ export default class ParseLaTeXMagic extends Rule {
         let jobMagic = magic
 
         if (groups.jobName) {
+          // There is a job name specified so create a jobs object.
           if (!('jobs' in magic)) magic.jobs = {}
 
           if (groups.jobName in magic.jobs) {
@@ -59,6 +61,7 @@ export default class ParseLaTeXMagic extends Rule {
           }
         }
 
+        // Assign the value
         jobMagic[groups.name] = value
       }
     }])

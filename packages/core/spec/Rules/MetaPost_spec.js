@@ -5,14 +5,15 @@ import 'babel-polyfill'
 import MetaPost from '../../src/Rules/MetaPost'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: MetaPost,
-    parameters: [{
-      filePath: 'MetaPost.mp'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = MetaPost,
+  parameters = [{
+    filePath: 'MetaPost.mp'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('MetaPost', () => {

@@ -5,14 +5,15 @@ import 'babel-polyfill'
 import MakeGlossaries from '../../src/Rules/MakeGlossaries'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: MakeGlossaries,
-    parameters: [{
-      filePath: 'GlossaryControlFile.glo'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = MakeGlossaries,
+  parameters = [{
+    filePath: 'GlossaryControlFile.glo'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('MakeGlossaries', () => {

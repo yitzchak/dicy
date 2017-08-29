@@ -5,20 +5,23 @@ import 'babel-polyfill'
 import PsToPdf from '../../src/Rules/PsToPdf'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: PsToPdf,
-    parameters: [{
-      filePath: 'PostScript.ps'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = PsToPdf,
+  parameters = [{
+    filePath: 'PostScript.ps'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('PsToPdf', () => {
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'pdf' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'pdf' }
+      })
 
       expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
@@ -26,7 +29,9 @@ describe('PsToPdf', () => {
     })
 
     it('returns false if outputFormat is not \'pdf\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'ps' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'ps' }
+      })
 
       expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 

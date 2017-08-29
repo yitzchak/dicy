@@ -5,14 +5,15 @@ import 'babel-polyfill'
 import Sage from '../../src/Rules/Sage'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: Sage,
-    parameters: [{
-      filePath: 'Sage.sage'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = Sage,
+  parameters = [{
+    filePath: 'Sage.sage'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('Sage', () => {

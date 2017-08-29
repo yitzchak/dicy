@@ -5,14 +5,15 @@ import 'babel-polyfill'
 import Biber from '../../src/Rules/Biber'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: Biber,
-    parameters: [{
-      filePath: 'BiberControlFile.bcf'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = Biber,
+  parameters = [{
+    filePath: 'BiberControlFile.bcf'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('Biber', () => {

@@ -5,20 +5,23 @@ import 'babel-polyfill'
 import DviToPdf from '../../src/Rules/DviToPdf'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: DviToPdf,
-    parameters: [{
-      filePath: 'DeviceIndependentFile.dvi'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = DviToPdf,
+  parameters = [{
+    filePath: 'DeviceIndependentFile.dvi'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('DviToPdf', () => {
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'pdf' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'pdf' }
+      })
 
       expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
@@ -26,7 +29,9 @@ describe('DviToPdf', () => {
     })
 
     it('returns false if outputFormat is not \'pdf\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'ps' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'ps' }
+      })
 
       expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
@@ -34,7 +39,9 @@ describe('DviToPdf', () => {
     })
 
     it('returns false if outputFormat is \'pdf\' but intermediatePostScript is set.', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'pdf', intermediatePostScript: true })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'pdf', intermediatePostScript: true }
+      })
 
       expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
@@ -62,7 +69,9 @@ describe('DviToPdf', () => {
     })
 
     it('uses correct dvipdf program when dviToPdfEngine is set.', async (done) => {
-      const { rule } = await initialize({ dviToPdfEngine: 'dvipdfm' })
+      const { rule } = await initialize({
+        options: { dviToPdfEngine: 'dvipdfm' }
+      })
 
       expect(rule.constructCommand().args[0]).toEqual('dvipdfm')
 

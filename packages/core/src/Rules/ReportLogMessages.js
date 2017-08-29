@@ -24,7 +24,8 @@ export default class ReportLogMessages extends Rule {
   async run () {
     const parsedLog: ?ParsedLog = this.firstParameter.value
 
-    if (parsedLog) {
+    // Not much here, just log each message, if there are any.
+    if (parsedLog && parsedLog.messages) {
       for (const message: Message of parsedLog.messages) {
         this.log(message)
       }

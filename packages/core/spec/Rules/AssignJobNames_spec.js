@@ -1,34 +1,23 @@
 /* @flow */
 
 import 'babel-polyfill'
-import path from 'path'
 
-import State from '../../src/State'
-import File from '../../src/File'
 import AssignJobNames from '../../src/Rules/AssignJobNames'
+import { initializeRule } from '../helpers'
+
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({ RuleClass = AssignJobNames, ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, ...rest })
+}
 
 describe('AssignJobNames', () => {
-  const fixturesPath = path.resolve(__dirname, '..', 'fixtures')
-  let state: State
-  let source: File
-  let assignJobNames: AssignJobNames
-
-  beforeEach(async (done) => {
-    state = await State.create(path.resolve(fixturesPath, 'file.tex'), [{
-      name: 'filePath',
-      type: 'string',
-      description: 'file path',
-      commands: []
-    }])
-    state.env.HOME = fixturesPath
-    assignJobNames = new AssignJobNames(state, 'load', 'finalize', state.getJobOptions())
-    source = await assignJobNames.getFile('file.tex')
-    done()
-  })
-
   describe('run', () => {
     it('verifies that no job names are set.', async (done) => {
-      await assignJobNames.run()
+      const { rule } = await initialize()
+      const source = await rule.getFile(rule.options.filePath)
+
+      expect(await rule.run()).toBe(true)
 
       expect(Array.from(source.jobNames.values())).toEqual([])
 
@@ -36,9 +25,10 @@ describe('AssignJobNames', () => {
     })
 
     it('verifies that job name is attached to file.', async (done) => {
-      assignJobNames.options.jobName = 'foo'
+      const { rule } = await initialize({ options: { jobName: 'foo' } })
+      const source = await rule.getFile(rule.options.filePath)
 
-      await assignJobNames.run()
+      expect(await rule.run()).toBe(true)
 
       expect(Array.from(source.jobNames.values())).toEqual(['foo'])
 

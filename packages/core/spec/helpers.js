@@ -94,37 +94,50 @@ export const customMatchers = {
 
 export type ParameterDefinition = {
   filePath: string,
-  value?: Object
+  value?: any
 }
 
 export type RuleDefinition = {
-  RuleClass: Class<Rule>,
+  RuleClass?: Class<Rule>,
   command?: Command,
   phase?: Phase,
   jobName?: string,
   filePath?: string,
   parameters?: Array<ParameterDefinition>,
-  options?: Object
+  options?: Object,
+  targets?: Array<string>
 }
 
-export async function initializeRule ({ RuleClass, command, phase, jobName, filePath = 'file-types/LaTeX_article.tex', parameters = [], options = {} }: RuleDefinition) {
+export async function initializeRule ({ RuleClass, command, phase, jobName, filePath = 'file-types/LaTeX_article.tex', parameters = [], options = {}, targets = [] }: RuleDefinition) {
+  if (!RuleClass) throw new Error('Missing rule class in initializeRule.')
+
   options.ignoreUserOptions = true
   const realFilePath = path.resolve(__dirname, 'fixtures', filePath)
   const dicy = await DiCy.create(realFilePath, options)
   const files = []
+
+  for (const target of targets) {
+    dicy.addTarget(target)
+  }
+
   for (const { filePath, value } of parameters) {
     const file = await dicy.getFile(filePath)
     if (file && value) file.value = value
     files.push(file)
   }
+
   if (!command) {
     command = RuleClass.commands.values().next().value || 'build'
   }
+
   if (!phase) {
     phase = RuleClass.phases.values().next().value || 'execute'
   }
   const jobOptions = dicy.state.getJobOptions(jobName)
   const rule = new RuleClass(dicy.state, command, phase, jobOptions, ...files)
+
+  spyOn(rule, 'log')
   await rule.initialize()
+
   return { dicy, rule, options: jobOptions }
 }

@@ -6,22 +6,23 @@ import File from '../../src/File'
 import ParseLaTeXLog from '../../src/Rules/ParseLaTeXLog'
 import { initializeRule } from '../helpers'
 
-async function initialize (filePath: string, logPath: string, options: Object = {}) {
-  return initializeRule({
-    RuleClass: ParseLaTeXLog,
-    filePath,
-    parameters: [{
-      filePath: logPath
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = ParseLaTeXLog,
+  filePath = 'error-warning.tex',
+  parameters = [{
+    filePath: 'error-warning.log'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, filePath, parameters, ...rest })
 }
 
 describe('ParseLaTeXLog', () => {
   it('verifies that all log messages are successfully parsed.', async (done) => {
     const sourceName = 'error-warning.tex'
     const logName = 'error-warning.log'
-    const { rule } = await initialize(sourceName, logName)
+    const { rule } = await initialize()
     const messages = [{
       name: 'pdfTeX',
       severity: 'info',

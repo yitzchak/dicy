@@ -15,6 +15,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   conversion \[[#72][]].
 - Verification of the existence of output targets \[[#76][]].
 
+### Fixed
+- Parsing of LaTeX magic comments to allow environment variables (`$PATH`) to
+  appear \[[#73][]].
+- Path globbing used in searching for log files and `clean` command on Windows by
+  not normalizing path before pattern application \[[#73][]].
+
 ## [v0.8.0][] &mdash; 2017-08-15
 
 ### Added
@@ -141,6 +147,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
 [#76]: https://github.com/yitzchak/dicy/pull/76
+[#73]: https://github.com/yitzchak/dicy/pull/73
 [#72]: https://github.com/yitzchak/dicy/pull/72
 [#71]: https://github.com/yitzchak/dicy/pull/71
 [#69]: https://github.com/yitzchak/dicy/pull/69
