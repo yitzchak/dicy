@@ -5,14 +5,15 @@ import 'babel-polyfill'
 import LhsToTeX from '../../src/Rules/LhsToTeX'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}, filePath = 'LiterateHaskell.lhs') {
-  return initializeRule({
-    RuleClass: LhsToTeX,
-    parameters: [{
-      filePath
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = LhsToTeX,
+  parameters = [{
+    filePath: 'LiterateHaskell.lhs'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('LhsToTeX', () => {
@@ -26,7 +27,10 @@ describe('LhsToTeX', () => {
     })
 
     it('returns true if literateAgdaEngine is \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule, options } = await initialize({ literateAgdaEngine: 'lhs2TeX' }, 'LiterateAgda.lagda')
+      const { rule, options } = await initialize({
+        parameters: [{ filePath: 'LiterateAgda.lagda' }],
+        options: { literateAgdaEngine: 'lhs2TeX' }
+      })
 
       expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
@@ -34,7 +38,9 @@ describe('LhsToTeX', () => {
     })
 
     it('returns false if literateAgdaEngine is not \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule, options } = await initialize({}, 'LiterateAgda.lagda')
+      const { rule, options } = await initialize({
+        parameters: [{ filePath: 'LiterateAgda.lagda' }]
+      })
 
       expect(await LhsToTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
@@ -57,7 +63,10 @@ describe('LhsToTeX', () => {
     })
 
     it('returns correct arguments and command options for lagda file.', async (done) => {
-      const { rule } = await initialize({}, 'LiterateAgda.lagda')
+      const { rule } = await initialize({
+        parameters: [{ filePath: 'LiterateAgda.lagda' }],
+        options: { literateAgdaEngine: 'lhs2TeX' }
+      })
 
       expect(rule.constructCommand()).toEqual({
         args: ['lhs2TeX', '--agda', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
@@ -70,7 +79,9 @@ describe('LhsToTeX', () => {
     })
 
     it('add --math to command line when lhs2texStyle is set to \'math\'.', async (done) => {
-      const { rule } = await initialize({ lhs2texStyle: 'math' })
+      const { rule } = await initialize({
+        options: { lhs2texStyle: 'math' }
+      })
 
       expect(rule.constructCommand().args).toContain('--math')
 
@@ -78,7 +89,9 @@ describe('LhsToTeX', () => {
     })
 
     it('add --newcode to command line when lhs2texStyle is set to \'newCode\'.', async (done) => {
-      const { rule } = await initialize({ lhs2texStyle: 'newCode' })
+      const { rule } = await initialize({
+        options: { lhs2texStyle: 'newCode' }
+      })
 
       expect(rule.constructCommand().args).toContain('--newcode')
 
@@ -86,7 +99,9 @@ describe('LhsToTeX', () => {
     })
 
     it('add --code to command line when lhs2texStyle is set to \'code\'.', async (done) => {
-      const { rule } = await initialize({ lhs2texStyle: 'code' })
+      const { rule } = await initialize({
+        options: { lhs2texStyle: 'code' }
+      })
 
       expect(rule.constructCommand().args).toContain('--code')
 
@@ -94,7 +109,9 @@ describe('LhsToTeX', () => {
     })
 
     it('add --tt to command line when lhs2texStyle is set to \'typewriter\'.', async (done) => {
-      const { rule } = await initialize({ lhs2texStyle: 'typewriter' })
+      const { rule } = await initialize({
+        options: { lhs2texStyle: 'typewriter' }
+      })
 
       expect(rule.constructCommand().args).toContain('--tt')
 
@@ -102,7 +119,9 @@ describe('LhsToTeX', () => {
     })
 
     it('add --verb to command line when lhs2texStyle is set to \'verbatim\'.', async (done) => {
-      const { rule } = await initialize({ lhs2texStyle: 'verbatim' })
+      const { rule } = await initialize({
+        options: { lhs2texStyle: 'verbatim' }
+      })
 
       expect(rule.constructCommand().args).toContain('--verb')
 

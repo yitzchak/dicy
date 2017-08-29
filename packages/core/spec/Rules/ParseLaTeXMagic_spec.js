@@ -6,15 +6,16 @@ import File from '../../src/File'
 import ParseLaTeXMagic from '../../src/Rules/ParseLaTeXMagic'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: ParseLaTeXMagic,
-    filePath: 'file-types/LaTeX_standalone.tex',
-    parameters: [{
-      filePath: 'LaTeX_standalone.tex'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = ParseLaTeXMagic,
+  filePath = 'file-types/LaTeX_standalone.tex',
+  parameters = [{
+    filePath: 'LaTeX_standalone.tex'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, filePath, parameters, ...rest })
 }
 
 describe('ParseLaTeXMagic', () => {

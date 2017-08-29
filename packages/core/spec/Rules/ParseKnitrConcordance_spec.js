@@ -6,15 +6,16 @@ import File from '../../src/File'
 import ParseKnitrConcordance from '../../src/Rules/ParseKnitrConcordance'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: ParseKnitrConcordance,
-    filePath: 'file-types/RNoWeb.Rnw',
-    parameters: [{
-      filePath: 'KnitrConcordance-concordance.tex'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = ParseKnitrConcordance,
+  filePath = 'file-types/RNoWeb.Rnw',
+  parameters = [{
+    filePath: 'KnitrConcordance-concordance.tex'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, filePath, parameters, ...rest })
 }
 
 describe('ParseKnitrConcordance', () => {

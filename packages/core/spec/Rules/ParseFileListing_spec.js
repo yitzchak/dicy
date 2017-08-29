@@ -9,14 +9,15 @@ import { initializeRule } from '../helpers'
 
 import type { ParsedLog } from '../../src/types'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: ParseFileListing,
-    parameters: [{
-      filePath: 'FileListing.fls'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = ParseFileListing,
+  parameters = [{
+    filePath: 'FileListing.fls'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('ParseFileListing', () => {

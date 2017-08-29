@@ -5,20 +5,23 @@ import 'babel-polyfill'
 import DviToPs from '../../src/Rules/DviToPs'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: DviToPs,
-    parameters: [{
-      filePath: 'DeviceIndependentFile.dvi'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = DviToPs,
+  parameters = [{
+    filePath: 'DeviceIndependentFile.dvi'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('DviToPs', () => {
   describe('appliesToParameters', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'ps' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'ps' }
+      })
 
       expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
@@ -26,7 +29,9 @@ describe('DviToPs', () => {
     })
 
     it('returns true if outputFormat is \'pdf\' and intermediatePostScript is set', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'pdf', intermediatePostScript: true })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'pdf', intermediatePostScript: true }
+      })
 
       expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
@@ -34,7 +39,9 @@ describe('DviToPs', () => {
     })
 
     it('returns false if outputFormat is not \'ps\'', async (done) => {
-      const { rule, options } = await initialize({ outputFormat: 'dvi' })
+      const { rule, options } = await initialize({
+        options: { outputFormat: 'dvi' }
+      })
 
       expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 

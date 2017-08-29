@@ -6,12 +6,13 @@ import path from 'path'
 import FindLogFiles from '../../src/Rules/FindLogFiles'
 import { initializeRule } from '../helpers'
 
-async function initialize (options = {}) {
-  return initializeRule({
-    RuleClass: FindLogFiles,
-    filePath: 'error-warning.tex',
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = FindLogFiles,
+  filePath = 'error-warning.tex',
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, filePath, ...rest })
 }
 
 describe('FindLogFiles', () => {
@@ -31,8 +32,10 @@ describe('FindLogFiles', () => {
     it('finds all log files when output directory is set.', async (done) => {
       const logPath = path.join('file-types', 'BiberLog.blg')
       const { rule } = await initialize({
-        jobName: 'BiberLog',
-        outputDirectory: 'file-types'
+        options: {
+          jobName: 'BiberLog',
+          outputDirectory: 'file-types'
+        }
       })
 
       expect(await rule.run()).toBe(true)

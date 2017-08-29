@@ -94,11 +94,11 @@ export const customMatchers = {
 
 export type ParameterDefinition = {
   filePath: string,
-  value?: Object
+  value?: any
 }
 
 export type RuleDefinition = {
-  RuleClass: Class<Rule>,
+  RuleClass?: Class<Rule>,
   command?: Command,
   phase?: Phase,
   jobName?: string,
@@ -109,6 +109,8 @@ export type RuleDefinition = {
 }
 
 export async function initializeRule ({ RuleClass, command, phase, jobName, filePath = 'file-types/LaTeX_article.tex', parameters = [], options = {}, targets = [] }: RuleDefinition) {
+  if (!RuleClass) throw new Error('Missing rule class in initializeRule.')
+
   options.ignoreUserOptions = true
   const realFilePath = path.resolve(__dirname, 'fixtures', filePath)
   const dicy = await DiCy.create(realFilePath, options)

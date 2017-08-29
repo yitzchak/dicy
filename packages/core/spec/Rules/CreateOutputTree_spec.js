@@ -5,11 +5,10 @@ import 'babel-polyfill'
 import CreateOutputTree from '../../src/Rules/CreateOutputTree'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: CreateOutputTree,
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({ RuleClass = CreateOutputTree, ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, ...rest })
 }
 
 describe('CreateOutputTree', () => {
@@ -23,7 +22,9 @@ describe('CreateOutputTree', () => {
     })
 
     it('returns false if outputDirectory is set to current directory.', async (done) => {
-      const { rule, options } = await initialize({ outputDirectory: '.' })
+      const { rule, options } = await initialize({
+        options: { outputDirectory: '.' }
+      })
 
       expect(await CreateOutputTree.appliesToPhase(rule.state, 'build', 'initialize', options)).toBe(false)
 
@@ -31,7 +32,9 @@ describe('CreateOutputTree', () => {
     })
 
     it('returns true if outputDirectory is set.', async (done) => {
-      const { rule, options } = await initialize({ outputDirectory: 'foo' })
+      const { rule, options } = await initialize({
+        options: { outputDirectory: 'foo' }
+      })
 
       expect(await CreateOutputTree.appliesToPhase(rule.state, 'build', 'initialize', options)).toBe(true)
 

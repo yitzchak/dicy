@@ -5,15 +5,16 @@ import 'babel-polyfill'
 import Knitr from '../../src/Rules/Knitr'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: Knitr,
-    filePath: 'file-types/RNoWeb.Rnw',
-    parameters: [{
-      filePath: 'RNoWeb.Rnw'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = Knitr,
+  filePath = 'file-types/RNoWeb.Rnw',
+  parameters = [{
+    filePath: 'RNoWeb.Rnw'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, filePath, parameters, ...rest })
 }
 
 describe('Knitr', () => {
@@ -32,7 +33,9 @@ describe('Knitr', () => {
     })
 
     it('returns correct arguments and command options for Rnw file when concordance is off.', async (done) => {
-      const { rule } = await initialize({ knitrConcordance: false })
+      const { rule } = await initialize({
+        options: { knitrConcordance: false }
+      })
 
       expect(rule.constructCommand()).toEqual({
         args: ['Rscript', '-e', 'library(knitr);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
@@ -45,7 +48,9 @@ describe('Knitr', () => {
     })
 
     it('returns correct arguments and command options for Rnw file when knitrOutputPath is set.', async (done) => {
-      const { rule } = await initialize({ knitrOutputPath: 'foo.tex' })
+      const { rule } = await initialize({
+        options: { knitrOutputPath: 'foo.tex' }
+      })
 
       expect(rule.constructCommand()).toEqual({
         args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'foo.tex\')'],

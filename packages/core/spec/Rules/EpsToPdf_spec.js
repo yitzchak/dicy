@@ -5,25 +5,17 @@ import 'babel-polyfill'
 import EpsToPdf from '../../src/Rules/EpsToPdf'
 import { initializeRule } from '../helpers'
 
-type EpsToPdfDefinition = {
-  filePath?: string,
-  epsPath?: string,
-  logValue?: Object,
-  options?: Object
-}
+import type { RuleDefinition } from '../helpers'
 
-async function initialize ({ epsPath = 'EncapsulatedPostScript.eps', filePath = 'file-types/LaTeX_article.tex', logValue, options = {} }: EpsToPdfDefinition = {}) {
-  return initializeRule({
-    RuleClass: EpsToPdf,
-    filePath,
-    parameters: [{
-      filePath: epsPath
-    }, {
-      filePath: logValue ? 'LaTeX.log-ParsedLaTeXLog' : 'x.y-Nil',
-      value: logValue
-    }],
-    options
-  })
+async function initialize ({
+  RuleClass = EpsToPdf,
+  parameters = [{
+    filePath: 'EncapsulatedPostScript.eps'
+  }, {
+    filePath: 'x.y-Nil'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('EpsToPdf', () => {
@@ -48,16 +40,21 @@ describe('EpsToPdf', () => {
 
     it('returns true if there is a matching epstopdf call in the log.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['epstopdf', 'EncapsulatedPostScript.eps'],
-            options: { epstopdf: '' },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'EncapsulatedPostScript.eps'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['epstopdf', 'EncapsulatedPostScript.eps'],
+              options: { epstopdf: '' },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
@@ -67,16 +64,21 @@ describe('EpsToPdf', () => {
 
     it('returns false if there is a matching epstopdf call in the log.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['epstopdf', 'foo.eps'],
-            options: { epstopdf: '' },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'EncapsulatedPostScript.eps'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['epstopdf', 'foo.eps'],
+              options: { epstopdf: '' },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
@@ -124,16 +126,21 @@ describe('EpsToPdf', () => {
 
     it('removes run action if epstopdf call present.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['epstopdf', 'EncapsulatedPostScript.eps'],
-            options: {},
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'EncapsulatedPostScript.eps'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['epstopdf', 'EncapsulatedPostScript.eps'],
+              options: {},
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       rule.addActions()
@@ -145,16 +152,21 @@ describe('EpsToPdf', () => {
 
     it('retains run action if epstopdf call failed.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['epstopdf', 'EncapsulatedPostScript.eps'],
-            options: {},
-            status: 'clobbered'
-          }]
-        }
+        parameters: [{
+          filePath: 'EncapsulatedPostScript.eps'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['epstopdf', 'EncapsulatedPostScript.eps'],
+              options: {},
+              status: 'clobbered'
+            }]
+          }
+        }]
       })
 
       rule.addActions()
@@ -166,16 +178,21 @@ describe('EpsToPdf', () => {
 
     it('retains run action if epstopdf call was for another file.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['epstopdf', 'foo.eps'],
-            options: {},
-            status: 'execute (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'EncapsulatedPostScript.eps'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['epstopdf', 'foo.eps'],
+              options: {},
+              status: 'execute (allowed)'
+            }]
+          }
+        }]
       })
 
       rule.addActions()
@@ -189,20 +206,25 @@ describe('EpsToPdf', () => {
   describe('initialize', () => {
     it('verifies that epstopdf call overrides default options.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['epstopdf', 'EncapsulatedPostScript.eps'],
-            options: {
-              hires: true,
-              outfile: 'foo.pdf',
-              restricted: true
-            },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'EncapsulatedPostScript.eps'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['epstopdf', 'EncapsulatedPostScript.eps'],
+              options: {
+                hires: true,
+                outfile: 'foo.pdf',
+                restricted: true
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.epstopdfBoundingBox).toBe('hires')
@@ -214,18 +236,23 @@ describe('EpsToPdf', () => {
 
     it('verifies that epstopdf with --exact call overrides default options.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['epstopdf', 'EncapsulatedPostScript.eps'],
-            options: {
-              exact: true
-            },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'EncapsulatedPostScript.eps'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['epstopdf', 'EncapsulatedPostScript.eps'],
+              options: {
+                exact: true
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.epstopdfBoundingBox).toBe('exact')

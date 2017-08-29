@@ -5,18 +5,18 @@ import 'babel-polyfill'
 import CheckForMissingTargets from '../../src/Rules/CheckForMissingTargets'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}, targets = []) {
-  return initializeRule({
-    RuleClass: CheckForMissingTargets,
-    options,
-    targets
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({ RuleClass = CheckForMissingTargets, ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, ...rest })
 }
 
 describe('CheckForMissingTargets', () => {
   describe('run', () => {
     it('run succeeds and does not log any error messages when targets are available.', async (done) => {
-      const { rule } = await initialize({}, ['PortableDocumentFormat.pdf'])
+      const { rule } = await initialize({
+        targets: ['PortableDocumentFormat.pdf']
+      })
 
       expect(await rule.run()).toBe(true)
       expect(rule.log).not.toHaveBeenCalled()
@@ -38,7 +38,10 @@ describe('CheckForMissingTargets', () => {
     })
 
     it('run succeeds and does not any log error messages when targets are available when a jobname is set.', async (done) => {
-      const { rule } = await initialize({ jobName: 'foo' }, ['PortableDocumentFormat.pdf'])
+      const { rule } = await initialize({
+        options: { jobName: 'foo' },
+        targets: ['PortableDocumentFormat.pdf']
+      })
 
       const file = await rule.getFile('PortableDocumentFormat.pdf')
       file.jobNames.add('foo')
@@ -50,7 +53,10 @@ describe('CheckForMissingTargets', () => {
     })
 
     it('run fails and logs an error messages when targets are not available when a jobname is set.', async (done) => {
-      const { rule } = await initialize({ jobName: 'foo' }, ['PortableDocumentFormat.pdf'])
+      const { rule } = await initialize({
+        options: { jobName: 'foo' },
+        target: ['PortableDocumentFormat.pdf']
+      })
 
       expect(await rule.run()).toBe(false)
       expect(rule.log).toHaveBeenCalledWith({

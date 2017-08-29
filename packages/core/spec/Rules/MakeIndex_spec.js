@@ -5,35 +5,34 @@ import 'babel-polyfill'
 import MakeIndex from '../../src/Rules/MakeIndex'
 import { initializeRule } from '../helpers'
 
-type MakeIndexDefinition = {
-  indexPath?: string,
-  logValue?: Object,
-  options?: Object
-}
+import type { RuleDefinition } from '../helpers'
 
-async function initialize ({ indexPath = 'IndexControlFile.idx', logValue = { inputs: [], outputs: [], messages: [], calls: [] }, options = {} }: MakeIndexDefinition = {}) {
-  return initializeRule({
-    RuleClass: MakeIndex,
-    parameters: [{
-      filePath: indexPath
-    }, {
-      filePath: 'LaTeX.log-ParsedLaTeXLog',
-      value: logValue
-    }],
-    options
-  })
+async function initialize ({
+  RuleClass = MakeIndex,
+  parameters = [{
+    filePath: 'IndexControlFile.idx'
+  }, {
+    filePath: 'LaTeX.log-ParsedLaTeXLog'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('MakeIndex', () => {
   describe('appliesToParameters', () => {
     it('returns true if there are no splitindex notices in the log.', async (done) => {
       const { dicy, rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: []
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: []
+          }
+        }]
       })
 
       expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
@@ -43,15 +42,20 @@ describe('MakeIndex', () => {
 
     it('returns false if there are splitindex notices in the log.', async (done) => {
       const { dicy, rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [{
-            severity: 'info',
-            text: 'Using splitted index at IndexControlFile.idx'
-          }],
-          calls: []
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [{
+              severity: 'info',
+              text: 'Using splitted index at IndexControlFile.idx'
+            }],
+            calls: []
+          }
+        }]
       })
 
       expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
@@ -61,16 +65,21 @@ describe('MakeIndex', () => {
 
     it('returns false if there are splitindex calls in the log.', async (done) => {
       const { dicy, rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['splitindex', 'IndexControlFile.idx'],
-            options: { makeindex: '' },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['splitindex', 'IndexControlFile.idx'],
+              options: { makeindex: '' },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
@@ -154,16 +163,21 @@ describe('MakeIndex', () => {
 
     it('removes run action if makeindex call present.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['makeindex', 'IndexControlFile.idx'],
-            options: {},
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: {},
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       rule.addActions()
@@ -175,16 +189,21 @@ describe('MakeIndex', () => {
 
     it('retains run action if makeindex call failed.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['makeindex', 'IndexControlFile.idx'],
-            options: {},
-            status: 'clobbered'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: {},
+              status: 'clobbered'
+            }]
+          }
+        }]
       })
 
       rule.addActions()
@@ -196,16 +215,21 @@ describe('MakeIndex', () => {
 
     it('retains run action if makeindex call was for another index.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['makeindex', 'foo.idx'],
-            options: {},
-            status: 'execute (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'foo.idx'],
+              options: {},
+              status: 'execute (allowed)'
+            }]
+          }
+        }]
       })
 
       rule.addActions()
@@ -219,25 +243,30 @@ describe('MakeIndex', () => {
   describe('initialize', () => {
     it('verifies that makeindex call overrides default options.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['makeindex', 'IndexControlFile.idx'],
-            options: {
-              c: true,
-              g: true,
-              l: true,
-              o: 'foo.ind',
-              p: 'odd',
-              r: true,
-              s: 'foo.ist',
-              t: 'foo.ilg'
-            },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: {
+                c: true,
+                g: true,
+                l: true,
+                o: 'foo.ind',
+                p: 'odd',
+                r: true,
+                s: 'foo.ist',
+                t: 'foo.ilg'
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.indexAutomaticRanges).toBe(false)
@@ -254,16 +283,21 @@ describe('MakeIndex', () => {
 
     it('verifies that makeindex call with -T option results in Thai sorting.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['makeindex', 'IndexControlFile.idx'],
-            options: { T: true },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: { T: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.indexSorting).toBe('thai')
@@ -272,16 +306,21 @@ describe('MakeIndex', () => {
 
     it('verifies that makeindex call with -L option results in locale sorting.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['makeindex', 'IndexControlFile.idx'],
-            options: { L: true },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'IndexControlFile.idx'],
+              options: { L: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.indexSorting).toBe('locale')
@@ -290,18 +329,23 @@ describe('MakeIndex', () => {
 
     it('verifies that makeindex call on a different index does not override default options.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['makeindex', 'foo.idx'],
-            options: {
-              c: true
-            },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['makeindex', 'foo.idx'],
+              options: {
+                c: true
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.indexCompressBlanks).toBe(false)
@@ -311,21 +355,26 @@ describe('MakeIndex', () => {
 
     it('verifies that mendex call overrides default options and sets indexEngine.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['mendex', 'IndexControlFile.idx'],
-            options: {
-              d: 'foo',
-              f: true,
-              I: 'euc',
-              U: true
-            },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: {
+                d: 'foo',
+                f: true,
+                I: 'euc',
+                U: true
+              },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.indexDictionary).toBe('foo')
@@ -339,16 +388,21 @@ describe('MakeIndex', () => {
 
     it('verifies that mendex call with -E option results in kanji setting of euc.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['mendex', 'IndexControlFile.idx'],
-            options: { E: true },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: { E: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.kanji).toBe('euc')
@@ -358,16 +412,21 @@ describe('MakeIndex', () => {
 
     it('verifies that mendex call with -J option results in kanji setting of jis.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['mendex', 'IndexControlFile.idx'],
-            options: { J: true },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: { J: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.kanji).toBe('jis')
@@ -377,16 +436,21 @@ describe('MakeIndex', () => {
 
     it('verifies that mendex call with -S option results in kanji setting of sjis.', async (done) => {
       const { rule } = await initialize({
-        logValue: {
-          inputs: [],
-          outputs: [],
-          messages: [],
-          calls: [{
-            args: ['mendex', 'IndexControlFile.idx'],
-            options: { S: true },
-            status: 'executed (allowed)'
-          }]
-        }
+        parameters: [{
+          filePath: 'IndexControlFile.idx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog',
+          value: {
+            inputs: [],
+            outputs: [],
+            messages: [],
+            calls: [{
+              args: ['mendex', 'IndexControlFile.idx'],
+              options: { S: true },
+              status: 'executed (allowed)'
+            }]
+          }
+        }]
       })
 
       expect(rule.options.kanji).toBe('sjis')
@@ -419,7 +483,11 @@ describe('MakeIndex', () => {
 
     it('returns correct arguments and command options for nomenclature file.', async (done) => {
       const { rule } = await initialize({
-        indexPath: 'NomenclatureControlFile.nlo'
+        parameters: [{
+          filePath: 'NomenclatureControlFile.nlo'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog'
+        }]
       })
 
       expect(rule.constructCommand()).toEqual({
@@ -444,7 +512,11 @@ describe('MakeIndex', () => {
 
     it('returns correct arguments and command options for bibref file.', async (done) => {
       const { rule } = await initialize({
-        indexPath: 'BibRefControlFile.bdx'
+        parameters: [{
+          filePath: 'BibRefControlFile.bdx'
+        }, {
+          filePath: 'LaTeX.log-ParsedLaTeXLog'
+        }]
       })
 
       expect(rule.constructCommand()).toEqual({

@@ -5,14 +5,15 @@ import 'babel-polyfill'
 import Asymptote from '../../src/Rules/Asymptote'
 import { initializeRule } from '../helpers'
 
-async function initialize (options: Object = {}) {
-  return initializeRule({
-    RuleClass: Asymptote,
-    parameters: [{
-      filePath: 'Asymptote.asy'
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = Asymptote,
+  parameters = [{
+    filePath: 'Asymptote.asy'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('Asymptote', () => {

@@ -5,17 +5,17 @@ import 'babel-polyfill'
 import BibTeX from '../../src/Rules/BibTeX'
 import { initializeRule } from '../helpers'
 
-async function initialize (options = {}, auxValue = {}) {
-  return initializeRule({
-    RuleClass: BibTeX,
-    parameters: [{
-      filePath: 'LaTeXAuxilary.aux'
-    }, {
-      filePath: 'LaTeXAuxilary.aux-ParsedLaTeXAuxilary',
-      value: auxValue
-    }],
-    options
-  })
+import type { RuleDefinition } from '../helpers'
+
+async function initialize ({
+  RuleClass = BibTeX,
+  parameters = [{
+    filePath: 'LaTeXAuxilary.aux'
+  }, {
+    filePath: 'LaTeXAuxilary.aux-ParsedLaTeXAuxilary'
+  }],
+  ...rest }: RuleDefinition = {}) {
+  return initializeRule({ RuleClass, parameters, ...rest })
 }
 
 describe('BibTeX', () => {
@@ -113,7 +113,9 @@ describe('BibTeX', () => {
     })
 
     it('returns correct arguments when bibtexEngine is set.', async (done) => {
-      const { rule } = await initialize({ bibtexEngine: 'upbibtex' })
+      const { rule } = await initialize({
+        options: { bibtexEngine: 'upbibtex' }
+      })
 
       expect(rule.constructCommand().args[0]).toEqual('upbibtex')
 
@@ -121,7 +123,9 @@ describe('BibTeX', () => {
     })
 
     it('adds kanji option when kanji encoding is set.', async (done) => {
-      const { rule } = await initialize({ bibtexEngine: 'upbibtex', kanji: 'uptex' })
+      const { rule } = await initialize({
+        options: { bibtexEngine: 'upbibtex', kanji: 'uptex' }
+      })
 
       expect(rule.constructCommand().args).toContain('-kanji=uptex')
 
@@ -129,7 +133,9 @@ describe('BibTeX', () => {
     })
 
     it('does not add kanji option when kanji encoding is set but engine is not a Japanese variant.', async (done) => {
-      const { rule } = await initialize({ kanji: 'uptex' })
+      const { rule } = await initialize({
+        options: { kanji: 'uptex' }
+      })
 
       expect(rule.constructCommand().args).not.toContain('-kanji=uptex')
 
@@ -137,7 +143,9 @@ describe('BibTeX', () => {
     })
 
     it('adds -kanji-internal option when kanji encoding is set.', async (done) => {
-      const { rule } = await initialize({ bibtexEngine: 'upbibtex', kanjiInternal: 'uptex' })
+      const { rule } = await initialize({
+        options: { bibtexEngine: 'upbibtex', kanjiInternal: 'uptex' }
+      })
 
       expect(rule.constructCommand().args).toContain('-kanji-internal=uptex')
 
@@ -145,7 +153,9 @@ describe('BibTeX', () => {
     })
 
     it('does not add -kanji-internal option when kanji encoding is set but engine is not a Japanese variant.', async (done) => {
-      const { rule } = await initialize({ kanjiInternal: 'uptex' })
+      const { rule } = await initialize({
+        options: { kanjiInternal: 'uptex' }
+      })
 
       expect(rule.constructCommand().args).not.toContain('-kanji-internal=uptex')
 
