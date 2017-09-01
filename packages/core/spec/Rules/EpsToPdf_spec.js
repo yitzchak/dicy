@@ -39,7 +39,7 @@ describe('EpsToPdf', () => {
     })
 
     it('returns true if there is a matching epstopdf call in the log.', async (done) => {
-      const { rule } = await initialize({
+      const { rule, options } = await initialize({
         parameters: [{
           filePath: 'EncapsulatedPostScript.eps'
         }, {
@@ -57,13 +57,13 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if there is a matching epstopdf call in the log.', async (done) => {
-      const { rule } = await initialize({
+      const { rule, options } = await initialize({
         parameters: [{
           filePath: 'EncapsulatedPostScript.eps'
         }, {
@@ -81,7 +81,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await EpsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })

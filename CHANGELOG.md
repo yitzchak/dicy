@@ -13,7 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   \[[#71][]].
 - `dviToPdfEngine` option to allow setting the program to use for DVI to PDF
   conversion \[[#72][]].
-- Verification of the existence of output targets \[[#76][]].
+- Verification of the existence of appropriate build rules \[[#77][]].
 
 ### Fixed
 - Parsing of LaTeX magic comments to allow environment variables (`$PATH`) to
@@ -146,7 +146,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
-[#76]: https://github.com/yitzchak/dicy/pull/76
+[#77]: https://github.com/yitzchak/dicy/pull/77
 [#73]: https://github.com/yitzchak/dicy/pull/73
 [#72]: https://github.com/yitzchak/dicy/pull/72
 [#71]: https://github.com/yitzchak/dicy/pull/71
