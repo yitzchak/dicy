@@ -11,6 +11,8 @@ import Rule from './Rule'
 
 import type { Action, Command, Option, Phase, RuleInfo } from './types'
 
+const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
+
 export default class DiCy extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
     const schema = await DiCy.getOptionDefinitions()
@@ -172,6 +174,12 @@ export default class DiCy extends StateConsumer {
   async run (...commands: Array<Command>): Promise<boolean> {
     if (this.killToken) {
       this.error('Build currently in progress')
+      return false
+    }
+
+    const invalidCommands = commands.filter(command => !VALID_COMMAND_PATTERN.test(command))
+    if (invalidCommands.length !== 0) {
+      this.error(`Aborting due to receiving the following invalid commands: ${invalidCommands.join(', ')}`)
       return false
     }
 

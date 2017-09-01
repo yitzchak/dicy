@@ -81,6 +81,18 @@ export default class StateConsumer {
     this.state.killToken = value
   }
 
+  assignOption (store: Object, name: string, value: any) {
+    const schema = this.state.optionSchema.get(name)
+    if (schema) {
+      store[schema.name] = value
+    } else if (name.startsWith('$')) {
+      // It's an environment variable
+      store[name] = value
+    } else {
+      this.error(`Ignoring attempt to set unknown option \`${name}\` to a value of \`${value.toString()}\``)
+    }
+  }
+
   checkForKill (): void {
     if (this.state.killToken && this.state.killToken.error) throw this.state.killToken.error
   }
