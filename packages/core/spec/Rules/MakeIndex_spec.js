@@ -21,7 +21,7 @@ async function initialize ({
 describe('MakeIndex', () => {
   describe('appliesToParameters', () => {
     it('returns true if there are no splitindex notices in the log.', async (done) => {
-      const { dicy, rule } = await initialize({
+      const { dicy, rule, options } = await initialize({
         parameters: [{
           filePath: 'IndexControlFile.idx'
         }, {
@@ -35,13 +35,13 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(true)
+      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if there are splitindex notices in the log.', async (done) => {
-      const { dicy, rule } = await initialize({
+      const { dicy, rule, options } = await initialize({
         parameters: [{
           filePath: 'IndexControlFile.idx'
         }, {
@@ -58,13 +58,13 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if there are splitindex calls in the log.', async (done) => {
-      const { dicy, rule } = await initialize({
+      const { dicy, rule, options } = await initialize({
         parameters: [{
           filePath: 'IndexControlFile.idx'
         }, {
@@ -82,7 +82,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', null, ...rule.parameters)).toBe(false)
+      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })
