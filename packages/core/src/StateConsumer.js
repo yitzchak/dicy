@@ -29,7 +29,7 @@ export default class StateConsumer {
           : target[key]
       },
       set: (target, key, value) => {
-        this.consumerOptions[key] = value
+        this.setOption(this.consumerOptions, key, value)
         return true
       },
       ownKeys: target => {
@@ -81,10 +81,60 @@ export default class StateConsumer {
     this.state.killToken = value
   }
 
-  assignOption (store: Object, name: string, value: any) {
+  assignOptions (options: Object) {
+    for (const name in options) {
+      const value = options[name]
+
+      if (name === 'jobs') {
+        let jobs = this.state.options.jobs
+
+        if (!jobs) {
+          this.state.options.jobs = jobs = {}
+        }
+
+        for (const jobName in value) {
+          const subOptions = value[jobName]
+          let jobOptions = jobs[jobName]
+
+          if (!jobOptions) {
+            jobs[jobName] = jobOptions = {}
+          }
+
+          for (const jobOptionName in subOptions) {
+            this.setOption(jobOptions, jobOptionName, subOptions[jobOptionName])
+          }
+        }
+      } else {
+        this.setOption(this.state.options, name, value)
+      }
+    }
+  }
+
+  setOption (store: Object, name: string, value: any) {
     const schema = this.state.optionSchema.get(name)
     if (schema) {
-      store[schema.name] = value
+      let invalidType = false
+
+      switch (schema.type) {
+        case 'string':
+          invalidType = typeof value !== 'string'
+          break
+        case 'strings':
+          invalidType = !Array.isArray(value) || value.some(x => typeof x !== 'string')
+          break
+        case 'number':
+          invalidType = typeof value !== 'number'
+          break
+        case 'boolean':
+          invalidType = typeof value !== 'boolean'
+          break
+      }
+
+      if (invalidType || (schema.values && !schema.values.includes(value))) {
+        this.error(`Ignoring attempt to set \`${name}\` to a invalid value of \`${value.toString()}\``)
+      } else {
+        store[schema.name] = value
+      }
     } else if (name.startsWith('$')) {
       // It's an environment variable
       store[name] = value
