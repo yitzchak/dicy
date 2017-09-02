@@ -115,7 +115,7 @@ export type Event = LogEvent | ActionEvent | CommandEvent | FileEvent | InputOut
 
 export type Option = {
   name: string,
-  type: 'string' | 'strings' | 'number' | 'numbers' | 'boolean',
+  type: 'string' | 'strings' | 'number' | 'boolean',
   defaultValue?: any,
   description: string,
   values?: Array<any>,
