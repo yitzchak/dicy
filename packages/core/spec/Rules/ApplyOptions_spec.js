@@ -14,7 +14,7 @@ async function initialize ({ RuleClass = ApplyOptions, ...rest }: RuleDefinition
 }
 
 describe('ApplyOptions', () => {
-  describe('assignOptions', () => {
+  describe('doAssignOptions', () => {
     it('verifies that high priority configuration overrides low priority configuration.', async (done) => {
       const { rule } = await initialize()
       const yaml: ?File = await rule.getResolvedFile('$NAME.yaml-ParsedYAML')
@@ -33,7 +33,7 @@ describe('ApplyOptions', () => {
           outputDirectory: 'gronk'
         }
 
-        await rule.assignOptions()
+        await rule.doAssignOptions()
 
         expect(rule.state.options.engine).toBe('bar')
         expect(rule.state.options.indexStyle).toBe('baz.ist')

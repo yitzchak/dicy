@@ -20,13 +20,13 @@ export default class ApplyOptions extends Rule {
     // Save the old options so we can tell if they have changed.
     const previousOptions = _.cloneDeep(this.state.options)
 
-    await this.assignOptions()
+    await this.doAssignOptions()
     this.checkForConfigurationChange(previousOptions)
 
     return true
   }
 
-  async assignOptions (): Promise<void> {
+  async doAssignOptions (): Promise<void> {
     // All the possible sources of configuration data with low priority first.
     const optionPaths = [
       '$HOME/.dicy.yaml-ParsedYAML',
@@ -50,7 +50,7 @@ export default class ApplyOptions extends Rule {
     this.state.resetOptions()
 
     for (const options: Object of optionSet) {
-      this.state.assignOptions(options)
+      this.assignOptions(options)
     }
   }
 
