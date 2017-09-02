@@ -2,8 +2,6 @@
 
 shopt -s nocasematch
 
-echo Installing Pygments...
-
 if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing node...
   PowerShell -Command Install-Product node 7 x64
@@ -52,8 +50,7 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
 fi
 
 echo Installing Python libraries...
-pip2 install Pygments Pweave matplotlib
-pip3 install Pygments
+pip3 install Pygments Pweave matplotlib
 
 if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
   echo Installing R libraries...
