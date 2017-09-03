@@ -53,6 +53,7 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ~/virtualenv/python3.6/bin/activate; fi
   - ./scripts/ci-install
 
 before_script:
