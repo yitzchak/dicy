@@ -39,7 +39,9 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   echo Installing lhs2TeX...
   brew cask install haskell-platform
   stack update
-  sudo cabal install regex-compat lhs2tex
+  sudo cabal install regex-posix
+  sudo cabal install regex-compat
+  sudo cabal install lhs2tex
 
   echo Installing R...
   brew tap homebrew/science
