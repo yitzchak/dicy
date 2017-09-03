@@ -10,10 +10,12 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   cinst ghostscript
 
   echo Installing Agda and lhs2TeX...
-  curl -sS -ostack.exe -L --insecure http://www.stackage.org/stack/windows-x86_64-installer
+  curl -sS -ostack.zip -L --insecure http://www.stackage.org/stack/windows-x86_64
+  7z x stack.zip stack.exe
   stack setup > nul
   stack update
-  cabal install Agda lhs2tex
+  cabal install Agda
+  cabal install lhs2tex
 
   echo Installing R...
   cinst R.Project --allow-empty-checksums --ia="/DIR=\"${R_HOME}\""
@@ -45,7 +47,8 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   echo Installing Agda and lhs2TeX...
   brew cask install haskell-platform
   stack update
-  sudo cabal install Agda lhs2tex
+  sudo cabal install Agda
+  sudo cabal install lhs2tex
 
   echo Installing R...
   brew tap homebrew/science
