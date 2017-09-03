@@ -9,6 +9,12 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing GhostScript...
   cinst ghostscript
 
+  echo Installing Agda and lhs2TeX...
+  curl -sS -ostack.exe -L --insecure http://www.stackage.org/stack/windows-x86_64-installer
+  stack setup > nul
+  stack update
+  cabal install Agda lhs2tex
+
   echo Installing R...
   cinst R.Project --allow-empty-checksums --ia="/DIR=\"${R_HOME}\""
 
@@ -36,12 +42,10 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   echo Installing GhostScript...
   brew install ghostscript
 
-  echo Installing lhs2TeX...
+  echo Installing Agda and lhs2TeX...
   brew cask install haskell-platform
   stack update
-  sudo cabal install regex-posix
-  sudo cabal install regex-compat
-  sudo cabal install lhs2tex
+  sudo cabal install Agda lhs2tex
 
   echo Installing R...
   brew tap homebrew/science
