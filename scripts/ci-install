@@ -23,8 +23,15 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing package dependencies...
   npm install
 elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
+  export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH
+
   echo Updating homebrew...
   brew update
+
+  echo Installing Python 3...
+  brew install python3
+  virtualenv venv -p python3
+  source venv/bin/activate
 
   echo Installing GhostScript...
   brew install ghostscript

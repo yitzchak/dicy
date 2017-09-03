@@ -50,11 +50,8 @@ addons:
       - texlive-xetex
       - xindy
 
-
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -R ~; fi
-  - ./scripts/ci-install
+  - source ./scripts/ci-install
 
 before_script:
-  - ./scripts/ci-before-test
+  - source ./scripts/ci-before-test
