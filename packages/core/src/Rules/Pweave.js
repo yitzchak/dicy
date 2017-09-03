@@ -4,8 +4,6 @@ import Rule from '../Rule'
 
 import type { CommandOptions } from '../types'
 
-const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
-
 export default class Pweave extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['PythonNoWeb'])]
   static description: string = 'Runs Pweave on Pnw files.'
@@ -20,7 +18,6 @@ export default class Pweave extends Rule {
       `--format=${this.options.pweaveOutputFormat}`,
       `--output={{${outputPath}}}`
     ]
-    let figureFormat = this.options.pweaveFigureFormat
 
     // If the cache directory is not the default then set it.
     if (cacheDirectory !== 'cache') {
