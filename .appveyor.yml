@@ -16,6 +16,7 @@ environment:
     PYTHON: C:\Python36
     R_HOME: '%PROGRAMFILES%\R'
     R_LIBS_USER: '%USERPROFILE%\R\library'
+    STACK_ROOT: C:\StackRoot
 
 cache:
   - '%R_LIBS_USER%'
@@ -23,9 +24,9 @@ cache:
 
 # init:
 #   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-# 
+#
 # on_finish:
-#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))  
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin;%ASYMPTOTE_HOME%;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
