@@ -434,16 +434,6 @@ cache and inline code will be hidden.
 
 Directory used for Pweave figures.
 
-## pweaveFigureFormat
-
--   **Type:** string
--   **Default Value:** `auto`
--   **Values:** `auto`, `pdf`, `eps`, `svg`
--   **Commands:** [build][]
--   **Command Line Interface:** `--pweave-figure-format <pweaveFigureFormat>`
-
-Format used for Pweave figures.
-
 ## pweaveOutputFormat
 
 -   **Type:** string

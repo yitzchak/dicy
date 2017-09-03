@@ -11,16 +11,9 @@ events:
   - type: command
     rule: Pweave(build;execute;job-2;test-pweave.Pnw)
     command: >-
-      pweave --format=tex --output=job-2.tex
+      pweave --format=texminted --output=job-2.tex
       --cache-directory=pweave-cache-for-job-2
-      --figure-directory=pweave-figures-for-job-2 --figure-format=eps
-      test-pweave.Pnw
-  - type: command
-    rule: Pweave(build;execute;job-3;test-pweave.Pnw)
-    command: >-
-      pweave --format=texminted --output=job-3.tex
-      --cache-directory=pweave-cache-for-job-3
-      --figure-directory=pweave-figures-for-job-3 test-pweave.Pnw
+      --figure-directory=pweave-figures-for-job-2 test-pweave.Pnw
   - type: command
     rule: LaTeX(build;execute;job-1;job-1.tex)
     command: >-
@@ -29,28 +22,15 @@ events:
   - type: command
     rule: LaTeX(build;execute;job-2;job-2.tex)
     command: >-
-      latex -file-line-error -interaction=batchmode -recorder -jobname=job-2
-      job-2.tex
-  - type: command
-    rule: LaTeX(build;execute;job-3;job-3.tex)
-    command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
-      -shell-escape job-3.tex
-  - type: command
-    rule: DviToPdf(build;execute;job-2;job-2.dvi)
-    command: xdvipdfmx -o job-2.pdf job-2.dvi
-  - type: command
-    rule: LaTeX(build;execute;job-2;job-2.tex)
-    command: >-
-      latex -file-line-error -interaction=batchmode -recorder -jobname=job-2
-      job-2.tex
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-2
+      -shell-escape job-2.tex
   - type: command
     rule: LaTeX(build;execute;job-1;job-1.tex)
     command: >-
       pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1
       job-1.tex
   - type: command
-    rule: LaTeX(build;execute;job-3;job-3.tex)
+    rule: LaTeX(build;execute;job-2;job-2.tex)
     command: >-
-      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-3
-      -shell-escape job-3.tex
+      pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-2
+      -shell-escape job-2.tex

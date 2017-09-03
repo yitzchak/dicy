@@ -1,7 +1,8 @@
-%!TeX jobNames = job-1, job-2, job-3
-%!TeX job-2:engine = latex
-%!TeX job-3:pweaveOutputFormat = texminted
-%!TeX job-3:shellEscape = enabled
+%!TeX jobNames = job-1, job-2
+%!TeX job-2:pweaveOutputFormat = texminted
+%!TeX job-2:shellEscape = enabled
+% Pweave v0.30.0 does not support figure format.
+%%!TeX job-3:engine = latex
 %!TeX check = pweave --version
 \documentclass{article}
 
@@ -11,7 +12,7 @@
 \usepackage{xstring}
 
 \IfStrEqCase*{\jobname}{%
-  {job-3}{\usepackage{minted}}}
+  {job-2}{\usepackage{minted}}}
 
 \begin{document}
 
