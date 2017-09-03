@@ -444,17 +444,6 @@ pweaveFigureDirectory:
   defaultValue: pweave-figures-for-$JOB
   description: Directory used for figures.
   type: string
-pweaveFigureFormat:
-  commands:
-    - build
-  defaultValue: auto
-  description:
-  values:
-    - auto
-    - pdf
-    - eps
-    - svg
-  type: string
 pweaveOutputFormat:
   commands:
     - build
