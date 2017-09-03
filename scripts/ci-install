@@ -39,7 +39,7 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   echo Installing lhs2TeX...
   brew cask install haskell-platform
   stack update
-  sudo cabal install lhs2tex
+  sudo cabal install regex-compat lhs2tex
 
   echo Installing R...
   brew tap homebrew/science
@@ -57,11 +57,7 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
 fi
 
 echo Installing Python libraries...
-if [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
-  pip install Pygments Pweave matplotlib
-else
-  pip3 install Pygments Pweave matplotlib
-fi
+pip3 install Pygments Pweave matplotlib
 
 if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
   echo Installing R libraries...
