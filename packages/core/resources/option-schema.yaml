@@ -487,11 +487,9 @@ shellEscape:
   description: Enable shell escape (write18).
   type: string
   values:
-    - false
     - disabled
     - restricted
     - enabled
-    - true
 synctex:
   aliases:
     - enableSynctex
