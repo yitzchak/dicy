@@ -115,7 +115,7 @@ export type Event = LogEvent | ActionEvent | CommandEvent | FileEvent | InputOut
 
 export type Option = {
   name: string,
-  type: 'string' | 'strings' | 'number' | 'boolean',
+  type: 'string' | 'strings' | 'number' | 'boolean' | 'variable',
   defaultValue?: any,
   description: string,
   values?: Array<any>,
@@ -214,7 +214,6 @@ export interface OptionsInterface {
   pweaveCacheDirectory: string,
   pweaveDocumentationMode: boolean,
   pweaveFigureDirectory: string,
-  pweaveFigureFormat: 'auto' | 'pdf' | 'eps' | 'svg',
   pweaveOutputFormat: 'tex' | 'texminted' | 'texpweave' | 'texpygments',
   pweaveOutputPath: string,
   severity: 'info' | 'warning' | 'error',
@@ -249,7 +248,6 @@ outputFormat: 'pdf',
 phaseCycles: 20,
 pweaveCacheDirectory: 'pweave-cache-for-$JOB',
 pweaveFigureDirectory: 'pweave-figures-for-$JOB',
-pweaveFigureFormat: 'auto',
 pweaveOutputFormat: 'tex',
 pweaveOutputPath: '$JOB.tex',
 severity: 'warning' }
