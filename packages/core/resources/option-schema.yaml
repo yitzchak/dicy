@@ -10,7 +10,7 @@ $BIBINPUTS:
     - $ROOTDIR/$OUTDIR
     - ''
   description: BibTeX bibliography source search path
-  type: strings
+  type: variable
 $BLTXMLINPUTS:
   commands:
     - build
@@ -19,7 +19,7 @@ $BLTXMLINPUTS:
     - log
     - scrub
   description: BibLaTeXML bibliography files for Biber search path
-  type: strings
+  type: variable
 $BSTINPUTS:
   commands:
     - build
@@ -28,7 +28,7 @@ $BSTINPUTS:
     - log
     - scrub
   description: BibTeX style file search path
-  type: strings
+  type: variable
 $CLUAINPUTS:
   commands:
     - build
@@ -37,7 +37,7 @@ $CLUAINPUTS:
     - log
     - scrub
   description: Dynamic libraries for Lua search path
-  type: strings
+  type: variable
 $LUAINPUTS:
   commands:
     - build
@@ -46,7 +46,7 @@ $LUAINPUTS:
     - log
     - scrub
   description: Lua source search path
-  type: strings
+  type: variable
 $MFINPUTS:
   commands:
     - build
@@ -55,7 +55,7 @@ $MFINPUTS:
     - log
     - scrub
   description: Metafont source search path
-  type: strings
+  type: variable
 $MPINPUTS:
   commands:
     - build
@@ -64,7 +64,7 @@ $MPINPUTS:
     - log
     - scrub
   description: MetaPont source search path
-  type: strings
+  type: variable
 $PATH:
   aliases:
     - texPath
@@ -76,7 +76,7 @@ $PATH:
     - log
     - scrub
   description: search path for executables
-  type: strings
+  type: variable
 $TEXINPUTS:
   commands:
     - build
@@ -89,7 +89,7 @@ $TEXINPUTS:
     - $ROOTDIR/$OUTDIR
     - ''
   description: TeX source search path
-  type: strings
+  type: variable
 $TEXPICTS:
   commands:
     - build
@@ -98,7 +98,7 @@ $TEXPICTS:
     - log
     - scrub
   description: Picture search path
-  type: strings
+  type: variable
 bibtexEngine:
   commands:
     - build
@@ -487,11 +487,9 @@ shellEscape:
   description: Enable shell escape (write18).
   type: string
   values:
-    - false
     - disabled
     - restricted
     - enabled
-    - true
 synctex:
   aliases:
     - enableSynctex
