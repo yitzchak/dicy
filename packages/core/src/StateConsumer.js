@@ -130,7 +130,7 @@ export default class StateConsumer {
           break
         case 'variable':
           invalidType = !(typeof value === 'string' ||
-            (Array.isArray(value) || value.every(x => typeof x === 'string')))
+            (Array.isArray(value) && value.every(x => typeof x === 'string')))
           break
       }
 
