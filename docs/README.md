@@ -1,10 +1,18 @@
 # DiCy
 
-A JavaScript based builder for LaTeX, knitr, literate Agda and literate Haskell
-that automatically builds dependencies. Can automatically process projects that
-utilize Agda, Asymptote, Biber, BibTeX, dvitopdf, knitr, lhs2TeX, MetaPost,
-makeindex, makeglossaries, or SageTeX. Also, parses and filters output logs and
-error messages generated during build.
+A JavaScript based builder for [LaTeX][], [knitr][], [Literate Agda][],
+[Literate Haskell][], and [Pweave][] that automatically builds dependencies. It
+parses and filters output logs and error messages generated during build and
+can build projects that utilize the following programs to process files.
+
+-   Bibliographies &mdash; [Biber][], [BibTeX][]
+-   Graphics Creation &mdash; [Asymptote][], [MetaPost][]
+-   Image/File Conversion &mdash; [dvipdfm][], [dvipdfmx][], [dvips][],
+    [dvisvgm][], [epstopdf][], [pdf2ps][], [ps2pdf][]
+-   Indexing/Glossaries &mdash; [makeglossaries][], [makeindex][], [mendex][],
+    [splitindex][], [texindy][], [upmendex][]
+-   Literate Programming/Reproducible Research &mdash; [Agda][], [knitr][],
+    [lhs2TeX][], [patchSynctex][], [PythonTeX][], [Pweave][], [SageTeX][]
 
 ## Installation
 
@@ -78,7 +86,34 @@ always be `load` and `save`, respectively.
 | graph   | Graph dependencies using GraphViz |
 | log     | Report log messages generated     |
 
-[events]: events
-[options]: options
+[Agda]: http://wiki.portal.chalmers.se/agda/pmwiki.php
+[Asymptote]: http://asymptote.sourceforge.net/
+[Biber]: http://biblatex-biber.sourceforge.net/
+[BibTeX]: http://www.bibtex.org/
 [configuration]: configuration
+[dvipdfm]: http://www.ctan.org/pkg/dvipdfm
+[dvipdfmx]: http://project.ktug.org/dvipdfmx/
+[dvips]: http://www.tug.org/texinfohtml/dvips.html
+[dvisvgm]: http://dvisvgm.bplaced.net/
+[epstopdf]: http://www.ctan.org/pkg/epstopdf
+[events]: events
+[knitr]: https://yihui.name/knitr/
+[LaTeX]: https://www.latex-project.org/
+[lhs2TeX]: http://www.andres-loeh.de/lhs2tex/
+[Literate Agda]: http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Main.LiterateAgda
+[Literate Haskell]: https://wiki.haskell.org/Literate_programming
+[makeglossaries]: http://www.ctan.org/pkg/glossaries
+[makeindex]: http://www.ctan.org/pkg/makeindex
+[mendex]: https://www.ctan.org/pkg/mendex
+[MetaPost]: http://www.tug.org/metapost.html
+[options]: options
+[patchSynctex]: https://cran.r-project.org/package=patchSynctex
+[pdf2ps]: http://linux.die.net/man/1/pdf2ps
+[ps2pdf]: http://ghostscript.com/doc/current/Ps2pdf.htm
+[Pweave]: https://github.com/mpastell/Pweave
+[PythonTeX]: http://www.ctan.org/pkg/pythontex
 [rules]: rules
+[SageTeX]: http://www.ctan.org/tex-archive/macros/latex/contrib/sagetex/
+[splitindex]: http://www.ctan.org/pkg/splitindex
+[texindy]: http://xindy.sourceforge.net/
+[upmendex]: http://www.ctan.org/pkg/upmendex

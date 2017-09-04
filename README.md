@@ -11,27 +11,14 @@ A JavaScript based builder for [LaTeX][], [knitr][], [Literate Agda][],
 parses and filters output logs and error messages generated during build and
 can build projects that utilize the following programs to process files.
 
--   [Agda][]
--   [Asymptote][]
--   [Biber][]
--   [BibTeX][]
--   [dvipdfm][]
--   [dvips][]
--   [dvisvgm][]
--   [epstopdf][]
--   [knitr][]
--   [lhs2TeX][]
--   [makeglossaries][]
--   [makeindex][]
--   [mendex][]
--   [MetaPost][]
--   [PythonTeX][]
--   [SageTeX][]
--   [splitindex][]
--   [texindy][]
--   [pdf2ps][]
--   [ps2pdf][]
--   [upmendex][]
+-   Bibliographies &mdash; [Biber][], [BibTeX][]
+-   Graphics Creation &mdash; [Asymptote][], [MetaPost][]
+-   Image/File Conversion &mdash; [dvipdfm][], [dvipdfmx][], [dvips][],
+    [dvisvgm][], [epstopdf][], [pdf2ps][], [ps2pdf][]
+-   Indexing/Glossaries &mdash; [makeglossaries][], [makeindex][], [mendex][],
+    [splitindex][], [texindy][], [upmendex][]
+-   Literate Programming/Reproducible Research &mdash; [Agda][], [knitr][],
+    [lhs2TeX][], [patchSynctex][], [PythonTeX][], [Pweave][], [SageTeX][]
 
 ## Installation
 
@@ -121,6 +108,7 @@ always be `load` and `save`, respectively.
 [devDependency svg]: https://david-dm.org/yitzchak/dicy/dev-status.svg
 [devDependency]: https://david-dm.org/yitzchak/dicy?type=dev
 [dvipdfm]: http://www.ctan.org/pkg/dvipdfm
+[dvipdfmx]: http://project.ktug.org/dvipdfmx/
 [dvips]: http://www.tug.org/texinfohtml/dvips.html
 [dvisvgm]: http://dvisvgm.bplaced.net/
 [epstopdf]: http://www.ctan.org/pkg/epstopdf
@@ -137,6 +125,7 @@ always be `load` and `save`, respectively.
 [mendex]: https://www.ctan.org/pkg/mendex
 [MetaPost]: http://www.tug.org/metapost.html
 [options]: https://yitzchak.github.io/dicy/options
+[patchSynctex]: https://cran.r-project.org/package=patchSynctex
 [pdf2ps]: http://linux.die.net/man/1/pdf2ps
 [ps2pdf]: http://ghostscript.com/doc/current/Ps2pdf.htm
 [Pweave]: https://github.com/mpastell/Pweave
