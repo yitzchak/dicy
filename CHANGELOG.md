@@ -3,10 +3,9 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased][]
+## [v0.9.0][] &mdash; 2017-09-04
 
 ### Added
-
 - Support for PythonTeX \[[#69][]].
 - Support for Pweave \[[#71][]].
 - `knitrOutputPath` option to allow job specific output paths for knitr
@@ -18,8 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Parsing of LaTeX magic comments to allow environment variables (`$PATH`) to
   appear \[[#73][]].
-- Path globbing used in searching for log files and `clean` command on Windows by
-  not normalizing path before pattern application \[[#73][]].
+- Path globbing used in searching for log files and `clean` command on Windows
+  by not normalizing path before pattern application \[[#73][]].
 
 ## [v0.8.0][] &mdash; 2017-08-15
 
@@ -131,7 +130,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 - Configuration parsing in YAML or TeX magic comments.
 
-[Unreleased]: https://github.com/yitzchak/dicy/compare/v0.8.0...master
+[v0.9.0]: https://github.com/yitzchak/dicy/compare/v0.8.0...v0.9.0
 [v0.8.0]: https://github.com/yitzchak/dicy/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/yitzchak/dicy/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/yitzchak/dicy/compare/v0.5.0...v0.6.0
