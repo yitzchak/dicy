@@ -128,6 +128,10 @@ export default class StateConsumer {
         case 'boolean':
           invalidType = typeof value !== 'boolean'
           break
+        case 'variable':
+          invalidType = typeof value !== 'string' || !Array.isArray(value) ||
+            (Array.isArray(value) && value.some(x => typeof x !== 'string'))
+          break
       }
 
       if (invalidType || (schema.values && !schema.values.includes(value))) {

@@ -33,6 +33,11 @@ export default class ParseLaTeXMagic extends Rule {
         if (schema) {
           // If we have a schema definition then use it to parse the value
           switch (schema.type) {
+            case 'variable':
+              if (ITEM_SEPARATOR_PATTERN.test(value)) {
+                value = value.split(ITEM_SEPARATOR_PATTERN)
+              }
+              break
             case 'strings':
               value = value.split(ITEM_SEPARATOR_PATTERN)
               break
