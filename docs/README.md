@@ -5,12 +5,15 @@ A JavaScript based builder for [LaTeX][], [knitr][], [Literate Agda][],
 parses and filters output logs and error messages generated during build and
 can build projects that utilize the following programs to process files.
 
--   Bibliographies &mdash; [Biber][], [BibTeX][]
+-   Bibliographies &mdash; [Biber][], [BibTeX][], [BibTeX8][], BibTeXu,
+    [pBibTeX][], [upBibTeX][]
 -   Graphics Creation &mdash; [Asymptote][], [MetaPost][]
 -   Image/File Conversion &mdash; [dvipdfm][], [dvipdfmx][], [dvips][],
     [dvisvgm][], [epstopdf][], [pdf2ps][], [ps2pdf][]
 -   Indexing/Glossaries &mdash; [makeglossaries][], [makeindex][], [mendex][],
     [splitindex][], [texindy][], [upmendex][]
+-   LaTeX Engines &mdash; [LaTeX][], [LuaLaTeX][], [pdfLaTeX][], [pLaTeX][],
+    [upLaTeX][], [XeLaTeX][]
 -   Literate Programming/Reproducible Research &mdash; [Agda][], [knitr][],
     [lhs2TeX][], [patchSynctex][], [PythonTeX][], [Pweave][], [SageTeX][]
 
@@ -90,30 +93,38 @@ always be `load` and `save`, respectively.
 [Asymptote]: http://asymptote.sourceforge.net/
 [Biber]: http://biblatex-biber.sourceforge.net/
 [BibTeX]: http://www.bibtex.org/
-[configuration]: configuration
+[BibTeX8]: http://www.ctan.org/pkg/bibtex8bit
+[configuration]: https://yitzchak.github.io/dicy/configuration
 [dvipdfm]: http://www.ctan.org/pkg/dvipdfm
 [dvipdfmx]: http://project.ktug.org/dvipdfmx/
 [dvips]: http://www.tug.org/texinfohtml/dvips.html
 [dvisvgm]: http://dvisvgm.bplaced.net/
 [epstopdf]: http://www.ctan.org/pkg/epstopdf
-[events]: events
+[events]: https://yitzchak.github.io/dicy/events
 [knitr]: https://yihui.name/knitr/
 [LaTeX]: https://www.latex-project.org/
 [lhs2TeX]: http://www.andres-loeh.de/lhs2tex/
 [Literate Agda]: http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Main.LiterateAgda
 [Literate Haskell]: https://wiki.haskell.org/Literate_programming
+[LuaLaTeX]: http://www.luatex.org/
 [makeglossaries]: http://www.ctan.org/pkg/glossaries
 [makeindex]: http://www.ctan.org/pkg/makeindex
 [mendex]: https://www.ctan.org/pkg/mendex
 [MetaPost]: http://www.tug.org/metapost.html
-[options]: options
+[options]: https://yitzchak.github.io/dicy/options
 [patchSynctex]: https://cran.r-project.org/package=patchSynctex
+[pBibTeX]: http://www.ctan.org/pkg/pbibtex-base
 [pdf2ps]: http://linux.die.net/man/1/pdf2ps
+[pdfLaTeX]: http://www.tug.org/applications/pdftex/
+[pLaTeX]: http://www.ctan.org/pkg/platex
 [ps2pdf]: http://ghostscript.com/doc/current/Ps2pdf.htm
 [Pweave]: https://github.com/mpastell/Pweave
 [PythonTeX]: http://www.ctan.org/pkg/pythontex
-[rules]: rules
+[rules]: https://yitzchak.github.io/dicy/rules
 [SageTeX]: http://www.ctan.org/tex-archive/macros/latex/contrib/sagetex/
 [splitindex]: http://www.ctan.org/pkg/splitindex
 [texindy]: http://xindy.sourceforge.net/
+[upBibTeX]: http://www.t-lab.opal.ne.jp/tex/uptex_en.html
+[upLaTeX]: http://www.ctan.org/pkg/uplatex
 [upmendex]: http://www.ctan.org/pkg/upmendex
+[XeLaTeX]: http://xetex.sourceforge.net/
