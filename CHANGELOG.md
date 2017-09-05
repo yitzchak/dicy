@@ -3,6 +3,11 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.9.1][] &mdash; 2017-09-04
+
+### Fixed
+- Validation of environment variable options \[[#82][]].
+
 ## [v0.9.0][] &mdash; 2017-09-04
 
 ### Added
@@ -130,6 +135,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 - Configuration parsing in YAML or TeX magic comments.
 
+[v0.9.1]: https://github.com/yitzchak/dicy/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/yitzchak/dicy/compare/v0.8.0...v0.9.0
 [v0.8.0]: https://github.com/yitzchak/dicy/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/yitzchak/dicy/compare/v0.6.0...v0.7.0
@@ -145,6 +151,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
+[#82]: https://github.com/yitzchak/dicy/pull/82
 [#77]: https://github.com/yitzchak/dicy/pull/77
 [#73]: https://github.com/yitzchak/dicy/pull/73
 [#72]: https://github.com/yitzchak/dicy/pull/72
