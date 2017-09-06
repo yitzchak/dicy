@@ -434,6 +434,15 @@ cache and inline code will be hidden.
 
 Directory used for Pweave figures.
 
+## pweaveKernel
+
+-   **Type:** string
+-   **Default Value:** `python3`
+-   **Commands:** [build][]
+-   **Command Line Interface:** `--pweave-kernel <pweaveKernel>`
+
+Jupyter kernel used to run code.
+
 ## pweaveOutputFormat
 
 -   **Type:** string

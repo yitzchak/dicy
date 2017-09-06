@@ -11,6 +11,7 @@ export default class Pweave extends Rule {
   constructCommand (): CommandOptions {
     const cacheDirectory = this.options.pweaveCacheDirectory
     const figureDirectory = this.options.pweaveFigureDirectory
+    const kernel = this.options.pweaveKernel
     const outputPath = this.options.pweaveOutputPath
     // Always add output format and output path.
     const args = [
@@ -27,6 +28,10 @@ export default class Pweave extends Rule {
     // If the figure directory is not the default then set it.
     if (figureDirectory !== 'figures') {
       args.push(`--figure-directory={{${figureDirectory}}}`)
+    }
+
+    if (kernel !== 'python3') {
+      args.push(`--kernel=${kernel}`)
     }
 
     // Add the documentation mode option if it is set.

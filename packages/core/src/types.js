@@ -214,10 +214,11 @@ export interface OptionsInterface {
   pweaveCacheDirectory: string,
   pweaveDocumentationMode: boolean,
   pweaveFigureDirectory: string,
+  pweaveKernel: string,
   pweaveOutputFormat: 'tex' | 'texminted' | 'texpweave' | 'texpygments',
   pweaveOutputPath: string,
   severity: 'info' | 'warning' | 'error',
-  shellEscape?: false | 'disabled' | 'restricted' | 'enabled' | true,
+  shellEscape?: 'disabled' | 'restricted' | 'enabled',
   synctex: boolean
 }
 
@@ -248,6 +249,7 @@ outputFormat: 'pdf',
 phaseCycles: 20,
 pweaveCacheDirectory: 'pweave-cache-for-$JOB',
 pweaveFigureDirectory: 'pweave-figures-for-$JOB',
+pweaveKernel: 'python3',
 pweaveOutputFormat: 'tex',
 pweaveOutputPath: '$JOB.tex',
 severity: 'warning' }
