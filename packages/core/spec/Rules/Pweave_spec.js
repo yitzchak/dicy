@@ -97,6 +97,16 @@ describe('Pweave', () => {
     done()
   })
 
+  it('adds --kernel to args when pweaveKernel is set.', async (done) => {
+    const { rule } = await initialize({
+      options: { pweaveKernel: 'foo' }
+    })
+
+    expect(rule.constructCommand().args).toContain('--kernel=foo')
+
+    done()
+  })
+
   it('adds --format to args when pweaveOutputFormat is set.', async (done) => {
     const { rule } = await initialize({
       options: { pweaveOutputFormat: 'texminted' }

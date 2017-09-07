@@ -444,6 +444,12 @@ pweaveFigureDirectory:
   defaultValue: pweave-figures-for-$JOB
   description: Directory used for figures.
   type: string
+pweaveKernel:
+  commands:
+    - build
+  description: Jupyter kernel used to run code.
+  defaultValue: python3
+  type: string
 pweaveOutputFormat:
   commands:
     - build
