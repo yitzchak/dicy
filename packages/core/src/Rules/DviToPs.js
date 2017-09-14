@@ -10,7 +10,7 @@ export default class DviToPs extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to PS using dvips.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     // Only apply if output format is ps or intermediate PostScript generation
     // is on.
     return options.outputFormat === 'ps' ||

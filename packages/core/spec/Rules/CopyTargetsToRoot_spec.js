@@ -27,7 +27,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -40,7 +40,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -53,7 +53,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -63,7 +63,7 @@ describe('CopyTargetsToRoot', () => {
         options: { copyTargetsToRoot: true }
       })
 
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -72,7 +72,7 @@ describe('CopyTargetsToRoot', () => {
       const { rule, options } = await initialize()
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

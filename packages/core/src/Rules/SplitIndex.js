@@ -16,7 +16,7 @@ export default class SplitIndex extends Rule {
   ]
   static description: string = 'Runs splitindex on any index files.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     const parsedLog: ?ParsedLog = parameters[1].value
     const base = path.basename(parameters[0].filePath)
     const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)

@@ -12,7 +12,7 @@ export default class CheckForMissingBuildRule extends Rule {
   static alwaysEvaluate: boolean = true
   static description: string = 'Check for no applicable build rule.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     // Only apply if parameter is main source file for job.
     return parameters.some(file => file.filePath === options.filePath)
   }

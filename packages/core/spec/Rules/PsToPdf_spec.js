@@ -23,7 +23,7 @@ describe('PsToPdf', () => {
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await PsToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await PsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('PsToPdf', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(await PsToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await PsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

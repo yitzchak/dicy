@@ -134,7 +134,7 @@ export async function initializeRule ({ RuleClass, command, phase, jobName, file
     phase = RuleClass.phases.values().next().value || 'execute'
   }
   const jobOptions = dicy.state.getJobOptions(jobName)
-  const rule = new RuleClass(dicy.state, command, phase, jobOptions, ...files)
+  const rule = new RuleClass(dicy.state, command, phase, jobOptions, files)
 
   spyOn(rule, 'log')
   await rule.initialize()

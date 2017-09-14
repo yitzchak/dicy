@@ -23,7 +23,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -43,7 +43,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'pdf', intermediatePostScript: true }
       })
 
-      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

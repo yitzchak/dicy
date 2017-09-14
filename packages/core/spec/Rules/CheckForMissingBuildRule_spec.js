@@ -26,7 +26,7 @@ describe('CheckForMissingBuildRule', () => {
         }]
       })
 
-      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -38,7 +38,7 @@ describe('CheckForMissingBuildRule', () => {
         }]
       })
 
-      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -48,7 +48,7 @@ describe('CheckForMissingBuildRule', () => {
     it('run succeeds and does not log any error messages when build rules are present.', async (done) => {
       const { dicy, rule, options } = await initialize()
       const file = await dicy.getFile('LaTeX_article.tex')
-      const otherRule = new Rule(rule.state, 'build', 'execute', options, file)
+      const otherRule = new Rule(rule.state, 'build', 'execute', options, [file])
 
       dicy.addRule(otherRule)
 
@@ -76,7 +76,7 @@ describe('CheckForMissingBuildRule', () => {
         options: { jobName: 'foo' }
       })
       const file = await dicy.getFile('LaTeX_article.tex')
-      const otherRule = new Rule(rule.state, 'build', 'execute', options, file)
+      const otherRule = new Rule(rule.state, 'build', 'execute', options, [file])
 
       dicy.addRule(otherRule)
 

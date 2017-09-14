@@ -141,7 +141,7 @@ export default class State extends EventEmitter {
 
   async addCachedRule (cache: RuleCache): Promise<void> {
     const options = this.getJobOptions(cache.jobName)
-    const id = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, ...cache.parameters)
+    const id = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, cache.parameters)
     if (this.rules.has(id)) return
 
     const RuleClass = this.ruleClasses.find(ruleClass => ruleClass.name === cache.name)
@@ -153,7 +153,7 @@ export default class State extends EventEmitter {
         parameters.push(parameter)
       }
       // $FlowIgnore
-      const rule = new RuleClass(this, cache.command, cache.phase, options, ...parameters)
+      const rule = new RuleClass(this, cache.command, cache.phase, options, parameters)
       this.addNode(rule.id)
       await rule.initialize()
       this.rules.set(rule.id, rule)
@@ -169,16 +169,13 @@ export default class State extends EventEmitter {
     }
   }
 
-  getRuleId (name: string, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File | string>): string {
-    const items = parameters.map(item => (typeof item === 'string') ? this.normalizePath(item) : item.filePath)
-    items.unshift(jobName || '')
-    items.unshift(phase || '')
-    items.unshift(command || '')
+  getRuleId (name: string, command: Command, phase: Phase, jobName: ?string, parameters: Array<string> = []): string {
+    const items = [command, phase, jobName || ''].concat(parameters)
     return `${name}(${items.join(';')})`
   }
 
-  getRule (name: string, command: Command, phase: Phase, jobName: ?string, ...parameters: Array<File | string>): ?Rule {
-    const id = this.getRuleId(name, command, phase, jobName, ...parameters)
+  getRule (name: string, command: Command, phase: Phase, jobName: ?string, parameters: Array<string> = []): ?Rule {
+    const id = this.getRuleId(name, command, phase, jobName, parameters)
     return this.rules.get(id)
   }
 

@@ -18,7 +18,7 @@ export default class BibTeX extends Rule {
   ]
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     return state.isGrandparentOf(parameters[0], parameters[1]) &&
       !!parameters[1].value && !!parameters[1].value.bibdata
   }

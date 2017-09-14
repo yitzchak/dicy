@@ -61,11 +61,12 @@ export default class Rule extends StateConsumer {
           let indicies = candidates.map(files => files.length - 1)
 
           while (indicies.every(index => index > -1)) {
-            const parameters = candidates.map((files, index) => files[indicies[index]])
-            const ruleId = state.getRuleId(this.name, command, phase, options.jobName, ...parameters)
+            const parameters: Array<File> = candidates.map((files, index) => files[indicies[index]])
+            // $FlowIgnore
+            const ruleId: string = state.getRuleId(this.name, command, phase, options.jobName, parameters.map(file => file.filePath))
 
-            if (!state.rules.has(ruleId) && await this.isApplicable(state, command, phase, options, ...parameters)) {
-              const rule = new this(state, command, phase, options, ...parameters)
+            if (!state.rules.has(ruleId) && await this.isApplicable(state, command, phase, options, parameters)) {
+              const rule = new this(state, command, phase, options, parameters)
               await rule.initialize()
               if (rule.alwaysEvaluate) rule.addActions(file)
               rules.push(rule)
@@ -86,17 +87,17 @@ export default class Rule extends StateConsumer {
     return rules
   }
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     return true
   }
 
-  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>) {
+  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []) {
     super(state, options)
 
     this.parameters = parameters
     this.command = command
     this.phase = phase
-    this.id = state.getRuleId(this.constructor.name, command, phase, options.jobName, ...parameters)
+    this.id = state.getRuleId(this.constructor.name, command, phase, options.jobName, parameters.map(file => file.filePath))
 
     this.parameters.forEach((file, index) => {
       const { dir, base, name, ext } = path.parse(file.filePath)

@@ -35,7 +35,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -58,7 +58,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -82,7 +82,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

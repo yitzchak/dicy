@@ -21,7 +21,7 @@ describe('Agda', () => {
     it('returns true if literateAgdaEngine is \'agda\'', async (done) => {
       const { rule, options } = await initialize()
 
-      expect(await Agda.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await Agda.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -31,7 +31,7 @@ describe('Agda', () => {
         options: { literateAgdaEngine: 'lhs2TeX' }
       })
 
-      expect(await Agda.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await Agda.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

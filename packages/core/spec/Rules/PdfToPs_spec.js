@@ -23,7 +23,7 @@ describe('PdfToPs', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(await PdfToPs.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await PdfToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('PdfToPs', () => {
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await PdfToPs.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await PdfToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

@@ -23,7 +23,7 @@ describe('DviToSvg', () => {
         options: { outputFormat: 'svg' }
       })
 
-      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('DviToSvg', () => {
         options: { outputFormat: 'dvi' }
       })
 
-      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

@@ -25,7 +25,7 @@ describe('EpsToPdf', () => {
         filePath: 'file-types/EncapsulatedPostScript.eps'
       })
 
-      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('EpsToPdf', () => {
     it('returns false if EPS file is not the main source file.', async (done) => {
       const { rule, options } = await initialize()
 
-      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -57,7 +57,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -81,7 +81,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await EpsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

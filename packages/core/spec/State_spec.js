@@ -11,7 +11,7 @@ describe('State', () => {
   })
 
   it('verifies that getRuleId returns expected id', () => {
-    const result = state.getRuleId('quux', 'build', 'execute', 'bar', 'foo.tex')
+    const result = state.getRuleId('quux', 'build', 'execute', 'bar', ['foo.tex'])
     const expectedResult = 'quux(build;execute;bar;foo.tex)'
     expect(result).toEqual(expectedResult)
   })

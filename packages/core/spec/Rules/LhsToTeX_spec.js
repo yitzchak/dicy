@@ -21,7 +21,7 @@ describe('LhsToTeX', () => {
     it('returns true if file type is \'LiterateHaskell\'', async (done) => {
       const { rule, options } = await initialize()
 
-      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -32,7 +32,7 @@ describe('LhsToTeX', () => {
         options: { literateAgdaEngine: 'lhs2TeX' }
       })
 
-      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -42,7 +42,7 @@ describe('LhsToTeX', () => {
         parameters: [{ filePath: 'LiterateAgda.lagda' }]
       })
 
-      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
