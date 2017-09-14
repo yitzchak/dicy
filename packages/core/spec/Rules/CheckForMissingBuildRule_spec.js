@@ -18,7 +18,7 @@ async function initialize ({
 }
 
 describe('CheckForMissingBuildRule', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if the parameter is the main source file.', async (done) => {
       const { dicy, rule, options } = await initialize({
         parameters: [{
@@ -26,7 +26,7 @@ describe('CheckForMissingBuildRule', () => {
         }]
       })
 
-      expect(await CheckForMissingBuildRule.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
 
       done()
     })
@@ -38,7 +38,7 @@ describe('CheckForMissingBuildRule', () => {
         }]
       })
 
-      expect(await CheckForMissingBuildRule.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
 
       done()
     })

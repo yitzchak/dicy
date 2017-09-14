@@ -16,7 +16,7 @@ describe('CreateOutputTree', () => {
     it('returns false if outputDirectory is not set.', async (done) => {
       const { rule, options } = await initialize()
 
-      expect(await CreateOutputTree.appliesToPhase(rule.state, 'build', 'initialize', options)).toBe(false)
+      expect(await CreateOutputTree.isApplicable(rule.state, 'build', 'initialize', options)).toBe(false)
 
       done()
     })
@@ -26,7 +26,7 @@ describe('CreateOutputTree', () => {
         options: { outputDirectory: '.' }
       })
 
-      expect(await CreateOutputTree.appliesToPhase(rule.state, 'build', 'initialize', options)).toBe(false)
+      expect(await CreateOutputTree.isApplicable(rule.state, 'build', 'initialize', options)).toBe(false)
 
       done()
     })
@@ -36,7 +36,7 @@ describe('CreateOutputTree', () => {
         options: { outputDirectory: 'foo' }
       })
 
-      expect(await CreateOutputTree.appliesToPhase(rule.state, 'build', 'initialize', options)).toBe(true)
+      expect(await CreateOutputTree.isApplicable(rule.state, 'build', 'initialize', options)).toBe(true)
 
       done()
     })

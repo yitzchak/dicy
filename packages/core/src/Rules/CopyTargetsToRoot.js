@@ -13,7 +13,7 @@ export default class CopyTargetsToRoot extends Rule {
   static description: string = 'Copy targets to root directory.'
   static alwaysEvaluate: boolean = true
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     return !!options.copyTargetsToRoot &&
       parameters.every(file => !file.virtual && state.targets.has(file.filePath) && path.dirname(file.filePath) !== '.')
   }

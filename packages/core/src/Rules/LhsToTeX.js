@@ -13,7 +13,7 @@ export default class LhsToTeX extends Rule {
   ])]
   static description: string = 'Runs lhs2TeX on lhs or lagda files.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
     return parameters.some(file => ((file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'lhs2TeX') ||
       (file.type === 'LiterateAgda' && options.literateAgdaEngine === 'lhs2TeX')))
   }
