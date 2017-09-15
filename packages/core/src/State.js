@@ -14,11 +14,12 @@ import type {
   KillToken,
   Option,
   OptionsInterface,
+  OptionInterfaceMap,
   Phase,
   RuleCache
 } from './types'
 
-function getLabel (x: File | Rule) {
+function getLabel (x: File | Rule): string {
   return (x instanceof File) ? x.filePath : x.id
 }
 
@@ -47,7 +48,7 @@ export default class State extends EventEmitter {
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
-    const resolveFilePath = path.resolve(filePath)
+    const resolveFilePath: string = path.resolve(filePath)
     const { dir, base, name, ext } = path.parse(resolveFilePath)
     this.filePath = base
     this.rootPath = dir
@@ -76,21 +77,10 @@ export default class State extends EventEmitter {
     }
   }
 
-  static async create (filePath: string, schema: Array<Option> = []) {
-    const state = new State(filePath, schema)
-
-    // I've removed this line to allow for the cache to test for a file update
-    // in the main source file. This make the async not really needed anymore,
-    // but I'll leave for a bit just in case.
-    // await state.getFile(filePath)
-
-    return state
-  }
-
   async getTargetPaths (absolute: boolean = false): Promise<Array<string>> {
     const results: Array<string> = []
     for (const target of this.targets.values()) {
-      const file = await this.getFile(target)
+      const file: ?File = await this.getFile(target)
       if (file) results.push(absolute ? file.realFilePath : target)
     }
     return results
@@ -99,7 +89,7 @@ export default class State extends EventEmitter {
   async getTargetFiles (): Promise<Array<File>> {
     const results: Array<File> = []
     for (const target of this.targets.values()) {
-      const file = await this.getFile(target)
+      const file: ?File = await this.getFile(target)
       if (file) results.push(file)
     }
     return results
@@ -140,42 +130,42 @@ export default class State extends EventEmitter {
   }
 
   async addCachedRule (cache: RuleCache): Promise<void> {
-    const options = this.getJobOptions(cache.jobName)
-    const id = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, cache.parameters)
+    const options: OptionsInterface = this.getJobOptions(cache.jobName)
+    const id: string = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, cache.parameters)
     if (this.rules.has(id)) return
 
     const RuleClass = this.ruleClasses.find(ruleClass => ruleClass.name === cache.name)
     if (RuleClass) {
-      const parameters = []
+      const parameters: Array<File> = []
       for (const filePath of cache.parameters) {
         const parameter = await this.getFile(filePath)
         if (!parameter) break
         parameters.push(parameter)
       }
       // $FlowIgnore
-      const rule = new RuleClass(this, cache.command, cache.phase, options, parameters)
+      const rule: Rule = new RuleClass(this, cache.command, cache.phase, options, parameters)
       this.addNode(rule.id)
       await rule.initialize()
       this.rules.set(rule.id, rule)
       await rule.getInputs(cache.inputs)
-      const outputs = await rule.getOutputs(cache.outputs)
+      const outputs: Array<File> = await rule.getOutputs(cache.outputs)
       if (rule.constructor.alwaysEvaluate || outputs.length !== cache.outputs.length) {
         // At least one of the outputs is missing or the rule should always run.
         rule.addActions()
       }
-      for (const input of rule.inputs) {
+      for (const input: File of rule.inputs) {
         await rule.addFileActions(input)
       }
     }
   }
 
   getRuleId (name: string, command: Command, phase: Phase, jobName: ?string, parameters: Array<string> = []): string {
-    const items = [command, phase, jobName || ''].concat(parameters)
+    const items: Array<string> = [command, phase, jobName || ''].concat(parameters)
     return `${name}(${items.join(';')})`
   }
 
   getRule (name: string, command: Command, phase: Phase, jobName: ?string, parameters: Array<string> = []): ?Rule {
-    const id = this.getRuleId(name, command, phase, jobName, parameters)
+    const id: string = this.getRuleId(name, command, phase, jobName, parameters)
     return this.rules.get(id)
   }
 
@@ -230,9 +220,9 @@ export default class State extends EventEmitter {
   }
 
   async deleteFile (file: File, jobName: ?string, unlink: boolean = true) {
-    const invalidRules = []
+    const invalidRules: Array<Rule> = []
 
-    for (const rule of this.rules.values()) {
+    for (const rule: Rule of this.rules.values()) {
       if (rule.jobName === jobName) {
         if (await rule.removeFile(file)) {
           // This file is one of the parameters of the rule so we need to remove
@@ -242,7 +232,7 @@ export default class State extends EventEmitter {
       }
     }
 
-    for (const rule of invalidRules) {
+    for (const rule: Rule of invalidRules) {
       this.removeNode(rule.id)
     }
 
@@ -260,11 +250,11 @@ export default class State extends EventEmitter {
   }
 
   assignSubOptions (to: Object, from: Object) {
-    for (const name in from) {
+    for (const name: string in from) {
       if (from.hasOwnProperty(name)) {
-        const value = from[name]
+        const value: any = from[name]
         if (typeof value !== 'object' || Array.isArray(value)) {
-          const schema = this.optionSchema.get(name)
+          const schema: Option | void = this.optionSchema.get(name)
           if (schema) {
             to[schema.name] = value
           } else if (name.startsWith('$')) {
@@ -286,7 +276,7 @@ export default class State extends EventEmitter {
   }
 
   resetOptions () {
-    for (const name of Object.getOwnPropertyNames(this.options)) {
+    for (const name: string of Object.getOwnPropertyNames(this.options)) {
       delete this.options[name]
     }
 
@@ -294,7 +284,7 @@ export default class State extends EventEmitter {
   }
 
   getJobOptions (jobName: ?string = null): OptionsInterface {
-    let optionProxy = this.optionProxies[jobName]
+    let optionProxy: OptionsInterface = this.optionProxies[jobName]
 
     if (!optionProxy) {
       this.optionProxies[jobName] = optionProxy = new Proxy(this.options, {
@@ -309,12 +299,12 @@ export default class State extends EventEmitter {
           if (jobName) {
             if (name === 'jobName') return jobName
             if ('jobs' in target) {
-              const jobOptions = target.jobs[jobName]
+              const jobOptions: OptionInterfaceMap = target.jobs[jobName]
               if (jobOptions && name in jobOptions) return jobOptions[name]
             }
           }
 
-          const schema = this.optionSchema.get(name)
+          const schema: Option | void = this.optionSchema.get(name)
 
           if (schema && schema.type === 'boolean') {
             return !!target[name]
@@ -323,10 +313,10 @@ export default class State extends EventEmitter {
           return (name === 'filePath') ? this.filePath : target[name]
         },
         ownKeys: target => {
-          const keys = new Set(['filePath', 'jobNames'])
+          const keys: Set<string> = new Set(['filePath', 'jobNames'])
 
           if (jobName && 'jobs' in target) {
-            const jobOptions = target.jobs[jobName]
+            const jobOptions: OptionInterfaceMap = target.jobs[jobName]
             if (jobOptions) Object.keys(jobOptions).forEach(key => keys.add(key))
           }
 
@@ -357,8 +347,8 @@ export default class State extends EventEmitter {
   }
 
   isGrandparentOf (x: File | Rule, y: File | Rule): boolean {
-    const xLabel = getLabel(x)
-    const yLabel = getLabel(y)
+    const xLabel: string = getLabel(x)
+    const yLabel: string = getLabel(y)
 
     return this.graph.predecessors(yLabel).some(file => this.graph.predecessors(file).some(r => r === xLabel))
   }

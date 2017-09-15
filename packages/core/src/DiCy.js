@@ -16,7 +16,7 @@ const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
 export default class DiCy extends StateConsumer {
   static async create (filePath: string, options: Object = {}) {
     const schema = await DiCy.getOptionDefinitions()
-    const state = await State.create(filePath, schema)
+    const state = new State(filePath, schema)
     const builder = new DiCy(state, state.getJobOptions())
 
     await builder.initialize()
