@@ -20,14 +20,14 @@ async function initialize ({
 }
 
 describe('CopyTargetsToRoot', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if parameter is a target', async (done) => {
       const { rule, options } = await initialize({
         options: { copyTargetsToRoot: true }
       })
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -40,7 +40,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -53,7 +53,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -63,7 +63,7 @@ describe('CopyTargetsToRoot', () => {
         options: { copyTargetsToRoot: true }
       })
 
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -72,7 +72,7 @@ describe('CopyTargetsToRoot', () => {
       const { rule, options } = await initialize()
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

@@ -17,13 +17,13 @@ async function initialize ({
 }
 
 describe('DviToSvg', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if outputFormat is \'svg\'', async (done) => {
       const { rule, options } = await initialize({
         options: { outputFormat: 'svg' }
       })
 
-      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('DviToSvg', () => {
         options: { outputFormat: 'dvi' }
       })
 
-      expect(await DviToSvg.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

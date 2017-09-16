@@ -17,13 +17,13 @@ async function initialize ({
 }
 
 describe('DviToPs', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
       const { rule, options } = await initialize({
         options: { outputFormat: 'ps' }
       })
 
-      expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await DviToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('DviToPs', () => {
         options: { outputFormat: 'pdf', intermediatePostScript: true }
       })
 
-      expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await DviToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -43,7 +43,7 @@ describe('DviToPs', () => {
         options: { outputFormat: 'dvi' }
       })
 
-      expect(await DviToPs.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await DviToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

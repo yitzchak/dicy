@@ -17,13 +17,13 @@ async function initialize ({
 }
 
 describe('DviToPdf', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
       const { rule, options } = await initialize({
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -43,7 +43,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'pdf', intermediatePostScript: true }
       })
 
-      expect(await DviToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await DviToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

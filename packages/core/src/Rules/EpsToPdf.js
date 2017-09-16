@@ -16,7 +16,7 @@ export default class EpsToPdf extends Rule {
   ]
   static description: string = 'Converts EPS to PDF using epstopdf.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     switch (parameters[1].type) {
       case 'Nil':
         // If there is not a LaTeX log present then only apply epstopdf when the

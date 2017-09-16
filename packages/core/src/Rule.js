@@ -33,7 +33,10 @@ export default class Rule extends StateConsumer {
   failures: Set<Action> = new Set()
 
   static async analyzePhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<?Rule> {
-    if (await this.appliesToPhase(state, command, phase, options)) {
+    const appliesToPhase: boolean = this.commands.has(command) && this.phases.has(phase) &&
+          this.parameterTypes.length === 0
+
+    if (appliesToPhase && await this.isApplicable(state, command, phase, options)) {
       const rule = new this(state, command, phase, options)
       await rule.initialize()
       if (rule.alwaysEvaluate) rule.addActions()
@@ -41,17 +44,13 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  static async appliesToPhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<boolean> {
-    return this.commands.has(command) &&
-      this.phases.has(phase) &&
-      this.parameterTypes.length === 0
-  }
-
   static async analyzeFile (state: State, command: Command, phase: Phase, options: OptionsInterface, file: File): Promise<Array<Rule>> {
-    const rules = []
+    const rules: Array<Rule> = []
+    const appliesToFile: boolean = this.commands.has(command) && this.phases.has(phase) &&
+          this.parameterTypes.some(types => file && file.inTypeSet(types))
 
-    if (await this.appliesToFile(state, command, phase, options, file)) {
-      const files = Array.from(state.files.values()).filter(file => !options.jobName || file.jobNames.has(options.jobName))
+    if (appliesToFile) {
+      const files: Array<File> = Array.from(state.files.values()).filter(file => !options.jobName || file.jobNames.has(options.jobName))
 
       for (let i = 0; i < this.parameterTypes.length; i++) {
         if (file.inTypeSet(this.parameterTypes[i])) {
@@ -62,11 +61,12 @@ export default class Rule extends StateConsumer {
           let indicies = candidates.map(files => files.length - 1)
 
           while (indicies.every(index => index > -1)) {
-            const parameters = candidates.map((files, index) => files[indicies[index]])
-            const ruleId = state.getRuleId(this.name, command, phase, options.jobName, ...parameters)
+            const parameters: Array<File> = candidates.map((files, index) => files[indicies[index]])
+            // $FlowIgnore
+            const ruleId: string = state.getRuleId(this.name, command, phase, options.jobName, parameters.map(file => file.filePath))
 
-            if (!state.rules.has(ruleId) && await this.appliesToParameters(state, command, phase, options, ...parameters)) {
-              const rule = new this(state, command, phase, options, ...parameters)
+            if (!state.rules.has(ruleId) && await this.isApplicable(state, command, phase, options, parameters)) {
+              const rule = new this(state, command, phase, options, parameters)
               await rule.initialize()
               if (rule.alwaysEvaluate) rule.addActions(file)
               rules.push(rule)
@@ -87,23 +87,17 @@ export default class Rule extends StateConsumer {
     return rules
   }
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     return true
   }
 
-  static async appliesToFile (state: State, command: Command, phase: Phase, options: OptionsInterface, file: File): Promise<boolean> {
-    return this.commands.has(command) &&
-      this.phases.has(phase) &&
-      this.parameterTypes.some(types => file.inTypeSet(types))
-  }
-
-  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>) {
+  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []) {
     super(state, options)
 
     this.parameters = parameters
     this.command = command
     this.phase = phase
-    this.id = state.getRuleId(this.constructor.name, command, phase, options.jobName, ...parameters)
+    this.id = state.getRuleId(this.constructor.name, command, phase, options.jobName, parameters.map(file => file.filePath))
 
     this.parameters.forEach((file, index) => {
       const { dir, base, name, ext } = path.parse(file.filePath)

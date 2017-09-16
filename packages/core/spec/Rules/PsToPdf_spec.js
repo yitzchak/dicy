@@ -17,13 +17,13 @@ async function initialize ({
 }
 
 describe('PsToPdf', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if outputFormat is \'pdf\'', async (done) => {
       const { rule, options } = await initialize({
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await PsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -33,7 +33,7 @@ describe('PsToPdf', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(await PsToPdf.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await PsToPdf.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

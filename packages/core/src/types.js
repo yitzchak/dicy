@@ -255,3 +255,5 @@ pweaveOutputPath: '$JOB.tex',
 severity: 'warning' }
 
 // END_AUTO
+
+export type OptionInterfaceMap = { [name: string]: OptionsInterface }

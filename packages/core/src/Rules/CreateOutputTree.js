@@ -13,11 +13,8 @@ export default class CreateOutputTree extends Rule {
   static alwaysEvaluate: boolean = true
   static description: string = 'Create directory tree for aux files when `outputDirectory` is set.'
 
-  static async appliesToPhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<boolean> {
-    return this.commands.has(command) &&
-      this.phases.has(phase) &&
-      this.parameterTypes.length === 0 &&
-      !!options.outputDirectory && options.outputDirectory !== '.'
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+    return !!options.outputDirectory && options.outputDirectory !== '.'
   }
 
   async run () {

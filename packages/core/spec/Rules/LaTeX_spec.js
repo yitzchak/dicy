@@ -14,7 +14,7 @@ async function initialize ({
 }
 
 describe('LaTeX', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if file type is \'LaTeX\'', async (done) => {
       const { rule, options } = await initialize({
         parameters: [{
@@ -22,7 +22,7 @@ describe('LaTeX', () => {
         }]
       })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await LaTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -34,7 +34,7 @@ describe('LaTeX', () => {
         }]
       })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -47,7 +47,7 @@ describe('LaTeX', () => {
       })
       const parameters = await rule.getFiles(['LaTeX_standalone.tex'])
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule.state, 'build', 'execute', options, parameters)).toBe(false)
 
       done()
     })
@@ -60,7 +60,7 @@ describe('LaTeX', () => {
         options: { literateAgdaEngine: 'none' }
       })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await LaTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -73,7 +73,7 @@ describe('LaTeX', () => {
         options: { literateAgdaEngine: 'agda' }
       })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -86,7 +86,7 @@ describe('LaTeX', () => {
         options: { literateHaskellEngine: 'none' }
       })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await LaTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -99,7 +99,7 @@ describe('LaTeX', () => {
         options: { literateHaskellEngine: 'lhs2TeX' }
       })
 
-      expect(await LaTeX.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

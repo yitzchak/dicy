@@ -19,7 +19,7 @@ async function initialize ({
 }
 
 describe('MakeIndex', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns true if there are no splitindex notices in the log.', async (done) => {
       const { dicy, rule, options } = await initialize({
         parameters: [{
@@ -35,7 +35,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -58,7 +58,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -82,7 +82,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.appliesToParameters(dicy.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await MakeIndex.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })

@@ -19,11 +19,11 @@ async function initialize ({
 }
 
 describe('SplitIndex', () => {
-  describe('appliesToParameters', () => {
+  describe('isApplicable', () => {
     it('returns false if there are no splitindex notices in the log.', async (done) => {
       const { rule, options } = await initialize()
 
-      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(false)
+      expect(await SplitIndex.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
 
       done()
     })
@@ -46,7 +46,7 @@ describe('SplitIndex', () => {
         }]
       })
 
-      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await SplitIndex.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })
@@ -70,7 +70,7 @@ describe('SplitIndex', () => {
         }]
       })
 
-      expect(await SplitIndex.appliesToParameters(rule.state, 'build', 'execute', options, ...rule.parameters)).toBe(true)
+      expect(await SplitIndex.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
 
       done()
     })

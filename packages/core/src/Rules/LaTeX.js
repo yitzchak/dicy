@@ -20,7 +20,7 @@ export default class LaTeX extends Rule {
   ])]
   static description: string = 'Runs the required latex variant.'
 
-  static async appliesToParameters (state: State, command: Command, phase: Phase, options: OptionsInterface, ...parameters: Array<File>): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     return parameters.some(file =>
       ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))) ||
       (file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'none') ||
