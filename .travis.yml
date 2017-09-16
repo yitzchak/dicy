@@ -39,6 +39,7 @@ addons:
       - feynmf
       - latex-xcolor
       - lhs2tex
+      - python3-pip
       - r-recommended
       - texlive-bibtex-extra
       - texlive-extra-utils
