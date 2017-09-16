@@ -25,11 +25,16 @@
     "clean": "lerna clean --yes",
     "create-fixtures": "scripts/create-fixtures",
     "dicy": "node packages/cli/lib/main.js",
+    "fix": "npm run fix-js && npm run fix-md",
+    "fix-js": "echo Fixing sources... | chalk yellowBright bold && eslint --color --fix packages",
+    "fix-md": "echo Fixing MarkDown... | chalk yellowBright bold && remark . -o",
     "flow-typed-update": "flow-typed install --overwrite --skip",
     "format-yaml": "babel-node scripts/format-yaml.js",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
-    "lint": "echo Linting sources... | chalk yellowBright bold && eslint --color packages",
+    "lint": "npm run lint-js && npm run lint-md",
+    "lint-js": "echo Linting sources... | chalk yellowBright bold && eslint --color packages",
+    "lint-md": "echo Linting MarkDown... | chalk yellowBright bold && remark .",
     "specs": "echo Running core specs... | chalk yellowBright bold && cd packages/core && npm test",
     "test": "npm run lint && npm run specs",
     "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
@@ -76,6 +81,10 @@
     "flow-typed": "^2.1.5",
     "jasmine": "^2.7.0",
     "lerna": "^2.0.0",
+    "remark-cli": "^4.0.0",
+    "remark-lint-ordered-list-marker-value": "^1.0.1",
+    "remark-preset-lint-consistent": "^2.0.1",
+    "remark-preset-lint-recommended": "^3.0.1",
     "rimraf": "^2.6.1",
     "tosource": "^1.0.0"
   },
@@ -126,5 +135,11 @@
         }
       ]
     }
+  },
+  "remarkConfig": {
+    "plugins": [
+      "preset-lint-consistent",
+      "preset-lint-recommended"
+    ]
   }
 }

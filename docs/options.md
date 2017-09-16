@@ -32,16 +32,16 @@ glob pattern uses following syntax:
     `@` matches exactly one pattern, and `!` match anything but given patterns.
 -   Value of environment variable using shell variable form (`$VAR` or `${VAR}`)
     or the following job variables.
-    *   `$BASE` &mdash; File name of current source file.
-    *   `$DIR` &mdash; Directory of current source file.
-    *   `$EXT` &mdash; Extension of current source file.
-    *   `$JOB` &mdash; Current job name or base name of source file if no job
+    -   `$BASE` — File name of current source file.
+    -   `$DIR` — Directory of current source file.
+    -   `$EXT` — Extension of current source file.
+    -   `$JOB` — Current job name or base name of source file if no job
         name is used.
-    *   `$NAME` &mdash; File name of current source file with extension.
-    *   `$OUTDIR` &mdash; Current output directory or `.` if no output directory
+    -   `$NAME` — File name of current source file with extension.
+    -   `$OUTDIR` — Current output directory or `.` if no output directory
         has been specified.
-    *   `$OUTEXT` &mdash; File extension associated with output format.
-    *   `$ROOTDIR` &mdash; Directory of current main source file.
+    -   `$OUTEXT` — File extension associated with output format.
+    -   `$ROOTDIR` — Directory of current main source file.
 
 Patterns that begin with a slash or a backslash (`/` or `\`) are interpreted as
 a file system glob pattern with the directory of the main source file as the
@@ -561,15 +561,27 @@ $PATH:
 ```
 
 [action]: events#action
+
 [build]: commands#build
+
 [clean]: commands#clean
-[cleanPatterns]: #cleanpatterns
-[consoleEventOutput]: #consoleeventoutput
-[copyTargetsToRoot]: #copytargetstoroot
-[DviToPdf]: rules#dvitopdf
+
+[cleanpatterns]: #cleanpatterns
+
+[consoleeventoutput]: #consoleeventoutput
+
+[copytargetstoroot]: #copytargetstoroot
+
+[dvitopdf]: rules#dvitopdf
+
 [engine]: #engine
-[Job Specific Source Files]: configuration#job-specific-source-files
-[LaTeX]: rules#latex
-[outputDirectory]: #outputdirectory
-[outputFormat]: #outputformat
+
+[job specific source files]: configuration#job-specific-source-files
+
+[latex]: rules#latex
+
+[outputdirectory]: #outputdirectory
+
+[outputformat]: #outputformat
+
 [severity]: #severity
