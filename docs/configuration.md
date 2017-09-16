@@ -18,7 +18,7 @@ configuration sources are detailed in the [Options](options) page,
 with the exception of job name specific options which is detailed in the
 [Multiple Jobs](#multiple-jobs) section.
 
-# Multiple Jobs
+## Multiple Jobs
 
 DiCy can run LaTeX multiple times on the same source file with different
 job names and can also have job specific settings which include the ability to
@@ -26,8 +26,8 @@ build jobs that depend on source files other than the main source file. These
 abilities are accomplished through the [jobNames][] and the [jobs][] options.
 
 Modern LaTeX engines provide a command line option `jobname` which can be used
-to specify the output file name as different from the input source name. For instance,
-executing
+to specify the output file name as different from the input source name. For
+instance, executing
 
 ```bash
 pdflatex -jobname=bar foo.tex

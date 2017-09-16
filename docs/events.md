@@ -2,7 +2,18 @@
 
 ## action
 
--   event: `{ type: 'action', rule: <ruleId>, action: 'run' | 'updateDependencies', triggers: <fileTriggers> }`
+### Object
+
+```javascript
+{
+  type: 'action',
+  rule: string, // Rule ID
+  action: 'parse' | 'run' | 'updateDependencies',
+  triggers: Array<string> // File paths that triggered the action
+}
+```
+
+### Description
 
 The `action` event is emitted when a rule is activated to run or update
 dependencies. The `triggers` property lists any files the caused the activation
@@ -10,14 +21,33 @@ of the action.
 
 ## command
 
--   event: `{ type: 'command', rule: <ruleId>, command: <commandString> }`
+### Object
+
+```javascript
+{
+  type: 'command',
+  rule: string, // Rule ID
+  command: string // Command line
+}
+```
+
+### Description
 
 The `command` event is emitted when a shell command is executed. For instance,
 by the [LaTeX][] rule when executing `pdflatex`.
 
 ## fileAdded
 
--   event: `{ type: 'fileAdded', file: <filePath> }`
+### Object
+
+```javascript
+{
+  type: 'fileAdded',
+  file: string, // Path file
+}
+```
+
+### Description
 
 The `fileAdded` event is emitted when a file is added to the current build
 state. The file may be an input or an output file, so the `inputAdded` or
@@ -25,39 +55,95 @@ state. The file may be an input or an output file, so the `inputAdded` or
 
 ## fileChanged
 
--   event: `{ type: 'fileChanged', file: <filePath> }`
+### Object
+
+```javascript
+{
+  type: 'fileChanged',
+  file: string, // Path file
+}
+```
+
+### Description
 
 The `fileChanged` event is emitted when a file is has been modified.
 
 ## fileDeleted
 
--   event: `{ type: 'fileDeleted', file: <filePath> }`
+### Object
+
+```javascript
+{
+  type: 'fileDeleted',
+  file: string, // Path file
+}
+```
+
+### Description
 
 The `fileDeleted` event is emitted when a file is deleted by a command such
 as the [clean][] command.
 
 ## fileRemoved
 
--   event: `{ type: 'fileRemoved', file: <filePath> }`
+### Object
+
+```javascript
+{
+  type: 'fileRemoved',
+  file: string, // Path file
+}
+```
+
+### Description
 
 The `fileRemoved` event is emitted when a file is found to no longer exist and
 needs to be removed from dependent rules.
 
 ## inputAdded
 
--   event: `{ type: 'inputAdded', rule: <ruleId>, file: <filePath> }`
+### Object
+
+```javascript
+{
+  type: 'inputAdded',
+  rule: string, // Rule ID
+  file: string, // Path file
+}
+```
+
+### Description
 
 The `inputAdded` event is emitted when a file is added as an input to a rule.
 
 ## log
 
--   event: `{ type: 'message', message: <message> }`
+### Object
+
+```javascript
+{
+  type: 'message',
+  message: Message
+}
+```
+
+### Description
 
 The `log` event is emitted when a when a log message is received.
 
 ## outputAdded
 
--   event: `{ type: 'outputAdded', rule: <ruleId>, file: <filePath> }`
+### Object
+
+```javascript
+{
+  type: 'outputAdded',
+  rule: string, // Rule ID
+  file: string, // Path file
+}
+```
+
+### Description
 
 The `outputAdded` event is emitted when a file is added as an output to a rule.
 

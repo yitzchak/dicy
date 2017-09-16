@@ -115,8 +115,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Previous rule failure no longer prevents rule evaluation if the inputs of the
-    rule have changed.
+-   Previous rule failure no longer prevents rule evaluation if the inputs of
+    the rule have changed.
 
 ## [v0.2.1][] — 2017-06-08
 
