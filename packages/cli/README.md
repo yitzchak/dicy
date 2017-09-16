@@ -87,8 +87,8 @@ builder.on('log', event => {
 await builder.run('load', 'build', 'log', 'save')
 ```
 
-Any sequence of commands listed below may be used, but the first and last commands should
-always be `load` and `save`, respectively.
+Any sequence of commands listed below may be used, but the first and last
+commands should always be `load` and `save`, respectively.
 
 | Command | Description                                                     |
 | ------- | --------------------------------------------------------------- |
