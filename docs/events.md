@@ -23,7 +23,6 @@ The `fileAdded` event is emitted when a file is added to the current build
 state. The file may be an input or an output file, so the `inputAdded` or
 `outputAdded` might also be triggered.
 
-
 ## fileChanged
 
 -   event: `{ type: 'fileChanged', file: <filePath> }`
@@ -63,4 +62,5 @@ The `log` event is emitted when a when a log message is received.
 The `outputAdded` event is emitted when a file is added as an output to a rule.
 
 [clean]: commands#clean
-[LaTeX]: rules#latex
+
+[latex]: rules#latex

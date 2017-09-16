@@ -61,6 +61,7 @@ names via the [jobNames][] option.
 Wibble, wibble, wibble!
 \end{document}
 ```
+
 or via YAML
 
 ```yaml
@@ -164,7 +165,11 @@ do not. This is done in case the job creates a dependency for the main source
 file.
 
 <!--refs-->
-[filePath]: options#filePath
-[jobName]: options#jobname
-[jobNames]: options#jobnames
+
+[filepath]: options#filePath
+
+[jobname]: options#jobname
+
+[jobnames]: options#jobnames
+
 [jobs]: options#jobs
