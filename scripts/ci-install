@@ -57,7 +57,12 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
 fi
 
 echo Installing Python libraries...
-pip3 install Pygments Pweave matplotlib
+PIP_MODULES=(Pygments Pweave matplotlib)
+if [[ "${TRAVIS_OS_NAME:-}" == "linux" ]]; then
+  pip3 install --user ${PIP_MODULES[*]}
+else
+  pip3 install ${PIP_MODULES[*]}
+fi
 
 if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
   echo Installing R libraries...
