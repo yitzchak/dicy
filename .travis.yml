@@ -55,4 +55,6 @@ before_install:
   - source ./scripts/ci-install
 
 before_script:
+  - echo -en 'travis_fold:start:bootstraping\r'
   - source ./scripts/ci-before-test
+  - echo -en 'travis_fold:end:bootstraping\r'
