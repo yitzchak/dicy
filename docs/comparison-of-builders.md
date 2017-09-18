@@ -98,7 +98,65 @@ multistage documents. For instance, no further configuration is needed build a
 knitr document. DiCy will automatically process the file with knitr, then
 process the result with the usual LaTeX build pipeline.
 
-[arara]: https://ctan.org/pkg/arara
-[compilation topic]: https://ctan.org/topic/compilation
-[latexmk]: https://ctan.org/pkg/latexmk
-[pandoc]: https://pandoc.org/
+The automatic rule selection of DiCy is based upon log parsing, console output
+and file listings, like [latexmk][]. DiCy's automatic rule is more comprehensive
+then that of [latexmk][], though. For example, DiCy will automatically call the
+appropriate program if one uses packages that require follow-on scripts to
+process output files such as [makeindex][], [epstopdf][] or [splitindex][].
+
+### Log Parsing and Filtering
+
+In addition to using parsed logs for automatic rule selection, DiCy can filter
+and display log messages based on message severity. For example, the following
+call to DiCy will build the document then display all warning or error messages
+from Asymptote, Biber, BibTeX, LaTeX, makeindex, mendex, splitindex, or xindy
+logs.
+
+```sh
+dicy build,log foo.tex
+```
+
+Whereas the following call will display all messages including informational
+only messages (`info` severity).
+
+```sh
+dicy bl --severity=info foo.tex
+```
+
+Log message display can be done as part of a build, or may be done after a build
+has been completed since all parsed messages are stored in the build cache
+`foo-cache.yaml` in this example. For instance, the following will display all
+error messages.
+
+```sh
+dicy b foo.tex
+dicy l -s error foo.tex
+```
+
+### Shared Configuration
+
+DiCy loads the build configuration from external YAML option files or LaTeX
+magic comments in addition to any options passed via the command line. This is
+explained in more detail in the section on [configuration][]. This makes it
+possible to share the build configuration between the command line interface of
+DiCy and the library interface of DiCy used in a builder such as [Atom LaTeX][].
+From the user perspective this happens automatically, so that building from
+[Atom LaTeX][] via the `latex:build` command produces the same result as
+building from the command line via `dicy b foo.tex`.
+
+Since the same cache is used one can even query the parsed logs generated from
+an [Atom LaTeX][] build from the command line using the methods described in the
+previous section. DiCy also ensures that the in-memory cache is syncronized with
+the on-disk cache.  This guarantees building from the command line and any new
+rules or  dependencies created will be updated on the next build or cache load
+requested by a library client such as [Atom LaTeX][].
+
+[atom latex]: http://atom.io/packages/latex
+[configuration]: configuration
+[arara]: http://ctan.org/pkg/arara
+[compilation topic]: http://ctan.org/topic/compilation
+[epstopdf]: http://ctan.org/pkg/epstopdf
+[latexmk]: http://ctan.org/pkg/latexmk
+[makeindex]: http://ctan.org/pkg/makeindex
+[pandoc]: http://pandoc.org/
+[splitindex]: http://ctan.org/pkg/splitindex
