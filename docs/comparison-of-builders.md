@@ -206,6 +206,8 @@ blank means that the builder is not known to support the program.
 
 [configuration]: configuration
 
+[arara]: http://ctan.org/pkg/arara
+
 [compilation topic]: http://ctan.org/topic/compilation
 
 [epstopdf]: http://ctan.org/pkg/epstopdf
