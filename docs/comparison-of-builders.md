@@ -62,10 +62,12 @@ document building has been completed.
 [latexmk][] focuses on a small set of common rules and offers limited
 configuration of those rules, usually by allowing one to override the command
 line used to call the applicable program. New rules can be added by defining
-custom rules triggered by file extension in various `latexmkrc` files. Also,
-[latexmk][] treats the `latex` rule as a special primary rule which is run
-before all other rules. This makes it difficult to run preprocessing rules need
-in literate programming such as knitr, lhs2TeX or Pweave before LaTeX is run.
+custom rules triggered by file extension in various `latexmkrc` files. Custom
+rules do not have the same priority as internal rules. Specifically, [latexmk][]
+treats the `latex` rule as a special primary rule which is run before all other
+rules. This makes it difficult to run preprocessing rules such as knitr, lhs2TeX
+or Pweave which are needed in literate programming or reproducible research
+documents.
 
 ## DiCy
 
@@ -73,8 +75,8 @@ Like [arara][], DiCy has an extensive set of rules including indexing,
 bibliography, graphics and literate programming rules which can be individually
 configured. Like [latexmk][], DiCy automatically selects the appropriate rules
 to run, including the timing and frequency of each run. This means that, like
-[latexmk][], in order to build a document with a BibTeX based bibliography one
-need only execute the following in a command shell.
+[latexmk][], to build a document with a BibTeX based bibliography one need only
+execute the following in a command shell.
 
 ```sh
 dicy build foo.tex
@@ -86,8 +88,8 @@ style with BibTeX one could use the following TeX Magic comments in the main
 source file.
 
 ```latex
-% !TeX shellEscape = yes
-% !TeX makeindexStyle = foo
+%!TeX shellEscape = yes
+%!TeX makeindexStyle = foo
 \documentclass{article}
 ...
 ```
@@ -136,27 +138,82 @@ dicy l -s error foo.tex
 ### Shared Configuration
 
 DiCy loads the build configuration from external YAML option files or LaTeX
-magic comments in addition to any options passed via the command line. This is
-explained in more detail in the section on [configuration][]. This makes it
-possible to share the build configuration between the command line interface of
-DiCy and the library interface of DiCy used in a builder such as [Atom LaTeX][].
-From the user perspective this happens automatically, so that building from
-[Atom LaTeX][] via the `latex:build` command produces the same result as
-building from the command line via `dicy b foo.tex`.
+magic comments in addition to any options passed via the command line as
+explained in detail in the section on [configuration][]. This makes it possible
+to share the build configuration between the command line interface of DiCy and
+the library interface of DiCy used in a builder such as [Atom LaTeX][]. From the
+user perspective this happens automatically, so that building from [Atom
+LaTeX][] via the `latex:build` command produces the same result as building from
+the command line via `dicy b foo.tex`.
 
 Since the same cache is used one can even query the parsed logs generated from
 an [Atom LaTeX][] build from the command line using the methods described in the
-previous section. DiCy also ensures that the in-memory cache is syncronized with
-the on-disk cache.  This guarantees building from the command line and any new
-rules or  dependencies created will be updated on the next build or cache load
-requested by a library client such as [Atom LaTeX][].
+previous section. DiCy also ensures that the in-memory cache is synchronized
+with the on-disk cache.  This guarantees when building from the command line any
+new rules or  dependencies created will be updated on the next build or cache
+load requested by a library client such as [Atom LaTeX][].
+
+## Program Support Across Builders
+
+The following table is a summary of support that each builder has for common
+programs used in processing LaTeX documents. In the table a closed dot (●) means
+that the builder has at least minimal support for the program, an open dot (○)
+means that support can be added via a custom rule or configuration option, and a
+blank means that the builder is not known to support the program.
+
+| Program                    | arara | latexmk | DiCy |
+| -------------------------- | :---: | :-----: | :--: |
+| Agda (literate Agda)       |       |         |   ●  |
+| Asymptote                  |       |    ○    |   ●  |
+| bib2gls                    |   ●   |         |      |
+| Biber                      |   ●   |    ●    |   ●  |
+| BibTeX                     |   ●   |    ●    |   ●  |
+| BibTeX8                    |   ●   |    ○    |   ●  |
+| BibTeXu                    |   ●   |    ○    |   ●  |
+| dvipdfm(x)                 |   ●   |    ●    |   ●  |
+| dvips                      |   ●   |    ●    |   ●  |
+| dvisvgm                    |       |         |   ●  |
+| epstopdf                   |       |         |   ●  |
+| gnuplot                    |   ○   |         |      |
+| knitr                      |       |         |   ●  |
+| LaTeX                      |   ●   |    ●    |   ●  |
+| lhs2TeX (literate Agda)    |       |         |   ●  |
+| lhs2TeX (literate Haskell) |       |         |   ●  |
+| LuaLaTeX                   |   ●   |    ●    |   ●  |
+| make                       |   ●   |    ●    |      |
+| makeglossaries             |   ●   |    ○    |   ●  |
+| makeindex                  |   ●   |    ●    |   ●  |
+| mendex                     |       |    ○    |   ●  |
+| MetaPost                   |   ●   |    ○    |   ●  |
+| patchSynctex               |       |         |   ●  |
+| pBibTeX                    |       |    ○    |   ●  |
+| pdfLaTeX                   |   ●   |    ●    |   ●  |
+| pLaTeX                     |       |    ○    |   ●  |
+| ps2pdf                     |   ●   |    ●    |   ●  |
+| Pweave                     |       |         |   ●  |
+| PythonTeX                  |   ●   |    ○    |   ●  |
+| Sage                       |   ●   |    ○    |   ●  |
+| songidx                    |   ●   |         |      |
+| splitindex                 |       |         |   ●  |
+| texindy                    |   ●   |    ○    |   ●  |
+| upBibTeX                   |       |    ○    |   ●  |
+| upLaTeX                    |       |    ○    |   ●  |
+| upmendex                   |       |    ○    |   ●  |
+| XeLaTeX                    |   ●   |    ●    |   ●  |
+| xindy                      |   ●   |         |      |
 
 [atom latex]: http://atom.io/packages/latex
+
 [configuration]: configuration
-[arara]: http://ctan.org/pkg/arara
+
 [compilation topic]: http://ctan.org/topic/compilation
+
 [epstopdf]: http://ctan.org/pkg/epstopdf
+
 [latexmk]: http://ctan.org/pkg/latexmk
+
 [makeindex]: http://ctan.org/pkg/makeindex
+
 [pandoc]: http://pandoc.org/
+
 [splitindex]: http://ctan.org/pkg/splitindex
