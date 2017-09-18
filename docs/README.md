@@ -28,10 +28,16 @@ a library use `npm install @dicy/core`. To install for command line access use
 Basic usage of the Command Line interface and library can be found below. For
 more detailed documentation please see the following pages.
 
--   [Configuration][configuration]
--   [Events][events]
--   [Options][options]
--   [Rules][rules]
+-   [Comparison of Builders][] — A comparision of DiCy to [arara][] and
+    [latexmk][].
+-   [Commands][] — The commands that can be passed to DiCy.
+-   [Configuration][] — How DiCy configures the build including the order of
+    configuration.
+-   [Options][] — The options that can be passed to DiCy from the command line,
+    the YAML option files, or TeX magic comments.
+-   [Events][] — The events emitted during a build. Only applicable when using
+    the library interface to DiCy.
+-   [Rules][] — A description of the rules used when executing a DiCy build.
 
 ## Command Line Usage
 
@@ -91,6 +97,8 @@ commands should always be `load` and `save`, respectively.
 
 [agda]: http://wiki.portal.chalmers.se/agda/pmwiki.php
 
+[arara]: http://ctan.org/pkg/arara
+
 [asymptote]: http://asymptote.sourceforge.net/
 
 [biber]: http://biblatex-biber.sourceforge.net/
@@ -98,6 +106,10 @@ commands should always be `load` and `save`, respectively.
 [bibtex]: http://www.bibtex.org/
 
 [bibtex8]: http://www.ctan.org/pkg/bibtex8bit
+
+[comparison of builders]: https://yitzchak.github.io/dicy/comparison-of-builders
+
+[commands]: https://yitzchak.github.io/dicy/commands
 
 [configuration]: https://yitzchak.github.io/dicy/configuration
 
@@ -116,6 +128,8 @@ commands should always be `load` and `save`, respectively.
 [knitr]: https://yihui.name/knitr/
 
 [latex]: https://www.latex-project.org/
+
+[latexmk]: http://ctan.org/pkg/latexmk
 
 [lhs2tex]: http://www.andres-loeh.de/lhs2tex/
 
