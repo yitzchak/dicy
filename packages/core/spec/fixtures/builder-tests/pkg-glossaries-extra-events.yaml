@@ -1,0 +1,18 @@
+types:
+  - command
+  - log
+events:
+  - type: command
+    rule: LaTeX(build;execute;;pkg-glossaries-extra.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-glossaries-extra.tex
+  - type: command
+    rule: >-
+      BibToGls(build;execute;;pkg-glossaries-extra.aux;pkg-glossaries-extra.aux-ParsedLaTeXAuxilary)
+    command: bib2gls pkg-glossaries-extra
+  - type: command
+    rule: LaTeX(build;execute;;pkg-glossaries-extra.tex)
+    command: >-
+      pdflatex -file-line-error -interaction=batchmode -recorder
+      pkg-glossaries-extra.tex

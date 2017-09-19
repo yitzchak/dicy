@@ -21,6 +21,17 @@ export default class ParseLaTeXAuxilary extends Rule {
       evaluate: (reference, groups) => {
         results.bibdata = groups.bibdata.split(',')
       }
+    }, {
+      names: ['src'],
+      patterns: [/\\glsxtr@resource\{.*?src=\{([^}]+)\}/],
+      evaluate: (reference, groups) => {
+        const resource = { src: groups.src }
+        if (results.glsxtrResource) {
+          results.glsxtrResource.push(resource)
+        } else {
+          results.glsxtrResource = [resource]
+        }
+      }
     }])
 
     output.value = results
