@@ -82,10 +82,10 @@ execute the following in a command shell.
 dicy build foo.tex
 ```
 
-DiCy builds can be configured using command line options, using a YAML file or
-using TeX Magic comments. For instance, to enable shell escape and use a custom
-style with BibTeX one could use the following TeX Magic comments in the main
-source file.
+DiCy builds can be configured using command line options, using a YAML options
+file or using TeX Magic comments. For instance, to enable shell escape and use a
+custom style with BibTeX one could use the following TeX Magic comments in the
+main source file.
 
 ```latex
 %!TeX shellEscape = yes
@@ -95,10 +95,10 @@ source file.
 ```
 
 DiCy does not treat the LaTeX rule as a primary rule and all other rules as
-secondary rules. This makes it easy to support literate programming or
-multistage documents. For instance, no further configuration is needed build a
-knitr document. DiCy will automatically process the file with knitr, then
-process the result with the usual LaTeX build pipeline.
+secondary rules as [latexmk][] does. This makes it easy to support literate
+programming or multistage documents. For instance, no further configuration is
+needed build a knitr document. DiCy will automatically process the file with
+knitr, then process the result with the usual LaTeX build pipeline.
 
 The automatic rule selection of DiCy is based upon log parsing, console output
 and file listings, like [latexmk][]. DiCy's automatic rule is more comprehensive
@@ -110,9 +110,9 @@ process output files such as [makeindex][], [epstopdf][] or [splitindex][].
 
 In addition to using parsed logs for automatic rule selection, DiCy can filter
 and display log messages based on message severity. For example, the following
-call to DiCy will build the document then display all warning or error messages
-from Asymptote, Biber, BibTeX, LaTeX, makeindex, mendex, splitindex, or xindy
-logs.
+call to DiCy will build the document and then display all warning or error
+messages from Asymptote, Biber, BibTeX, LaTeX, makeindex, mendex, splitindex,
+upmendex, or xindy logs.
 
 ```sh
 dicy build,log foo.tex
