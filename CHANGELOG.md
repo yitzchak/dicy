@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   `pweaveKernel` option to specify Jupyter kernel \[[#83][]].
+-   Documentation comparing DiCy to latexmk and arara \[[#89][]]. Suggested and
+    edited by [@yudai-nkt][].
 
 ## [v0.9.1][] — 2017-09-04
 
@@ -184,6 +186,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
+[#89]: https://github.com/yitzchak/dicy/pull/89
+
 [#83]: https://github.com/yitzchak/dicy/pull/83
 
 [#82]: https://github.com/yitzchak/dicy/pull/82
@@ -213,3 +217,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [#23]: https://github.com/yitzchak/dicy/pull/23
 
 [#21]: https://github.com/yitzchak/dicy/pull/21
+
+[@yudai-nkt]: https://github.com/yudai-nkt
