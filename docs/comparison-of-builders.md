@@ -18,9 +18,9 @@ like arara and latexmk lack.
 -   Unlike latexmk, its build procedure does not need to start with LaTeX and
     can start with preprocessors such as knitr.
 -   It includes a larger default set of rules which describe how to run programs
-    used in building LaTeX documents then either arara or latexmk.
--   Unlike arara or latexmk, it parses, filters and can display messages from
-    log files generated during a build.
+    used in building LaTeX documents than either arara or latexmk.
+-   Unlike arara or latexmk, it parses, filters and display messages from log
+    files generated during a build.
 
 ## arara
 
@@ -198,7 +198,8 @@ error messages.
 
 ```shellsession
 $ dicy b foo.tex
-(INFO)    [LaTeX(build;execute;;foo.tex)] Executing `pdflatex -file-line-error -interaction=batchmode -recorder -shell-escape foo.tex`
+(INFO)    [LaTeX(build;execute;;foo.tex)] Executing `pdflatex -file-line-error
+            -interaction=batchmode -recorder -shell-escape foo.tex`
 (INFO)    [DiCy] Produced `foo.pdf`
 $ dicy l -s error foo.tex
 (ERROR)   [pdfTeX] Undefined control sequence
