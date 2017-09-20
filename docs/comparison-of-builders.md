@@ -117,8 +117,8 @@ $ dicy build foo.tex
 
 DiCy builds can be configured using command line options, using a YAML options
 file or using TeX magic comments. For instance, to enable shell escape and use a
-German word ordering with makeindex one could use the following TeX magic comments in
-the main source file.
+German word ordering with makeindex one could use the following TeX magic
+comments in the main source file.
 
 ```latex
 %!TeX shellEscape = yes
