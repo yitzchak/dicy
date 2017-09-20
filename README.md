@@ -109,15 +109,15 @@ commands should always be `load` and `save`, respectively.
 
 [appveyor]: https://ci.appveyor.com/project/yitzchak/dicy/branch/master
 
-[arara]: http://ctan.org/pkg/arara
+[arara]: https://ctan.org/pkg/arara
 
 [asymptote]: http://asymptote.sourceforge.net/
 
-[biber]: http://biblatex-biber.sourceforge.net/
+[biber]: https://www.ctan.org/pkg/biber)
 
 [bibtex]: http://www.bibtex.org/
 
-[bibtex8]: http://www.ctan.org/pkg/bibtex8bit
+[bibtex8]: https://www.ctan.org/pkg/bibtex8bit
 
 [comparison of builders]: https://yitzchak.github.io/dicy/comparison-of-builders
 
@@ -133,7 +133,7 @@ commands should always be `load` and `save`, respectively.
 
 [devdependency]: https://david-dm.org/yitzchak/dicy?type=dev
 
-[dvipdfm]: http://www.ctan.org/pkg/dvipdfm
+[dvipdfm]: https://www.ctan.org/pkg/dvipdfm
 
 [dvipdfmx]: http://project.ktug.org/dvipdfmx/
 
@@ -141,7 +141,7 @@ commands should always be `load` and `save`, respectively.
 
 [dvisvgm]: http://dvisvgm.bplaced.net/
 
-[epstopdf]: http://www.ctan.org/pkg/epstopdf
+[epstopdf]: https://www.ctan.org/pkg/epstopdf
 
 [events]: https://yitzchak.github.io/dicy/events
 
@@ -153,7 +153,7 @@ commands should always be `load` and `save`, respectively.
 
 [latex]: https://www.latex-project.org/
 
-[latexmk]: http://ctan.org/pkg/latexmk
+[latexmk]: https://ctan.org/pkg/latexmk
 
 [lhs2tex]: http://www.andres-loeh.de/lhs2tex/
 
@@ -163,9 +163,9 @@ commands should always be `load` and `save`, respectively.
 
 [lualatex]: http://www.luatex.org/
 
-[makeglossaries]: http://www.ctan.org/pkg/glossaries
+[makeglossaries]: https://www.ctan.org/pkg/glossaries
 
-[makeindex]: http://www.ctan.org/pkg/makeindex
+[makeindex]: https://www.ctan.org/pkg/makeindex
 
 [mendex]: https://www.ctan.org/pkg/mendex
 
@@ -175,25 +175,25 @@ commands should always be `load` and `save`, respectively.
 
 [patchsynctex]: https://cran.r-project.org/package=patchSynctex
 
-[pbibtex]: http://www.ctan.org/pkg/pbibtex-base
+[pbibtex]: https://www.ctan.org/pkg/pbibtex-base
 
 [pdf2ps]: http://linux.die.net/man/1/pdf2ps
 
 [pdflatex]: http://www.tug.org/applications/pdftex/
 
-[platex]: http://www.ctan.org/pkg/platex
+[platex]: https://www.ctan.org/pkg/platex
 
 [ps2pdf]: http://ghostscript.com/doc/current/Ps2pdf.htm
 
 [pweave]: https://github.com/mpastell/Pweave
 
-[pythontex]: http://www.ctan.org/pkg/pythontex
+[pythontex]: https://www.ctan.org/pkg/pythontex
 
 [rules]: https://yitzchak.github.io/dicy/rules
 
-[sagetex]: http://www.ctan.org/tex-archive/macros/latex/contrib/sagetex/
+[sagetex]: https://www.ctan.org/tex-archive/macros/latex/contrib/sagetex/
 
-[splitindex]: http://www.ctan.org/pkg/splitindex
+[splitindex]: https://www.ctan.org/pkg/splitindex
 
 [texindy]: http://xindy.sourceforge.net/
 
@@ -203,8 +203,8 @@ commands should always be `load` and `save`, respectively.
 
 [upbibtex]: http://www.t-lab.opal.ne.jp/tex/uptex_en.html
 
-[uplatex]: http://www.ctan.org/pkg/uplatex
+[uplatex]: https://www.ctan.org/pkg/uplatex
 
-[upmendex]: http://www.ctan.org/pkg/upmendex
+[upmendex]: https://www.ctan.org/pkg/upmendex
 
 [xelatex]: http://xetex.sourceforge.net/

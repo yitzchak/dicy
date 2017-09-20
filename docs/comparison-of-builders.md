@@ -2,43 +2,62 @@
 
 There are many different automatic and semi-automatic builders for LaTeX-centric
 documents. The [Compilation Topic][] at CTAN provides a current list of some of
-those specifically designed for TeX or LaTeX documents. In addition there are
-also generic document processing tools such as [pandoc][].
+those specifically designed for TeX or LaTeX documents.
 
 In order to explain the intention of and capabilities of DiCy this document
 compares DiCy to two of the most popular builders, [arara][] and [latexmk][].
 
+## Summary
+
+DiCy was designed to be used either from the command line or to be used from an
+editor like Atom. It was also to designed to have capabilities that builders
+like arara and latexmk lack.
+
+-   Unlike arara, it automatically selects the appropriate rules to run. This
+    includes the timing, the frequency and the order of each rule evaluated.
+-   Unlike latexmk, its build procedure does not need to start with LaTeX and
+    can start with preprocessors such as knitr.
+-   It includes a larger default set of rules which describe how to run programs
+    used in building LaTeX documents then either arara or latexmk.
+-   Unlike arara or latexmk, it parses, filters and can display messages from
+    log files generated during a build.
+
 ## arara
 
-[arara][] is a rule based builder which relies on directives given in the source
+arara is a rule based builder which relies on directives given in the source
 file to specify what programs should be run, the order in which they should be
-run, and also the frequency in which they should be run. For instance, to
-compile a document that has a BibTeX based bibliography the following directives
-would need to be listed at the beginning of the source document.
+run, and also the frequency in which they should be run. For instance, to build
+a document with an index the following directives would need to be listed at the
+beginning of the source document.
 
 ```latex
 % arara: pdflatex
-% arara: bibtex
-% arara: pdflatex
+% arara: makeindex
 % arara: pdflatex
 \documentclass{article}
 ...
 ```
 
-Any repeated calls of `pdflatex` need to be listed explicitly as [arara][] does
-not detect the need to run or rerun a program, nor does it detect which rules
-are applicable to the source file.
+Any repeated calls of `pdflatex` need to be listed explicitly as arara does
+not detect the need to run or rerun a program. The following command executed
+from the command shell will build the document.
 
-One can add new rules to [arara][] and there is an extensive set of rules
-provided as part of the default installation. Additionally, many of the rules
-can be customized using options in the directive. For instance, to enable shell
-escape and use a custom style with BibTeX one would use the following
+```shellsession
+$ arara foo.tex
+Running PDFLaTeX... SUCCESS
+Running MakeIndex... SUCCESS
+Running PDFLaTeX... SUCCESS
+```
+
+One can add new rules to arara and there is an extensive set of rules provided
+as part of the default installation. Additionally, many of the rules can be
+customized using options in the directive. For instance, to enable shell escape
+and use a German word ordering with makeindex one would use the following
 directives.
 
 ```latex
 % arara: pdflatex: { shell: yes }
-% arara: bibtex: { style: foo }
-% arara: pdflatex: { shell: yes }
+% arara: makeindex: { german: yes }
 % arara: pdflatex: { shell: yes }
 \documentclass{article}
 ...
@@ -46,63 +65,77 @@ directives.
 
 ## latexmk
 
-[latexmk][] is rule based builder selects the appropriate programs to run
+latexmk is a rule based builder selects the appropriate programs to run
 including the frequency at which those programs to run automatically and without
-explicit directives. For instance, to build a document with a BibTeX based
-bibliography one need only execute the following in a command shell.
+explicit directives. For instance, to build a document with an index one need
+only execute the following in a command shell.
 
-```sh
-latexmk -pdf foo.tex
+```shellsession
+$ latexmk -pdf -silent foo.tex
+Latexmk: Run number 1 of rule 'pdflatex'
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex)
+entering extended mode
+===========Latexmk: Missing input file: 'foo.ind' from line
+  'No file foo.ind.'
+Latexmk: Run number 1 of rule 'makeindex foo.idx'
+Latexmk: Run number 2 of rule 'pdflatex'
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex)
+entering extended mode
 ```
 
-Unlike [arara][], [latexmk][] uses the log files, console output and any file
-listings created by LaTeX to determine which programs to run and whether
-document building has been completed.
+Unlike arara, latexmk uses the log files and any file listings created by LaTeX
+to determine which programs to run and whether document building has been
+completed.
 
-[latexmk][] focuses on a small set of common rules and offers limited
-configuration of those rules, usually by allowing one to override the command
-line used to call the applicable program. New rules can be added by defining
-custom rules triggered by file extension in various `latexmkrc` files. Custom
-rules do not have the same priority as internal rules. Specifically, [latexmk][]
-treats the `latex` rule as a special primary rule which is run before all other
-rules. This makes it difficult to run preprocessing rules such as knitr, lhs2TeX
-or Pweave which are needed in literate programming or reproducible research
-documents.
+latexmk focuses on a small set of common rules and offers limited configuration
+of those rules, usually by allowing one to override the command line used to
+call the applicable program. New rules can be added by defining custom rules
+triggered by file extension in various `latexmkrc` files. Custom rules do not
+have the same priority as internal rules. Specifically, latexmk treats the
+`latex` rule as a special primary rule which is run before all other rules. This
+makes it difficult to run preprocessing rules such as knitr, lhs2TeX or Pweave
+which are needed in literate programming or reproducible research documents.
 
 ## DiCy
 
-Like [arara][], DiCy has an extensive set of rules including indexing,
-bibliography, graphics and literate programming rules which can be individually
-configured. Like [latexmk][], DiCy automatically selects the appropriate rules
-to run, including the timing and frequency of each run. This means that, like
-[latexmk][], to build a document with a BibTeX based bibliography one need only
-execute the following in a command shell.
+Like arara, DiCy has an extensive set of rules including indexing, bibliography,
+graphics and literate programming rules which can be individually configured.
+Like latexmk, DiCy automatically selects the appropriate rules to run, including
+the timing and frequency of each run. This means that, like latexmk, to build a
+document with an index one need only execute the following in a command shell.
 
-```sh
-dicy build foo.tex
+```shellsession
+$ dicy build foo.tex
+(INFO)    [LaTeX(build;execute;;foo.tex)] Executing `pdflatex -file-line-error
+            -interaction=batchmode -recorder foo.tex`
+(INFO)    [MakeIndex(build;execute;;foo.idx;foo.log-ParsedLaTeXLog)] Executing
+            `makeindex -t foo.ilg -o foo.ind foo.idx`
+(INFO)    [LaTeX(build;execute;;foo.tex)] Executing `pdflatex -file-line-error
+            -interaction=batchmode -recorder foo.tex`
+(INFO)    [DiCy] Produced `foo.pdf`
 ```
 
 DiCy builds can be configured using command line options, using a YAML options
-file or using TeX Magic comments. For instance, to enable shell escape and use a
-custom style with BibTeX one could use the following TeX Magic comments in the
-main source file.
+file or using TeX magic comments. For instance, to enable shell escape and use a
+custom style with makeindex one could use the following TeX magic comments in
+the main source file.
 
 ```latex
 %!TeX shellEscape = yes
-%!TeX makeindexStyle = foo
+%!TeX indexSorting = german
 \documentclass{article}
 ...
 ```
 
 DiCy does not treat the LaTeX rule as a primary rule and all other rules as
-secondary rules as [latexmk][] does. This makes it easy to support literate
+secondary rules as latexmk does. This makes it easy to support literate
 programming or multistage documents. For instance, no further configuration is
 needed build a knitr document. DiCy will automatically process the file with
 knitr, then process the result with the usual LaTeX build pipeline.
 
 The automatic rule selection of DiCy is based upon log parsing, console output
-and file listings, like [latexmk][]. DiCy's automatic rule is more comprehensive
-then that of [latexmk][], though. For example, DiCy will automatically call the
+and file listings, like latexmk. DiCy's automatic rule is more comprehensive
+then that of latexmk, though. For example, DiCy will automatically call the
 appropriate program if one uses packages that require follow-on scripts to
 process output files such as [makeindex][], [epstopdf][] or [splitindex][].
 
@@ -114,15 +147,48 @@ call to DiCy will build the document and then display all warning or error
 messages from Asymptote, Biber, BibTeX, LaTeX, makeindex, mendex, splitindex,
 upmendex, or xindy logs.
 
-```sh
-dicy build,log foo.tex
+```shellsession
+$ dicy build,log foo.tex
+(INFO)    [LaTeX(build;execute;;foo.tex)] Executing `pdflatex -file-line-error
+            -interaction=batchmode -recorder -shell-escape foo.tex`
+(ERROR)   [LaTeX] Error: Command failed: `pdflatex -file-line-error
+            -interaction=batchmode -recorder -shell-escape foo.tex`
+(WARNING) [pdfTeX] No file foo.aux.
+          [Log] foo.log @ 96-96
+(ERROR)   [pdfTeX] Undefined control sequence
+          [Source] foo.tex @ 12-12
+          [Log] foo.log @ 111-111
+(INFO)    [DiCy] Produced `foo.pdf`
 ```
 
 Whereas the following call will display all messages including informational
 only messages (`info` severity).
 
-```sh
-dicy bl --severity=info foo.tex
+```shellsession
+$ dicy bl --severity=info foo.tex
+(INFO)    [LaTeX(build;execute;;foo.tex)] Executing `pdflatex -file-line-error
+            -interaction=batchmode -recorder -shell-escape foo.tex`
+(INFO)    [makeindex] Scanning input file foo.idx....done (1 entries accepted, 0
+            rejected).
+          [Log] foo.ilg @ 2-2
+(INFO)    [makeindex] Sorting entries...done (0 comparisons).
+          [Log] foo.ilg @ 3-3
+(INFO)    [makeindex] Output written in foo.ind.
+          [Log] foo.ilg @ 5-5
+(INFO)    [makeindex] Transcript written in foo.ilg.
+          [Log] foo.ilg @ 6-6
+(INFO)    [pdfTeX] imakeidx 2016/10/15 v1.3e Package for typesetting indices in
+            a synchronous mode
+          [Source] foo.tex
+          [Log] foo.log @ 27-28
+(INFO)    [pdfTeX] Writing index file foo.idx
+          [Log] foo.log @ 95-95
+(WARNING) [pdfTeX] No file foo.aux.
+          [Log] foo.log @ 96-96
+(ERROR)   [pdfTeX] Undefined control sequence
+          [Source] foo.tex @ 12-12
+          [Log] foo.log @ 111-111
+(INFO)    [DiCy] Produced `foo.pdf`
 ```
 
 Log message display can be done as part of a build, or may be done after a build
@@ -130,9 +196,14 @@ has been completed since all parsed messages are stored in the build cache
 `foo-cache.yaml` in this example. For instance, the following will display all
 error messages.
 
-```sh
-dicy b foo.tex
-dicy l -s error foo.tex
+```shellsession
+$ dicy b foo.tex
+(INFO)    [LaTeX(build;execute;;foo.tex)] Executing `pdflatex -file-line-error -interaction=batchmode -recorder -shell-escape foo.tex`
+(INFO)    [DiCy] Produced `foo.pdf`
+$ dicy l -s error foo.tex
+(ERROR)   [pdfTeX] Undefined control sequence
+          [Source] foo.tex @ 12-12
+          [Log] foo.log @ 111-111
 ```
 
 ### Shared Configuration
@@ -206,16 +277,14 @@ blank means that the builder is not known to support the program.
 
 [configuration]: configuration
 
-[arara]: http://ctan.org/pkg/arara
+[arara]: https://ctan.org/pkg/arara
 
-[compilation topic]: http://ctan.org/topic/compilation
+[compilation topic]: https://ctan.org/topic/compilation
 
-[epstopdf]: http://ctan.org/pkg/epstopdf
+[epstopdf]: https://ctan.org/pkg/epstopdf
 
-[latexmk]: http://ctan.org/pkg/latexmk
+[latexmk]: https://ctan.org/pkg/latexmk
 
-[makeindex]: http://ctan.org/pkg/makeindex
+[makeindex]: https://ctan.org/pkg/makeindex
 
-[pandoc]: http://pandoc.org/
-
-[splitindex]: http://ctan.org/pkg/splitindex
+[splitindex]: https://ctan.org/pkg/splitindex
