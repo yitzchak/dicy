@@ -113,7 +113,7 @@ commands should always be `load` and `save`, respectively.
 
 [asymptote]: http://asymptote.sourceforge.net/
 
-[biber]: https://www.ctan.org/pkg/biber)
+[biber]: https://www.ctan.org/pkg/biber
 
 [bibtex]: http://www.bibtex.org/
 
