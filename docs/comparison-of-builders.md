@@ -52,7 +52,7 @@ Running PDFLaTeX... SUCCESS
 One can add new rules to arara and there is an extensive set of rules provided
 as part of the default installation. Additionally, many of the rules can be
 customized using options in the directive. For instance, to enable shell escape
-and use a German word ordering with makeindex one would use the following
+and use German word ordering with makeindex one would use the following
 directives.
 
 ```latex
@@ -117,7 +117,7 @@ $ dicy build foo.tex
 
 DiCy builds can be configured using command line options, using a YAML options
 file or using TeX magic comments. For instance, to enable shell escape and use a
-custom style with makeindex one could use the following TeX magic comments in
+German word ordering with makeindex one could use the following TeX magic comments in
 the main source file.
 
 ```latex
