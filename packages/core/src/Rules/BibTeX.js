@@ -26,8 +26,7 @@ export default class BibTeX extends Rule {
   async initialize () {
     await this.getResolvedInputs([
       '$OUTDIR/$JOB.log-ParsedLaTeXLog',
-      '$DIR_0/$NAME_0.blg-ParsedBibTeXLog',
-      '$FILEPATH_0'
+      '$DIR_0/$NAME_0.blg-ParsedBibTeXLog'
     ])
   }
 
