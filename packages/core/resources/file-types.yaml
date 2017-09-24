@@ -27,7 +27,7 @@ BiberLog:
   hashSkip: !!js/regexp /===/
 BibToGlsLog:
   contents: !!js/regexp /^bib2gls version /
-  fileName: !!js/regexp /\.glg$/i
+  fileName: !!js/regexp /\..+lg$/i
 DeviceIndependentFile:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
   hashFilter: dvitype
