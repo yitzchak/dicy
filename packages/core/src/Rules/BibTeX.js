@@ -20,14 +20,13 @@ export default class BibTeX extends Rule {
 
   static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     return state.isGrandparentOf(parameters[0], parameters[1]) &&
-      !!parameters[1].value && !!parameters[1].value.bibdata
+      !!parameters[1].value && !!parameters[1].value.commands.includes('bibdata')
   }
 
   async initialize () {
     await this.getResolvedInputs([
       '$OUTDIR/$JOB.log-ParsedLaTeXLog',
-      '$DIR_0/$NAME_0.blg-ParsedBibTeXLog',
-      '$FILEPATH_0'
+      '$DIR_0/$NAME_0.blg-ParsedBibTeXLog'
     ])
   }
 

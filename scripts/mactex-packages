@@ -1,6 +1,7 @@
 adjustbox
 amsrefs
 asymptote
+bib2gls
 biber
 biblatex
 bibtopic
@@ -14,6 +15,7 @@ framed
 fvextra
 gincltex
 glossaries
+glossaries-extra
 ifplatform
 imakeidx
 lazylist

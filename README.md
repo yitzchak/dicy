@@ -16,8 +16,8 @@ can build projects that utilize the following programs to process files.
 -   Graphics Creation — [Asymptote][], [MetaPost][]
 -   Image/File Conversion — [dvipdfm][], [dvipdfmx][], [dvips][],
     [dvisvgm][], [epstopdf][], [pdf2ps][], [ps2pdf][]
--   Indexing/Glossaries — [makeglossaries][], [makeindex][], [mendex][],
-    [splitindex][], [texindy][], [upmendex][]
+-   Indexing/Glossaries — [bib2gls][], [makeglossaries][], [makeindex][],
+    [mendex][], [splitindex][], [texindy][], [upmendex][]
 -   LaTeX Engines — [LaTeX][], [LuaLaTeX][], [pdfLaTeX][], [pLaTeX][],
     [upLaTeX][], [XeLaTeX][]
 -   Literate Programming/Reproducible Research — [Agda][], [knitr][],
@@ -112,6 +112,8 @@ commands should always be `load` and `save`, respectively.
 [arara]: https://ctan.org/pkg/arara
 
 [asymptote]: http://asymptote.sourceforge.net/
+
+[bib2gls]: https://ctan.org/pkg/bib2gls
 
 [biber]: https://www.ctan.org/pkg/biber
 

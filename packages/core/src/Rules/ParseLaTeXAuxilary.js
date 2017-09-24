@@ -13,13 +13,15 @@ export default class ParseLaTeXAuxilary extends Rule {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedLaTeXAuxilary')
     if (!output) return false
 
-    const results = {}
+    const results = {
+      commands: []
+    }
 
     await this.firstParameter.parse([{
-      names: ['bibdata'],
-      patterns: [/\\bibdata\{([^}]+)\}$/],
+      names: ['command'],
+      patterns: [/^\\([A-Za-z@]+)/],
       evaluate: (reference, groups) => {
-        results.bibdata = groups.bibdata.split(',')
+        results.commands.push(groups.command)
       }
     }])
 

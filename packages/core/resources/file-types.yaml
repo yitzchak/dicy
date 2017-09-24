@@ -25,6 +25,9 @@ BiberLog:
   contents: !!js/regexp / This is Biber /
   fileName: !!js/regexp /\.blg$/i
   hashSkip: !!js/regexp /===/
+BibToGlsLog:
+  contents: !!js/regexp /^bib2gls version /
+  fileName: !!js/regexp /\..+lg$/i
 DeviceIndependentFile:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
   hashFilter: dvitype
@@ -106,6 +109,7 @@ OUT:
 ParsedAsymptoteStdOut: {}
 ParsedAsymptoteStdErr: {}
 ParsedBibTeXLog: {}
+ParsedBibToGlsLog: {}
 ParsedBiberLog: {}
 ParsedLaTeXAuxilary: {}
 ParsedFileListing: {}

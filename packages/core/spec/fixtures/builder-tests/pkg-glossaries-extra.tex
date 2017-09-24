@@ -1,0 +1,19 @@
+%!TeX shellEscape = disabled
+%!TeX jobNames = job-1, job-2
+%!TeX job-2:outputDirectory = output
+%!TeX check = bib2gls -v
+\documentclass{article}
+
+\usepackage[record]{glossaries-extra}
+
+\GlsXtrLoadResources[sort={en-US},src={quux}]
+
+\begin{document}
+
+\Gls{bird} and \gls{goose}.
+Symbol: $\gls{v}$.
+Abbreviation: \gls{html}.
+
+\printunsrtglossaries
+
+\end{document}
