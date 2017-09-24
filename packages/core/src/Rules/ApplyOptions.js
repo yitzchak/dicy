@@ -29,7 +29,6 @@ export default class ApplyOptions extends Rule {
   async doAssignOptions (): Promise<void> {
     // All the possible sources of configuration data with low priority first.
     const optionPaths = [
-      '$HOME/.dicy.yaml-ParsedYAML',
       'dicy.yaml-ParsedYAML',
       '$NAME.yaml-ParsedYAML',
       '$BASE-ParsedLaTeXMagic',
@@ -40,10 +39,14 @@ export default class ApplyOptions extends Rule {
     const optionSet: Array<Object> = inputs.map(file => file.value || {})
     const globalOptions: Object = Object.assign({}, ...optionSet)
 
-    // Remove the user options if ignoreUserOptions is set.
-    if (globalOptions.ignoreUserOptions) {
-      this.info('Ignoring user options since `ignoreUserOptions` is set.')
-      optionSet.shift()
+    // Load the user options if userOptions is true.
+    if (globalOptions.userOptions) {
+      const userOptions: ?File = await this.getResolvedInput('$HOME/.dicy.yaml-ParsedYAML')
+      if (userOptions) {
+        optionSet.unshift(userOptions.value || {})
+      }
+    } else {
+      this.info('Ignoring user options since `userOptions` is false.')
     }
 
     // Reset the options and assign from frrom the inputs
