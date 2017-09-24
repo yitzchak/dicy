@@ -1,12 +1,16 @@
 /* @flow */
 
-import path from 'path'
-
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
+import type {
+  Action,
+  Command,
+  CommandOptions,
+  OptionsInterface,
+  Phase
+} from '../types'
 
 export default class BibToGls extends Rule {
   static parameterTypes: Array<Set<string>> = [
@@ -18,13 +22,6 @@ export default class BibToGls extends Rule {
   static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     return state.isGrandparentOf(parameters[0], parameters[1]) &&
       !!parameters[1].value && !!parameters[1].value.commands.includes('glsxtr@resource')
-  }
-
-  async initialize () {
-    await this.getResolvedInputs([
-      '$DIR_0/$NAME_0.glg-ParsedBibToGlsLog',
-      '$FILEPATH_0'
-    ])
   }
 
   async getFileActions (file: File): Promise<Array<Action>> {
@@ -39,20 +36,18 @@ export default class BibToGls extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const { dir, name } = path.parse(this.firstParameter.filePath)
-    const args = ['bib2gls']
+    const args = ['bib2gls', '-t', '{{$NAME_0.gelg}}']
 
     // Only push the -d option if needed.
-    if (dir) args.push('-d', dir)
-    args.push(name)
+    if (this.env.DIR_0 !== '.') args.push('-d', '{{$DIR_0}}')
+    args.push('{{$NAME_0}}')
 
     return {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: [
-        '$DIR_0/$NAME_0.glg'
-      ]
+      inputs: ['$DIR_0/$NAME_0.gelg-ParsedBibToGlsLog'],
+      outputs: ['$DIR_0/$NAME_0.gelg']
     }
   }
 }
