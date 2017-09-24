@@ -237,7 +237,7 @@ blank means that the builder is not known to support the program.
 | -------------------------- | :---: | :-----: | :--: |
 | Agda (literate Agda)       |       |         |   ●  |
 | Asymptote                  |       |    ○    |   ●  |
-| bib2gls                    |   ●   |         |      |
+| bib2gls                    |   ●   |         |   ●  |
 | Biber                      |   ●   |    ●    |   ●  |
 | BibTeX                     |   ●   |    ●    |   ●  |
 | BibTeX8                    |   ●   |    ○    |   ●  |
