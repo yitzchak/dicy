@@ -42,11 +42,14 @@ export type RuleCache = {
 }
 
 export type Cache = {
+  version: string,
   filePath: string,
   options: Object,
   files: { [filePath: string]: FileCache },
   rules: Array<RuleCache>
 }
+
+export const CACHE_VERSION = '0.10.0'
 
 export type LineRange = {
   start: number,

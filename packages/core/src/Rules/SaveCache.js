@@ -3,6 +3,7 @@
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
+import { CACHE_VERSION } from '../types'
 
 import type { Command, FileCache, Cache, Phase, OptionsInterface, RuleCache } from '../types'
 
@@ -32,6 +33,7 @@ export default class SaveCache extends Rule {
 
   async run () {
     const cache: Cache = {
+      version: CACHE_VERSION,
       filePath: this.filePath,
       options: this.state.options,
       files: {},
