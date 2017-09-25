@@ -22,11 +22,14 @@ export default class LoadAndValidateCache extends Rule {
     if (this.options.loadCache) {
       if (await File.canRead(this.cacheFilePath) && (!this.state.cacheTimeStamp ||
         this.state.cacheTimeStamp < await File.getModifiedTime(this.cacheFilePath))) {
+        this.info('Loading build cache from disk as it is newer then in-memory build cache.')
         await this.loadCache()
       } else {
+        this.info('Validating in-memory build cache.')
         await this.validateCache()
       }
     } else {
+      this.info('Skipping loading build cache from disk since `loadCache` is not set.')
       this.cleanCache()
     }
 
