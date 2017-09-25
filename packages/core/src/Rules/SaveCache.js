@@ -2,8 +2,10 @@
 
 import File from '../File'
 import Rule from '../Rule'
+import State from '../State'
+import { CACHE_VERSION } from '../types'
 
-import type { Command, FileCache, Cache, RuleCache } from '../types'
+import type { Command, FileCache, Cache, Phase, OptionsInterface, RuleCache } from '../types'
 
 export default class SaveCache extends Rule {
   static commands: Set<Command> = new Set(['save'])
@@ -12,6 +14,11 @@ export default class SaveCache extends Rule {
   static description: string = 'Saves file and rule status to a cache (-cache.yaml) to assist with rebuilding.'
 
   cacheFilePath: string
+
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+    // Only apply if saveCache is enabled
+    return options.saveCache
+  }
 
   async initialize () {
     this.cacheFilePath = this.resolvePath('$ROOTDIR/$NAME-cache.yaml')
@@ -26,6 +33,7 @@ export default class SaveCache extends Rule {
 
   async run () {
     const cache: Cache = {
+      version: CACHE_VERSION,
       filePath: this.filePath,
       options: this.state.options,
       files: {},

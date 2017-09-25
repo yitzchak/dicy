@@ -93,7 +93,7 @@ export default class EpsToPdf extends Rule {
     if (call && call.status.startsWith('executed')) {
       // There is a matching and successful call so just get the resolved output
       // and skip the evaluation.
-      this.info(`Skipping epstopdf call since epstopdf was already executed via shell escape.`, this.id)
+      this.info(`Skipping epstopdf call since epstopdf was already executed via shell escape.`)
 
       await this.getResolvedOutput(this.options.epstopdfOutputPath)
 

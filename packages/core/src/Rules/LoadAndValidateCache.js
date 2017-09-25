@@ -1,7 +1,10 @@
 /* @flow */
 
+import semver from 'semver'
+
 import File from '../File'
 import Rule from '../Rule'
+import { CACHE_VERSION } from '../types'
 
 import type { Command, Phase, RuleCache, Cache } from '../types'
 
@@ -19,15 +22,18 @@ export default class LoadAndValidateCache extends Rule {
   }
 
   async run () {
-    if (this.options.ignoreCache) {
-      this.cleanCache()
-    } else {
+    if (this.options.loadCache) {
       if (await File.canRead(this.cacheFilePath) && (!this.state.cacheTimeStamp ||
         this.state.cacheTimeStamp < await File.getModifiedTime(this.cacheFilePath))) {
+        this.info('Loading build cache from disk as it is newer then in-memory build cache.')
         await this.loadCache()
       } else {
+        this.info('Validating in-memory build cache.')
         await this.validateCache()
       }
+    } else {
+      this.info('Skipping loading build cache from disk since `loadCache` is not set.')
+      this.cleanCache()
     }
 
     // Get the main source file just in case it wasn't added by the cache load.
@@ -52,6 +58,13 @@ export default class LoadAndValidateCache extends Rule {
     const cache: ?Cache = await File.safeLoad(this.cacheFilePath)
 
     if (!cache) return true
+
+    if (!cache.version) {
+      this.warning('Skipping load of build cache since no version tag was found in the cache.')
+    } else if (!semver.satisfies(cache.version, `^${CACHE_VERSION}`)) {
+      this.warning(`Skipping load of build cache since version tag \`v${cache.version}\` does not match \`^${CACHE_VERSION}\`.`)
+      return true
+    }
 
     this.state.assignOptions(cache.options)
 

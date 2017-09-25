@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import File from '../File'
 import Rule from '../Rule'
+import { DEFAULT_OPTIONS } from '../types'
 
 import type { Command, Phase } from '../types'
 
@@ -29,7 +30,6 @@ export default class ApplyOptions extends Rule {
   async doAssignOptions (): Promise<void> {
     // All the possible sources of configuration data with low priority first.
     const optionPaths = [
-      '$HOME/.dicy.yaml-ParsedYAML',
       'dicy.yaml-ParsedYAML',
       '$NAME.yaml-ParsedYAML',
       '$BASE-ParsedLaTeXMagic',
@@ -38,12 +38,18 @@ export default class ApplyOptions extends Rule {
 
     const inputs: Array<File> = await this.getResolvedInputs(optionPaths)
     const optionSet: Array<Object> = inputs.map(file => file.value || {})
-    const globalOptions: Object = Object.assign({}, ...optionSet)
+    const loadUserOptions: boolean = optionSet.reduce(
+      (loadUserOptions, options) => ('loadUserOptions' in options) ? options.loadUserOptions : loadUserOptions,
+      DEFAULT_OPTIONS.loadUserOptions)
 
-    // Remove the user options if ignoreUserOptions is set.
-    if (globalOptions.ignoreUserOptions) {
-      this.info('Ignoring user options since `ignoreUserOptions` is set.')
-      optionSet.shift()
+    // Load the user options if loadUserOptions is true.
+    if (loadUserOptions) {
+      const userOptions: ?File = await this.getResolvedInput('$HOME/.dicy.yaml-ParsedYAML')
+      if (userOptions) {
+        optionSet.unshift(userOptions.value || {})
+      }
+    } else {
+      this.info('Ignoring user options since `loadUserOptions` is false.')
     }
 
     // Reset the options and assign from frrom the inputs

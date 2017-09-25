@@ -42,11 +42,14 @@ export type RuleCache = {
 }
 
 export type Cache = {
+  version: string,
   filePath: string,
   options: Object,
   files: { [filePath: string]: FileCache },
   rules: Array<RuleCache>
 }
+
+export const CACHE_VERSION = '0.10.0'
 
 export type LineRange = {
   start: number,
@@ -178,15 +181,12 @@ export interface OptionsInterface {
   check?: Array<string>,
   cleanPatterns: Array<string>,
   copyTargetsToRoot: boolean,
-  disableRules: Array<string>,
   dviToPdfEngine: 'dvipdfm' | 'xdvipdfmx' | 'dvipdfmx',
   engine: string,
   epstopdfBoundingBox: 'default' | 'exact' | 'hires',
   epstopdfOutputPath: string,
   epstopdfRestricted: boolean,
   filePath: string,
-  ignoreCache: boolean,
-  ignoreUserOptions: boolean,
   indexAutomaticRanges: boolean,
   indexCompressBlanks: boolean,
   indexDictionary?: string,
@@ -208,6 +208,8 @@ export interface OptionsInterface {
   lhs2texStyle: 'poly' | 'math' | 'newCode' | 'code' | 'typewriter' | 'verbatim',
   literateAgdaEngine: 'agda' | 'lhs2TeX' | 'none',
   literateHaskellEngine: 'lhs2TeX' | 'none',
+  loadCache: boolean,
+  loadUserOptions: boolean,
   outputDirectory?: string,
   outputFormat: 'dvi' | 'pdf' | 'ps' | 'svg',
   phaseCycles: number,
@@ -217,6 +219,7 @@ export interface OptionsInterface {
   pweaveKernel: string,
   pweaveOutputFormat: 'tex' | 'texminted' | 'texpweave' | 'texpygments',
   pweaveOutputPath: string,
+  saveCache: boolean,
   severity: 'info' | 'warning' | 'error',
   shellEscape?: 'disabled' | 'restricted' | 'enabled',
   synctex: boolean
@@ -231,7 +234,6 @@ $TEXINPUTS: [ '$ROOTDIR',
 bibtexEngine: 'bibtex',
 cleanPatterns: [ '$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)',
   '/$OUTDIR/_minted-$JOB/*' ],
-disableRules: [ ],
 dviToPdfEngine: 'xdvipdfmx',
 engine: 'pdflatex',
 epstopdfBoundingBox: 'default',
@@ -245,6 +247,8 @@ knitrOutputPath: '$JOB.tex',
 lhs2texStyle: 'poly',
 literateAgdaEngine: 'agda',
 literateHaskellEngine: 'lhs2TeX',
+loadCache: true,
+loadUserOptions: true,
 outputFormat: 'pdf',
 phaseCycles: 20,
 pweaveCacheDirectory: 'pweave-cache-for-$JOB',
@@ -252,6 +256,7 @@ pweaveFigureDirectory: 'pweave-figures-for-$JOB',
 pweaveKernel: 'python3',
 pweaveOutputFormat: 'tex',
 pweaveOutputPath: '$JOB.tex',
+saveCache: true,
 severity: 'warning' }
 
 // END_AUTO

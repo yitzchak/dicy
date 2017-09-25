@@ -53,7 +53,7 @@ export default class SplitIndex extends Rule {
     if (parsedLog) {
       const call = Log.findCall(parsedLog, 'splitindex', base, 'executed')
       if (call) {
-        this.info('Skipping splitindex call since splitindex was already executed via shell escape.', this.id)
+        this.info('Skipping splitindex call since splitindex was already executed via shell escape.')
         for (const call of Log.filterCalls(parsedLog, 'makeindex')) {
           await this.getOutputs(call.args.slice(1))
         }

@@ -115,6 +115,18 @@ export default class Rule extends StateConsumer {
     })
   }
 
+  error (text: string, name?: string) {
+    super.error(text, name || this.id)
+  }
+
+  warning (text: string, name?: string) {
+    super.warning(text, name || this.id)
+  }
+
+  info (text: string, name?: string) {
+    super.info(text, name || this.id)
+  }
+
   async initialize () {}
 
   async phaseInitialize (command: ?Command, phase: ?Phase) {
@@ -223,7 +235,7 @@ export default class Rule extends StateConsumer {
 
       return success
     } catch (error) {
-      this.error(error.stack, this.id)
+      this.error(error.stack)
     }
 
     return false
