@@ -11,6 +11,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Documentation comparing DiCy to latexmk and arara \[[#89][]]. Suggested and
     edited by [@yudai-nkt][].
 -   Support for bib2gls and glossaries-extra package \[[#90][]].
+-   Version field and version checking for cache loading and saving \[[#92][]].
+
+### Changed
+-   Replace `ignoreUserOptions` option with `loadUserOptions` option which has a
+    default value of `true` \[[#92][]].
+-   Replace `ignoreCache` option with `loadCache` and `saveCache` options both
+    of which have a default value of `true` \[[#92][]].
+-   Only emit `fileDeleted` event when file was actually deleted and not when
+    file has been removed from in-memory cache \[[#92][]].
 
 ## [v0.9.1][] — 2017-09-04
 
@@ -186,6 +195,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
+
+[#92]: https://github.com/yitzchak/dicy/pull/92
 
 [#90]: https://github.com/yitzchak/dicy/pull/90
 
