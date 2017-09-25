@@ -111,7 +111,7 @@ export type RuleDefinition = {
 export async function initializeRule ({ RuleClass, command, phase, jobName, filePath = 'file-types/LaTeX_article.tex', parameters = [], options = {}, targets = [] }: RuleDefinition) {
   if (!RuleClass) throw new Error('Missing rule class in initializeRule.')
 
-  options.userOptions = false
+  options.loadUserOptions = false
   const realFilePath = path.resolve(__dirname, 'fixtures', filePath)
   const dicy = await DiCy.create(realFilePath, options)
   const files = []

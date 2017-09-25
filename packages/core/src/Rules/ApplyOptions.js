@@ -38,18 +38,18 @@ export default class ApplyOptions extends Rule {
 
     const inputs: Array<File> = await this.getResolvedInputs(optionPaths)
     const optionSet: Array<Object> = inputs.map(file => file.value || {})
-    const userOptions: boolean = optionSet.reduce(
-      (userOptions, options) => ('userOptions' in options) ? options.userOptions : userOptions,
-      DEFAULT_OPTIONS.userOptions)
+    const loadUserOptions: boolean = optionSet.reduce(
+      (loadUserOptions, options) => ('loadUserOptions' in options) ? options.loadUserOptions : loadUserOptions,
+      DEFAULT_OPTIONS.loadUserOptions)
 
-    // Load the user options if userOptions is true.
-    if (userOptions) {
+    // Load the user options if loadUserOptions is true.
+    if (loadUserOptions) {
       const userOptions: ?File = await this.getResolvedInput('$HOME/.dicy.yaml-ParsedYAML')
       if (userOptions) {
         optionSet.unshift(userOptions.value || {})
       }
     } else {
-      this.info('Ignoring user options since `userOptions` is false.')
+      this.info('Ignoring user options since `loadUserOptions` is false.')
     }
 
     // Reset the options and assign from frrom the inputs
