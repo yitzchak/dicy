@@ -25,14 +25,14 @@ export default class LoadAndValidateCache extends Rule {
     if (this.options.loadCache) {
       if (await File.canRead(this.cacheFilePath) && (!this.state.cacheTimeStamp ||
         this.state.cacheTimeStamp < await File.getModifiedTime(this.cacheFilePath))) {
-        this.info('Loading build cache from disk as it is newer then in-memory build cache.', this.id)
+        this.info('Loading build cache from disk as it is newer then in-memory build cache.')
         await this.loadCache()
       } else {
-        this.info('Validating in-memory build cache.', this.id)
+        this.info('Validating in-memory build cache.')
         await this.validateCache()
       }
     } else {
-      this.info('Skipping loading build cache from disk since `loadCache` is not set.', this.id)
+      this.info('Skipping loading build cache from disk since `loadCache` is not set.')
       this.cleanCache()
     }
 
@@ -60,9 +60,9 @@ export default class LoadAndValidateCache extends Rule {
     if (!cache) return true
 
     if (!cache.version) {
-      this.warning('Skipping load of build cache since no version tag was found in the cache.', this.id)
+      this.warning('Skipping load of build cache since no version tag was found in the cache.')
     } else if (!semver.satisfies(cache.version, `^${CACHE_VERSION}`)) {
-      this.warning(`Skipping load of build cache since version tag \`v${cache.version}\` does not match \`^${CACHE_VERSION}\`.`, this.id)
+      this.warning(`Skipping load of build cache since version tag \`v${cache.version}\` does not match \`^${CACHE_VERSION}\`.`)
       return true
     }
 

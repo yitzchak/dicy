@@ -178,7 +178,7 @@ export default class MakeIndex extends Rule {
     if (parsedLog) {
       const call = Log.findCall(parsedLog, engine, base, 'executed')
       if (call) {
-        this.info(`Skipping ${engine} call since ${engine} was already executed via shell escape.`, this.id)
+        this.info(`Skipping ${engine} call since ${engine} was already executed via shell escape.`)
         const firstChar = ext[1]
 
         await this.getResolvedOutputs([
@@ -202,7 +202,7 @@ export default class MakeIndex extends Rule {
       ? 'ParsedXindyLog'
       : (makeindex ? 'ParsedMakeIndexLog' : 'ParsedMendexLog')
     const infoIgnoreSetting = (name: string) => {
-      this.info(`Ignoring \`${name}\` setting of \`${this.options[name].toString()}\` since index engine \`${this.options.engine}\` does not support that option or setting.`, this.id)
+      this.info(`Ignoring \`${name}\` setting of \`${this.options[name].toString()}\` since index engine \`${this.options.engine}\` does not support that option or setting.`)
     }
 
     const args = [

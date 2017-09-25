@@ -64,7 +64,7 @@ describe('CheckForMissingBuildRule', () => {
       expect(await rule.run()).toBe(false)
       expect(rule.log).toHaveBeenCalledWith({
         severity: 'error',
-        name: 'DiCy',
+        name: 'CheckForMissingBuildRule(build;finalize;;LaTeX_article.tex)',
         text: 'No applicable build rule was found for main source file `LaTeX_article.tex`.'
       })
 
@@ -94,7 +94,7 @@ describe('CheckForMissingBuildRule', () => {
       expect(await rule.run()).toBe(false)
       expect(rule.log).toHaveBeenCalledWith({
         severity: 'error',
-        name: 'DiCy',
+        name: 'CheckForMissingBuildRule(build;finalize;foo;LaTeX_article.tex)',
         text: 'No applicable build rule was found for main source file `LaTeX_article.tex` with job name of `foo`.'
       })
 
