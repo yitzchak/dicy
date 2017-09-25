@@ -19,15 +19,15 @@ export default class LoadAndValidateCache extends Rule {
   }
 
   async run () {
-    if (this.options.ignoreCache) {
-      this.cleanCache()
-    } else {
+    if (this.options.loadCache) {
       if (await File.canRead(this.cacheFilePath) && (!this.state.cacheTimeStamp ||
         this.state.cacheTimeStamp < await File.getModifiedTime(this.cacheFilePath))) {
         await this.loadCache()
       } else {
         await this.validateCache()
       }
+    } else {
+      this.cleanCache()
     }
 
     // Get the main source file just in case it wasn't added by the cache load.
