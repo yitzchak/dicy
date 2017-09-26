@@ -127,13 +127,13 @@ commands should always be `load` and `save`, respectively.
 
 [configuration]: https://yitzchak.github.io/dicy/configuration
 
-[dependency svg]: https://david-dm.org/yitzchak/dicy.svg
+[dependency svg]: https://david-dm.org/yitzchak/dicy.svg?path=packages%2Fcore
 
-[dependency]: https://david-dm.org/yitzchak/dicy
+[dependency]: https://david-dm.org/yitzchak/dicy?path=packages%2Fcore
 
-[devdependency svg]: https://david-dm.org/yitzchak/dicy/dev-status.svg
+[devdependency svg]: https://david-dm.org/yitzchak/dicy/dev-status.svg?path=packages%2Fcore
 
-[devdependency]: https://david-dm.org/yitzchak/dicy?type=dev
+[devdependency]: https://david-dm.org/yitzchak/dicy?type=dev&path=packages%2Fcore
 
 [dvipdfm]: https://www.ctan.org/pkg/dvipdfm
 
