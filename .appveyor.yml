@@ -5,13 +5,14 @@ branches:
 platform:
   - x64
 
+version: 0.10.0-{build}
 skip_tags: true
 clone_depth: 1
 
 environment:
   global:
     ASYMPTOTE_HOME: '%PROGRAMFILES(X86)%\Asymptote'
-    ASYMPTOTE_VERSION: 2.40
+    ASYMPTOTE_VERSION: 2.41
     MIKTEX_HOME: '%PROGRAMFILES%\MiKTeX 2.9'
     PYTHON: C:\Python36
     R_HOME: '%PROGRAMFILES%\R'
