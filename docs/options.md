@@ -305,9 +305,9 @@ Internal kanji encoding for pLaTeX, upLaTeX, pBibTeX, upBibTeX and mendex.
 -   **Type:** boolean
 -   **Default Value:** `true`
 -   **Commands:** [build][]
--   **Command Line Interface:** `--knitr-concordance <knitrConcordance>`
+-   **Command Line Interface:** `--no-knitr-concordance`
 
-Enable creation of knitr concordance file used to SyncTeX patching and source
+Enable/disable creation of knitr concordance file used to SyncTeX patching and source
 code mapping in log messages.
 
 ## knitrOutputPath
