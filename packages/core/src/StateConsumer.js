@@ -135,7 +135,7 @@ export default class StateConsumer {
       }
 
       if (invalidType || (schema.values && !schema.values.includes(value))) {
-        this.error(`Ignoring attempt to set \`${name}\` to a invalid value of \`${value.toString()}\``)
+        this.warning(`Ignoring attempt to set \`${name}\` to a invalid value of \`${value.toString()}\``)
       } else {
         store[schema.name] = value
       }
@@ -143,7 +143,7 @@ export default class StateConsumer {
       // It's an environment variable
       store[name] = value
     } else {
-      this.error(`Ignoring attempt to set unknown option \`${name}\` to a value of \`${value.toString()}\``)
+      this.warning(`Ignoring attempt to set unknown option \`${name}\` to a value of \`${value.toString()}\``)
     }
   }
 
