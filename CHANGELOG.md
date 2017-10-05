@@ -11,7 +11,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     warning severity.
 -   `BibToGls` missing guard on parsed log search.
 
-
 ## [v0.10.0][] — 2017-09-25
 
 ### Added
@@ -23,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Version field and version checking for cache loading and saving \[[#92][]].
 
 ### Changed
+
 -   Replace `ignoreUserOptions` option with `loadUserOptions` option which has a
     default value of `true` \[[#92][]].
 -   Replace `ignoreCache` option with `loadCache` and `saveCache` options both

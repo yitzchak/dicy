@@ -307,8 +307,8 @@ Internal kanji encoding for pLaTeX, upLaTeX, pBibTeX, upBibTeX and mendex.
 -   **Commands:** [build][]
 -   **Command Line Interface:** `--no-knitr-concordance`
 
-Enable/disable creation of knitr concordance file used to SyncTeX patching and source
-code mapping in log messages.
+Enable/disable creation of knitr concordance file used to SyncTeX patching and
+source code mapping in log messages.
 
 ## knitrOutputPath
 
