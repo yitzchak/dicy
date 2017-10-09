@@ -19,7 +19,8 @@ export default class ParseSplitIndexStdOut extends Rule {
       messages: [],
       inputs: [],
       outputs: [],
-      calls: []
+      calls: [],
+      requests: []
     }
 
     await this.firstParameter.parse([{

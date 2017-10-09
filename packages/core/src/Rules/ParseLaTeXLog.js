@@ -26,7 +26,8 @@ export default class ParseLaTeXLog extends Rule {
       messages: [],
       inputs: [],
       outputs: [],
-      calls: []
+      calls: [],
+      requests: []
     }
     const name: string = this.firstParameter.subType || 'LaTeX'
     let filePath: string

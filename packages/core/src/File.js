@@ -7,6 +7,7 @@ import crypto from 'crypto'
 import fs from 'fs-extra'
 import path from 'path'
 import readline from 'readline'
+import xmljs from 'xml-js'
 import yaml from 'js-yaml'
 
 import type { FileType, Parser, Reference } from './types'
@@ -395,6 +396,15 @@ export default class File {
 
   read (): Promise<string> {
     return File.read(this.realFilePath)
+  }
+
+  static async readXml (filePath: string): Promise<Object> {
+    const contents: string = await File.read(filePath)
+    return xmljs.xml2js(contents)
+  }
+
+  readXml (): Promise<Object> {
+    return File.readXml(this.realFilePath)
   }
 
   static async load (filePath: string): Promise<Object> {

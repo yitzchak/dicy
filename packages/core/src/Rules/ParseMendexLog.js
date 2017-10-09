@@ -25,7 +25,8 @@ export default class ParsedMendexLog extends Rule {
       messages: [],
       inputs: [],
       outputs: [],
-      calls: []
+      calls: [],
+      requests: []
     }
     const name: string = this.firstParameter.subType || 'mendex'
     let filePath: string

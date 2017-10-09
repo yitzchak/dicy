@@ -23,7 +23,8 @@ export default class ParsedMendexStdErr extends Rule {
       messages: [],
       inputs: [],
       outputs: [],
-      calls: []
+      calls: [],
+      requests: []
     }
     let name: string = 'mendex'
 

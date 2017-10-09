@@ -3,7 +3,7 @@
 import _ from 'lodash'
 import yargs from 'yargs-parser'
 
-import type { Message, ParsedLog, ShellCall } from './types'
+import type { Message, ParsedLog, ShellCall, ShellRequest } from './types'
 
 const ARGUMENT_PARSERS = {
   epstopdf: {
@@ -201,17 +201,24 @@ export default class Log {
       (!status || call.status.startsWith(status)))
   }
 
+  static findRequest (parsedLog: ?ParsedLog, type: string): ?ShellRequest {
+    return parsedLog ? parsedLog.requests.find(request => request.type === type) : null
+  }
+
   static parseCall (command: string, status: string = 'executed'): ShellCall {
-    const args = splitCommand(command)
+    const { args, options } = Log.parseCommandLine(splitCommand(command))
+    return { args, options, status }
+  }
+
+  static parseCommandLine (args: Array<string>): { args: Array<string>, options: Object } {
     if (args[0] in ARGUMENT_PARSERS) {
       const argv = yargs(args, ARGUMENT_PARSERS[args[0]])
       return {
         args: argv._,
-        options: _.omitBy(_.omitBy(_.omit(argv, ['_', '$0']), _.isUndefined), v => v === false),
-        status
+        options: _.omitBy(_.omitBy(_.omit(argv, ['_', '$0']), _.isUndefined), v => v === false)
       }
     }
 
-    return { args, options: {}, status }
+    return { args, options: {} }
   }
 }

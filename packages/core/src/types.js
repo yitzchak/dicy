@@ -139,11 +139,20 @@ export type ShellCall = {
   status: string
 }
 
+export type ShellRequest = {
+  type: string,
+  args: Array<string>,
+  options: Object,
+  inputs: Array<string>,
+  outputs: Array<string>
+}
+
 export type ParsedLog = {
   inputs: Array<string>,
   outputs: Array<string>,
   messages: Array<Message>,
-  calls: Array<ShellCall>
+  calls: Array<ShellCall>,
+  requests: Array<ShellRequest>
 }
 
 export type CommandOptions = {

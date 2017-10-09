@@ -68,7 +68,8 @@ describe('ParseFileListing', () => {
         '/home/tburton/Documents/git/dicy/spec/fixtures/file-types/output/biber.log',
         '/home/tburton/Documents/git/dicy/spec/fixtures/file-types/output/biber.run.xml'
       ].map(filePath => rule.normalizePath(path.resolve(rule.rootPath, filePath))),
-      messages: []
+      messages: [],
+      requests: []
     }
 
     await rule.parse()
