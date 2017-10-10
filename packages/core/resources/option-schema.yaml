@@ -512,8 +512,6 @@ synctex:
   description: Enable generation of SyncTeX annotations.
   type: boolean
 validateCache:
-  aliases:
-    - L
   commands:
     - build
   defaultValue: true
