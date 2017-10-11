@@ -53,7 +53,8 @@ job-1-persons.idx with 1 lines`
         name: 'splitindex',
         text: 'job-1-persons.idx with 1 lines'
       }],
-      calls: []
+      calls: [],
+      requests: []
     }
 
     await rule.parse()

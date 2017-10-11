@@ -25,7 +25,8 @@ export default class ParsedXindyLog extends Rule {
       messages: [],
       inputs: [],
       outputs: [],
-      calls: []
+      calls: [],
+      requests: []
     }
     const name: string = 'xindy'
     let filePath: string

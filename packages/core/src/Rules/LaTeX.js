@@ -30,7 +30,8 @@ export default class LaTeX extends Rule {
   async initialize () {
     await this.getResolvedInputs([
       '$OUTDIR/$JOB.fls-ParsedFileListing',
-      '$OUTDIR/$JOB.log-ParsedLaTeXLog'
+      '$OUTDIR/$JOB.log-ParsedLaTeXLog',
+      '$OUTDIR/$JOB.run.xml-ParsedLogRequest'
     ])
     await this.addResolvedTargets([
       '$OUTDIR/$JOB$OUTEXT',
@@ -48,6 +49,8 @@ export default class LaTeX extends Rule {
         return (file.value && !!Log.findMessage(file.value, RERUN_LATEX_PATTERN))
           ? ['updateDependencies', 'run']
           : ['updateDependencies']
+      case 'ParsedLogRequest':
+        return Log.findRequest(file.value, 'latex') ? ['run'] : []
       default:
         return ['run']
     }

@@ -18,7 +18,8 @@ export default class ParseBibTeXLog extends Rule {
       messages: [],
       inputs: [],
       outputs: [],
-      calls: []
+      calls: [],
+      requests: []
     }
     const name: string = (this.firstParameter.subType === '8-bit Big BibTeX')
       ? 'BibTeX8'
