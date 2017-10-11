@@ -3,6 +3,12 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased][] —
+
+### Added
+
+-   `validateCache` to control cache validation during load command \[[#99][]].
+
 ## [v0.10.1][] — 2017-09-30
 
 ### Fixed
@@ -173,6 +179,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
 
+[unreleased]: https://github.com/yitzchak/dicy/compare/v0.10.1...master
+
 [v0.10.1]: https://github.com/yitzchak/dicy/compare/v0.10.0...v0.10.1
 
 [v0.10.0]: https://github.com/yitzchak/dicy/compare/v0.9.1...v0.10.0
@@ -206,6 +214,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
+
+[#99]: https://github.com/yitzchak/dicy/pull/99
 
 [#92]: https://github.com/yitzchak/dicy/pull/92
 
