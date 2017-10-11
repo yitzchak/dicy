@@ -123,7 +123,7 @@ export type Option = {
   description: string,
   values?: Array<any>,
   aliases?: Array<string>,
-  commands: Array<string>,
+  commands?: Array<string>,
   noInvalidate?: boolean
 }
 
@@ -222,7 +222,8 @@ export interface OptionsInterface {
   saveCache: boolean,
   severity: 'info' | 'warning' | 'error',
   shellEscape?: 'disabled' | 'restricted' | 'enabled',
-  synctex: boolean
+  synctex: boolean,
+  validateCache: boolean
 }
 
 export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
@@ -257,7 +258,8 @@ pweaveKernel: 'python3',
 pweaveOutputFormat: 'tex',
 pweaveOutputPath: '$JOB.tex',
 saveCache: true,
-severity: 'warning' }
+severity: 'warning',
+validateCache: true }
 
 // END_AUTO
 

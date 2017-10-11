@@ -181,13 +181,13 @@ program
 
 DiCy.getOptionDefinitions().then(definitions => {
   function loadOptions (pc) {
+    const commands = pc.name().split(',').concat(['load', 'save'])
+
     for (const option of definitions) {
       // Skip environment variables
       if (option.name.startsWith('$') || option.name.includes('_')) continue
 
-      const commands = pc.name().split(',')
-
-      if (!option.commands.some(command => commands.includes(command))) continue
+      if (option.commands && !option.commands.some(command => commands.includes(command))) continue
 
       const prefix = (option.type === 'boolean' && option.defaultValue) ? 'no-' : ''
       const flagList = [].concat((option.aliases || []).filter(alias => alias.length === 1), option.name)

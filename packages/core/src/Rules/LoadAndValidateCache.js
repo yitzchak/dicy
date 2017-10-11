@@ -28,8 +28,12 @@ export default class LoadAndValidateCache extends Rule {
         this.info('Loading build cache from disk as it is newer then in-memory build cache.')
         await this.loadCache()
       } else {
-        this.info('Validating in-memory build cache.')
-        await this.validateCache()
+        if (this.options.validateCache) {
+          this.info('Validating in-memory build cache.')
+          await this.validateCache()
+        } else {
+          this.info('Skipping cache validation since `validateCache` is not set.')
+        }
       }
     } else {
       this.info('Skipping loading build cache from disk since `loadCache` is not set.')
