@@ -39,7 +39,7 @@ export default class Rule extends StateConsumer {
     if (appliesToPhase && await this.isApplicable(state, command, phase, options)) {
       const rule = new this(state, command, phase, options)
       await rule.initialize()
-      if (rule.alwaysEvaluate) rule.addActions()
+      if (this.alwaysEvaluate) rule.addActions()
       return rule
     }
   }
@@ -68,7 +68,7 @@ export default class Rule extends StateConsumer {
             if (!state.rules.has(ruleId) && await this.isApplicable(state, command, phase, options, parameters)) {
               const rule = new this(state, command, phase, options, parameters)
               await rule.initialize()
-              if (rule.alwaysEvaluate) rule.addActions(file)
+              if (this.alwaysEvaluate) rule.addActions(file)
               rules.push(rule)
             }
 
