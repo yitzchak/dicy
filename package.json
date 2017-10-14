@@ -41,52 +41,52 @@
     "update-types": "babel-node scripts/update-types && eslint --fix packages/core/src/types.js"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
-    "babel-runtime": "^6.25.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-runtime": "^6.26.0",
     "chalk": "^2.1.0",
     "cliui": "^3.2.0",
     "command-join": "^2.0.0",
-    "commander": "^2.10.0",
+    "commander": "^2.11.0",
     "fast-glob": "^1.0.1",
-    "fs-extra": "^4.0.1",
+    "fs-extra": "^4.0.2",
     "graphlib": "^2.1.1",
-    "js-yaml": "^3.9.1",
+    "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
-    "micromatch": "^3.0.1",
+    "micromatch": "^3.1.0",
     "readdir-enhanced": "^1.5.2",
     "semver": "^5.4.1",
     "temp": "^0.8.3",
-    "tree-kill": "^1.1.0",
+    "tree-kill": "^1.2.0",
     "yargs-parser": "^8.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-eslint": "^8.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-plugin-transform-strict-mode": "^6.24.1",
     "babel-preset-env": "^1.6.0",
-    "babel-preset-flow": "6.23.0",
+    "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-3": "^6.24.1",
-    "babel-register": "^6.24.1",
+    "babel-register": "^6.26.0",
     "chalk-cli": "^4.0.0",
-    "eslint": "^4.4.1",
+    "eslint": "^4.8.0",
     "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-flowtype": "2.34.0",
-    "eslint-plugin-flowtype-errors": "3.3.0",
-    "eslint-plugin-import": "^2.6.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-flowtype-errors": "^3.3.4",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "0.55.0",
-    "flow-typed": "2.1.5",
-    "jasmine": "^2.7.0",
-    "lerna": "^2.0.0",
+    "flow-bin": "^0.57.2",
+    "flow-typed": "^2.2.0",
+    "jasmine": "^2.8.0",
+    "lerna": "^2.4.0",
     "remark-cli": "^4.0.0",
     "remark-preset-lint-consistent": "^2.0.1",
     "remark-preset-lint-markdown-style-guide": "^2.1.1",
     "remark-preset-lint-recommended": "^3.0.1",
-    "rimraf": "^2.6.1",
+    "rimraf": "^2.6.2",
     "tosource": "^1.0.0"
   },
   "babel": {
@@ -107,35 +107,6 @@
       "transform-class-properties",
       "transform-strict-mode"
     ]
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "extends": [
-      "standard",
-      "plugin:flowtype/recommended"
-    ],
-    "plugins": [
-      "flowtype",
-      "flowtype-errors"
-    ],
-    "env": {
-      "jasmine": true,
-      "node": true
-    },
-    "rules": {
-      "flowtype-errors/show-errors": 2,
-      "flowtype/delimiter-dangle": [
-        2,
-        "never"
-      ],
-      "flowtype/require-valid-file-annotation": [
-        2,
-        "always",
-        {
-          "annotationStyle": "block"
-        }
-      ]
-    }
   },
   "remarkConfig": {
     "plugins": [
