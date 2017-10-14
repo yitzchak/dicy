@@ -593,8 +593,12 @@ $PATH:
 
 [latex]: rules#latex
 
+[load]: commands#load
+
 [outputdirectory]: #outputdirectory
 
 [outputformat]: #outputformat
+
+[save]: commands#save
 
 [severity]: #severity
