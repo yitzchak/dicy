@@ -13,15 +13,9 @@ export default class SaveCache extends Rule {
   static ignoreJobName: boolean = true
   static description: string = 'Saves file and rule status to a cache (-cache.yaml) to assist with rebuilding.'
 
-  cacheFilePath: string
-
   static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     // Only apply if saveCache is enabled
     return options.saveCache
-  }
-
-  async initialize () {
-    this.cacheFilePath = this.resolvePath('$ROOTDIR/$NAME-cache.yaml')
   }
 
   async preEvaluate () {
@@ -32,6 +26,7 @@ export default class SaveCache extends Rule {
   }
 
   async run () {
+    const cacheFilePath = this.resolvePath('$ROOTDIR/$NAME-cache.yaml')
     const cache: Cache = {
       version: CACHE_VERSION,
       filePath: this.filePath,
@@ -44,9 +39,15 @@ export default class SaveCache extends Rule {
     for (const file: File of this.files) {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
-        hash: file.hash,
-        value: file.value,
         jobNames: Array.from(file.jobNames.values())
+      }
+
+      if (file.value) {
+        fileCache.value = file.value
+      }
+
+      if (file.hash) {
+        fileCache.hash = file.hash
       }
 
       if (file.type) {
@@ -79,8 +80,8 @@ export default class SaveCache extends Rule {
     }
 
     // Save the cache and update the timestamp.
-    await File.safeDump(this.cacheFilePath, cache)
-    this.state.cacheTimeStamp = await File.getModifiedTime(this.cacheFilePath)
+    await File.safeDump(cacheFilePath, cache)
+    this.state.cacheTimeStamp = await File.getModifiedTime(cacheFilePath)
 
     return true
   }
