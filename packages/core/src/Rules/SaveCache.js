@@ -81,7 +81,7 @@ export default class SaveCache extends Rule {
     }
 
     // Save the cache and update the timestamp.
-    await File.safeDump(cacheFilePath, cache)
+    await File.writeYaml(cacheFilePath, cache)
     this.state.cacheTimeStamp = await File.getModifiedTime(cacheFilePath)
 
     return true

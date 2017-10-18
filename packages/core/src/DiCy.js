@@ -239,7 +239,7 @@ export default class DiCy extends StateConsumer {
 
   static async getOptionDefinitions (): Promise<Array<Option>> {
     const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
-    const schema = await File.load(filePath)
+    const schema = await File.readYaml(filePath, true)
     const options = []
     for (const name in schema) {
       const option = schema[name]
@@ -254,12 +254,12 @@ export default class DiCy extends StateConsumer {
     const filePath = this.resolvePath(user ? '$HOME/.dicy.yaml' : '$ROOTDIR/$NAME.yaml')
 
     if (await File.canRead(filePath)) {
-      const currentOptions = await File.safeLoad(filePath)
+      const currentOptions = await File.readYaml(filePath)
       this.state.assignSubOptions(normalizedOptions, currentOptions)
     }
 
     this.state.assignSubOptions(normalizedOptions, options)
-    await File.safeDump(filePath, normalizedOptions)
+    await File.writeYaml(filePath, normalizedOptions)
 
     return normalizedOptions
   }

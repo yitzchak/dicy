@@ -37,7 +37,7 @@ describe('SaveCache', () => {
     otherRule = new Rule(rule.state, 'build', 'execute', options)
     dicy.addRule(otherRule)
 
-    spyOn(File, 'safeDump').and.callFake(() => Promise.resolve())
+    spyOn(File, 'writeYaml').and.callFake(() => Promise.resolve())
 
     saveCache = rule
 
@@ -117,7 +117,7 @@ describe('SaveCache', () => {
 
       expect(await saveCache.run()).toBe(true)
 
-      expect(File.safeDump).toHaveBeenCalledWith(cachePath, expectedCache)
+      expect(File.writeYaml).toHaveBeenCalledWith(cachePath, expectedCache)
 
       done()
     })
