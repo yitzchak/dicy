@@ -163,7 +163,7 @@ const command = async (inputs, env) => {
         eventData[filePath] = data
       } else {
         const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
-        await File.safeDump(eventFilePath, data)
+        await File.writeYaml(eventFilePath, data)
       }
     }
   }

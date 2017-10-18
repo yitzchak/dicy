@@ -18,7 +18,7 @@ export default class ParseOptionsFile extends Rule {
     for (const input of this.inputs) {
       const output = await this.getOutput(`${input.filePath}-ParsedYAML`)
       if (output) {
-        output.value = await input.safeLoad()
+        output.value = await input.readYaml()
       }
     }
 

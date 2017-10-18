@@ -217,7 +217,7 @@ export default class File {
   static async loadFileTypes (): Promise<void> {
     if (!this.fileTypes) {
       const fileTypesPath = path.resolve(__dirname, '..', 'resources', 'file-types.yaml')
-      const value = await this.load(fileTypesPath)
+      const value = await this.readYaml(fileTypesPath)
 
       // Create a new map and iterate through each type in the file and save it
       // to the map.
@@ -397,22 +397,15 @@ export default class File {
     return File.read(this.realFilePath)
   }
 
-  static async load (filePath: string): Promise<Object> {
+  static async readYaml (filePath: string, fullSchema: boolean = true): Promise<Object> {
     const contents = await File.read(filePath)
-    return yaml.load(contents)
+    return yaml.load(contents, {
+      schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
+    })
   }
 
-  load (): Promise<Object> {
-    return File.load(this.realFilePath)
-  }
-
-  static async safeLoad (filePath: string): Promise<Object> {
-    const contents = await File.read(filePath)
-    return yaml.safeLoad(contents)
-  }
-
-  safeLoad (): Promise<Object> {
-    return File.safeLoad(this.realFilePath)
+  readYaml (): Promise<Object> {
+    return File.readYaml(this.realFilePath)
   }
 
   static write (filePath: string, value: string): Promise<void> {
@@ -431,13 +424,11 @@ export default class File {
     return File.write(this.realFilePath, value)
   }
 
-  static async dump (filePath: string, value: Object): Promise<void> {
-    const contents = yaml.dump(value, { skipInvalid: true })
-    await fs.writeFile(filePath, contents)
-  }
-
-  static async safeDump (filePath: string, value: Object): Promise<void> {
-    const contents = yaml.safeDump(value, { skipInvalid: true })
+  static async writeYaml (filePath: string, value: Object, fullSchema: boolean = false): Promise<void> {
+    const contents = yaml.dump(value, {
+      skipInvalid: true,
+      schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
+    })
     await fs.writeFile(filePath, contents)
   }
 
