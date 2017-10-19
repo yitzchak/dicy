@@ -62,7 +62,7 @@ export type Reference = {
 }
 
 export type Parser = {
-  names: Array<string>,
+  names?: Array<string>,
   patterns: Array<RegExp>,
   evaluate: (reference: Reference, groups: Object) => void
 }

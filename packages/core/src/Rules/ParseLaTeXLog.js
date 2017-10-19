@@ -29,7 +29,7 @@ export default class ParseLaTeXLog extends Rule {
       calls: []
     }
     const name: string = this.firstParameter.subType || 'LaTeX'
-    let filePath: string
+    const sourcePaths: Array<string> = []
 
     await this.firstParameter.parse([{
       // Input file name
@@ -37,8 +37,8 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^\*\*([^*]+)$/],
       evaluate: (reference, groups) => {
         // Don't let subsequent lines overwrite the first.
-        if (!filePath) {
-          filePath = this.normalizePath(groups.filePath)
+        if (!sourcePaths.length === 0) {
+          sourcePaths.unshift(this.normalizePath(groups.filePath))
         }
       }
     }, {
@@ -50,7 +50,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           severity: 'info',
           text: groups.text,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           log: reference
         })
       }
@@ -65,7 +65,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           log: reference
         })
       }
@@ -101,7 +101,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           log: reference
         }
 
@@ -110,7 +110,7 @@ export default class ParseLaTeXLog extends Rule {
           const line: number = parseInt(groups.line, 10)
 
           message.source = {
-            file: filePath,
+            file: sourcePaths[0],
             range: { start: line, end: line }
           }
         }
@@ -136,7 +136,7 @@ export default class ParseLaTeXLog extends Rule {
 
             message.text = `${message.text}.`
             message.source = {
-              file: filePath,
+              file: sourcePaths[0],
               range: { start: line, end: line }
             }
           }
@@ -179,7 +179,7 @@ export default class ParseLaTeXLog extends Rule {
           severity: groups.severity,
           name,
           category: groups.category,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           text: groups.text,
           log: reference
         }
@@ -207,7 +207,7 @@ export default class ParseLaTeXLog extends Rule {
 
             message.text = `${message.text}.`
             message.source = {
-              file: filePath,
+              file: sourcePaths[0],
               range: { start: line, end: line }
             }
           }
@@ -263,6 +263,19 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^runsystem\((.*?)\)\.\.\.(.*?)\.$/],
       evaluate: (reference, groups) => {
         parsedLog.calls.push(Log.parseCall(groups.command, groups.status))
+      }
+    }, {
+      // \input notification
+      patterns: [/(\([^)[]+|\))/g],
+      evaluate: (reference, groups) => {
+        for (const token of groups.captures) {
+          if (token === ')') {
+            // Avoid popping texFilePath off of the stack.
+            if (sourcePaths.length > 0) sourcePaths.shift()
+          } else {
+            sourcePaths.unshift(this.normalizePath(token.substring(1).trim()))
+          }
+        }
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 

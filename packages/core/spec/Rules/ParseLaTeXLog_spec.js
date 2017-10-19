@@ -27,9 +27,6 @@ describe('ParseLaTeXLog', () => {
       name: 'pdfTeX',
       severity: 'info',
       text: 'expl3 2017/05/29 L3 programming layer (loader)',
-      source: {
-        file: sourceName
-      },
       log: {
         file: logName,
         range: {
@@ -41,9 +38,6 @@ describe('ParseLaTeXLog', () => {
       name: 'pdfTeX',
       severity: 'info',
       text: 'expl3 2017/05/29 L3 programming layer (code)',
-      source: {
-        file: sourceName
-      },
       log: {
         file: logName,
         range: {
@@ -694,7 +688,7 @@ describe('ParseLaTeXLog', () => {
     expect(parsedLog.value).toBeDefined()
     if (!parsedLog.value) return
 
-    expect(parsedLog.value.messages).toEqual(messages)
+    expect(parsedLog.value.messages).toEqual(messages.map(jasmine.objectContaining))
 
     done()
   })
