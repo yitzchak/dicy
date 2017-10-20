@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.6.9)  27 JUN 2017 18:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.7.30)  19 OCT 2017 19:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -6,7 +6,7 @@ entering extended mode
 **error-warning.tex
 (./error-warning.tex
 LaTeX2e <2017-04-15>
-Babel <3.10> and hyphenation patterns for 84 language(s) loaded.
+Babel <3.12> and hyphenation patterns for 84 language(s) loaded.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
 (/usr/local/texlive/2017/texmf-dist/tex/latex/base/size10.clo
@@ -24,9 +24,9 @@ File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 ) (/usr/local/texlive/2017/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2017/05/29 L3 programming layer (loader) 
+Package: expl3 2017/07/19 L3 programming layer (loader) 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/l3kernel/expl3-code.tex
-Package: expl3 2017/05/29 L3 programming layer (code)
+Package: expl3 2017/07/19 L3 programming layer (code)
 \c_max_int=\count87
 \l_tmpa_int=\count88
 \l_tmpb_int=\count89
@@ -111,14 +111,14 @@ Package: expl3 2017/05/29 L3 programming layer (code)
 \l__regex_capturing_group_int=\count150
 \l__regex_min_pos_int=\count151
 \l__regex_max_pos_int=\count152
-\l__regex_current_pos_int=\count153
+\l__regex_curr_pos_int=\count153
 \l__regex_start_pos_int=\count154
 \l__regex_success_pos_int=\count155
-\l__regex_current_char_int=\count156
-\l__regex_current_catcode_int=\count157
+\l__regex_curr_char_int=\count156
+\l__regex_curr_catcode_int=\count157
 \l__regex_last_char_int=\count158
 \l__regex_case_changed_char_int=\count159
-\l__regex_current_state_int=\count160
+\l__regex_curr_state_int=\count160
 \l__regex_step_int=\count161
 \l__regex_min_active_int=\count162
 \l__regex_max_active_int=\count163
@@ -127,6 +127,7 @@ Package: expl3 2017/05/29 L3 programming layer (code)
 \l__regex_min_submatch_int=\count166
 \l__regex_submatch_int=\count167
 \l__regex_zeroth_submatch_int=\count168
+\g__debug_trace_regex_int=\count169
 \c_empty_box=\box26
 \l_tmpa_box=\box27
 \l_tmpb_box=\box28
@@ -169,9 +170,10 @@ Package: expl3 2017/05/29 L3 programming layer (code)
 \l__coffin_scaled_width_dim=\dimen133
 ) (/usr/local/texlive/2017/texmf-dist/tex/latex/l3kernel/l3pdfmode.def
 File: l3pdfmode.def 2017/03/18 v L3 Experimental driver: PDF mode
-\l__driver_color_stack_int=\count169
+\l__driver_color_stack_int=\count170
 \l__driver_tmp_box=\box41
-)) (./error-warning.aux)
+))
+No file error-warning.aux.
 \openout1 = `error-warning.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 5.
@@ -278,21 +280,22 @@ Package bar Warning: Package issue on input line 37.
 Package bar Warning: Nebulous package issue.
 
 Package bar Info: Insignificant package issue on input line 39.
+(./sub/wibble gronk.tex
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !
-./error-warning.tex:47: foo error: "bar"
+./sub/wibble gronk.tex:7: foo error: "bar"
 ! 
 ! The blind spot behind a submarine which makes a good hidding spot for other
-! submarines on line 47.
+! submarines on line 7.
 ! 
 ! See the foo documentation for further information.
 ! 
 ! Type <return> to continue.
 !...............................................  
                                                   
-l.47   \msg_error:nn {foo} {bar}
-                                
+l.7 \msg_error:nn {foo} {bar}
+                             
 |'''''''''''''''''''''''''''''''''''''''''''''''
 | LaTeX does not know anything more about this error, sorry.
 | 
@@ -304,38 +307,38 @@ l.47   \msg_error:nn {foo} {bar}
 * foo warning: "bar"
 * 
 * The blind spot behind a submarine which makes a good hidding spot for other
-* submarines on line 48.
+* submarines on line 8.
 *************************************************
 .................................................
 . foo info: "bar"
 . 
 . The blind spot behind a submarine which makes a good hidding spot for other
-. submarines on line 49.
+. submarines on line 9.
 .................................................
 The blind spot behind a submarine which makes a good hidding spot for other
-submarines on line 50.
+submarines on line 10.
+) [1
 
-! LaTeX Error: File `sub/wibble.tex' not found.
-
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: tex)
-
-Enter file name: 
-./error-warning.tex:54: Emergency stop.
-<read *> 
-         
-l.54   \input{sub/wibble}
-                         ^^M
-*** (cannot \read from terminal in nonstop modes)
-
- 
+{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./erro
+r-warning.aux) ) 
 Here is how much of TeX's memory you used:
- 7786 strings out of 492995
- 157435 string characters out of 6132705
- 180957 words of memory out of 5000000
- 11402 multiletter control sequences out of 15000+600000
+ 7888 strings out of 492990
+ 159827 string characters out of 6132636
+ 183256 words of memory out of 5000000
+ 11505 multiletter control sequences out of 15000+600000
  533623 words of font info for 33 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  26i,8n,25p,10329b,275s stack positions out of 5000i,500n,10000p,200000b,80000s
-./error-warning.tex:54:  ==> Fatal error occurred, no output PDF file produced!
+</usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmbx10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr6.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
+8.pfb>
+Output written on error-warning.pdf (1 page, 47997 bytes).
+PDF statistics:
+ 28 PDF objects out of 1000 (max. 8388607)
+ 19 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

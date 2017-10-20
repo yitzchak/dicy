@@ -266,14 +266,15 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       // \input notification
-      patterns: [/(\([^)[]+|\))/g],
+      patterns: [/(\([^()[]+|\))/g],
       evaluate: (reference, groups) => {
+        const trimPattern = /(^\([\s"]*|[\s"]+$)/g
         for (const token of groups.captures) {
           if (token === ')') {
-            // Avoid popping texFilePath off of the stack.
+            // Avoid popping main source file off of the stack.
             if (sourcePaths.length > 0) sourcePaths.shift()
           } else {
-            sourcePaths.unshift(this.normalizePath(token.substring(1).trim()))
+            sourcePaths.unshift(this.normalizePath(token.replace(trimPattern, '')))
           }
         }
       }
