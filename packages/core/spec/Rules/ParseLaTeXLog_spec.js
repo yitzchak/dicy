@@ -1,6 +1,7 @@
 /* @flow */
 
 import 'babel-polyfill'
+import path from 'path'
 
 import File from '../../src/File'
 import ParseLaTeXLog from '../../src/Rules/ParseLaTeXLog'
@@ -21,7 +22,7 @@ async function initialize ({
 describe('ParseLaTeXLog', () => {
   it('verifies that all log messages are successfully parsed.', async (done) => {
     const sourceName = 'error-warning.tex'
-    const subSourceName = 'sub/wibble gronk.tex'
+    const subSourceName = path.join('sub', 'wibble gronk.tex')
     const logName = 'error-warning.log'
     const { rule } = await initialize()
     const messages = [{
