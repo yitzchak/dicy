@@ -287,7 +287,7 @@ export default class File {
                 contents += chunk
               })
               .on('end', () => {
-                const [value, subType] = contents.match(fileType.contents) || []
+                const [value, subType] = contents.match(fileType.contents || '') || []
                 if (value) {
                   // We have a match so set the type and sub type.
                   this.type = name
