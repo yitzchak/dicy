@@ -14,6 +14,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Creation of output directories across different jobs caused excessive
     directories to be created. Sub-directories of any output directory are now
     ignored, not just the current output directory. Fixes \[[#104][]].
+-   Incorrect identification of sub-files with `\documentclass` in a verbatim
+    environment as a LaTeX main file. Fixes \[[#106][]]
 
 ## [v0.10.1][] — 2017-09-30
 
@@ -221,7 +223,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
-[#104]: https://github.com/yitzchak/dicy/pull/104
+[#106]: https://github.com/yitzchak/dicy/issue/106
+
+[#104]: https://github.com/yitzchak/dicy/issue/104
 
 [#99]: https://github.com/yitzchak/dicy/pull/99
 
