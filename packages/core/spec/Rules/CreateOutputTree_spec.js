@@ -46,7 +46,6 @@ describe('CreateOutputTree', () => {
   })
 
   describe('run', () => {
-    let tempDir
     let dirs
 
     function createTree (rule) {
@@ -70,10 +69,11 @@ describe('CreateOutputTree', () => {
         'foo/wibble',
         'foo/wibble/angle',
         'foo/wibble/angle/dangle'
-      ].map(dir => [path.resolve(rule.rootPath, dir)])
+      ].map(dir => [path.normalize(path.resolve(rule.rootPath, dir))])
       await createTree(rule)
 
       expect(await rule.run()).toBeTruthy()
+      // $FlowIgnore
       expect(File.ensureDir.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
@@ -94,10 +94,11 @@ describe('CreateOutputTree', () => {
         'foo/wibble',
         'foo/wibble/angle',
         'foo/wibble/angle/dangle'
-      ].map(dir => [path.resolve(rule.rootPath, dir)])
+      ].map(dir => [path.normalize(path.resolve(rule.rootPath, dir))])
       await createTree(rule)
 
       expect(await rule.run()).toBeTruthy()
+      // $FlowIgnore
       expect(File.ensureDir.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
@@ -120,10 +121,11 @@ describe('CreateOutputTree', () => {
         'foo/wibble',
         'foo/wibble/angle',
         'foo/wibble/angle/dangle'
-      ].map(dir => [path.resolve(rule.rootPath, dir)])
+      ].map(dir => [path.normalize(path.resolve(rule.rootPath, dir))])
       await createTree(rule)
 
       expect(await rule.run()).toBeTruthy()
+      // $FlowIgnore
       expect(File.ensureDir.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
