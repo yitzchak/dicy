@@ -15,7 +15,7 @@ BibTeXControlFile:
 BibTeXFile:
   fileName: !!js/regexp /\.bib$/i
 BibTeXLog:
-  contents: !!js/regexp /^This is ((?:u?p|8-bit Big )?BibTeXu?)[,:]/
+  contents: !!js/regexp /^This is ((?:u?p|8-bit Big )?BibTeXu?)[,:]/m
   fileName: !!js/regexp /\.blg$/i
 BibTeXStyle:
   fileName: !!js/regexp /\.bst$/i
@@ -26,7 +26,7 @@ BiberLog:
   fileName: !!js/regexp /\.blg$/i
   hashSkip: !!js/regexp /===/
 BibToGlsLog:
-  contents: !!js/regexp /^bib2gls version /
+  contents: !!js/regexp /^bib2gls version /m
   fileName: !!js/regexp /\..+lg$/i
 DeviceIndependentFile:
   fileName: !!js/regexp /\.(dvi|xdv)$/i
@@ -58,7 +58,7 @@ RNoWeb:
 KnitrConcordance:
   fileName: !!js/regexp /-concordance\.tex$/i
 LaTeX:
-  contents: !!js/regexp /^\\documentclass(?:\[[^\]]*\])?\{([^}]*)\}/m
+  contents: !!js/regexp /^(?:\s*%.*?\n|\s*\n)*\\documentclass(?:\[[^\]]*\])?\{([^}]*)\}/
   fileName: !!js/regexp /\.tex$/i
 LaTeXAuxilary:
   fileName: !!js/regexp /\.aux$/i
@@ -67,7 +67,7 @@ LaTeXClass:
 FileListing:
   fileName: !!js/regexp /\.fls$/i
 LaTeXLog:
-  contents: !!js/regexp /^This is ((?:pdf|e-u?p|u?p|Lua|Xe)?TeX),/
+  contents: !!js/regexp /^This is ((?:pdf|e-u?p|u?p|Lua|Xe)?TeX),/m
   fileName: !!js/regexp /\.log$/i
   hashSkip: !!js/regexp /^This is/
 LaTeXStyle:
@@ -81,7 +81,7 @@ LiterateAgda:
 LiterateHaskell:
   fileName: !!js/regexp /\.lhs$/i
 MakeIndexLog:
-  contents: !!js/regexp /^This is makeindex,/
+  contents: !!js/regexp /^This is makeindex,/m
   fileName: !!js/regexp /\..+lg$/i
 MendexLog:
   contents: !!js/regexp /^This is ((?:up)?mendex) /
@@ -90,11 +90,11 @@ MendexStdOut: {}
 MendexStdErr: {}
 MetaPost:
   fileName: !!js/regexp /\.mp$/i
-  contents: !!js/regexp /^ *(?:end|bye)\b/
+  contents: !!js/regexp /^ *(?:end|bye)\b/m
 MetaPostLibrary:
   fileName: !!js/regexp /\.mp$/i
 MetaPostLog:
-  contents: !!js/regexp /^This is MetaPost,/
+  contents: !!js/regexp /^This is MetaPost,/m
   fileName: !!js/regexp /\.log$/i
   hashSkip: !!js/regexp /^This is/
 MetaPostOutput:
@@ -154,10 +154,12 @@ SyncTeX:
   fileName: !!js/regexp /\.synctex(\.gz)?$/i
 TableOfContents:
   fileName: !!js/regexp /\.toc$/i
+TeX:
+  fileName: !!js/regexp /\.tex$/i
 XML:
   fileName: !!js/regexp /\.xml$/i
 XindyLog:
-  contents: !!js/regexp /^;; This logfile was generated automatically by `xindy'/
+  contents: !!js/regexp /^;; This logfile was generated automatically by `xindy'/m
   fileName: !!js/regexp /\..+lg$/i
   hashSkip: !!js/regexp /^;; at /
 YAML:

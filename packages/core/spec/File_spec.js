@@ -35,7 +35,7 @@ describe('File', () => {
   it('verifies that plain TeX files are not classified as LaTeX files', async (done) => {
     const file = await createFile('plain.tex')
     expect(file).toBeDefined()
-    if (file) expect(file.type).toBeUndefined()
+    if (file) expect(file.type).toEqual('TeX')
     done()
   })
 

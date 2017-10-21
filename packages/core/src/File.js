@@ -275,28 +275,32 @@ export default class File {
         // Make sure the file is readable.
         File.canRead(this.realFilePath).then(canRead => {
           if (canRead) {
-            // Create a line reading interface and interate through the lines
-            // looking for a content match.
-            const rl = readline.createInterface({
-              input: fs.createReadStream(this.realFilePath)
+            const stream = fs.createReadStream(this.realFilePath, {
+              encoding: 'utf8',
+              start: 0,
+              end: 2048
             })
-            let match = false
+            let contents = ''
 
-            rl
-              .on('line', line => {
-                const [value, subType] = line.match(fileType.contents) || []
+            stream
+              .on('data', chunk => {
+                contents += chunk
+              })
+              .on('end', () => {
+                const [value, subType] = contents.match(fileType.contents) || []
                 if (value) {
                   // We have a match so set the type and sub type.
-                  match = true
                   this.type = name
                   this.subType = subType
-                  rl.close()
+                  stream.close()
+                  resolve(true)
+                } else {
+                  resolve(false)
                 }
               })
-              .on('close', () => {
-                resolve(match)
-              })
-          } else resolve(false)
+          } else {
+            resolve(false)
+          }
         })
       } else {
         // No specific contents required so we have a successful match!
