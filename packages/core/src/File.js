@@ -275,18 +275,16 @@ export default class File {
         // Make sure the file is readable.
         File.canRead(this.realFilePath).then(canRead => {
           if (canRead) {
+            let finished = false
             const stream = fs.createReadStream(this.realFilePath, {
               encoding: 'utf8',
               start: 0,
               end: 2048
             })
             let contents = ''
-
-            stream
-              .on('data', chunk => {
-                contents += chunk
-              })
-              .on('end', () => {
+            const finish = () => {
+              if (!finished) {
+                finished = true
                 const [value, subType] = contents.match(fileType.contents || '') || []
                 if (value) {
                   // We have a match so set the type and sub type.
@@ -297,7 +295,16 @@ export default class File {
                 } else {
                   resolve(false)
                 }
+              }
+            }
+
+            stream
+              .on('data', chunk => {
+                contents += chunk
               })
+              .on('end', finish)
+              .on('close', finish)
+              .on('error', finish)
           } else {
             resolve(false)
           }
