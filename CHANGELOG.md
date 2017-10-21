@@ -223,9 +223,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
 
-[#106]: https://github.com/yitzchak/dicy/issue/106
+[#106]: https://github.com/yitzchak/dicy/issues/106
 
-[#104]: https://github.com/yitzchak/dicy/issue/104
+[#104]: https://github.com/yitzchak/dicy/issues/104
 
 [#99]: https://github.com/yitzchak/dicy/pull/99
 
