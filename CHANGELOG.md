@@ -11,8 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Creation of output directories across different jobs caused a excessive
-    directories to be created. Sub=directories of any output directory are now
+-   Creation of output directories across different jobs caused excessive
+    directories to be created. Sub-directories of any output directory are now
     ignored, not just the current output directory. Fixes \[[#99][]].
 
 ## [v0.10.1][] — 2017-09-30
