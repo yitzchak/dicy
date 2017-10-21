@@ -32,6 +32,10 @@ export default class ParseLaTeXLog extends Rule {
     const sourcePaths: Array<string> = []
 
     await this.firstParameter.parse([{
+      // Ignore intro line
+      patterns: [/^This is/],
+      evaluate: (reference, groups) => {}
+    }, {
       // Input file name
       names: ['filePath'],
       patterns: [/^\*\*([^*]+)$/],
@@ -272,7 +276,7 @@ export default class ParseLaTeXLog extends Rule {
         for (const token of groups.captures) {
           if (token === ')') {
             // Avoid popping main source file off of the stack.
-            if (sourcePaths.length > 0) sourcePaths.shift()
+            if (sourcePaths.length > 1) sourcePaths.shift()
           } else {
             sourcePaths.unshift(this.normalizePath(token.replace(trimPattern, '')))
           }
