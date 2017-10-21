@@ -13,7 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Creation of output directories across different jobs caused excessive
     directories to be created. Sub-directories of any output directory are now
-    ignored, not just the current output directory. Fixes \[[#99][]].
+    ignored, not just the current output directory. Fixes \[[#104][]].
 
 ## [v0.10.1][] — 2017-09-30
 
