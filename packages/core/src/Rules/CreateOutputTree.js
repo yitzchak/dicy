@@ -1,5 +1,6 @@
 /* @flow */
 
+import _ from 'lodash'
 import path from 'path'
 
 import File from '../File'
@@ -18,11 +19,12 @@ export default class CreateOutputTree extends Rule {
   }
 
   async run () {
+    const outputDirectories: Array<string> = _.uniq(this.options.jobNames.map(jobName => this.state.getJobOptions(jobName).outputDirectory || '.')
+      .filter(outputDirectory => outputDirectory !== '.'))
     const directories = await this.globPath('**/*', {
       types: 'directories',
-      ignorePattern: `${this.options.outputDirectory || '.'}/**`
+      ignorePattern: outputDirectories.map(outputDirectory => `${outputDirectory}/**`)
     })
-    directories.unshift('.')
 
     await Promise.all(directories.map(directory => File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory || '.', directory))))
 
