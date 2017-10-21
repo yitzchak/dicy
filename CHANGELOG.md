@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 -   `validateCache` to control cache validation during load command \[[#99][]].
 
+### Fixed
+
+-   Creation of output directories across different jobs caused excessive
+    directories to be created. Sub-directories of any output directory are now
+    ignored, not just the current output directory. Fixes \[[#104][]].
+
 ## [v0.10.1][] — 2017-09-30
 
 ### Fixed
@@ -214,6 +220,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
+
+[#104]: https://github.com/yitzchak/dicy/pull/104
 
 [#99]: https://github.com/yitzchak/dicy/pull/99
 

@@ -2,7 +2,7 @@
 
 export type globOptions = {
   types: 'all' | 'files' | 'directories',
-  ignorePattern: string
+  ignorePattern: string | Array<string>
 }
 
 export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub'
