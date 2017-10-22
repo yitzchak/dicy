@@ -250,7 +250,7 @@ export default class File {
    * @return {Boolean}           True if the file matches the file type, false
    *                             otherwise.
    */
-  isFileType (name: string, fileType: FileType): Promise<boolean> {
+  async isFileType (name: string, fileType: FileType): Promise<boolean> {
     // If the file type descriptor does not have a pattern for the file name or
     // a pattern for the contents of the file then it must be a virtual file.
     if (!fileType.fileName && !fileType.contents) {
@@ -261,60 +261,40 @@ export default class File {
         this.type = name
         this.virtual = true
       }
-      return Promise.resolve(isMatch)
+      return isMatch
     }
 
-    return new Promise((resolve, reject) => {
-      // If file name does not match required pattern then just quit.
-      if (fileType.fileName && !fileType.fileName.test(this.realFilePath)) {
-        return resolve(false)
-      }
+    console.log(this.realFilePath)
+    console.log(name)
+    // If file name does not match required pattern then just quit.
+    if (fileType.fileName && !fileType.fileName.test(this.realFilePath)) {
+      return false
+    }
 
-      // Does the file type descriptor require specific file contents pattern?
-      if (fileType.contents) {
-        // Make sure the file is readable.
-        File.canRead(this.realFilePath).then(canRead => {
-          if (canRead) {
-            let finished = false
-            const stream = fs.createReadStream(this.realFilePath, {
-              encoding: 'utf8',
-              start: 0,
-              end: 2048
-            })
-            let contents = ''
-            const finish = () => {
-              if (!finished) {
-                finished = true
-                const [value, subType] = contents.match(fileType.contents || '') || []
-                if (value) {
-                  // We have a match so set the type and sub type.
-                  this.type = name
-                  this.subType = subType
-                  stream.close()
-                  resolve(true)
-                } else {
-                  resolve(false)
-                }
-              }
-            }
+    // Does the file type descriptor require specific file contents pattern?
+    if (fileType.contents) {
+      console.log(`${fileType.contents}`)
+      // Make sure the file is readable.
+      if (await this.canRead()) {
+        console.log(`can read`)
+        const contents = await this.read()
+        console.log('sdfsdf')
+        const [value, subType] = contents.match(fileType.contents || '') || []
 
-            stream
-              .on('data', chunk => {
-                contents += chunk
-              })
-              .on('end', finish)
-              .on('close', finish)
-              .on('error', finish)
-          } else {
-            resolve(false)
-          }
-        })
-      } else {
-        // No specific contents required so we have a successful match!
-        this.type = name
-        resolve(true)
+        if (value) {
+          // We have a match so set the type and sub type.
+          this.type = name
+          this.subType = subType
+          return true
+        }
       }
-    })
+    } else {
+      // No specific contents required so we have a successful match!
+      this.type = name
+      return true
+    }
+
+    return false
   }
 
   inTypeSet (types: Set<string>) {
