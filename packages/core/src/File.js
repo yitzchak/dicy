@@ -264,8 +264,6 @@ export default class File {
       return isMatch
     }
 
-    console.log(this.realFilePath)
-    console.log(name)
     // If file name does not match required pattern then just quit.
     if (fileType.fileName && !fileType.fileName.test(this.realFilePath)) {
       return false
@@ -273,12 +271,9 @@ export default class File {
 
     // Does the file type descriptor require specific file contents pattern?
     if (fileType.contents) {
-      console.log(`${fileType.contents}`)
       // Make sure the file is readable.
       if (await this.canRead()) {
-        console.log(`can read`)
         const contents = await this.read()
-        console.log('sdfsdf')
         const [value, subType] = contents.match(fileType.contents || '') || []
 
         if (value) {
