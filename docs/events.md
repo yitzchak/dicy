@@ -34,7 +34,7 @@ of the action.
 ### Description
 
 The `command` event is emitted when a shell command is executed. For instance,
-by the [LaTeX][] rule when executing `pdflatex`.
+when executing `pdflatex`.
 
 ## fileAdded
 
@@ -148,5 +148,3 @@ The `log` event is emitted when a when a log message is received.
 The `outputAdded` event is emitted when a file is added as an output to a rule.
 
 [clean]: commands#clean
-
-[latex]: rules#latex

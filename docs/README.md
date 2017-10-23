@@ -37,7 +37,6 @@ more detailed documentation please see the following pages.
     the YAML option files, or TeX magic comments.
 -   [Events][] — The events emitted during a build. Only applicable when using
     the library interface to DiCy.
--   [Rules][] — A description of the rules used when executing a DiCy build.
 
 ## Command Line Usage
 
@@ -58,7 +57,6 @@ where the following commands are available (`--help` will enumerate options):
 | build,clean     |   bc  | Build the inputs and then clean up.                                 |
 | build,log       |   bl  | Build the inputs and report messages from any logs.                 |
 | build,log,clean |  blc  | Build the inputs, report messages from any logs, and then clean up. |
-| rules           |       | List available rules.                                               |
 
 The [options][] that can be specified are generally the same options accessible
 via the library interface.
@@ -166,8 +164,6 @@ commands should always be `load` and `save`, respectively.
 [pweave]: https://github.com/mpastell/Pweave
 
 [pythontex]: https://www.ctan.org/pkg/pythontex
-
-[rules]: https://yitzchak.github.io/dicy/rules
 
 [sagetex]: https://www.ctan.org/tex-archive/macros/latex/contrib/sagetex/
 
