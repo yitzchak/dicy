@@ -233,9 +233,6 @@ DiCy.getOptionDefinitions().then(definitions => {
           options[name] = o
           break
       }
-
-      if (option.type === 'boolean') {
-      }
     }
 
     return options
