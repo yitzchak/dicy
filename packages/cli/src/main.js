@@ -153,7 +153,7 @@ const command = async (argv) => {
 
 yargs
   .wrap(columns)
-  .usage('A builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.')
+  .usage('DiCy - A builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.')
 
 DiCy.getOptionDefinitions().then(definitions => {
   function getOptions (commands) {
