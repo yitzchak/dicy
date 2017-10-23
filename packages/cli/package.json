@@ -37,7 +37,7 @@
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "table": "^4.0.1",
-    "yargs": "^9.0.1"
+    "yargs": "^10.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -51,5 +51,10 @@
     "babel-register": "^6.24.1",
     "jasmine": "^2.7.0",
     "rimraf": "^2.6.1"
+  },
+  "yargs": {
+    "dot-notation": false,
+    "boolean-negation": false,
+    "camel-case-expansion": false
   }
 }
