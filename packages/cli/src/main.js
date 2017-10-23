@@ -14,10 +14,19 @@ import { DiCy, File } from '@dicy/core'
 // $FlowIgnore
 const columns = Math.min(Math.max(process.stdout.columns, 80), 132)
 
+const optionNames = {}
 const commandLists = {}
 
 const command = async (argv) => {
-  const options = _.omitBy(argv, (value, key) => value === undefined || /(^help$|^inputs$|^version$|^verbose$|^consoleEventOutput$|^.$|[-_$])/.test(key))
+  console.log(argv)
+  const options = {}
+  for (const name in argv) {
+    const value = argv[name]
+    if (name in optionNames && value !== undefined) {
+      options[optionNames[name]] = name.startsWith('no-') ? !argv[name] : argv[name]
+    }
+  }
+  console.log(options)
   const commands = commandLists[argv._]
   const {
     saveEvents = [],
@@ -179,6 +188,7 @@ DiCy.getOptionDefinitions().then(definitions => {
 
       if (option.commands && !option.commands.some(command => commands.includes(command))) continue
 
+      let name = _.kebabCase(option.name).replace('lhs-2-tex', 'lhs2tex')
       const o = {
         alias: (option.aliases || []).filter(alias => alias.length === 1),
         description: option.description,
@@ -190,22 +200,42 @@ DiCy.getOptionDefinitions().then(definitions => {
         o.choices = option.values
       }
 
+      optionNames[name] = option.name
+
       switch (option.type) {
         case 'strings':
         case 'numbers':
           o.type = 'array'
+          options[name] = o
           break
         case 'number':
           o.type = 'number'
+          options[name] = o
           break
         case 'boolean':
           // $FlowIgnore
           o.default = undefined
           o.type = 'boolean'
+          const withoutAliases = _.omit(o, ['alias'])
+          withoutAliases.hidden = true
+          const negatedName = `no-${name}`
+          optionNames[negatedName] = option.name
+          if (option.defaultValue) {
+            o.description = o.description.replace('Enable', 'Disable')
+            options[name] = withoutAliases
+            options[negatedName] = o
+          } else {
+            options[name] = o
+            options[negatedName] = withoutAliases
+          }
+          break
+        default:
+          options[name] = o
           break
       }
 
-      options[_.kebabCase(option.name).replace('lhs-2-tex', 'lhs2tex')] = o
+      if (option.type === 'boolean') {
+      }
     }
 
     return options
@@ -229,7 +259,7 @@ DiCy.getOptionDefinitions().then(definitions => {
         builder: yargs => {
           yargs
             .options(getOptions(commands))
-            .epilogue('All boolean options can be negated by prefixing option with `no-`.')
+            .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
         },
         handler: command
       })
