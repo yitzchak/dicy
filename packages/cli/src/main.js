@@ -6,50 +6,26 @@ import _ from 'lodash'
 import chalk from 'chalk'
 import cliui from 'cliui'
 import path from 'path'
-import program from 'commander'
+import yargs from 'yargs'
 import yaml from 'js-yaml'
 
 import { DiCy, File } from '@dicy/core'
 
 // $FlowIgnore
-const columns = Math.max(process.stdout.columns, 80)
+const columns = Math.min(Math.max(process.stdout.columns, 80), 132)
 
-function parseStrings (value) {
-  return value.split(/\s*,\s*/)
-}
+const commandLists = {}
 
-function parseNumber (value) {
-  return parseInt(value, 10)
-}
-
-function parseNumbers (value) {
-  return parseStrings(value).map(x => parseNumber(x))
-}
-
-function cloneOptions (options) {
-  const newOptions = {}
-
-  for (const property in options) {
-    const value = options[property]
-    if (value !== undefined) {
-      newOptions[property] = value
-    }
-  }
-
-  return newOptions
-}
-
-const command = async (inputs, env) => {
-  const commands = env.name().split(',')
+const command = async (argv) => {
+  const options = _.omitBy(argv, (value, key) => value === undefined || /(^help$|^inputs$|^version$|^verbose$|^consoleEventOutput$|^.$|[-_$])/.test(key))
+  const commands = commandLists[argv._]
   const {
     saveEvents = [],
     verbose = false,
     consoleEventOutput = false,
-    ...options
-  } = cloneOptions(env.opts())
+    inputs = []
+  } = argv
   const eventData = {}
-  commands.unshift('load')
-  commands.push('save')
 
   function log (message) {
     if (consoleEventOutput) return
@@ -175,13 +151,27 @@ const command = async (inputs, env) => {
   process.exit(success ? 0 : 1)
 }
 
-program
-  .version(require('../package.json').version)
-  .description('An experimental circular builder for LaTeX')
+yargs
+  .wrap(columns)
+  .usage('A builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.')
 
 DiCy.getOptionDefinitions().then(definitions => {
-  function loadOptions (pc) {
-    const commands = pc.name().split(',').concat(['load', 'save'])
+  function getOptions (commands) {
+    const options = {
+      'save-events': {
+        array: true,
+        description: 'List of event types to save in YAML format. By default this will save to a file <name>-events.yaml unless --console-event-output is enabled.'
+      },
+      verbose: {
+        alias: 'v',
+        boolean: true,
+        description: 'Be verbose in command output.'
+      },
+      'console-event-output': {
+        boolean: true,
+        description: 'Output saved events in YAML format to console. This will supress all other output.'
+      }
+    }
 
     for (const option of definitions) {
       // Skip environment variables
@@ -189,110 +179,70 @@ DiCy.getOptionDefinitions().then(definitions => {
 
       if (option.commands && !option.commands.some(command => commands.includes(command))) continue
 
-      const prefix = (option.type === 'boolean' && option.defaultValue) ? 'no-' : ''
-      const flagList = [].concat((option.aliases || []).filter(alias => alias.length === 1), option.name)
-        .map(name => name.length === 1 ? `-${name}` : `--${prefix}${_.kebabCase(name).replace('lhs-2-tex', 'lhs2tex')}`)
-        .join(', ')
-      const flags = (option.type === 'boolean') ? flagList : `${flagList} <${option.name}>`
-      let description = option.description
+      const o = {
+        alias: (option.aliases || []).filter(alias => alias.length === 1),
+        description: option.description,
+        type: 'string'
+      }
 
-      if ((option.type === 'string' || option.type === 'number') && (option.values || option.defaultValue)) {
-        const parts = []
-        if (option.values) parts.push(`values=${option.values.join('|')}`)
-        if (option.defaultValue) parts.push(`default value=${option.defaultValue}`)
-        description += ` (${parts.join('; ')})`
+      if (option.values) {
+        // $FlowIgnore
+        o.choices = option.values
       }
 
       switch (option.type) {
-        case 'string':
-          if (option.values) {
-            pc = pc.option(flags, description, new RegExp(`^(${option.values.join('|')})$`))
-          } else {
-            pc = pc.option(flags, description)
-          }
-          break
         case 'strings':
-          pc = pc.option(flags, description, parseStrings)
+        case 'numbers':
+          o.type = 'array'
           break
         case 'number':
-          pc = pc.option(flags, description, parseNumber)
-          break
-        case 'numbers':
-          pc = pc.option(flags, description, parseNumbers)
+          o.type = 'number'
           break
         case 'boolean':
-          pc = pc.option(flags, option.description)
+          // $FlowIgnore
+          o.default = undefined
+          o.type = 'boolean'
           break
       }
+
+      options[_.kebabCase(option.name).replace('lhs-2-tex', 'lhs2tex')] = o
     }
 
-    pc = pc.option('--save-events <saveEvents>', 'List of event types to save in YAML format. By default this will save to a file <name>-events.yaml unless --console-event-output is enabled.', parseStrings, [])
-    pc = pc.option('-v, --verbose', 'Be verbose in command output.')
-    pc = pc.option('--console-event-output', 'Output saved events in YAML format to console. This will supress all other output.')
-
-    return pc
+    return options
   }
 
-  loadOptions(program
-    .command('build [inputs...]')
-    .alias('b')
-    .description('Build the inputs.'))
-    .action(command)
+  function createCommand (commands, description) {
+    const name = commands.join(',')
+    const alias = commands.map(c => c.substr(0, 1)).join('')
 
-  loadOptions(program
-    .command('clean [inputs...]')
-    .alias('c')
-    .description('Clean up after a previous build.'))
-    .action(command)
+    commands.unshift('load')
+    commands.push('save')
 
-  loadOptions(program
-    .command('scrub [inputs...]')
-    .alias('s')
-    .description('Clean up generated files after a previous build.'))
-    .action(command)
+    commandLists[name] = commands
+    commandLists[alias] = commands
 
-  loadOptions(program
-    .command('log [inputs...]')
-    .alias('l')
-    .description('Report messages from any logs.'))
-    .action(command)
+    yargs
+      .command({
+        command: `${name} <inputs...>`,
+        aliases: [alias],
+        description,
+        builder: yargs => {
+          yargs
+            .options(getOptions(commands))
+            .epilogue('All boolean options can be negated by prefixing option with `no-`.')
+        },
+        handler: command
+      })
+  }
 
-  loadOptions(program
-    .command('graph [inputs...]')
-    .alias('g')
-    .description('Create a dependency graph from a previous build.'))
-    .action(command)
+  createCommand(['build'], 'Build the inputs.')
+  createCommand(['clean'], 'Clean up after a previous build.')
+  createCommand(['scrub'], 'Clean up generated files after a previous build.')
+  createCommand(['log'], 'Report messages from any logs.')
+  createCommand(['graph'], 'Create a dependency graph from a previous build.')
+  createCommand(['build', 'clean'], 'Build the inputs and then clean up.')
+  createCommand(['build', 'log'], 'Build the inputs and report messages from any logs.')
+  createCommand(['build', 'log', 'clean'], 'Build the inputs, report messages from any logs, and then clean up.')
 
-  loadOptions(program
-    .command('build,clean [inputs...]')
-    .alias('bc')
-    .description('Build the inputs and then clean up.'))
-    .action(command)
-
-  loadOptions(program
-    .command('build,log [inputs...]')
-    .alias('bl')
-    .description('Build the inputs and report messages from any logs.'))
-    .action(command)
-
-  loadOptions(program
-    .command('build,log,clean [inputs...]')
-    .alias('blc')
-    .description('Build the inputs, report messages from any logs, and then clean up.'))
-    .action(command)
-
-  program
-    .command('rules')
-    .description('List available rules')
-    .option('--command <command>', 'List only rules that apply to a specific command.', null)
-    .action(async (env) => {
-      const ui = cliui({ width: columns })
-      const { command } = cloneOptions(env.opts())
-      const dicy = await DiCy.create('foo.tex')
-      ui.div(dicy.getAvailableRules(command).map(rule => `${rule.name}\t  ${rule.description}`).join('\n'))
-      console.log(ui.toString())
-    })
-
-  program
-    .parse(process.argv)
+  yargs.parse()
 }, error => { console.log(error) })
