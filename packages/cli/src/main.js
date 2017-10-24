@@ -17,7 +17,7 @@ const columns = Math.min(Math.max(process.stdout.columns, 80), 132)
 const optionNames = {}
 const commandLists = {}
 
-const command = async (argv) => {
+const handler = async (argv) => {
   const options = {}
   for (const name in argv) {
     const value = argv[name]
@@ -182,56 +182,70 @@ DiCy.getOptionDefinitions().then(definitions => {
       }
     }
 
-    for (const option of definitions) {
+    for (const definition of definitions) {
       // Skip environment variables
-      if (option.name.startsWith('$') || option.name.includes('_')) continue
+      if (definition.name.startsWith('$') || definition.name.includes('_')) continue
 
-      if (option.commands && !option.commands.some(command => commands.includes(command))) continue
+      if (definition.commands && !definition.commands.some(command => commands.includes(command))) continue
 
-      let name = _.kebabCase(option.name).replace('lhs-2-tex', 'lhs2tex')
-      const o = {
-        alias: (option.aliases || []).filter(alias => alias.length === 1),
-        description: option.description,
-        type: 'string'
+      const addOption = (name, option) => {
+        optionNames[name] = definition.name
+        if (definition.values) {
+          // $FlowIgnore
+          option.choices = definition.values
+        }
+        options[name] = option
       }
+      const name = _.kebabCase(definition.name).replace('lhs-2-tex', 'lhs2tex')
+      const negatedName = `no-${name}`
+      const description = definition.description
+      const alias = (definition.aliases || []).filter(alias => alias.length === 1)
 
-      if (option.values) {
-        // $FlowIgnore
-        o.choices = option.values
-      }
-
-      optionNames[name] = option.name
-
-      switch (option.type) {
+      switch (definition.type) {
         case 'strings':
         case 'numbers':
-          o.type = 'array'
-          options[name] = o
+          addOption(name, {
+            type: 'array',
+            alias,
+            description
+          })
           break
         case 'number':
-          o.type = 'number'
-          options[name] = o
+          addOption(name, {
+            type: 'number',
+            alias,
+            description
+          })
           break
         case 'boolean':
-          // $FlowIgnore
-          o.type = 'boolean'
-          const shadowOption = {
-            type: 'boolean',
-            hidden: true
-          }
-          const negatedName = `no-${name}`
-          optionNames[negatedName] = option.name
-          if (option.defaultValue) {
-            o.description = o.description.replace('Enable', 'Disable')
-            options[name] = shadowOption
-            options[negatedName] = o
+          if (definition.defaultValue) {
+            addOption(name, {
+              type: 'boolean',
+              hidden: true
+            })
+            addOption(negatedName, {
+              type: 'boolean',
+              alias,
+              description: description.replace('Enable', 'Disable')
+            })
           } else {
-            options[name] = o
-            options[negatedName] = shadowOption
+            addOption(negatedName, {
+              type: 'boolean',
+              hidden: true
+            })
+            addOption(name, {
+              type: 'boolean',
+              alias,
+              description
+            })
           }
           break
-        default:
-          options[name] = o
+        case 'string':
+          addOption(name, {
+            type: 'string',
+            alias,
+            description
+          })
           break
       }
     }
@@ -259,7 +273,7 @@ DiCy.getOptionDefinitions().then(definitions => {
             .options(getOptions(commands))
             .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
         },
-        handler: command
+        handler
       })
   }
 
