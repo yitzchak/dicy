@@ -25,7 +25,6 @@ const command = async (argv) => {
       options[optionNames[name]] = name.startsWith('no-') ? !argv[name] : argv[name]
     }
   }
-  console.log(options)
   const commands = commandLists[argv._]
   const {
     saveEvents = [],
