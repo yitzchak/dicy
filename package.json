@@ -46,7 +46,6 @@
     "chalk": "^2.1.0",
     "cliui": "^3.2.0",
     "command-join": "^2.0.0",
-    "commander": "^2.11.0",
     "fast-glob": "^1.0.1",
     "fs-extra": "^4.0.2",
     "graphlib": "^2.1.1",
@@ -57,6 +56,7 @@
     "semver": "^5.4.1",
     "temp": "^0.8.3",
     "tree-kill": "^1.2.0",
+    "yargs": "^10.0.3",
     "yargs-parser": "^8.0.0"
   },
   "devDependencies": {

@@ -34,10 +34,9 @@
     "babel-polyfill": "^6.26.0",
     "chalk": "^2.1.0",
     "cliui": "^3.2.0",
-    "commander": "^2.11.0",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
-    "table": "^4.0.1"
+    "yargs": "^10.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -51,5 +50,10 @@
     "babel-register": "^6.24.1",
     "jasmine": "^2.7.0",
     "rimraf": "^2.6.1"
+  },
+  "yargs": {
+    "dot-notation": false,
+    "boolean-negation": false,
+    "camel-case-expansion": false
   }
 }
