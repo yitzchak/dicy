@@ -161,6 +161,8 @@ const command = async (argv) => {
 yargs
   .wrap(columns)
   .usage('DiCy - A builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.')
+  .demandCommand(1, 'You need to specify a command.')
+  .help()
 
 DiCy.getOptionDefinitions().then(definitions => {
   function getOptions (commands) {
