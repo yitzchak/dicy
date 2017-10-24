@@ -21,10 +21,11 @@ const command = async (argv) => {
   const options = {}
   for (const name in argv) {
     const value = argv[name]
-    if (name in optionNames && value !== undefined) {
+    if (name in optionNames && value !== undefined && value !== false) {
       options[optionNames[name]] = name.startsWith('no-') ? !argv[name] : argv[name]
     }
   }
+  console.log(options)
   const commands = commandLists[argv._]
   const {
     saveEvents = [],
@@ -212,19 +213,20 @@ DiCy.getOptionDefinitions().then(definitions => {
           break
         case 'boolean':
           // $FlowIgnore
-          o.default = undefined
           o.type = 'boolean'
-          const withoutAliases = _.omit(o, ['alias'])
-          withoutAliases.hidden = true
+          const shadowOption = {
+            type: 'boolean',
+            hidden: true
+          }
           const negatedName = `no-${name}`
           optionNames[negatedName] = option.name
           if (option.defaultValue) {
             o.description = o.description.replace('Enable', 'Disable')
-            options[name] = withoutAliases
+            options[name] = shadowOption
             options[negatedName] = o
           } else {
             options[name] = o
-            options[negatedName] = withoutAliases
+            options[negatedName] = shadowOption
           }
           break
         default:
