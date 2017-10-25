@@ -119,11 +119,17 @@ export default class File {
                 // $FlowIgnore
                 _: matches.map(match => match[0]).join('\n')
               }
-              // $FlowIgnore
-              const m = [].concat(...matches.map(match => match.slice(1)))
-              parser.names.map((name, index) => {
-                if (m[index] !== undefined) groups[name] = m[index]
-              })
+              if (parser.names) {
+                // $FlowIgnore
+                const m = [].concat(...matches.map(match => match.slice(1)))
+                const names = parser.names || []
+                names.map((name, index) => {
+                  if (m[index] !== undefined) groups[name] = m[index]
+                })
+              } else {
+                const m = [].concat(...matches)
+                groups.captures = m
+              }
               const lineCount = lines.splice(0, parser.patterns.length).reduce((total, line) => total + line.count, 0)
               const reference: Reference = {
                 file: this.filePath,

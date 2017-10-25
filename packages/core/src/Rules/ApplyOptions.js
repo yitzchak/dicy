@@ -52,7 +52,7 @@ export default class ApplyOptions extends Rule {
       this.info('Ignoring user options since `loadUserOptions` is false.')
     }
 
-    // Reset the options and assign from frrom the inputs
+    // Reset the options and assign from from the inputs
     this.state.resetOptions()
 
     for (const options: Object of optionSet) {

@@ -29,16 +29,20 @@ export default class ParseLaTeXLog extends Rule {
       calls: []
     }
     const name: string = this.firstParameter.subType || 'LaTeX'
-    let filePath: string
+    const sourcePaths: Array<string> = []
 
     await this.firstParameter.parse([{
+      // Ignore intro line
+      patterns: [/^This is/],
+      evaluate: (reference, groups) => {}
+    }, {
       // Input file name
       names: ['filePath'],
       patterns: [/^\*\*([^*]+)$/],
       evaluate: (reference, groups) => {
         // Don't let subsequent lines overwrite the first.
-        if (!filePath) {
-          filePath = this.normalizePath(groups.filePath)
+        if (!sourcePaths.length === 0) {
+          sourcePaths.unshift(this.normalizePath(groups.filePath))
         }
       }
     }, {
@@ -50,7 +54,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           severity: 'info',
           text: groups.text,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           log: reference
         })
       }
@@ -65,7 +69,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           log: reference
         })
       }
@@ -101,7 +105,7 @@ export default class ParseLaTeXLog extends Rule {
           name,
           category: groups.category,
           text: groups.text,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           log: reference
         }
 
@@ -110,7 +114,7 @@ export default class ParseLaTeXLog extends Rule {
           const line: number = parseInt(groups.line, 10)
 
           message.source = {
-            file: filePath,
+            file: sourcePaths[0],
             range: { start: line, end: line }
           }
         }
@@ -120,7 +124,7 @@ export default class ParseLaTeXLog extends Rule {
     }, {
       // Continuation of message with possible file reference.
       names: ['package', 'text', 'line'],
-      patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.?)?$/],
+      patterns: [/^\(([^()]+)\) {2,}(.*?)(?: on input line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         // Verify that the previous message matches the category.
@@ -136,7 +140,7 @@ export default class ParseLaTeXLog extends Rule {
 
             message.text = `${message.text}.`
             message.source = {
-              file: filePath,
+              file: sourcePaths[0],
               range: { start: line, end: line }
             }
           }
@@ -179,7 +183,7 @@ export default class ParseLaTeXLog extends Rule {
           severity: groups.severity,
           name,
           category: groups.category,
-          source: { file: filePath },
+          source: { file: sourcePaths[0] },
           text: groups.text,
           log: reference
         }
@@ -192,7 +196,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
-        if (message) {
+        if (message && message.log && message.log.range && reference.range) {
           // Don't add input requests to the message.
           if (groups.text !== 'Type <return> to continue.') {
             message.text = `${message.text} ${groups.text.trim() || '\n'}`
@@ -207,7 +211,7 @@ export default class ParseLaTeXLog extends Rule {
 
             message.text = `${message.text}.`
             message.source = {
-              file: filePath,
+              file: sourcePaths[0],
               range: { start: line, end: line }
             }
           }
@@ -263,6 +267,22 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^runsystem\((.*?)\)\.\.\.(.*?)\.$/],
       evaluate: (reference, groups) => {
         parsedLog.calls.push(Log.parseCall(groups.command, groups.status))
+      }
+    }, {
+      // \input notification
+      patterns: [/(\([^()[]+|\))/g],
+      evaluate: (reference, groups) => {
+        const trimPattern = /(^\([\s"]*|[\s"]+$)/g
+        for (const token of groups.captures) {
+          if (token === ')') {
+            // Avoid popping main source file off of the stack.
+            if (sourcePaths.length > 1) {
+              sourcePaths.shift()
+            }
+          } else {
+            sourcePaths.unshift(this.normalizePath(token.replace(trimPattern, '')))
+          }
+        }
       }
     }], line => WRAPPED_LINE_PATTERN.test(line))
 

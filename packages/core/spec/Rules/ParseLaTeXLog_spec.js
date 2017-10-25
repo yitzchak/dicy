@@ -1,6 +1,7 @@
 /* @flow */
 
 import 'babel-polyfill'
+import path from 'path'
 
 import File from '../../src/File'
 import ParseLaTeXLog from '../../src/Rules/ParseLaTeXLog'
@@ -21,15 +22,13 @@ async function initialize ({
 describe('ParseLaTeXLog', () => {
   it('verifies that all log messages are successfully parsed.', async (done) => {
     const sourceName = 'error-warning.tex'
+    const subSourceName = path.join('sub', 'wibble gronk.tex')
     const logName = 'error-warning.log'
     const { rule } = await initialize()
     const messages = [{
       name: 'pdfTeX',
       severity: 'info',
-      text: 'expl3 2017/05/29 L3 programming layer (loader)',
-      source: {
-        file: sourceName
-      },
+      text: 'expl3 2017/07/19 L3 programming layer (loader)',
       log: {
         file: logName,
         range: {
@@ -40,10 +39,7 @@ describe('ParseLaTeXLog', () => {
     }, {
       name: 'pdfTeX',
       severity: 'info',
-      text: 'expl3 2017/05/29 L3 programming layer (code)',
-      source: {
-        file: sourceName
-      },
+      text: 'expl3 2017/07/19 L3 programming layer (code)',
       log: {
         file: logName,
         range: {
@@ -52,48 +48,21 @@ describe('ParseLaTeXLog', () => {
         }
       }
     }, {
+      severity: 'warning',
+      name: 'pdfTeX',
+      text: 'No file error-warning.aux.',
+      log: {
+        file: 'error-warning.log',
+        range: {
+          start: 176,
+          end: 176
+        }
+      }
+    }, {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
       text: 'Checking defaults for OML/cmm/m/it',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 177,
-          end: 177
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: '... okay',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 178,
-          end: 178
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: 'Checking defaults for T1/cmr/m/n',
       source: {
         file: sourceName,
         range: {
@@ -131,7 +100,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for OT1/cmr/m/n',
+      text: 'Checking defaults for T1/cmr/m/n',
       source: {
         file: sourceName,
         range: {
@@ -169,7 +138,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for OMS/cmsy/m/n',
+      text: 'Checking defaults for OT1/cmr/m/n',
       source: {
         file: sourceName,
         range: {
@@ -207,7 +176,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for OMX/cmex/m/n',
+      text: 'Checking defaults for OMS/cmsy/m/n',
       source: {
         file: sourceName,
         range: {
@@ -245,7 +214,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for U/cmr/m/n',
+      text: 'Checking defaults for OMX/cmex/m/n',
       source: {
         file: sourceName,
         range: {
@@ -280,6 +249,44 @@ describe('ParseLaTeXLog', () => {
         }
       }
     }, {
+      severity: 'info',
+      name: 'pdfTeX',
+      category: 'LaTeX Font',
+      text: 'Checking defaults for U/cmr/m/n',
+      source: {
+        file: sourceName,
+        range: {
+          start: 5,
+          end: 5
+        }
+      },
+      log: {
+        file: logName,
+        range: {
+          start: 189,
+          end: 189
+        }
+      }
+    }, {
+      severity: 'info',
+      name: 'pdfTeX',
+      category: 'LaTeX Font',
+      text: '... okay',
+      source: {
+        file: sourceName,
+        range: {
+          start: 5,
+          end: 5
+        }
+      },
+      log: {
+        file: logName,
+        range: {
+          start: 190,
+          end: 190
+        }
+      }
+    }, {
       severity: 'error',
       name: 'pdfTeX',
       category: 'LaTeX',
@@ -287,8 +294,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 190,
-          end: 190
+          start: 192,
+          end: 192
         }
       },
       source: {
@@ -313,25 +320,6 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 202,
-          end: 203
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: 'External font `cmex10\' loaded for size <7>.',
-      source: {
-        file: sourceName,
-        range: {
-          start: 17,
-          end: 17
-        }
-      },
-      log: {
-        file: logName,
-        range: {
           start: 204,
           end: 205
         }
@@ -340,7 +328,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'External font `cmex10\' loaded for size <8>.',
+      text: 'External font `cmex10\' loaded for size <7>.',
       source: {
         file: sourceName,
         range: {
@@ -359,7 +347,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'External font `cmex10\' loaded for size <6>.',
+      text: 'External font `cmex10\' loaded for size <8>.',
       source: {
         file: sourceName,
         range: {
@@ -378,7 +366,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'External font `cmex10\' loaded for size <5>.',
+      text: 'External font `cmex10\' loaded for size <6>.',
       source: {
         file: sourceName,
         range: {
@@ -394,14 +382,33 @@ describe('ParseLaTeXLog', () => {
         }
       }
     }, {
+      severity: 'info',
+      name: 'pdfTeX',
+      category: 'LaTeX Font',
+      text: 'External font `cmex10\' loaded for size <5>.',
+      source: {
+        file: sourceName,
+        range: {
+          start: 17,
+          end: 17
+        }
+      },
+      log: {
+        file: logName,
+        range: {
+          start: 212,
+          end: 213
+        }
+      }
+    }, {
       severity: 'error',
       name: 'pdfTeX',
       text: 'Argument of \\@sect has an extra }',
       log: {
         file: logName,
         range: {
-          start: 212,
-          end: 212
+          start: 214,
+          end: 214
         }
       },
       source: {
@@ -418,8 +425,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 227,
-          end: 227
+          start: 229,
+          end: 229
         }
       },
       source: {
@@ -436,8 +443,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 236,
-          end: 236
+          start: 238,
+          end: 238
         }
       },
       source: {
@@ -455,8 +462,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 246,
-          end: 246
+          start: 248,
+          end: 248
         }
       },
       source: {
@@ -481,8 +488,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 257,
-          end: 257
+          start: 259,
+          end: 259
         }
       }
     }, {
@@ -496,8 +503,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 260,
-          end: 260
+          start: 262,
+          end: 262
         }
       }
     }, {
@@ -515,8 +522,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 262,
-          end: 262
+          start: 264,
+          end: 264
         }
       }
     }, {
@@ -527,8 +534,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 264,
-          end: 264
+          start: 266,
+          end: 266
         }
       },
       source: {
@@ -553,8 +560,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 275,
-          end: 275
+          start: 277,
+          end: 277
         }
       }
     }, {
@@ -568,8 +575,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 278,
-          end: 278
+          start: 280,
+          end: 280
         }
       }
     }, {
@@ -587,8 +594,8 @@ describe('ParseLaTeXLog', () => {
       log: {
         file: logName,
         range: {
-          start: 280,
-          end: 280
+          start: 282,
+          end: 282
         }
       }
     }, {
@@ -596,18 +603,18 @@ describe('ParseLaTeXLog', () => {
       name: 'pdfTeX',
       category: 'foo',
       source: {
-        file: sourceName,
+        file: subSourceName,
         range: {
-          start: 47,
-          end: 47
+          start: 7,
+          end: 7
         }
       },
       text: '"bar"\nThe blind spot behind a submarine which makes a good hidding spot for other submarines.\nSee the foo documentation for further information.',
       log: {
         file: logName,
         range: {
-          start: 282,
-          end: 292
+          start: 285,
+          end: 295
         }
       }
     }, {
@@ -615,18 +622,18 @@ describe('ParseLaTeXLog', () => {
       name: 'pdfTeX',
       category: 'foo',
       source: {
-        file: sourceName,
+        file: subSourceName,
         range: {
-          start: 48,
-          end: 48
+          start: 8,
+          end: 8
         }
       },
       text: '"bar"\nThe blind spot behind a submarine which makes a good hidding spot for other submarines.',
       log: {
         file: logName,
         range: {
-          start: 303,
-          end: 308
+          start: 306,
+          end: 311
         }
       }
     }, {
@@ -634,51 +641,18 @@ describe('ParseLaTeXLog', () => {
       name: 'pdfTeX',
       category: 'foo',
       source: {
-        file: sourceName,
+        file: subSourceName,
         range: {
-          start: 49,
-          end: 49
+          start: 9,
+          end: 9
         }
       },
       text: '"bar"\nThe blind spot behind a submarine which makes a good hidding spot for other submarines.',
       log: {
         file: logName,
         range: {
-          start: 309,
-          end: 314
-        }
-      }
-    }, {
-      severity: 'error',
-      name: 'pdfTeX',
-      category: 'LaTeX',
-      text: 'File `sub/wibble.tex\' not found',
-      source: {
-        file: sourceName
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 318,
-          end: 318
-        }
-      }
-    }, {
-      severity: 'error',
-      name: 'pdfTeX',
-      text: 'Emergency stop',
-      log: {
-        file: logName,
-        range: {
-          start: 324,
-          end: 324
-        }
-      },
-      source: {
-        file: sourceName,
-        range: {
-          start: 54,
-          end: 54
+          start: 312,
+          end: 317
         }
       }
     }]
@@ -694,7 +668,7 @@ describe('ParseLaTeXLog', () => {
     expect(parsedLog.value).toBeDefined()
     if (!parsedLog.value) return
 
-    expect(parsedLog.value.messages).toEqual(messages)
+    expect(parsedLog.value.messages).toEqual(messages.map(jasmine.objectContaining))
 
     done()
   })
