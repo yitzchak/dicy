@@ -272,7 +272,6 @@ export default class ParseLaTeXLog extends Rule {
       // \input notification
       patterns: [/(\([^()[]+|\))/g],
       evaluate: (reference, groups) => {
-        parsedLog.messages.push({ severity: 'error', text: 'foo', log: reference })
         const trimPattern = /(^\([\s"]*|[\s"]+$)/g
         for (const token of groups.captures) {
           if (token === ')') {
