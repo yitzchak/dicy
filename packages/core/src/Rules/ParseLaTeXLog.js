@@ -196,7 +196,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
-        if (message && message.log.end === reference.start - 1) {
+        if (message && message.log && message.log.range && reference.range) {
           // Don't add input requests to the message.
           if (groups.text !== 'Type <return> to continue.') {
             message.text = `${message.text} ${groups.text.trim() || '\n'}`
@@ -272,11 +272,14 @@ export default class ParseLaTeXLog extends Rule {
       // \input notification
       patterns: [/(\([^()[]+|\))/g],
       evaluate: (reference, groups) => {
+        parsedLog.messages.push({ severity: 'error', text: 'foo', log: reference })
         const trimPattern = /(^\([\s"]*|[\s"]+$)/g
         for (const token of groups.captures) {
           if (token === ')') {
             // Avoid popping main source file off of the stack.
-            if (sourcePaths.length > 1) sourcePaths.shift()
+            if (sourcePaths.length > 1) {
+              sourcePaths.shift()
+            }
           } else {
             sourcePaths.unshift(this.normalizePath(token.replace(trimPattern, '')))
           }
