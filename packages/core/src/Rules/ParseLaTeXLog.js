@@ -124,7 +124,7 @@ export default class ParseLaTeXLog extends Rule {
     }, {
       // Continuation of message with possible file reference.
       names: ['package', 'text', 'line'],
-      patterns: [/^\(([^()]+)\) +(.*?)(?: on input line (\d+)\.?)?$/],
+      patterns: [/^\(([^()]+)\) {2,}(.*?)(?: on input line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         // Verify that the previous message matches the category.
@@ -196,7 +196,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
       evaluate: (reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
-        if (message) {
+        if (message && message.log.end === reference.start - 1) {
           // Don't add input requests to the message.
           if (groups.text !== 'Type <return> to continue.') {
             message.text = `${message.text} ${groups.text.trim() || '\n'}`
