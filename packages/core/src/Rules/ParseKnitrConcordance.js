@@ -23,7 +23,7 @@ export default class ParseKnitrConcordance extends Rule {
     await this.firstParameter.parse([{
       names: ['output', 'input', 'indicies'],
       patterns: [/^\\Sconcordance\{concordance:([^:]*):([^:]*):([^}]*)\}$/],
-      evaluate: (references, groups) => {
+      evaluate: (mode, reference, groups) => {
         // Split up the indicies in preparation to decode the RLE array.
         const encodedIndicies: Array<number> = groups.indicies.split(/\s+/).map(x => parseInt(x))
         const mappings: Array<LineRangeMapping> = []

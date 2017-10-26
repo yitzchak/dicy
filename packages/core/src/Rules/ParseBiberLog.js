@@ -25,7 +25,7 @@ export default class ParseBiberLog extends Rule {
       // Input messages
       names: ['text', 'input'],
       patterns: [/^[^>]+> INFO - ((?:Found BibTeX data source|Reading) '([^']+)')$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.inputs.push(groups.input)
 
         const message: Message = {
@@ -41,7 +41,7 @@ export default class ParseBiberLog extends Rule {
       // Output messages
       names: ['text', 'output'],
       patterns: [/^[^>]+> INFO - ((?:Writing|Logfile is) '([^']+)'.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.outputs.push(groups.output)
 
         const message: Message = {
@@ -57,7 +57,7 @@ export default class ParseBiberLog extends Rule {
       // All other messages
       names: ['severity', 'text'],
       patterns: [/^[^>]+> (INFO|WARN|ERROR) - (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         let severity = 'error'
         switch (groups.severity) {
           case 'INFO':

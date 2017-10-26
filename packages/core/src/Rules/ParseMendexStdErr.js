@@ -31,14 +31,14 @@ export default class ParsedMendexStdErr extends Rule {
       // Get the name
       names: ['text'],
       patterns: [/^This is (upmendex|mendex) /i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         name = groups.name
       }
     }, {
       // Dictionary Error
       names: ['name', 'text'],
       patterns: [/^(upmendex|mendex): (.*? is forbidden to open for reading\.)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name: groups.name,
           severity: 'error',
@@ -49,7 +49,7 @@ export default class ParsedMendexStdErr extends Rule {
       // Missing file errors
       names: ['text'],
       patterns: [/^(No log file, .*?\.|.*? does not exist\.)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: 'error',
@@ -60,7 +60,7 @@ export default class ParsedMendexStdErr extends Rule {
       // Bad kanji encoding
       names: ['text'],
       patterns: [/^(Ignoring bad kanji encoding.*)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: 'warning',

@@ -34,7 +34,7 @@ export default class ParsedMendexLog extends Rule {
       // Error/Warning messages
       names: ['severity', 'text', 'file', 'line'],
       patterns: [/^(Error|Warning): (.*?)(?: in (.*?), line ([0-9]+))?\.$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const message: Message = {
           name,
           severity: groups.severity.toLowerCase(),
@@ -59,7 +59,7 @@ export default class ParsedMendexLog extends Rule {
       // Bad encap messages
       names: ['text', 'file', 'line'],
       patterns: [/^Bad encap string in (.*?), line ([0-9]+)\.$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const line: number = parseInt(groups.line, 10)
         parsedLog.messages.push({
           name,
@@ -76,7 +76,7 @@ export default class ParsedMendexLog extends Rule {
       // Coallator failure
       names: ['text'],
       patterns: [/^(\[ICU\] Collator creation failed.*)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: 'error',
@@ -89,7 +89,7 @@ export default class ParsedMendexLog extends Rule {
       // Entry report
       names: ['text'],
       patterns: [/^(.*? entries accepted, .*? rejected\.)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: 'info',
@@ -102,7 +102,7 @@ export default class ParsedMendexLog extends Rule {
       // Input files
       names: ['file'],
       patterns: [/^Scanning (?:dictionary|environment dictionary|input) file (.*?)\.$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.inputs.push(path.normalize(groups.file))
         parsedLog.messages.push({
           name,
@@ -116,7 +116,7 @@ export default class ParsedMendexLog extends Rule {
       // Output files
       names: ['file'],
       patterns: [/^Output written in (.*?)\.$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.outputs.push(path.normalize(groups.file))
         parsedLog.messages.push({
           name,

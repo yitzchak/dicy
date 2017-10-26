@@ -24,13 +24,13 @@ export default class ParseBibTeXLog extends Rule {
     await this.firstParameter.parse([{
       names: ['output'],
       patterns: [/^Writing (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.outputs.push(this.normalizePath(groups.output))
       }
     }, {
       names: ['input'],
       patterns: [/^Reading (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.inputs.push(this.normalizePath(groups.input))
       }
     }])
