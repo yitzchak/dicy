@@ -1,5 +1,6 @@
 /* @flow */
 
+import File from '../File'
 import Rule from '../Rule'
 import Log from '../Log'
 
@@ -7,7 +8,7 @@ import type { Action, Command, Message, ParsedLog } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 
-const LATEX3_MODE = 'latex3'
+const LATEX3_PARSING_MODE = 'latex3'
 
 export default class ParseLaTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LaTeXLog'])]
@@ -173,7 +174,7 @@ export default class ParseLaTeXLog extends Rule {
 
         parsedLog.messages.push(message)
 
-        return LATEX3_MODE
+        return LATEX3_PARSING_MODE
       }
     }, {
       // LaTeX3 messages
@@ -194,11 +195,11 @@ export default class ParseLaTeXLog extends Rule {
 
         parsedLog.messages.push(message)
 
-        return LATEX3_MODE
+        return LATEX3_PARSING_MODE
       }
     }, {
       // LaTeX3 continued message
-      modes: [LATEX3_MODE],
+      modes: [LATEX3_PARSING_MODE],
       names: ['text', 'line'],
       patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
       evaluate: (mode, reference, groups) => {
@@ -226,7 +227,7 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       // End of LaTeX3 message
-      modes: [LATEX3_MODE],
+      modes: [LATEX3_PARSING_MODE],
       names: [],
       patterns: [/^[.*!]{48,50} *$/],
       evaluate: (mode, reference, groups) => {
@@ -236,7 +237,7 @@ export default class ParseLaTeXLog extends Rule {
           message.log.range.end = reference.range.end
         }
 
-        return 'default'
+        return File.DEFAULT_PARSING_MODE
       }
     }, {
       // Missing file warning.

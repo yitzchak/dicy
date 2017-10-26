@@ -11,9 +11,8 @@ import yaml from 'js-yaml'
 
 import type { FileType, Parser, Reference } from './types'
 
-export const DEFAULT_PARSING_MODE = 'default'
-
 export default class File {
+  static DEFAULT_PARSING_MODE = 'default'
   static fileTypes: Map<string, FileType>
 
   // The complete and real file path in the file system.
@@ -104,7 +103,7 @@ export default class File {
       let modeParsers: Array<Parser> = []
       const setMode = newMode => {
         mode = newMode
-        modeParsers = parsers.filter(parser => (parser.modes || [DEFAULT_PARSING_MODE]).includes(mode))
+        modeParsers = parsers.filter(parser => (parser.modes || [File.DEFAULT_PARSING_MODE]).includes(mode))
       }
       // A function to check form matches in all the parsers.
       const checkForMatches = (finalCheck: boolean = false) => {
@@ -160,7 +159,7 @@ export default class File {
         }
       }
 
-      setMode(DEFAULT_PARSING_MODE)
+      setMode(File.DEFAULT_PARSING_MODE)
 
       if (this.virtual) {
         const rawLines = this.value ? this.value.toString().split(/\r?\n/) : []
