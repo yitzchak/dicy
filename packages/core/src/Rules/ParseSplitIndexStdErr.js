@@ -25,7 +25,7 @@ export default class ParseSplitIndexStdOut extends Rule {
       // parse anything that has that form.
       names: ['text', 'file', 'line'],
       patterns: [/^(.*) at (.*?) line ([0-9]+)\.$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const line = parseInt(groups.line, 10)
 
         // Do not include the log reference since it is to a virtual file.

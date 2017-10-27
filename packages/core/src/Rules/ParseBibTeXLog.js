@@ -28,7 +28,7 @@ export default class ParseBibTeXLog extends Rule {
       // Missing database files or missing cross references.
       names: ['text'],
       patterns: [/^(I couldn't open (?:auxiliary|database) file .*|A bad cross reference---entry .*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           severity: 'error',
           name,
@@ -40,7 +40,7 @@ export default class ParseBibTeXLog extends Rule {
       // Warning messages
       names: ['text'],
       patterns: [/^Warning--(.+)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           severity: 'warning',
           name,
@@ -52,7 +52,7 @@ export default class ParseBibTeXLog extends Rule {
       // Continued source references.
       names: ['line', 'file'],
       patterns: [/^-+line (\d+) of file (.+)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const message = parsedLog.messages[parsedLog.messages.length - 1]
         if (message) {
           const line = parseInt(groups.line, 10)
@@ -74,7 +74,7 @@ export default class ParseBibTeXLog extends Rule {
       // Error messages with a source reference.
       names: ['text', 'line', 'file'],
       patterns: [/^(.+)---line (\d+) of file (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const line = parseInt(groups.line, 10)
         parsedLog.messages.push({
           severity: 'error',
@@ -96,7 +96,7 @@ export default class ParseBibTeXLog extends Rule {
       // line.
       names: ['input'],
       patterns: [/^.*?(?:Database file #\d+|The style file|The top-level auxiliary file|A level-\d+ auxiliary file): (.*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.inputs.push(groups.input)
       }
     }])

@@ -29,7 +29,7 @@ export default class ParseMakeIndexLog extends Rule {
       patterns: [
         /^Scanning (?:style|input) file (.*?)[.]+done .*$/
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.inputs.push(this.normalizePath(groups.input))
         parsedLog.messages.push({
           severity: 'info',
@@ -43,7 +43,7 @@ export default class ParseMakeIndexLog extends Rule {
       patterns: [
         /^(?:Output|Transcript) written in (.*?)\.*$/
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.outputs.push(this.normalizePath(groups.output))
         parsedLog.messages.push({
           severity: 'info',
@@ -57,7 +57,7 @@ export default class ParseMakeIndexLog extends Rule {
       patterns: [
         /^(Nothing written in .*?\.)$/
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           severity: 'warning',
           name,
@@ -70,7 +70,7 @@ export default class ParseMakeIndexLog extends Rule {
       patterns: [
         /^(Sorting entries.*)$/
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           severity: 'info',
           name,
@@ -84,7 +84,7 @@ export default class ParseMakeIndexLog extends Rule {
         /## Warning \(input = (.+), line = (\d+); output = (.+), line = (\d+)\):/,
         MESSAGE_PATTERN
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const line = parseInt(groups.inputLine, 10)
         parsedLog.messages.push({
           severity: 'warning',
@@ -106,7 +106,7 @@ export default class ParseMakeIndexLog extends Rule {
         /^[*!]+ (Input (?:index|style)) error \(file = (.+), line = (\d+)\):$/,
         MESSAGE_PATTERN
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const line = parseInt(groups.line, 10)
         parsedLog.messages.push({
           severity: 'error',

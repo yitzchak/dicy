@@ -62,9 +62,10 @@ export type Reference = {
 }
 
 export type Parser = {
+  modes?: Array<string>,
   names?: Array<string>,
   patterns: Array<RegExp>,
-  evaluate: (reference: Reference, groups: Object) => void
+  evaluate: (mode: string, reference: Reference, groups: Object) => ?string
 }
 
 export type Severity = 'info' | 'warning' | 'error'

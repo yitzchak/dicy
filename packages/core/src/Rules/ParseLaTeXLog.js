@@ -1,11 +1,14 @@
 /* @flow */
 
+import File from '../File'
 import Rule from '../Rule'
 import Log from '../Log'
 
 import type { Action, Command, Message, ParsedLog } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
+
+const LATEX3_PARSING_MODE = 'latex3'
 
 export default class ParseLaTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LaTeXLog'])]
@@ -34,12 +37,12 @@ export default class ParseLaTeXLog extends Rule {
     await this.firstParameter.parse([{
       // Ignore intro line
       patterns: [/^This is/],
-      evaluate: (reference, groups) => {}
+      evaluate: (mode, reference, groups) => {}
     }, {
       // Input file name
       names: ['filePath'],
       patterns: [/^\*\*([^*]+)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         // Don't let subsequent lines overwrite the first.
         if (!sourcePaths.length === 0) {
           sourcePaths.unshift(this.normalizePath(groups.filePath))
@@ -49,7 +52,7 @@ export default class ParseLaTeXLog extends Rule {
       // Package info message
       names: ['text'],
       patterns: [/^Package: (.*)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: 'info',
@@ -63,7 +66,7 @@ export default class ParseLaTeXLog extends Rule {
       // included.
       names: ['category', 'text'],
       patterns: [/^! (.+) Error: (.+?)\.?$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           severity: 'error',
           name,
@@ -78,7 +81,7 @@ export default class ParseLaTeXLog extends Rule {
       // available.
       names: ['file', 'line', 'category', 'text'],
       patterns: [/^(\S.*):(\d+): (?:(.+) Error: )?(.+?)\.?$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const line: number = parseInt(groups.line, 10)
         const message: Message = {
           severity: 'error',
@@ -99,7 +102,7 @@ export default class ParseLaTeXLog extends Rule {
       // Warning/Info messages, possibly with a line reference.
       names: ['category', 'severity', 'text', 'line'],
       patterns: [/^(.+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const message: Message = {
           severity: groups.severity.toLowerCase(),
           name,
@@ -125,7 +128,7 @@ export default class ParseLaTeXLog extends Rule {
       // Continuation of message with possible file reference.
       names: ['package', 'text', 'line'],
       patterns: [/^\(([^()]+)\) {2,}(.*?)(?: on input line (\d+)\.?)?$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         // Verify that the previous message matches the category.
         if (message && message.category && message.category.endsWith(groups.package)) {
@@ -154,7 +157,7 @@ export default class ParseLaTeXLog extends Rule {
         /^!$/,
         /^(.*):(\d+): (?:(.+) error: )?(.+?)\.?$/
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const line: number = parseInt(groups.line, 10)
         const message: Message = {
           severity: 'error',
@@ -170,6 +173,8 @@ export default class ParseLaTeXLog extends Rule {
         if (groups.category) message.category = groups.category
 
         parsedLog.messages.push(message)
+
+        return LATEX3_PARSING_MODE
       }
     }, {
       // LaTeX3 messages
@@ -178,7 +183,7 @@ export default class ParseLaTeXLog extends Rule {
         /^[.*!]{48,50}$/,
         /^[.*!] (.*?) (info|warning|error): ("[^"]*")$/
       ],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const message: Message = {
           severity: groups.severity,
           name,
@@ -189,12 +194,15 @@ export default class ParseLaTeXLog extends Rule {
         }
 
         parsedLog.messages.push(message)
+
+        return LATEX3_PARSING_MODE
       }
     }, {
       // LaTeX3 continued message
+      modes: [LATEX3_PARSING_MODE],
       names: ['text', 'line'],
       patterns: [/^[.*!] (.*?)(?: on line (\d+)\.?)?$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         if (message && message.log && message.log.range && reference.range) {
           // Don't add input requests to the message.
@@ -219,20 +227,23 @@ export default class ParseLaTeXLog extends Rule {
       }
     }, {
       // End of LaTeX3 message
+      modes: [LATEX3_PARSING_MODE],
       names: [],
       patterns: [/^[.*!]{48,50} *$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const message: Message = parsedLog.messages[parsedLog.messages.length - 1]
         // If the the previous message has a log reference then extend it.
         if (message && message.log && message.log.range && reference.range) {
           message.log.range.end = reference.range.end
         }
+
+        return File.DEFAULT_PARSING_MODE
       }
     }, {
       // Missing file warning.
       names: ['text'],
       patterns: [/^(No file .*\.)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           severity: 'warning',
           name,
@@ -244,7 +255,7 @@ export default class ParseLaTeXLog extends Rule {
       // makeidx/splitidx messages.
       names: ['text'],
       patterns: [/^(Writing index file.*|Using splitted index at.*|Started index file .*)$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           severity: 'info',
           name,
@@ -257,7 +268,7 @@ export default class ParseLaTeXLog extends Rule {
       // it does not put the output PDF file name into the FLS file.
       names: ['filePath'],
       patterns: [/^Output written on "?([^"]+)"? \([^)]*\)\.$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         // Sometimes XeLaTeX uses astricks instead of spaces in output path.
         parsedLog.outputs.push(this.normalizePath(groups.filePath.replace(/\*/g, ' ')))
       }
@@ -265,13 +276,13 @@ export default class ParseLaTeXLog extends Rule {
       // Run system message.
       names: ['command', 'status'],
       patterns: [/^runsystem\((.*?)\)\.\.\.(.*?)\.$/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.calls.push(Log.parseCall(groups.command, groups.status))
       }
     }, {
       // \input notification
       patterns: [/(\([^()[]+|\))/g],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         const trimPattern = /(^\([\s"]*|[\s"]+$)/g
         for (const token of groups.captures) {
           if (token === ')') {

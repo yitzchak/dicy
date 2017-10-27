@@ -34,7 +34,7 @@ export default class ParsedXindyLog extends Rule {
       // Error/Warning messages with file references
       names: ['severity', 'text', 'file'],
       patterns: [/^(ERROR|WARNING): (.*? in:?)$/i, /(.*)/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: groups.severity.toLowerCase(),
@@ -47,7 +47,7 @@ export default class ParsedXindyLog extends Rule {
       // Error/Warning messages
       names: ['severity', 'text'],
       patterns: [/^(ERROR|WARNING): (.*)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: groups.severity.toLowerCase(),
@@ -60,7 +60,7 @@ export default class ParsedXindyLog extends Rule {
       // Module loadings
       names: ['text'],
       patterns: [/^(Loading module .*|Finished loading module .*)$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.messages.push({
           name,
           severity: 'info',
@@ -73,7 +73,7 @@ export default class ParsedXindyLog extends Rule {
       // Input files
       names: ['file'],
       patterns: [/^Reading raw-index (.*?)[.]{3}$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         filePath = path.normalize(groups.file)
         parsedLog.inputs.push(path.normalize(groups.file))
         parsedLog.messages.push({
@@ -88,7 +88,7 @@ export default class ParsedXindyLog extends Rule {
       // Output files
       names: ['file'],
       patterns: [/^(?:Markup written into file|Opening logfile) (.*?)[. ]$/i],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         parsedLog.outputs.push(path.normalize(groups.file))
         parsedLog.messages.push({
           name,

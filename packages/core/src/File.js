@@ -12,6 +12,7 @@ import yaml from 'js-yaml'
 import type { FileType, Parser, Reference } from './types'
 
 export default class File {
+  static DEFAULT_PARSING_MODE = 'default'
   static fileTypes: Map<string, FileType>
 
   // The complete and real file path in the file system.
@@ -97,7 +98,13 @@ export default class File {
       type Line = { text: string, count: number }
       // The buffer of unwrapped lines.
       let lines: Array<Line> = []
-      let lineNumber = 1
+      let lineNumber: number = 1
+      let mode: string = ''
+      let modeParsers: Array<Parser> = []
+      const setMode = newMode => {
+        mode = newMode
+        modeParsers = parsers.filter(parser => (parser.modes || [File.DEFAULT_PARSING_MODE]).includes(mode))
+      }
       // A function to check form matches in all the parsers.
       const checkForMatches = (finalCheck: boolean = false) => {
         while (lines.length > 0) {
@@ -107,7 +114,7 @@ export default class File {
 
           let matched: boolean = false
 
-          for (const parser: Parser of parsers) {
+          for (const parser: Parser of modeParsers) {
             // If there is not enough lines to check this parser then skip it.
             if (parser.patterns.length > lines.length) continue
 
@@ -139,7 +146,8 @@ export default class File {
                 }
               }
               lineNumber += lineCount
-              parser.evaluate(reference, groups)
+              const newMode = parser.evaluate(mode, reference, groups)
+              if (newMode) setMode(newMode)
               break
             }
           }
@@ -150,6 +158,8 @@ export default class File {
           }
         }
       }
+
+      setMode(File.DEFAULT_PARSING_MODE)
 
       if (this.virtual) {
         const rawLines = this.value ? this.value.toString().split(/\r?\n/) : []

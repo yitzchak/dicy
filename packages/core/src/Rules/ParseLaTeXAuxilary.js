@@ -22,7 +22,7 @@ export default class ParseLaTeXAuxilary extends Rule {
     await this.firstParameter.parse([{
       names: ['command'],
       patterns: [/^\\([A-Za-z@]+)/],
-      evaluate: (reference, groups) => {
+      evaluate: (mode, reference, groups) => {
         results.commands.push(groups.command)
       }
     }])
