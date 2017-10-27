@@ -52,6 +52,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.24.1",
     "jasmine": "^2.7.0",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "typescript": "^2.5.3"
   }
 }

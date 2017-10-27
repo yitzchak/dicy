@@ -39,6 +39,7 @@
     "yargs": "^10.0.3"
   },
   "devDependencies": {
+    "@types/graphlib": "^2.1.4",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -49,7 +50,8 @@
     "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.24.1",
     "jasmine": "^2.7.0",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "typescript": "^2.5.3"
   },
   "yargs": {
     "dot-notation": false,
