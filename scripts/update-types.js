@@ -12,7 +12,7 @@ async function main () {
   const previous = await fs.readFile(filePath, 'utf8')
   const options: Array<Option> = await DiCy.getOptionDefinitions()
   const defaultOptions = {}
-  const properties = ['[name: string]: string | Array<string>'].concat(options.filter(option => !option.name.startsWith('$')).map(option => {
+  const properties = options.map(option => {
     let property: string = option.name.includes('$') ? `'${option.name}'` : option.name
 
     if (option.type !== 'boolean' && !option.defaultValue && !/^(filePath|jobNames)$/.test(option.name)) {
@@ -38,7 +38,7 @@ async function main () {
     }
 
     return property
-  }))
+  })
 
   for (const option of options) {
     if (option.defaultValue) defaultOptions[option.name] = option.defaultValue

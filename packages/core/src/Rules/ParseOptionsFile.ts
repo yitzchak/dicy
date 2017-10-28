@@ -1,11 +1,9 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Action, Command } from '../types'
+import { Action, Command } from '../types'
 
 export default class ParseOptionsFile extends Rule {
-  static commands: Set<Command> = new Set(['load'])
+  static commands: Set<Command> = new Set<Command>(['load'])
   static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses the YAML option file.'
 

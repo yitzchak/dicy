@@ -1,12 +1,10 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Command, CommandOptions } from '../types'
+import { Command, CommandOptions } from '../types'
 
 export default class GraphViz extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['GraphViz'])]
-  static commands: Set<Command> = new Set(['graph'])
+  static commands: Set<Command> = new Set<Command>(['graph'])
   static description: string = 'Runs GraphViz on dependency graphs.'
 
   constructCommand (): CommandOptions {

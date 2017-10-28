@@ -1,14 +1,12 @@
-/* @flow */
-
-import path from 'path'
+import * as path from 'path'
 
 import Rule from '../Rule'
 
-import type { Action, Command, ParsedLog } from '../types'
+import { Action, Command, ParsedLog, ParserMatch, Reference, Severity } from '../types'
 
 export default class ParsedXindyLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['XindyLog'])]
-  static commands: Set<Command> = new Set(['build', 'log'])
+  static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static description: string = 'Parses the logs produced by xindy and texindy.'
   static defaultActions: Array<Action> = ['parse']
 
@@ -34,12 +32,12 @@ export default class ParsedXindyLog extends Rule {
       // Error/Warning messages with file references
       names: ['severity', 'text', 'file'],
       patterns: [/^(ERROR|WARNING): (.*? in:?)$/i, /(.*)/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
-          severity: groups.severity.toLowerCase(),
-          text: `${groups.text} ${groups.file}`,
-          source: { file: path.normalize(groups.file) },
+          severity: <Severity>match.groups.severity.toLowerCase(),
+          text: `${match.groups.text} ${match.groups.file}`,
+          source: { file: path.normalize(match.groups.file) },
           log: reference
         })
       }
@@ -47,11 +45,11 @@ export default class ParsedXindyLog extends Rule {
       // Error/Warning messages
       names: ['severity', 'text'],
       patterns: [/^(ERROR|WARNING): (.*)$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
-          severity: groups.severity.toLowerCase(),
-          text: groups.text,
+          severity: <Severity>match.groups.severity.toLowerCase(),
+          text: match.groups.text,
           source: { file: filePath },
           log: reference
         })
@@ -60,11 +58,11 @@ export default class ParsedXindyLog extends Rule {
       // Module loadings
       names: ['text'],
       patterns: [/^(Loading module .*|Finished loading module .*)$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: groups.text,
+          text: match.groups.text,
           source: { file: filePath },
           log: reference
         })
@@ -73,13 +71,13 @@ export default class ParsedXindyLog extends Rule {
       // Input files
       names: ['file'],
       patterns: [/^Reading raw-index (.*?)[.]{3}$/i],
-      evaluate: (mode, reference, groups) => {
-        filePath = path.normalize(groups.file)
-        parsedLog.inputs.push(path.normalize(groups.file))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        filePath = path.normalize(match.groups.file)
+        parsedLog.inputs.push(path.normalize(match.groups.file))
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: groups._,
+          text: match.groups._,
           source: { file: filePath },
           log: reference
         })
@@ -88,12 +86,12 @@ export default class ParsedXindyLog extends Rule {
       // Output files
       names: ['file'],
       patterns: [/^(?:Markup written into file|Opening logfile) (.*?)[. ]$/i],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.outputs.push(path.normalize(groups.file))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.outputs.push(path.normalize(match.groups.file))
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: groups._,
+          text: match.groups._,
           source: { file: filePath },
           log: reference
         })

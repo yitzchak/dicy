@@ -1,8 +1,6 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Command, Message, ParsedLog } from '../types'
+import { Command, Message, ParsedLog } from '../types'
 
 export default class ReportLogMessages extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set([
@@ -17,7 +15,7 @@ export default class ReportLogMessages extends Rule {
     'ParsedSplitIndexStdOut',
     'ParsedXindyLog'
   ])]
-  static commands: Set<Command> = new Set(['log'])
+  static commands: Set<Command> = new Set<Command>(['log'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Reports log messages from any parsed log files.'
 

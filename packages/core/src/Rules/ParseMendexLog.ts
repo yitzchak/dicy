@@ -1,14 +1,12 @@
-/* @flow */
-
-import path from 'path'
+import * as path from 'path'
 
 import Rule from '../Rule'
 
-import type { Action, Command, Message, ParsedLog } from '../types'
+import { Action, Command, Message, ParsedLog, Reference, ParserMatch, Severity } from '../types'
 
 export default class ParsedMendexLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['MendexLog'])]
-  static commands: Set<Command> = new Set(['build', 'log'])
+  static parameterTypes: Array<Set<string>> = [new Set<string>(['MendexLog'])]
+  static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static description: string = 'Parses the logs produced by all mendex variants.'
   static defaultActions: Array<Action> = ['parse']
 
@@ -34,21 +32,21 @@ export default class ParsedMendexLog extends Rule {
       // Error/Warning messages
       names: ['severity', 'text', 'file', 'line'],
       patterns: [/^(Error|Warning): (.*?)(?: in (.*?), line ([0-9]+))?\.$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         const message: Message = {
           name,
-          severity: groups.severity.toLowerCase(),
-          text: groups.text,
+          severity: <Severity>match.groups.severity.toLowerCase(),
+          text: match.groups.text,
           source: { file: filePath },
           log: reference
         }
 
         // There is a line reference so add it to the message.
-        if (groups.line) {
-          const line: number = parseInt(groups.line, 10)
+        if (match.groups.line) {
+          const line: number = parseInt(match.groups.line, 10)
 
           message.source = {
-            file: path.normalize(groups.file),
+            file: path.normalize(match.groups.file),
             range: { start: line, end: line }
           }
         }
@@ -59,14 +57,14 @@ export default class ParsedMendexLog extends Rule {
       // Bad encap messages
       names: ['text', 'file', 'line'],
       patterns: [/^Bad encap string in (.*?), line ([0-9]+)\.$/i],
-      evaluate: (mode, reference, groups) => {
-        const line: number = parseInt(groups.line, 10)
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        const line: number = parseInt(match.groups.line, 10)
         parsedLog.messages.push({
           name,
           severity: 'error',
-          text: groups.text,
+          text: match.groups.text,
           source: {
-            file: path.normalize(groups.file),
+            file: path.normalize(match.groups.file),
             range: { start: line, end: line }
           },
           log: reference
@@ -76,11 +74,11 @@ export default class ParsedMendexLog extends Rule {
       // Coallator failure
       names: ['text'],
       patterns: [/^(\[ICU\] Collator creation failed.*)$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
           severity: 'error',
-          text: groups.text,
+          text: match.groups.text,
           source: { file: filePath },
           log: reference
         })
@@ -89,11 +87,11 @@ export default class ParsedMendexLog extends Rule {
       // Entry report
       names: ['text'],
       patterns: [/^(.*? entries accepted, .*? rejected\.)$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: groups.text,
+          text: match.groups.text,
           source: { file: filePath },
           log: reference
         })
@@ -102,12 +100,12 @@ export default class ParsedMendexLog extends Rule {
       // Input files
       names: ['file'],
       patterns: [/^Scanning (?:dictionary|environment dictionary|input) file (.*?)\.$/i],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.inputs.push(path.normalize(groups.file))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.inputs.push(path.normalize(match.groups.file))
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: groups._,
+          text: match.groups._,
           source: { file: filePath },
           log: reference
         })
@@ -116,12 +114,12 @@ export default class ParsedMendexLog extends Rule {
       // Output files
       names: ['file'],
       patterns: [/^Output written in (.*?)\.$/i],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.outputs.push(path.normalize(groups.file))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.outputs.push(path.normalize(match.groups.file))
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: groups._,
+          text: match.groups._,
           source: { file: filePath },
           log: reference
         })

@@ -1,12 +1,12 @@
-/* @flow */
+
 
 import Rule from '../Rule'
 
-import type { Action, Command, Message, ParsedLog } from '../types'
+import { Action, Command, Message, ParsedLog, ParserMatch, Reference, Severity } from '../types'
 
 export default class ParseBiberLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['BiberLog'])]
-  static commands: Set<Command> = new Set(['build', 'log'])
+  static parameterTypes: Array<Set<string>> = [new Set<string>(['BiberLog'])]
+  static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses any biber produced logs.'
 
@@ -25,13 +25,13 @@ export default class ParseBiberLog extends Rule {
       // Input messages
       names: ['text', 'input'],
       patterns: [/^[^>]+> INFO - ((?:Found BibTeX data source|Reading) '([^']+)')$/],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.inputs.push(groups.input)
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.inputs.push(match.groups.input)
 
         const message: Message = {
           severity: 'info',
           name: 'Biber',
-          text: groups.text,
+          text: match.groups.text,
           log: reference
         }
 
@@ -41,13 +41,13 @@ export default class ParseBiberLog extends Rule {
       // Output messages
       names: ['text', 'output'],
       patterns: [/^[^>]+> INFO - ((?:Writing|Logfile is) '([^']+)'.*)$/],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.outputs.push(groups.output)
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.outputs.push(match.groups.output)
 
         const message: Message = {
           severity: 'info',
           name: 'Biber',
-          text: groups.text,
+          text: match.groups.text,
           log: reference
         }
 
@@ -57,9 +57,9 @@ export default class ParseBiberLog extends Rule {
       // All other messages
       names: ['severity', 'text'],
       patterns: [/^[^>]+> (INFO|WARN|ERROR) - (.*)$/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         let severity = 'error'
-        switch (groups.severity) {
+        switch (match.groups.severity) {
           case 'INFO':
             severity = 'info'
             break
@@ -69,9 +69,9 @@ export default class ParseBiberLog extends Rule {
         }
 
         const message: Message = {
-          severity,
+          severity: <Severity>(severity),
           name: 'Biber',
-          text: groups.text,
+          text: match.groups.text,
           log: reference
         }
 

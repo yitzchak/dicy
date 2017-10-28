@@ -1,10 +1,8 @@
-/* @flow */
-
-import path from 'path'
+import * as path from 'path'
 
 import Rule from '../Rule'
 
-import type { CommandOptions } from '../types'
+import { CommandOptions } from '../types'
 
 export default class MakeGlossaries extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['GlossaryControlFile'])]

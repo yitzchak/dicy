@@ -1,5 +1,3 @@
-/* @flow */
-
 import _ from 'lodash'
 import path from 'path'
 import readdir from 'readdir-enhanced'
@@ -9,7 +7,7 @@ import StateConsumer from './StateConsumer'
 import File from './File'
 import Rule from './Rule'
 
-import type { Action, Command, Option, Phase, RuleInfo } from './types'
+import { Action, Command, Option, Phase, RuleInfo } from './types'
 
 const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
 

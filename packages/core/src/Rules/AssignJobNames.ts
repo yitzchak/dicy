@@ -1,12 +1,10 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Command, Phase } from '../types'
+import { Command, Phase } from '../types'
 
 export default class AssignJobNames extends Rule {
-  static phases: Set<Phase> = new Set(['finalize'])
-  static commands: Set<Command> = new Set(['load'])
+  static phases: Set<Phase> = new Set<Phase>(['finalize'])
+  static commands: Set<Command> = new Set<Command>(['load'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Assign job names to initial source file.'
 

@@ -1,16 +1,14 @@
-/* @flow */
-
-import semver from 'semver'
+import * as semver from 'semver'
 
 import File from '../File'
 import Rule from '../Rule'
 import { CACHE_VERSION } from '../types'
 
-import type { Command, Phase, RuleCache, Cache } from '../types'
+import { Command, Phase, RuleCache, Cache } from '../types'
 
 export default class LoadAndValidateCache extends Rule {
-  static phases: Set<Phase> = new Set(['initialize'])
-  static commands: Set<Command> = new Set(['load'])
+  static phases: Set<Phase> = new Set<Phase>(['initialize'])
+  static commands: Set<Command> = new Set<Command>(['load'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
   static description: string = 'Loads the file/rule cache from a previous build.'

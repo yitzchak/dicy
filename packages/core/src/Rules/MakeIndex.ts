@@ -1,13 +1,11 @@
-/* @flow */
-
-import path from 'path'
+import * as path from 'path'
 
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, Command, CommandOptions, OptionsInterface, ParsedLog, Phase } from '../types'
+import { Action, Command, CommandOptions, OptionsInterface, ParsedLog, Phase } from '../types'
 
 export default class MakeIndex extends Rule {
   static parameterTypes: Array<Set<string>> = [

@@ -1,15 +1,13 @@
-/* @flow */
-
-import path from 'path'
+import * as path from 'path'
 
 import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, OptionsInterface, Phase } from '../types'
+import { Command, OptionsInterface, Phase } from '../types'
 
 export default class CopyTargetsToRoot extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['*'])]
+  static parameterTypes: Array<Set<string>> = [new Set<string>(['*'])]
   static description: string = 'Copy targets to root directory.'
   static alwaysEvaluate: boolean = true
 

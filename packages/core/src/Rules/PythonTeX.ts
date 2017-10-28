@@ -1,8 +1,6 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { CommandOptions } from '../types'
+import { CommandOptions } from '../types'
 
 export default class PythonTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['PythonTeX'])]

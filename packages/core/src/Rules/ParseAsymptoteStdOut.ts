@@ -1,10 +1,10 @@
-/* @flow */
 
-import path from 'path'
+
+import * as path from 'path'
 
 import Rule from '../Rule'
 
-import type { Action, ParsedLog } from '../types'
+import { Action, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseAsymptoteStdOut extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['AsymptoteStdOut'])]
@@ -26,21 +26,21 @@ export default class ParseAsymptoteStdOut extends Rule {
     await this.firstParameter.parse([{
       names: ['filePath'],
       patterns: [/^cd (.*)$/],
-      evaluate: (mode, reference, groups) => {
-        rootPath = groups.filePath
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        rootPath = match.groups.filePath
       }
     }, {
       names: ['filePath'],
       patterns: [/^Wrote (.*)$/],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.outputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.outputs.push(this.normalizePath(path.resolve(rootPath, match.groups.filePath)))
       }
     }, {
       names: ['type', 'filePath'],
       patterns: [/^(Including|Loading) \S+ from (.*)$/],
-      evaluate: (mode, reference, groups) => {
-        if (!path.isAbsolute(groups.filePath)) {
-          parsedLog.inputs.push(this.normalizePath(path.resolve(rootPath, groups.filePath)))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        if (!path.isAbsolute(match.groups.filePath)) {
+          parsedLog.inputs.push(this.normalizePath(path.resolve(rootPath, match.groups.filePath)))
         }
       }
     }])

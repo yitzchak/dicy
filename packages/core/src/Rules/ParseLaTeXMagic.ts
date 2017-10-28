@@ -1,14 +1,12 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Action, Command } from '../types'
+import { Action, Command, Reference, ParserMatch } from '../types'
 
 const TRUE_PATTERN = /^(true|yes|enabled?)$/i
 const ITEM_SEPARATOR_PATTERN = /\s*,\s*/
 
 export default class ParseLaTeXMagic extends Rule {
-  static commands: Set<Command> = new Set(['load'])
+  static commands: Set<Command> = new Set<Command>(['load'])
   static parameterTypes: Array<Set<string>> = [new Set([
     'LaTeX',
     'LiterateAgda',
@@ -21,14 +19,14 @@ export default class ParseLaTeXMagic extends Rule {
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedLaTeXMagic')
-    const magic = {}
+    const magic: {[name: string]: any} = {}
 
     await this.firstParameter.parse([{
       names: ['jobName', 'name', 'value'],
       patterns: [/^%\s*!T[eE]X\s+(?:([^:]+?)\s*:\s*)?(\$?\w+)\s*=\s*(.*?)\s*$/],
-      evaluate: (mode, reference, groups) => {
-        const schema = this.state.optionSchema.get(groups.name)
-        let value = groups.value
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        const schema = this.state.optionSchema.get(match.groups.name)
+        let value: any = match.groups.value
 
         if (schema) {
           // If we have a schema definition then use it to parse the value
@@ -44,9 +42,6 @@ export default class ParseLaTeXMagic extends Rule {
             case 'number':
               value = parseInt(value, 10)
               break
-            case 'numbers':
-              value = value.split(ITEM_SEPARATOR_PATTERN).map(x => parseInt(x, 10))
-              break
             case 'boolean':
               value = TRUE_PATTERN.test(value)
               break
@@ -55,19 +50,19 @@ export default class ParseLaTeXMagic extends Rule {
 
         let jobMagic = magic
 
-        if (groups.jobName) {
+        if (match.groups.jobName) {
           // There is a job name specified so create a jobs object.
           if (!('jobs' in magic)) magic.jobs = {}
 
-          if (groups.jobName in magic.jobs) {
-            jobMagic = magic.jobs[groups.jobName]
+          if (match.groups.jobName in magic.jobs) {
+            jobMagic = magic.jobs[match.groups.jobName]
           } else {
-            magic.jobs[groups.jobName] = jobMagic = {}
+            magic.jobs[match.groups.jobName] = jobMagic = {}
           }
         }
 
         // Assign the value
-        jobMagic[groups.name] = value
+        jobMagic[match.groups.name] = value
       }
     }])
 

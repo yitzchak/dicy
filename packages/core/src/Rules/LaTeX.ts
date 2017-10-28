@@ -1,11 +1,9 @@
-/* @flow */
-
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
+import { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const JAPANESE_LATEX_PATTERN = /^u?platex$/

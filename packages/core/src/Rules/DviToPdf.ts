@@ -1,10 +1,8 @@
-/* @flow */
-
 import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, CommandOptions, OptionsInterface, Phase } from '../types'
+import { Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 export default class DviToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]

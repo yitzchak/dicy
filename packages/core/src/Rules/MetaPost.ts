@@ -1,9 +1,7 @@
-/* @flow */
-
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Action, CommandOptions } from '../types'
+import { Action, CommandOptions } from '../types'
 
 export default class MetaPost extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['MetaPost'])]

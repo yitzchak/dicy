@@ -1,8 +1,6 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { CommandOptions } from '../types'
+import { CommandOptions } from '../types'
 
 function escapePath (filePath) {
   return filePath.replace(/\\/g, '\\\\')

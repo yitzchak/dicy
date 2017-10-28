@@ -1,13 +1,11 @@
-/* @flow */
-
-import path from 'path'
+import * as path from 'path'
 
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
+import { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 const JAPANESE_BIBTEX_PATTERN = /^u?pbibtex$/
 
@@ -49,7 +47,7 @@ export default class BibTeX extends Rule {
 
   constructCommand (): CommandOptions {
     const engine = this.options.bibtexEngine
-    const args = [engine]
+    const args: Array<string> = [engine]
 
     if (JAPANESE_BIBTEX_PATTERN.test(engine)) {
       if (this.options.kanji) {

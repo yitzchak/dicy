@@ -1,14 +1,12 @@
-/* @flow */
-
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 import { CACHE_VERSION } from '../types'
 
-import type { Command, FileCache, Cache, Phase, OptionsInterface, RuleCache } from '../types'
+import { Command, FileCache, Cache, Phase, OptionsInterface, RuleCache } from '../types'
 
 export default class SaveCache extends Rule {
-  static commands: Set<Command> = new Set(['save'])
+  static commands: Set<Command> = new Set<Command>(['save'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
   static description: string = 'Saves file and rule status to a cache (-cache.yaml) to assist with rebuilding.'

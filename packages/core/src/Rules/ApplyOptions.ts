@@ -1,18 +1,16 @@
-/* @flow */
-
-import _ from 'lodash'
+import * as _ from 'lodash'
 
 import File from '../File'
 import Rule from '../Rule'
 import { DEFAULT_OPTIONS } from '../types'
 
-import type { Command, Phase } from '../types'
+import { Command, Phase } from '../types'
 
 export default class ApplyOptions extends Rule {
-  static commands: Set<Command> = new Set(['load'])
+  static commands: Set<Command> = new Set<Command>(['load'])
   // ApplyOptions runs in both the initialize and execute phases so that
   // instance options will be seen in the initialize phase.
-  static phases: Set<Phase> = new Set(['initialize', 'execute'])
+  static phases: Set<Phase> = new Set<Phase>(['initialize', 'execute'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
   static description: string = 'Apply options from YAML files and any LaTeX magic comments found in source file.'
@@ -44,7 +42,7 @@ export default class ApplyOptions extends Rule {
 
     // Load the user options if loadUserOptions is true.
     if (loadUserOptions) {
-      const userOptions: ?File = await this.getResolvedInput('$HOME/.dicy.yaml-ParsedYAML')
+      const userOptions: File | undefined = await this.getResolvedInput('$HOME/.dicy.yaml-ParsedYAML')
       if (userOptions) {
         optionSet.unshift(userOptions.value || {})
       }

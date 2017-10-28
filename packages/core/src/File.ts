@@ -1,15 +1,13 @@
-/* @flow */
+import * as childProcess from 'child_process'
+import * as _ from 'lodash'
+import * as commandJoin from 'command-join'
+import * as crypto from 'crypto'
+import * as fs from 'fs-extra'
+import * as path from 'path'
+import * as readline from 'readline'
+import * as yaml from 'js-yaml'
 
-import _ from 'lodash'
-import childProcess from 'child_process'
-import commandJoin from 'command-join'
-import crypto from 'crypto'
-import fs from 'fs-extra'
-import path from 'path'
-import readline from 'readline'
-import yaml from 'js-yaml'
-
-import type { FileType, Parser, Reference } from './types'
+import { FileType, Parser, ParserMatch, Reference } from './types'
 
 export default class File {
   static DEFAULT_PARSING_MODE = 'default'
@@ -22,7 +20,7 @@ export default class File {
   // The main type of the file, i.e. LaTeX, BibTeX, ...
   type: string
   // An optional sub type. Usually the document class for LaTeX documents.
-  subType: ?string
+  subType: string | undefined
   // Last update time of the file.
   timeStamp: Date
   // If it is a virtual or a physical file. Virtual files are usually in-memory
@@ -32,7 +30,7 @@ export default class File {
   // when the timestamp changes
   hash: string
   // Job names currently associated with the file.
-  jobNames: Set<string> = new Set()
+  jobNames: Set<string> = new Set<string>()
   // Has the file been analyzed in the current cycle?
   analyzed: boolean = false
   // Has the file been updated in the current cycle?
@@ -40,7 +38,7 @@ export default class File {
   // Has the file been changed during the current run?
   hasBeenUpdatedCache: boolean = false
   // The value of the virtual file.
-  _value: ?any
+  _value: any | undefined
 
   /**
    * Construct a new File. Because creating a file required asynchronous file
@@ -52,7 +50,7 @@ export default class File {
    * @param  {string} hash         The last content hash provided by cache.
    * @param  {any}    value        The value of the virtual file.
    */
-  constructor (realFilePath: string, filePath: string, timeStamp: ?Date, hash: ?string, value: ?any) {
+  constructor (realFilePath: string, filePath: string, timeStamp: Date | undefined, hash: string | undefined, value: any | undefined) {
     this.realFilePath = realFilePath
     this.filePath = filePath
     if (timeStamp) this.timeStamp = timeStamp
@@ -69,7 +67,7 @@ export default class File {
    * @param  {any}    value        The value of the virtual file.
    * @return {File}                The File instance.
    */
-  static async create (realFilePath: string, filePath: string, timeStamp: ?Date, hash: ?string, value: ?any): Promise<?File> {
+  static async create (realFilePath: string, filePath: string, timeStamp: Date | undefined, hash: string | undefined, value: any | undefined): Promise<File | undefined> {
     const file: File = new File(realFilePath, filePath, timeStamp, hash, value)
 
     await file.findType()
@@ -88,7 +86,7 @@ export default class File {
    * @param  {Array<Parser>}      parsers   List of parsers to apply.
    * @param  {string => boolean}  isWrapped A function to test for line wrapping.
    */
-  parse (parsers: Array<Parser>, isWrapped: string => boolean = line => false): Promise<void> {
+  parse (parsers: Array<Parser>, isWrapped: (x: string) => boolean = line => false): Promise<void> {
     return new Promise((resolve, reject) => {
       // The maximum number of lines that we need to maintain in a buffer to
       // satisfy all the parsers.
@@ -101,7 +99,7 @@ export default class File {
       let lineNumber: number = 1
       let mode: string = ''
       let modeParsers: Array<Parser> = []
-      const setMode = newMode => {
+      const setMode = (newMode: string) => {
         mode = newMode
         modeParsers = parsers.filter(parser => (parser.modes || [File.DEFAULT_PARSING_MODE]).includes(mode))
       }
@@ -114,28 +112,30 @@ export default class File {
 
           let matched: boolean = false
 
-          for (const parser: Parser of modeParsers) {
+          for (const parser of modeParsers) {
             // If there is not enough lines to check this parser then skip it.
             if (parser.patterns.length > lines.length) continue
 
             const matches = parser.patterns.map((pattern, index) => lines[index].text.match(pattern))
 
-            matched = matches.every(match => match)
+            matched = matches.every(match => !!match)
             if (matched) {
-              const groups: Object = {
-                // $FlowIgnore
-                _: matches.map(match => match[0]).join('\n')
+              const parserMatch: ParserMatch = {
+                _: matches.map(match => matches[0]).join('\n'),
+                captures: [],
+                groups: {}
               }
               if (parser.names) {
-                // $FlowIgnore
-                const m = [].concat(...matches.map(match => match.slice(1)))
+                let m: Array<string> = []
+                m = m.concat(...matches.map(match => match ? match.slice(1) : []))
                 const names = parser.names || []
                 names.map((name, index) => {
-                  if (m[index] !== undefined) groups[name] = m[index]
+                  if (m[index] !== undefined) parserMatch.groups[name] = m[index]
                 })
               } else {
-                const m = [].concat(...matches)
-                groups.captures = m
+                let m: Array<string> = []
+                m = m.concat(...matches.map(match => match || []))
+                parserMatch.captures = m
               }
               const lineCount = lines.splice(0, parser.patterns.length).reduce((total, line) => total + line.count, 0)
               const reference: Reference = {
@@ -146,7 +146,7 @@ export default class File {
                 }
               }
               lineNumber += lineCount
-              const newMode = parser.evaluate(mode, reference, groups)
+              const newMode: string | void = parser.evaluate(mode, reference, parserMatch)
               if (newMode) setMode(newMode)
               break
             }
@@ -163,7 +163,7 @@ export default class File {
 
       if (this.virtual) {
         const rawLines = this.value ? this.value.toString().split(/\r?\n/) : []
-        lines = rawLines.map(text => ({ text, count: 1 }))
+        lines = rawLines.map((text: string) => ({ text, count: 1 }))
         for (let index = lines.length - 1; index > -1; index--) {
           if (isWrapped(lines[index].text) && index + 1 < lines.length) {
             lines[index].text += lines[index + 1].text
@@ -215,11 +215,11 @@ export default class File {
     this.hasBeenUpdatedCache = value || this.hasBeenUpdatedCache
   }
 
-  get value (): ?any {
+  get value (): any | undefined {
     return this._value
   }
 
-  set value (value: ?any) {
+  set value (value: any | undefined) {
     if (!_.isEqual(value, this._value)) {
       this.hasBeenUpdated = true
       this.timeStamp = new Date()
@@ -233,7 +233,7 @@ export default class File {
   static async loadFileTypes (): Promise<void> {
     if (!this.fileTypes) {
       const fileTypesPath = path.resolve(__dirname, '..', 'resources', 'file-types.yaml')
-      const value = await this.readYaml(fileTypesPath)
+      const value: {[name: string]: FileType} = <{[name: string]: FileType}>(await this.readYaml(fileTypesPath))
 
       // Create a new map and iterate through each type in the file and save it
       // to the map.
@@ -290,7 +290,7 @@ export default class File {
       // Make sure the file is readable.
       if (await this.canRead()) {
         const contents = await this.read()
-        const [value, subType] = contents.match(fileType.contents || '') || []
+        const [value = undefined, subType = undefined] = contents.match(fileType.contents || '') || []
 
         if (value) {
           // We have a match so set the type and sub type.
@@ -389,7 +389,7 @@ export default class File {
         if (error) {
           reject(error)
         } else {
-          resolve(data)
+          resolve(data.toString())
         }
       })
     })

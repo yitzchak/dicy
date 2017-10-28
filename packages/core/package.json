@@ -42,6 +42,13 @@
     "yargs-parser": "^8.0.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^4.0.3",
+    "@types/graphlib": "^2.1.4",
+    "@types/js-yaml": "^3.9.1",
+    "@types/lodash": "^4.14.80",
+    "@types/micromatch": "^2.3.29",
+    "@types/node": "^8.0.47",
+    "@types/semver": "^5.4.0",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",

@@ -1,10 +1,8 @@
-/* @flow */
-
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { CommandOptions, Command, OptionsInterface, Phase } from '../types'
+import { CommandOptions, Command, OptionsInterface, Phase } from '../types'
 
 export default class LhsToTeX extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set([

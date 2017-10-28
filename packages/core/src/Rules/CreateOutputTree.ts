@@ -1,16 +1,14 @@
-/* @flow */
-
-import _ from 'lodash'
-import path from 'path'
+import * as _ from 'lodash'
+import * as path from 'path'
 
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Command, OptionsInterface, Phase } from '../types'
+import { Command, OptionsInterface, Phase } from '../types'
 
 export default class CreateOutputTree extends Rule {
-  static phases: Set<Phase> = new Set(['initialize'])
+  static phases: Set<Phase> = new Set<Phase>(['initialize'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Create directory tree for aux files when `outputDirectory` is set.'
 

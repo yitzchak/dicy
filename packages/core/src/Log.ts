@@ -1,9 +1,7 @@
-/* @flow */
+import * as _ from 'lodash'
+import * as yargs from 'yargs-parser'
 
-import _ from 'lodash'
-import yargs from 'yargs-parser'
-
-import type { Message, ParsedLog, ShellCall } from './types'
+import { Message, ParsedLog, ShellCall } from './types'
 
 const ARGUMENT_PARSERS = {
   epstopdf: {

@@ -1,12 +1,12 @@
-/* @flow */
+
 
 import Rule from '../Rule'
 
-import type { Action, Command, ParsedLog } from '../types'
+import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
-  static commands: Set<Command> = new Set(['build', 'log'])
+  static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses any bibtex produced logs.'
 
@@ -28,11 +28,11 @@ export default class ParseBibTeXLog extends Rule {
       // Missing database files or missing cross references.
       names: ['text'],
       patterns: [/^(I couldn't open (?:auxiliary|database) file .*|A bad cross reference---entry .*)$/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           severity: 'error',
           name,
-          text: groups.text,
+          text: match.groups.text,
           log: reference
         })
       }
@@ -40,11 +40,11 @@ export default class ParseBibTeXLog extends Rule {
       // Warning messages
       names: ['text'],
       patterns: [/^Warning--(.+)$/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           severity: 'warning',
           name,
-          text: groups.text,
+          text: match.groups.text,
           log: reference
         })
       }
@@ -52,17 +52,17 @@ export default class ParseBibTeXLog extends Rule {
       // Continued source references.
       names: ['line', 'file'],
       patterns: [/^-+line (\d+) of file (.+)$/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         const message = parsedLog.messages[parsedLog.messages.length - 1]
         if (message) {
-          const line = parseInt(groups.line, 10)
+          const line = parseInt(match.groups.line, 10)
 
           // Extend the log reference
           if (message.log && message.log.range && reference.range) message.log.range.end = reference.range.start
 
           // Add a source reference
           message.source = {
-            file: this.normalizePath(groups.file),
+            file: this.normalizePath(match.groups.file),
             range: {
               start: line,
               end: line
@@ -74,15 +74,15 @@ export default class ParseBibTeXLog extends Rule {
       // Error messages with a source reference.
       names: ['text', 'line', 'file'],
       patterns: [/^(.+)---line (\d+) of file (.*)$/],
-      evaluate: (mode, reference, groups) => {
-        const line = parseInt(groups.line, 10)
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        const line = parseInt(match.groups.line, 10)
         parsedLog.messages.push({
           severity: 'error',
           name,
-          text: groups.text,
+          text: match.groups.text,
           log: reference,
           source: {
-            file: this.normalizePath(groups.file),
+            file: this.normalizePath(match.groups.file),
             range: {
               start: line,
               end: line
@@ -96,8 +96,8 @@ export default class ParseBibTeXLog extends Rule {
       // line.
       names: ['input'],
       patterns: [/^.*?(?:Database file #\d+|The style file|The top-level auxiliary file|A level-\d+ auxiliary file): (.*)$/],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.inputs.push(groups.input)
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.inputs.push(match.groups.input)
       }
     }])
 

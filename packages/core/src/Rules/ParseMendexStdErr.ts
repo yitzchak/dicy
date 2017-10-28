@@ -1,12 +1,10 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Action, Command, ParsedLog } from '../types'
+import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParsedMendexStdErr extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['MendexStdErr'])]
-  static commands: Set<Command> = new Set(['build', 'log'])
+  static parameterTypes: Array<Set<string>> = [new Set<string>(['MendexStdErr'])]
+  static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static description: string = 'Parses the error produced by all mendex variants.'
   static defaultActions: Array<Action> = ['parse']
 
@@ -31,40 +29,40 @@ export default class ParsedMendexStdErr extends Rule {
       // Get the name
       names: ['text'],
       patterns: [/^This is (upmendex|mendex) /i],
-      evaluate: (mode, reference, groups) => {
-        name = groups.name
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        name = match.groups.name
       }
     }, {
       // Dictionary Error
       names: ['name', 'text'],
       patterns: [/^(upmendex|mendex): (.*? is forbidden to open for reading\.)$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
-          name: groups.name,
+          name: match.groups.name,
           severity: 'error',
-          text: groups.text
+          text: match.groups.text
         })
       }
     }, {
       // Missing file errors
       names: ['text'],
       patterns: [/^(No log file, .*?\.|.*? does not exist\.)$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
           severity: 'error',
-          text: groups.text
+          text: match.groups.text
         })
       }
     }, {
       // Bad kanji encoding
       names: ['text'],
       patterns: [/^(Ignoring bad kanji encoding.*)$/i],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
           severity: 'warning',
-          text: groups.text
+          text: match.groups.text
         })
       }
     }])

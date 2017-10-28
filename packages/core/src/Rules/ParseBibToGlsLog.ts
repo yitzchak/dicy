@@ -1,12 +1,10 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Action, Command, ParsedLog } from '../types'
+import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BibToGlsLog'])]
-  static commands: Set<Command> = new Set(['build', 'log'])
+  static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses any bib2gls produced logs.'
 
@@ -24,14 +22,14 @@ export default class ParseBibTeXLog extends Rule {
     await this.firstParameter.parse([{
       names: ['output'],
       patterns: [/^Writing (.*)$/],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.outputs.push(this.normalizePath(groups.output))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.outputs.push(this.normalizePath(match.groups.output))
       }
     }, {
       names: ['input'],
       patterns: [/^Reading (.*)$/],
-      evaluate: (mode, reference, groups) => {
-        parsedLog.inputs.push(this.normalizePath(groups.input))
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        parsedLog.inputs.push(this.normalizePath(match.groups.input))
       }
     }])
 

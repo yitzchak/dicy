@@ -1,14 +1,19 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Action, Command, LineRangeMapping, SourceMaps } from '../types'
+import {
+  Action,
+  Command,
+  LineRangeMapping,
+  ParserMatch,
+  Reference,
+  SourceMaps
+} from '../types'
 
 const WRAPPED_LINE_PATTERN = /%$/
 
 export default class ParseKnitrConcordance extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['KnitrConcordance'])]
-  static commands: Set<Command> = new Set(['build', 'log'])
+  static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static defaultActions: Array<Action> = ['parse']
   static description: string = 'Parses any knitr concordance files.'
 
@@ -23,9 +28,9 @@ export default class ParseKnitrConcordance extends Rule {
     await this.firstParameter.parse([{
       names: ['output', 'input', 'indicies'],
       patterns: [/^\\Sconcordance\{concordance:([^:]*):([^:]*):([^}]*)\}$/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         // Split up the indicies in preparation to decode the RLE array.
-        const encodedIndicies: Array<number> = groups.indicies.split(/\s+/).map(x => parseInt(x))
+        const encodedIndicies: Array<number> = match.groups.indicies.split(/\s+/).map(x => parseInt(x))
         const mappings: Array<LineRangeMapping> = []
         let inputLine: number = 1
         let outputLine: number = 1
@@ -46,8 +51,8 @@ export default class ParseKnitrConcordance extends Rule {
         }
 
         sourceMaps.maps.push({
-          input: groups.input,
-          output: groups.output,
+          input: match.groups.input,
+          output: match.groups.output,
           mappings
         })
       }

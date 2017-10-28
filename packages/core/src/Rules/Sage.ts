@@ -1,8 +1,6 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { CommandOptions } from '../types'
+import { CommandOptions } from '../types'
 
 export default class Sage extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['Sage'])]

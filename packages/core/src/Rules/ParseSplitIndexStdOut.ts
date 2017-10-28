@@ -1,10 +1,8 @@
-/* @flow */
-
 import path from 'path'
 
 import Rule from '../Rule'
 
-import type { Action, ParsedLog } from '../types'
+import { Action, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseSplitIndexStdOut extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['SplitIndexStdOut'])]
@@ -25,25 +23,25 @@ export default class ParseSplitIndexStdOut extends Rule {
     await this.firstParameter.parse([{
       names: ['text'],
       patterns: [/^(Close.*|New index file.*)$/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         // Do not include the reference since it is to a virtual file.
         parsedLog.messages.push({
           severity: 'info',
           name: 'splitindex',
-          text: groups.text
+          text: match.groups.text
         })
       }
     }, {
       names: ['filePath'],
       patterns: [/^(.*?) with [0-9]+ lines$/],
-      evaluate: (mode, reference, groups) => {
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         // Do not include the reference since it is to a virtual file.
         parsedLog.messages.push({
           severity: 'info',
           name: 'splitindex',
-          text: groups._
+          text: match.groups._
         })
-        parsedLog.outputs.push(this.normalizePath(path.resolve(this.rootPath, groups.filePath)))
+        parsedLog.outputs.push(this.normalizePath(path.resolve(this.rootPath, match.groups.filePath)))
       }
     }])
 

@@ -1,5 +1,3 @@
-/* @flow */
-
 import path from 'path'
 
 import File from '../File'
@@ -7,7 +5,7 @@ import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Action, ShellCall, Command, Phase, CommandOptions, OptionsInterface, ParsedLog } from '../types'
+import { Action, ShellCall, Command, Phase, CommandOptions, OptionsInterface, ParsedLog } from '../types'
 
 export default class EpsToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [
@@ -40,7 +38,7 @@ export default class EpsToPdf extends Rule {
    * @return {ShellCall}              The shell call found or null if no
    *                                  matching call was found.
    */
-  static findCall (parsedLog: ?ParsedLog, filePath: string): ?ShellCall {
+  static findCall (parsedLog: ParsedLog | undefined, filePath: string): ShellCall | undefined {
     let call
 
     if (parsedLog) {

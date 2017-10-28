@@ -1,14 +1,12 @@
-/* @flow */
-
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
-import type { Command, Phase, OptionsInterface } from '../types'
+import { Command, Phase, OptionsInterface } from '../types'
 
 export default class CheckForMissingBuildRule extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['*'])]
-  static phases: Set<Phase> = new Set(['finalize'])
+  static parameterTypes: Array<Set<string>> = [new Set<string>(['*'])]
+  static phases: Set<Phase> = new Set<Phase>(['finalize'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Check for no applicable build rule.'
 
@@ -18,10 +16,10 @@ export default class CheckForMissingBuildRule extends Rule {
   }
 
   async run (): Promise<boolean> {
-    const rules = Array.from(this.rules)
+    const rules: Array<Rule> = Array.from(this.rules)
 
     // If targets found for this job then just return true.
-    if (rules.some(rule => rule.command === 'build' && rule.phase === 'execute' && rule.parameters.includes(this.firstParameter))) return true
+    if (rules.some((rule: Rule) => rule.command === 'build' && rule.phase === 'execute' && rule.parameters.includes(this.firstParameter))) return true
     const jobName = this.options.jobName
 
     // No rules found so log an error message and cause rule failure.

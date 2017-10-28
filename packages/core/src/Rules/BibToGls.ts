@@ -1,10 +1,8 @@
-/* @flow */
-
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
 
-import type {
+import {
   Action,
   Command,
   CommandOptions,

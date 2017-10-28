@@ -1,12 +1,10 @@
-/* @flow */
-
-import path from 'path'
+import * as path from 'path'
 
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 
-import type { Action, CommandOptions } from '../types'
+import { Action, CommandOptions } from '../types'
 
 export default class Biber extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['BiberControlFile'])]

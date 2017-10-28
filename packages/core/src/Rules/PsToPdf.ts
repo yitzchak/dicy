@@ -1,10 +1,8 @@
-/* @flow */
-
 import State from '../State'
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command, Phase, CommandOptions, OptionsInterface } from '../types'
+import { Command, Phase, CommandOptions, OptionsInterface } from '../types'
 
 export default class PsToPdf extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['PostScript'])]

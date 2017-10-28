@@ -1,15 +1,13 @@
-/* @flow */
-
-import childProcess from 'child_process'
-import kill from 'tree-kill'
-import fastGlob from 'fast-glob'
-import path from 'path'
+import * as childProcess from 'child_process'
+import * as kill from 'tree-kill'
+import * as fastGlob from 'fast-glob'
+import * as path from 'path'
 
 import State from './State'
 import File from './File'
 import Rule from './Rule'
 
-import type { globOptions, Message, KillToken, OptionsInterface } from './types'
+import { globOptions, Message, KillToken, OptionsInterface } from './types'
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
@@ -17,7 +15,7 @@ export default class StateConsumer {
   state: State
   options: OptionsInterface
   consumerOptions: Object = {}
-  jobName: ?string
+  jobName: string | undefined
   env: Object
 
   constructor (state: State, options: OptionsInterface) {
@@ -172,7 +170,7 @@ export default class StateConsumer {
   }
 
   get targets (): Array<string> {
-    const targets: Set<string> = new Set()
+    const targets: Set<string> = new Set<string>()
 
     for (const rule of this.rules) {
       for (const file of rule.outputs) {

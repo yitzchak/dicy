@@ -1,8 +1,6 @@
-/* @flow */
-
 import Rule from '../Rule'
 
-import type { Action } from '../types'
+import { Action, ParserMatch, Reference } from '../types'
 
 export default class ParseLaTeXAuxilary extends Rule {
   static parameterTypes: Array<Set<string>> = [new Set(['LaTeXAuxilary'])]
@@ -13,7 +11,7 @@ export default class ParseLaTeXAuxilary extends Rule {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedLaTeXAuxilary')
     if (!output) return false
 
-    const results = {
+    const results: { commands: Array<string> } = {
       commands: []
     }
 
@@ -22,8 +20,8 @@ export default class ParseLaTeXAuxilary extends Rule {
     await this.firstParameter.parse([{
       names: ['command'],
       patterns: [/^\\([A-Za-z@]+)/],
-      evaluate: (mode, reference, groups) => {
-        results.commands.push(groups.command)
+      evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
+        results.commands.push(match.groups.command)
       }
     }])
 

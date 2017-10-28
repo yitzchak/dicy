@@ -1,13 +1,11 @@
-/* @flow */
-
-import path from 'path'
-import commandJoin from 'command-join'
+import * as path from 'path'
+import * as commandJoin from 'command-join'
 
 import State from './State'
 import File from './File'
 import StateConsumer from './StateConsumer'
 
-import type {
+import {
   Action,
   Command,
   CommandOptions,
@@ -18,8 +16,8 @@ import type {
 
 export default class Rule extends StateConsumer {
   static parameterTypes: Array<Set<string>> = []
-  static phases: Set<Phase> = new Set(['execute'])
-  static commands: Set<Command> = new Set(['build'])
+  static phases: Set<Phase> = new Set<Phase>(['execute'])
+  static commands: Set<Command> = new Set<Command>(['build'])
   static alwaysEvaluate: boolean = false
   static ignoreJobName: boolean = false
   static defaultActions: Array<Action> = ['run']
@@ -30,7 +28,7 @@ export default class Rule extends StateConsumer {
   phase: Phase
   parameters: Array<File> = []
   actions: Map<Action, Set<File>> = new Map()
-  failures: Set<Action> = new Set()
+  failures: Set<Action> = new Set<Action>()
 
   static async analyzePhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<?Rule> {
     const appliesToPhase: boolean = this.commands.has(command) && this.phases.has(phase) &&

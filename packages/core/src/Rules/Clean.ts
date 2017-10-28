@@ -1,25 +1,23 @@
-/* @flow */
-
-import fastGlob from 'fast-glob'
-import micromatch from 'micromatch'
-import path from 'path'
-import readdir from 'readdir-enhanced'
+import * as fastGlob from 'fast-glob'
+import * as micromatch from 'micromatch'
+import * as path from 'path'
+import * as readdir from 'readdir-enhanced'
 
 import File from '../File'
 import Rule from '../Rule'
 
-import type { Command } from '../types'
+import { Command } from '../types'
 
 export default class Clean extends Rule {
-  static commands: Set<Command> = new Set(['clean', 'scrub'])
+  static commands: Set<Command> = new Set<Command>(['clean', 'scrub'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Clean up a previous build.'
 
   async run () {
     const scrub: boolean = this.command === 'scrub'
-    const generatedFiles: Set<File> = new Set()
-    const files: Set<File> = new Set()
-    const directories: Set<string> = new Set()
+    const generatedFiles: Set<File> = new Set<File>()
+    const files: Set<File> = new Set<File>()
+    const directories: Set<string> = new Set<string>()
 
     if (scrub) {
       directories.add(this.resolvePath('$NAME-cache.yaml'))

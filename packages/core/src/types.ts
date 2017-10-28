@@ -1,5 +1,3 @@
-/* @flow */
-
 export type globOptions = {
   types: 'all' | 'files' | 'directories',
   ignorePattern: string | Array<string>
@@ -19,7 +17,8 @@ export type RuleInfo = {
 export type FileType = {
   fileName?: RegExp,
   contents?: RegExp,
-  hashSkip?: RegExp
+  hashSkip?: RegExp,
+  hashFilter?: string
 }
 
 export type FileCache = {
@@ -61,11 +60,17 @@ export type Reference = {
   range?: LineRange
 }
 
+export type ParserMatch = {
+  _: string,
+  captures: Array<string>,
+  groups: {[name: string]: string}
+}
+
 export type Parser = {
   modes?: Array<string>,
   names?: Array<string>,
   patterns: Array<RegExp>,
-  evaluate: (mode: string, reference: Reference, groups: Object) => ?string
+  evaluate: (mode: string, reference: Reference, match: ParserMatch) => string | void
 }
 
 export type Severity = 'info' | 'warning' | 'error'
@@ -177,7 +182,8 @@ export type SourceMaps = {
 // START_AUTO
 
 export interface OptionsInterface {
-  [name: string]: string | Array<string>,
+  $BIBINPUTS: string | Array<string>,
+  $TEXINPUTS: string | Array<string>,
   bibtexEngine: 'bibtex' | 'bibtex8' | 'bibtexu' | 'pbibtex' | 'upbibtex',
   check?: Array<string>,
   cleanPatterns: Array<string>,
@@ -236,10 +242,12 @@ $TEXINPUTS: [ '$ROOTDIR',
 bibtexEngine: 'bibtex',
 cleanPatterns: [ '$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)',
   '/$OUTDIR/_minted-$JOB/*' ],
+copyTargetsToRoot: false,
 dviToPdfEngine: 'xdvipdfmx',
 engine: 'pdflatex',
 epstopdfBoundingBox: 'default',
 epstopdfOutputPath: '$DIR_0/$NAME_0.pdf',
+epstopdfRestricted: false,
 indexAutomaticRanges: true,
 indexEngine: 'makeindex',
 indexOrdering: 'word',
