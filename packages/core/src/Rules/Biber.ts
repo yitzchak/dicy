@@ -7,7 +7,7 @@ import Rule from '../Rule'
 import { Action, CommandOptions } from '../types'
 
 export default class Biber extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['BiberControlFile'])]
+  static parameterTypes: Set<string>[] = [new Set(['BiberControlFile'])]
   static description: string = 'Runs Biber to process bibliography files (bib) when need is detected.'
 
   async initialize () {
@@ -17,7 +17,7 @@ export default class Biber extends Rule {
     ])
   }
 
-  async getFileActions (file: File): Promise<Array<Action>> {
+  async getFileActions (file: File): Promise<Action[]> {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.filePath)

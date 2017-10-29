@@ -12,9 +12,9 @@ import {
 const WRAPPED_LINE_PATTERN = /%$/
 
 export default class ParseKnitrConcordance extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['KnitrConcordance'])]
+  static parameterTypes: Set<string>[] = [new Set(['KnitrConcordance'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses any knitr concordance files.'
 
   async parse () {
@@ -30,8 +30,8 @@ export default class ParseKnitrConcordance extends Rule {
       patterns: [/^\\Sconcordance\{concordance:([^:]*):([^:]*):([^}]*)\}$/],
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         // Split up the indicies in preparation to decode the RLE array.
-        const encodedIndicies: Array<number> = match.groups.indicies.split(/\s+/).map(x => parseInt(x))
-        const mappings: Array<LineRangeMapping> = []
+        const encodedIndicies: number[] = match.groups.indicies.split(/\s+/).map(x => parseInt(x))
+        const mappings: LineRangeMapping[] = []
         let inputLine: number = 1
         let outputLine: number = 1
 

@@ -8,13 +8,13 @@ import State from '../State'
 import { Action, ShellCall, Command, Phase, CommandOptions, OptionsInterface, ParsedLog } from '../types'
 
 export default class EpsToPdf extends Rule {
-  static parameterTypes: Array<Set<string>> = [
+  static parameterTypes: Set<string>[] = [
     new Set(['EncapsulatedPostScript']),
     new Set(['ParsedLaTeXLog', 'Nil'])
   ]
   static description: string = 'Converts EPS to PDF using epstopdf.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     switch (parameters[1].type) {
       case 'Nil':
         // If there is not a LaTeX log present then only apply epstopdf when the
@@ -80,7 +80,7 @@ export default class EpsToPdf extends Rule {
     }
   }
 
-  async getFileActions (file: File): Promise<Array<Action>> {
+  async getFileActions (file: File): Promise<Action[]> {
     // Only return a run action for the actual eps file.
     return file.type === 'EncapsulatedPostScript' ? ['run'] : []
   }

@@ -141,8 +141,8 @@ const ARGUMENT_PARSERS: { [name: string]: Object } = {
   }
 }
 
-function splitCommand (command: string): Array<string> {
-  const args: Array<string> = []
+function splitCommand (command: string): string[] {
+  const args: string[] = []
   let current: string | null = null
   let quote: string | null = null
 
@@ -180,14 +180,14 @@ export default class Log {
     return parsedLog.messages.find(message => !!message.text.match(pattern))
   }
 
-  static findMessageMatches (parsedLog: ParsedLog, pattern: RegExp, category?: string): Array<Array<string>> {
+  static findMessageMatches (parsedLog: ParsedLog, pattern: RegExp, category?: string): string[][] {
     return parsedLog.messages
       .map(message => (!category || message.category === category) ? message.text.match(pattern) : null)
       .filter(match => !!match)
       .map(match => match || [])
   }
 
-  static filterCalls (parsedLog: ParsedLog, command: string | RegExp, filePath?: string, status?: string): Array<ShellCall> {
+  static filterCalls (parsedLog: ParsedLog, command: string | RegExp, filePath?: string, status?: string): ShellCall[] {
     return parsedLog.calls.filter(call => !!call.args[0].match(command) &&
       (!filePath || call.args.includes(filePath)) &&
       (!status || call.status.startsWith(status)))

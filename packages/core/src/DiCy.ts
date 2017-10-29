@@ -27,7 +27,7 @@ export default class DiCy extends StateConsumer {
 
   async initialize () {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
-    const entries: Array<string> = await readdir.async(ruleClassPath)
+    const entries: string[] = await readdir.async(ruleClassPath)
     this.state.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
   }
@@ -60,9 +60,9 @@ export default class DiCy extends StateConsumer {
       if (!file) break
 
       for (const ruleClass of this.ruleClasses) {
-        const jobNames: Array<string | null> = file.jobNames.size === 0 ? [null] : Array.from(file.jobNames.values())
+        const jobNames: (string | null)[] = file.jobNames.size === 0 ? [null] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, this.state.getJobOptions(jobName), file)
+          const rules: Rule[] = await ruleClass.analyzeFile(this.state, command, phase, this.state.getJobOptions(jobName), file)
           for (const rule of rules) {
             await this.addRule(rule)
           }
@@ -73,7 +73,7 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  getAvailableRules (command?: Command): Array<RuleInfo> {
+  getAvailableRules (command?: Command): RuleInfo[] {
     return this.ruleClasses
       .filter(rule => !command || rule.commands.has(command))
       .map(rule => ({ name: rule.name, description: rule.description }))
@@ -94,7 +94,7 @@ export default class DiCy extends StateConsumer {
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    const primaryCount = (ruleGroup: Array<Rule>) => ruleGroup.reduce(
+    const primaryCount = (ruleGroup: Rule[]) => ruleGroup.reduce(
       (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
       0)
     const evaluationNeeded = (rule: Rule): boolean => rule.actions.has(action) && rule.command === command && rule.phase === phase
@@ -109,10 +109,10 @@ export default class DiCy extends StateConsumer {
     // considered a primary is it has as an input the main source file for that
     // job. Note: we are using lodash's sortBy because the standard sort is
     // not guaranteed to be a stable sort.
-    const rules: Array<Rule> = _.flatten(_.sortBy(this.components
+    const rules: Rule[] = _.flatten(_.sortBy(this.components
       .map(component => {
         const ruleGroup = _.sortBy(component.filter(evaluationNeeded), [(rule: Rule) => rule.inputs.length])
-        type RuleGroupRanking = { rank: number, rules: Array<Rule> }
+        type RuleGroupRanking = { rank: number, rules: Rule[] }
 
         return ruleGroup.reduce((current: RuleGroupRanking, rule: Rule): RuleGroupRanking => {
           // Rank the rule by how many other rules it is directly dependent on.
@@ -169,7 +169,7 @@ export default class DiCy extends StateConsumer {
     return this.killToken.promise
   }
 
-  async run (...commands: Array<Command>): Promise<boolean> {
+  async run (...commands: Command[]): Promise<boolean> {
     if (this.killToken) {
       this.error('Build currently in progress')
       return false
@@ -208,7 +208,7 @@ export default class DiCy extends StateConsumer {
   }
 
   async runPhase (command: Command, phase: Phase): Promise<void> {
-    const actions: Array<Action> = ['parse', 'updateDependencies', 'run']
+    const actions: Action[] = ['parse', 'updateDependencies', 'run']
 
     this.checkForKill()
 
@@ -238,7 +238,7 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  static async getOptionDefinitions (): Promise<Array<Option>> {
+  static async getOptionDefinitions (): Promise<Option[]> {
     const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
     const schema: any = await File.readYaml(filePath, true)
     const options = []

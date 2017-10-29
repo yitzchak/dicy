@@ -1,6 +1,6 @@
 import * as childProcess from 'child_process'
 import * as _ from 'lodash'
-import * as commandJoin from 'command-join'
+const commandJoin = require('command-join')
 import * as crypto from 'crypto'
 import * as fs from 'fs-extra'
 import * as path from 'path'
@@ -81,10 +81,10 @@ export default class File {
 
   /**
    * Parse the file using a list of Parsers.
-   * @param  {Array<Parser>}      parsers   List of parsers to apply.
+   * @param  {Parser[]}      parsers   List of parsers to apply.
    * @param  {string => boolean}  isWrapped A function to test for line wrapping.
    */
-  parse (parsers: Array<Parser>, isWrapped: (x: string) => boolean = line => false): Promise<void> {
+  parse (parsers: Parser[], isWrapped: (x: string) => boolean = line => false): Promise<void> {
     return new Promise((resolve, reject) => {
       // The maximum number of lines that we need to maintain in a buffer to
       // satisfy all the parsers.
@@ -93,10 +93,10 @@ export default class File {
       // wrapped lines in the file that each unwrapped line represents.
       type Line = { text: string, count: number }
       // The buffer of unwrapped lines.
-      let lines: Array<Line> = []
+      let lines: Line[] = []
       let lineNumber: number = 1
       let mode: string = ''
-      let modeParsers: Array<Parser> = []
+      let modeParsers: Parser[] = []
       const setMode = (newMode: string) => {
         mode = newMode
         modeParsers = parsers.filter(parser => (parser.modes || [File.DEFAULT_PARSING_MODE]).includes(mode))
@@ -124,14 +124,14 @@ export default class File {
                 groups: {}
               }
               if (parser.names) {
-                let m: Array<string> = []
+                let m: string[] = []
                 m = m.concat(...matches.map(match => match ? match.slice(1) : []))
                 const names = parser.names || []
                 names.map((name, index) => {
                   if (m[index] !== undefined) parserMatch.groups[name] = m[index]
                 })
               } else {
-                let m: Array<string> = []
+                let m: string[] = []
                 m = m.concat(...matches.map(match => match || []))
                 parserMatch.captures = m
               }

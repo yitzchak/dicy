@@ -17,10 +17,10 @@ const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 const LATEX3_PARSING_MODE = 'latex3'
 
 export default class ParseLaTeXLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set<string>(['LaTeXLog'])]
+  static parameterTypes: Set<string>[] = [new Set<string>(['LaTeXLog'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static description: string = 'Parses the logs produced by all latex variants.'
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
 
   /**
    * Parse the latex log.
@@ -38,7 +38,7 @@ export default class ParseLaTeXLog extends Rule {
       calls: []
     }
     const name: string = this.firstParameter.subType || 'LaTeX'
-    const sourcePaths: Array<string> = []
+    const sourcePaths: string[] = []
 
     await this.firstParameter.parse([{
       // Ignore intro line

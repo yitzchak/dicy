@@ -5,10 +5,10 @@ import Rule from '../Rule'
 import { Command, Phase, CommandOptions, OptionsInterface } from '../types'
 
 export default class PsToPdf extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['PostScript'])]
+  static parameterTypes: Set<string>[] = [new Set(['PostScript'])]
   static description: string = 'Converts PS to PDF using ps2pdf.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     // Only apply if output format is pdf
     return options.outputFormat === 'pdf'
   }

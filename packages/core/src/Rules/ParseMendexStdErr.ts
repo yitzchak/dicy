@@ -3,10 +3,10 @@ import Rule from '../Rule'
 import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParsedMendexStdErr extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set<string>(['MendexStdErr'])]
+  static parameterTypes: Set<string>[] = [new Set<string>(['MendexStdErr'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static description: string = 'Parses the error produced by all mendex variants.'
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
 
   /**
    * Parse the mendex log.

@@ -5,13 +5,13 @@ import State from '../State'
 import { CommandOptions, Command, OptionsInterface, Phase } from '../types'
 
 export default class LhsToTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set([
+  static parameterTypes: Set<string>[] = [new Set([
     'LiterateHaskell',
     'LiterateAgda'
   ])]
   static description: string = 'Runs lhs2TeX on lhs or lagda files.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     return parameters.some(file => ((file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'lhs2TeX') ||
       (file.type === 'LiterateAgda' && options.literateAgdaEngine === 'lhs2TeX')))
   }

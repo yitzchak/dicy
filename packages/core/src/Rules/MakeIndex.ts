@@ -16,7 +16,7 @@ import {
 } from '../types'
 
 export default class MakeIndex extends Rule {
-  static parameterTypes: Array<Set<string>> = [
+  static parameterTypes: Set<string>[] = [
     new Set([
       'IndexControlFile',
       'BibRefControlFile',
@@ -26,7 +26,7 @@ export default class MakeIndex extends Rule {
   ]
   static description: string = 'Runs makeindex on any index files.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     const parsedLog: ParsedLog | undefined = parameters[1].value
     const base = path.basename(parameters[0].filePath)
     const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)
@@ -157,7 +157,7 @@ export default class MakeIndex extends Rule {
     }
   }
 
-  async getFileActions (file: File): Promise<Array<Action>> {
+  async getFileActions (file: File): Promise<Action[]> {
     // Only return a run action for the actual idx file and updateDependencies
     // for the parsed makeindex log.
     switch (file.type) {

@@ -7,7 +7,7 @@ function escapePath (filePath: string): string {
 }
 
 export default class Knitr extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['RNoWeb'])]
+  static parameterTypes: Set<string>[] = [new Set(['RNoWeb'])]
   static description: string = 'Runs knitr on Rnw files.'
 
   constructCommand (): CommandOptions {

@@ -1,6 +1,6 @@
 export type GlobOptions = {
   types?: 'all' | 'files' | 'directories',
-  ignorePattern?: string | Array<string>
+  ignorePattern?: string | string[]
 }
 
 export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub'
@@ -27,7 +27,7 @@ export type FileCache = {
   type?: string,
   subType?: string,
   value?: any,
-  jobNames?: Array<string>
+  jobNames?: string[]
 }
 
 export type RuleCache = {
@@ -35,9 +35,9 @@ export type RuleCache = {
   command: Command,
   phase: Phase,
   jobName?: string,
-  parameters: Array<string>,
-  inputs: Array<string>,
-  outputs: Array<string>
+  parameters: string[],
+  inputs: string[],
+  outputs: string[]
 }
 
 export type Cache = {
@@ -45,7 +45,7 @@ export type Cache = {
   filePath: string,
   options: Object,
   files: { [filePath: string]: FileCache },
-  rules: Array<RuleCache>
+  rules: RuleCache[]
 }
 
 export const CACHE_VERSION = '0.10.0'
@@ -62,14 +62,14 @@ export type Reference = {
 
 export type ParserMatch = {
   _: string,
-  captures: Array<string>,
+  captures: string[],
   groups: {[name: string]: string}
 }
 
 export type Parser = {
-  modes?: Array<string>,
-  names?: Array<string>,
-  patterns: Array<RegExp>,
+  modes?: string[],
+  names?: string[],
+  patterns: RegExp[],
   evaluate: (mode: string, reference: Reference, match: ParserMatch) => string | void
 }
 
@@ -98,7 +98,7 @@ export type ActionEvent = {
   type: 'action',
   rule: string,
   action: string,
-  triggers: Array<string>
+  triggers: string[]
 }
 
 export type CommandEvent = {
@@ -127,9 +127,9 @@ export type Option = {
   type: 'string' | 'strings' | 'number' | 'boolean' | 'variable',
   defaultValue?: any,
   description: string,
-  values?: Array<any>,
-  aliases?: Array<string>,
-  commands?: Array<string>,
+  values?: any[],
+  aliases?: string[],
+  commands?: string[],
   noInvalidate?: boolean
 }
 
@@ -140,26 +140,26 @@ export type KillToken = {
 }
 
 export type ShellCall = {
-  args: Array<string>,
+  args: string[],
   options: { [name: string]: string | boolean },
   status: string
 }
 
 export type ParsedLog = {
-  inputs: Array<string>,
-  outputs: Array<string>,
-  messages: Array<Message>,
-  calls: Array<ShellCall>
+  inputs: string[],
+  outputs: string[],
+  messages: Message[],
+  calls: ShellCall[]
 }
 
 export type CommandOptions = {
-  args: Array<string>,
+  args: string[],
   cd: string,
   severity: Severity,
-  inputs?: Array<string>,
-  outputs?: Array<string>,
-  globbedInputs?: Array<string>,
-  globbedOutputs?: Array<string>,
+  inputs?: string[],
+  outputs?: string[],
+  globbedInputs?: string[],
+  globbedOutputs?: string[],
   stdout?: boolean | string,
   stderr?: boolean | string
 }
@@ -177,11 +177,11 @@ export type LineRangeMapping = {
 export type SourceMap = {
   input: string,
   output: string,
-  mappings: Array<LineRangeMapping>
+  mappings: LineRangeMapping[]
 }
 
 export type SourceMaps = {
-  maps: Array<SourceMap>
+  maps: SourceMap[]
 }
 
 // START_AUTO
@@ -190,11 +190,11 @@ export type IndexEngine = 'makeindex' | 'mendex' | 'texindy' | 'upmendex'
 
 export interface OptionsInterface {
   [name: string]: any,
-  $BIBINPUTS: string | Array<string>,
-  $TEXINPUTS: string | Array<string>,
+  $BIBINPUTS: string | string[],
+  $TEXINPUTS: string | string[],
   bibtexEngine: 'bibtex' | 'bibtex8' | 'bibtexu' | 'pbibtex' | 'upbibtex',
-  check?: Array<string>,
-  cleanPatterns: Array<string>,
+  check?: string[],
+  cleanPatterns: string[],
   copyTargetsToRoot: boolean,
   dviToPdfEngine: 'dvipdfm' | 'xdvipdfmx' | 'dvipdfmx',
   engine: string,
@@ -215,7 +215,7 @@ export interface OptionsInterface {
   indexStyle?: string,
   intermediatePostScript: boolean,
   jobName?: string,
-  jobNames: Array<string>,
+  jobNames: string[],
   kanji?: 'euc' | 'jis' | 'sjis' | 'uptex' | 'utf8',
   kanjiInternal?: 'euc' | 'sjis' | 'uptex' | 'utf8',
   knitrConcordance: boolean,
@@ -241,42 +241,44 @@ export interface OptionsInterface {
   validateCache: boolean
 }
 
-export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
-  '$ROOTDIR/$OUTDIR',
-  '' ],
-$TEXINPUTS: [ '$ROOTDIR',
-  '$ROOTDIR/$OUTDIR',
-  '' ],
-bibtexEngine: 'bibtex',
-cleanPatterns: [ '$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)',
-  '/$OUTDIR/_minted-$JOB/*' ],
-copyTargetsToRoot: false,
-dviToPdfEngine: 'xdvipdfmx',
-engine: 'pdflatex',
-epstopdfBoundingBox: 'default',
-epstopdfOutputPath: '$DIR_0/$NAME_0.pdf',
-epstopdfRestricted: false,
-indexAutomaticRanges: true,
-indexEngine: 'makeindex',
-indexOrdering: 'word',
-indexSorting: 'default',
-knitrConcordance: true,
-knitrOutputPath: '$JOB.tex',
-lhs2texStyle: 'poly',
-literateAgdaEngine: 'agda',
-literateHaskellEngine: 'lhs2TeX',
-loadCache: true,
-loadUserOptions: true,
-outputFormat: 'pdf',
-phaseCycles: 20,
-pweaveCacheDirectory: 'pweave-cache-for-$JOB',
-pweaveFigureDirectory: 'pweave-figures-for-$JOB',
-pweaveKernel: 'python3',
-pweaveOutputFormat: 'tex',
-pweaveOutputPath: '$JOB.tex',
-saveCache: true,
-severity: 'warning',
-validateCache: true }
+export const DEFAULT_OPTIONS = {
+  $BIBINPUTS: [ '$ROOTDIR',
+    '$ROOTDIR/$OUTDIR',
+    '' ],
+  $TEXINPUTS: [ '$ROOTDIR',
+    '$ROOTDIR/$OUTDIR',
+    '' ],
+  bibtexEngine: 'bibtex',
+  cleanPatterns: [ '$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)',
+    '/$OUTDIR/_minted-$JOB/*' ],
+  copyTargetsToRoot: false,
+  dviToPdfEngine: 'xdvipdfmx',
+  engine: 'pdflatex',
+  epstopdfBoundingBox: 'default',
+  epstopdfOutputPath: '$DIR_0/$NAME_0.pdf',
+  epstopdfRestricted: false,
+  indexAutomaticRanges: true,
+  indexEngine: 'makeindex',
+  indexOrdering: 'word',
+  indexSorting: 'default',
+  knitrConcordance: true,
+  knitrOutputPath: '$JOB.tex',
+  lhs2texStyle: 'poly',
+  literateAgdaEngine: 'agda',
+  literateHaskellEngine: 'lhs2TeX',
+  loadCache: true,
+  loadUserOptions: true,
+  outputFormat: 'pdf',
+  phaseCycles: 20,
+  pweaveCacheDirectory: 'pweave-cache-for-$JOB',
+  pweaveFigureDirectory: 'pweave-figures-for-$JOB',
+  pweaveKernel: 'python3',
+  pweaveOutputFormat: 'tex',
+  pweaveOutputPath: '$JOB.tex',
+  saveCache: true,
+  severity: 'warning',
+  validateCache: true
+}
 
 // END_AUTO
 

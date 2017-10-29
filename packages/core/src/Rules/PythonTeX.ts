@@ -3,7 +3,7 @@ import Rule from '../Rule'
 import { CommandOptions } from '../types'
 
 export default class PythonTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['PythonTeX'])]
+  static parameterTypes: Set<string>[] = [new Set(['PythonTeX'])]
   static description: string = 'Supports the PythonTeX package by running pythontex when needed.'
 
   constructCommand (): CommandOptions {

@@ -1,5 +1,5 @@
 import * as path from 'path'
-import * as commandJoin from 'command-join'
+const commandJoin = require('command-join')
 
 import State from './State'
 import File from './File'
@@ -16,18 +16,18 @@ import {
 } from './types'
 
 export default class Rule extends StateConsumer {
-  static parameterTypes: Array<Set<string>> = []
+  static parameterTypes: Set<string>[] = []
   static phases: Set<Phase> = new Set<Phase>(['execute'])
   static commands: Set<Command> = new Set<Command>(['build'])
   static alwaysEvaluate: boolean = false
   static ignoreJobName: boolean = false
-  static defaultActions: Array<Action> = ['run']
+  static defaultActions: Action[] = ['run']
   static description: string = ''
 
   id: string
   command: Command
   phase: Phase
-  parameters: Array<File> = []
+  parameters: File[] = []
   actions: Map<Action, Set<File>> = new Map()
   failures: Set<Action> = new Set<Action>()
 
@@ -43,24 +43,24 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  static async analyzeFile (state: State, command: Command, phase: Phase, options: OptionsInterface, file: File): Promise<Array<Rule>> {
-    const rules: Array<Rule> = []
+  static async analyzeFile (state: State, command: Command, phase: Phase, options: OptionsInterface, file: File): Promise<Rule[]> {
+    const rules: Rule[] = []
     const appliesToFile: boolean = this.commands.has(command) && this.phases.has(phase) &&
           this.parameterTypes.some(types => file && file.inTypeSet(types))
 
     if (appliesToFile) {
-      const files: Array<File> = Array.from(state.files.values()).filter(file => !options.jobName || file.jobNames.has(options.jobName))
+      const files: File[] = Array.from(state.files.values()).filter(file => !options.jobName || file.jobNames.has(options.jobName))
 
       for (let i = 0; i < this.parameterTypes.length; i++) {
         if (file.inTypeSet(this.parameterTypes[i])) {
-          const candidates: Array<Array<File>> = this.parameterTypes.map((types, index) =>
+          const candidates: File[][] = this.parameterTypes.map((types, index) =>
             (index === i)
               ? [file]
               : files.filter(file => file.inTypeSet(types)))
           let indicies = candidates.map(files => files.length - 1)
 
           while (indicies.every(index => index > -1)) {
-            const parameters: Array<File> = candidates.map((files, index) => files[indicies[index]])
+            const parameters: File[] = candidates.map((files, index) => files[indicies[index]])
             const ruleId: string = state.getRuleId(this.name, command, phase, options.jobName, parameters.map(file => file.filePath))
 
             if (!state.rules.has(ruleId) && await this.isApplicable(state, command, phase, options, parameters)) {
@@ -85,11 +85,11 @@ export default class Rule extends StateConsumer {
     return rules
   }
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     return true
   }
 
-  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []) {
+  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []) {
     super(state, options)
 
     this.parameters = parameters
@@ -128,7 +128,7 @@ export default class Rule extends StateConsumer {
   async initialize () {}
 
   async phaseInitialize (command: Command, phase: Phase) {
-    if (command === this.command && phase === this.phase && this.constructor.alwaysEvaluate) {
+    if (command === this.command && phase === this.phase && (<typeof Rule>this.constructor).alwaysEvaluate) {
       if (this.inputs.length === 0) {
         this.addActions()
       } else {
@@ -152,12 +152,12 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  async getFileActions (file: File): Promise<Array<Action>> {
-    return this.constructor.defaultActions
+  async getFileActions (file: File): Promise<Action[]> {
+    return (<typeof Rule>this.constructor).defaultActions
   }
 
-  addActions (file?: File, actions?: Array<Action>): void {
-    if (!actions) actions = this.constructor.defaultActions
+  addActions (file?: File, actions?: Action[]): void {
+    if (!actions) actions = (<typeof Rule>this.constructor).defaultActions
 
     for (const action of actions || []) {
       const files: Set<File> | undefined = this.actions.get(action)
@@ -191,12 +191,12 @@ export default class Rule extends StateConsumer {
         !timestamp || file.timeStamp > timestamp ? file.timeStamp : timestamp, undefined)
   }
 
-  get inputs (): Array<File> {
+  get inputs (): File[] {
     const predecessors = this.state.graph.predecessors(this.id) || []
     return <File[]>predecessors.map(filePath => this.state.files.get(filePath)).filter(file => file)
   }
 
-  get outputs (): Array<File> {
+  get outputs (): File[] {
     const successors = this.state.graph.successors(this.id) || []
     return <File[]>successors.map(filePath => this.state.files.get(filePath)).filter(file => file)
   }
@@ -342,7 +342,7 @@ export default class Rule extends StateConsumer {
     return file
   }
 
-  async getOutputs (filePaths: Array<string>): Promise<Array<File>> {
+  async getOutputs (filePaths: string[]): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -381,7 +381,7 @@ export default class Rule extends StateConsumer {
     return file
   }
 
-  async getInputs (filePaths: Array<string>): Promise<Array<File>> {
+  async getInputs (filePaths: string[]): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -404,7 +404,7 @@ export default class Rule extends StateConsumer {
     return this.getInput(expanded)
   }
 
-  async getResolvedInputs (filePaths: Array<string>): Promise<Array<File>> {
+  async getResolvedInputs (filePaths: string[]): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -420,7 +420,7 @@ export default class Rule extends StateConsumer {
     return this.getOutput(expanded)
   }
 
-  async getResolvedOutputs (filePaths: Array<string>): Promise<Array<File>> {
+  async getResolvedOutputs (filePaths: string[]): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -431,7 +431,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getGlobbedInputs (pattern: string): Promise<Array<File>> {
+  async getGlobbedInputs (pattern: string): Promise<File[]> {
     const files = []
     for (const filePath of await this.globPath(pattern)) {
       const file = await this.getInput(filePath)
@@ -440,7 +440,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getGlobbedOutputs (pattern: string): Promise<Array<File>> {
+  async getGlobbedOutputs (pattern: string): Promise<File[]> {
     const files = []
     for (const filePath of await this.globPath(pattern)) {
       const file = await this.getOutput(filePath)
@@ -467,7 +467,7 @@ export default class Rule extends StateConsumer {
       const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
       if (Array.isArray(value)) {
         const emptyPath = (name === '$PATH') ? process.env[envName] || '' : ''
-        const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath.toString()) : emptyPath)
+        const paths: string[] = value.map(filePath => filePath ? this.resolvePath(filePath.toString()) : emptyPath)
 
         if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
           paths[paths.length - 1] = processOptions.env[envName] || ''

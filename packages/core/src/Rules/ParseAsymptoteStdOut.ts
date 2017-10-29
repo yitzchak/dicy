@@ -7,8 +7,8 @@ import Rule from '../Rule'
 import { Action, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseAsymptoteStdOut extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['AsymptoteStdOut'])]
-  static defaultActions: Array<Action> = ['parse']
+  static parameterTypes: Set<string>[] = [new Set(['AsymptoteStdOut'])]
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses the console output of Asymptote.'
 
   async parse () {

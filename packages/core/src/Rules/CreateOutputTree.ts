@@ -12,12 +12,12 @@ export default class CreateOutputTree extends Rule {
   static alwaysEvaluate: boolean = true
   static description: string = 'Create directory tree for aux files when `outputDirectory` is set.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     return !!options.outputDirectory && options.outputDirectory !== '.'
   }
 
   async run () {
-    const outputDirectories: Array<string> = _.uniq(this.options.jobNames.map(jobName => this.state.getJobOptions(jobName).outputDirectory || '.')
+    const outputDirectories: string[] = _.uniq(this.options.jobNames.map(jobName => this.state.getJobOptions(jobName).outputDirectory || '.')
       .filter(outputDirectory => outputDirectory !== '.'))
     const directories = await this.globPath('**/*', {
       types: 'directories',

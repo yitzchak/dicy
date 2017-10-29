@@ -5,10 +5,10 @@ import Rule from '../Rule'
 import { Action, Command, Message, ParsedLog, Reference, ParserMatch, Severity } from '../types'
 
 export default class ParsedMendexLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set<string>(['MendexLog'])]
+  static parameterTypes: Set<string>[] = [new Set<string>(['MendexLog'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static description: string = 'Parses the logs produced by all mendex variants.'
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
 
   /**
    * Parse the mendex log.

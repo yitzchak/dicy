@@ -5,10 +5,10 @@ import State from '../State'
 import { CommandOptions, Command, OptionsInterface, Phase } from '../types'
 
 export default class Agda extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['LiterateAgda'])]
+  static parameterTypes: Set<string>[] = [new Set(['LiterateAgda'])]
   static description: string = 'Runs agda on lagda files.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     // Only apply if the literate Agda engine is set to agda
     return options.literateAgdaEngine === 'agda'
   }

@@ -22,7 +22,7 @@ function getLabel (x: File | Rule): string {
 }
 
 type GraphProperties = {
-  components?: Array<Array<Rule>>
+  components?: Rule[][]
 }
 
 export default class State extends EventEmitter {
@@ -34,7 +34,7 @@ export default class State extends EventEmitter {
   defaultOptions: OptionsInterface
   optionSchema: Map<string, Option> = new Map()
   graphProperties: GraphProperties = {}
-  ruleClasses: Array<{ new(state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File>): Rule }> = []
+  ruleClasses: typeof Rule[] = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set<number>()
   env: {[name: string]: string}
@@ -43,7 +43,7 @@ export default class State extends EventEmitter {
   graph: Graph = new Graph()
   optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
-  constructor (filePath: string, schema: Array<Option> = []) {
+  constructor (filePath: string, schema: Option[] = []) {
     super()
     const resolveFilePath: string = path.resolve(filePath)
     const { dir, base, name, ext } = path.parse(resolveFilePath)
@@ -75,8 +75,8 @@ export default class State extends EventEmitter {
     }
   }
 
-  async getTargetPaths (absolute: boolean = false): Promise<Array<string>> {
-    const results: Array<string> = []
+  async getTargetPaths (absolute: boolean = false): Promise<string[]> {
+    const results: string[] = []
     for (const target of this.targets.values()) {
       const file: File | undefined = await this.getFile(target)
       if (file) results.push(absolute ? file.realFilePath : target)
@@ -84,8 +84,8 @@ export default class State extends EventEmitter {
     return results
   }
 
-  async getTargetFiles (): Promise<Array<File>> {
-    const results: Array<File> = []
+  async getTargetFiles (): Promise<File[]> {
+    const results: File[] = []
     for (const target of this.targets.values()) {
       const file: File | undefined = await this.getFile(target)
       if (file) results.push(file)
@@ -101,7 +101,7 @@ export default class State extends EventEmitter {
     filePath = path.normalize(filePath)
 
     if (path.isAbsolute(filePath)) {
-      const dirPaths: Array<string> = [
+      const dirPaths: string[] = [
         this.rootPath
       ]
 
@@ -134,7 +134,7 @@ export default class State extends EventEmitter {
 
     const RuleClass = this.ruleClasses.find(ruleClass => ruleClass.name === cache.name)
     if (RuleClass) {
-      const parameters: Array<File> = []
+      const parameters: File[] = []
       for (const filePath of cache.parameters) {
         const parameter: File | undefined = await this.getFile(filePath)
         if (!parameter) break
@@ -145,8 +145,8 @@ export default class State extends EventEmitter {
       await rule.initialize()
       this.rules.set(rule.id, rule)
       await rule.getInputs(cache.inputs)
-      const outputs: Array<File> = await rule.getOutputs(cache.outputs)
-      if (rule.constructor.alwaysEvaluate || outputs.length !== cache.outputs.length) {
+      const outputs: File[] = await rule.getOutputs(cache.outputs)
+      if (RuleClass.alwaysEvaluate || outputs.length !== cache.outputs.length) {
         // At least one of the outputs is missing or the rule should always run.
         rule.addActions()
       }
@@ -156,12 +156,12 @@ export default class State extends EventEmitter {
     }
   }
 
-  getRuleId (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: Array<string> = []): string {
-    const items: Array<string> = [command, phase, jobName || ''].concat(parameters)
+  getRuleId (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): string {
+    const items: string[] = [command, phase, jobName || ''].concat(parameters)
     return `${name}(${items.join(';')})`
   }
 
-  getRule (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: Array<string> = []): Rule | undefined {
+  getRule (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): Rule | undefined {
     const id: string = this.getRuleId(name, command, phase, jobName, parameters)
     return this.rules.get(id)
   }
@@ -217,7 +217,7 @@ export default class State extends EventEmitter {
   }
 
   async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true) {
-    const invalidRules: Array<Rule> = []
+    const invalidRules: Rule[] = []
 
     for (const rule of this.rules.values()) {
       if (rule.jobName === jobName) {
@@ -337,7 +337,7 @@ export default class State extends EventEmitter {
     return optionProxy
   }
 
-  get components (): Array<Array<Rule>> {
+  get components (): Rule[][] {
     if (!this.graphProperties.components) {
       this.graphProperties.components = alg.components(this.graph)
         .map(component => <Rule[]>component.map(id => this.rules.get(id)).filter(rule => rule))
@@ -350,17 +350,17 @@ export default class State extends EventEmitter {
   isGrandparentOf (x: File | Rule, y: File | Rule): boolean {
     const xLabel: string = getLabel(x)
     const yLabel: string = getLabel(y)
-    const predecessors: Array<string> = this.graph.predecessors(yLabel) || []
+    const predecessors: string[] = this.graph.predecessors(yLabel) || []
 
     return predecessors.some(file => (this.graph.predecessors(file) || []).some(r => r === xLabel))
   }
 
-  getInputRules (file: File): Array<Rule> {
+  getInputRules (file: File): Rule[] {
     const successors = this.graph.successors(file.filePath) || []
     return <Rule[]>successors.map(id => this.rules.get(id)).filter(rule => rule)
   }
 
-  getOutputRules (file: File): Array<Rule> {
+  getOutputRules (file: File): Rule[] {
     const predecessors = this.graph.predecessors(file.filePath) || []
     return <Rule[]>predecessors.map(id => this.rules.get(id)).filter(rule => rule)
   }

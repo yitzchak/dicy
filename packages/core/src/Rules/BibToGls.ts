@@ -11,19 +11,19 @@ import {
 } from '../types'
 
 export default class BibToGls extends Rule {
-  static parameterTypes: Array<Set<string>> = [
+  static parameterTypes: Set<string>[] = [
     new Set(['LaTeXAuxilary']),
     new Set(['ParsedLaTeXAuxilary'])
   ]
   static description: string = 'Runs bib2gls to process bibliography files (bib) when need is detected.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     return state.isGrandparentOf(parameters[0], parameters[1]) &&
       !!parameters[1].value && !!parameters[1].value.commands &&
       !!parameters[1].value.commands.includes('glsxtr@resource')
   }
 
-  async getFileActions (file: File): Promise<Array<Action>> {
+  async getFileActions (file: File): Promise<Action[]> {
     switch (file.type) {
       case 'ParsedBibToGlsLog':
         return ['updateDependencies']

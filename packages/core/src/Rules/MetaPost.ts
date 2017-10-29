@@ -4,10 +4,10 @@ import Rule from '../Rule'
 import { Action, CommandOptions } from '../types'
 
 export default class MetaPost extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['MetaPost'])]
+  static parameterTypes: Set<string>[] = [new Set(['MetaPost'])]
   static description: string = 'Runs MetaPost on produced MetaPost files.'
 
-  async getFileActions (file: File): Promise<Array<Action>> {
+  async getFileActions (file: File): Promise<Action[]> {
     // ParsedFileListing triggers updateDependencies, all others trigger run.
     return [file.type === 'ParsedFileListing' ? 'updateDependencies' : 'run']
   }

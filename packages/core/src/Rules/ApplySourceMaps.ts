@@ -9,7 +9,7 @@ function inRange (range: LineRange, line: number) {
 }
 
 export default class ApplySourceMaps extends Rule {
-  static parameterTypes: Array<Set<string>> = [
+  static parameterTypes: Set<string>[] = [
     new Set<string>(['ParsedSourceMap']),
     new Set<string>([
       'ParsedAsymptoteLog',

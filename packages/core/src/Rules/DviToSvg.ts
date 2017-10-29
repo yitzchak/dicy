@@ -5,10 +5,10 @@ import Rule from '../Rule'
 import { Command, CommandOptions, OptionsInterface, Phase } from '../types'
 
 export default class DviToSvg extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['DeviceIndependentFile'])]
+  static parameterTypes: Set<string>[] = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to SVG using dvisvgm.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     // Only apply if output format is svg
     return options.outputFormat === 'svg'
   }

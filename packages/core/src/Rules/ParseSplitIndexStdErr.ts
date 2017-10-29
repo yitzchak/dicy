@@ -3,8 +3,8 @@ import Rule from '../Rule'
 import { Action, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseSplitIndexStdOut extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['SplitIndexStdErr'])]
-  static defaultActions: Array<Action> = ['parse']
+  static parameterTypes: Set<string>[] = [new Set(['SplitIndexStdErr'])]
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses the error output of splitindex.'
 
   async parse () {

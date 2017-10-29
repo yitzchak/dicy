@@ -66,6 +66,7 @@
     "@types/js-yaml": "^3.9.1",
     "@types/lodash": "^4.14.80",
     "@types/node": "^8.0.47",
+    "@types/semver": "^5.4.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -94,6 +95,7 @@
     "remark-preset-lint-recommended": "^3.0.1",
     "rimraf": "^2.6.2",
     "tosource": "^1.0.0",
+    "tslint-config-standard": "^7.0.0",
     "typescript": "^2.5.3"
   },
   "babel": {

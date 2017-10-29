@@ -3,7 +3,7 @@ import Rule from '../Rule'
 import { CommandOptions } from '../types'
 
 export default class Pweave extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['PythonNoWeb'])]
+  static parameterTypes: Set<string>[] = [new Set(['PythonNoWeb'])]
   static description: string = 'Runs Pweave on Pnw files.'
 
   constructCommand (): CommandOptions {

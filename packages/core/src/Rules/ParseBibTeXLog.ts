@@ -5,9 +5,9 @@ import Rule from '../Rule'
 import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['BibTeXLog'])]
+  static parameterTypes: Set<string>[] = [new Set(['BibTeXLog'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses any bibtex produced logs.'
 
   async parse () {

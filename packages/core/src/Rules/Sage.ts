@@ -3,7 +3,7 @@ import Rule from '../Rule'
 import { CommandOptions } from '../types'
 
 export default class Sage extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['Sage'])]
+  static parameterTypes: Set<string>[] = [new Set(['Sage'])]
   static description: string = 'Supports SageTeX by running Sage when needed.'
 
   constructCommand (): CommandOptions {

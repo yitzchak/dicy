@@ -3,15 +3,15 @@ import Rule from '../Rule'
 import { Action, ParserMatch, Reference } from '../types'
 
 export default class ParseLaTeXAuxilary extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['LaTeXAuxilary'])]
-  static defaultActions: Array<Action> = ['parse']
+  static parameterTypes: Set<string>[] = [new Set(['LaTeXAuxilary'])]
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses the aux files produced by all variants of LaTeX.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedLaTeXAuxilary')
     if (!output) return false
 
-    const results: { commands: Array<string> } = {
+    const results: { commands: string[] } = {
       commands: []
     }
 

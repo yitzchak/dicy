@@ -3,7 +3,7 @@ import Rule from '../Rule'
 import { Command, Message, ParsedLog } from '../types'
 
 export default class ReportLogMessages extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set([
+  static parameterTypes: Set<string>[] = [new Set([
     'ParsedAsymptoteStdOut',
     'ParsedBiberLog',
     'ParsedBibTeXLog',

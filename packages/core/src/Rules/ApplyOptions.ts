@@ -2,9 +2,7 @@ import * as _ from 'lodash'
 
 import File from '../File'
 import Rule from '../Rule'
-import { DEFAULT_OPTIONS } from '../types'
-
-import { Command, Phase } from '../types'
+import { DEFAULT_OPTIONS, Command, Phase } from '../types'
 
 export default class ApplyOptions extends Rule {
   static commands: Set<Command> = new Set<Command>(['load'])
@@ -34,8 +32,8 @@ export default class ApplyOptions extends Rule {
       'dicy-instance.yaml-ParsedYAML'
     ]
 
-    const inputs: Array<File> = await this.getResolvedInputs(optionPaths)
-    const optionSet: Array<any> = inputs.map(file => file.value || {})
+    const inputs: File[] = await this.getResolvedInputs(optionPaths)
+    const optionSet: any[] = inputs.map(file => file.value || {})
     const loadUserOptions: boolean = optionSet.reduce(
       (loadUserOptions, options) => ('loadUserOptions' in options) ? options.loadUserOptions : loadUserOptions,
       DEFAULT_OPTIONS.loadUserOptions)
@@ -70,7 +68,7 @@ export default class ApplyOptions extends Rule {
     }
 
     if (!_.isMatchWith(this.state.options, previousOptions, matcher)) {
-      const rules: Array<Rule> = Array.from(this.rules)
+      const rules: Rule[] = Array.from(this.rules)
         .filter(rule => rule.command !== 'load' || rule.phase === 'finalize')
 
       if (rules.length !== 0) {

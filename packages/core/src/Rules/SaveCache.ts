@@ -11,7 +11,7 @@ export default class SaveCache extends Rule {
   static ignoreJobName: boolean = true
   static description: string = 'Saves file and rule status to a cache (-cache.yaml) to assist with rebuilding.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     // Only apply if saveCache is enabled
     return options.saveCache
   }

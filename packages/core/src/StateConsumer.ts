@@ -1,6 +1,6 @@
 import * as childProcess from 'child_process'
 import * as kill from 'tree-kill'
-import * as fastGlob from 'fast-glob'
+import fastGlob from 'fast-glob'
 import * as path from 'path'
 
 import State from './State'
@@ -72,7 +72,7 @@ export default class StateConsumer {
     }
   }
 
-  addResolvedTargets (filePaths: Array<string>) {
+  addResolvedTargets (filePaths: string[]) {
     for (const filePath of filePaths) {
       this.addResolvedTarget(filePath)
     }
@@ -156,7 +156,7 @@ export default class StateConsumer {
     if (this.state.killToken && this.state.killToken.error) throw this.state.killToken.error
   }
 
-  get ruleClasses (): Array<new (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File>) => Rule> {
+  get ruleClasses (): typeof Rule[] {
     return this.state.ruleClasses
   }
 
@@ -176,7 +176,7 @@ export default class StateConsumer {
     return this.state.rules.values()
   }
 
-  get targets (): Array<string> {
+  get targets (): string[] {
     const targets: Set<string> = new Set<string>()
 
     for (const rule of this.rules) {
@@ -191,11 +191,11 @@ export default class StateConsumer {
     return Array.from(targets.values())
   }
 
-  getTargetPaths (): Promise<Array<string>> {
+  getTargetPaths (): Promise<string[]> {
     return this.state.getTargetPaths()
   }
 
-  getTargetFiles (): Promise<Array<File>> {
+  getTargetFiles (): Promise<File[]> {
     return this.state.getTargetFiles()
   }
 
@@ -217,9 +217,9 @@ export default class StateConsumer {
     return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
 
-  async globPath (pattern: string, { types = 'all', ignorePattern }: GlobOptions = {}): Promise<Array<string>> {
+  async globPath (pattern: string, { types = 'all', ignorePattern }: GlobOptions = {}): Promise<string[]> {
     try {
-      return await fastGlob(this.expandVariables(pattern), {
+      return <string[]>await fastGlob(this.expandVariables(pattern), {
         cwd: this.rootPath,
         bashNative: [],
         onlyFiles: types === 'files',
@@ -237,8 +237,8 @@ export default class StateConsumer {
     return file
   }
 
-  async getFiles (filePaths: Array<string>): Promise<Array<File>> {
-    const files: Array<File> = []
+  async getFiles (filePaths: string[]): Promise<File[]> {
+    const files: File[] = []
     for (const filePath of filePaths) {
       const file = await this.getFile(filePath)
       if (file) files.push(file)
@@ -246,7 +246,7 @@ export default class StateConsumer {
     return files
   }
 
-  async getGlobbedFiles (pattern: string): Promise<Array<File>> {
+  async getGlobbedFiles (pattern: string): Promise<File[]> {
     const files = []
     for (const filePath of await this.globPath(pattern)) {
       const file = await this.getFile(filePath)
@@ -274,7 +274,7 @@ export default class StateConsumer {
     this.emit('log', { type: 'log', ...message })
   }
 
-  get components (): Array<Array<Rule>> {
+  get components (): Rule[][] {
     return this.state.components
   }
 
@@ -311,7 +311,7 @@ export default class StateConsumer {
     return this.state.addListener(eventName, listener)
   }
 
-  emit (eventName: string, ...args: Array<any>) {
+  emit (eventName: string, ...args: any[]) {
     return this.state.emit(eventName, ...args)
   }
 

@@ -7,11 +7,11 @@ import Rule from '../Rule'
 import { Command, OptionsInterface, Phase } from '../types'
 
 export default class CopyTargetsToRoot extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set<string>(['*'])]
+  static parameterTypes: Set<string>[] = [new Set<string>(['*'])]
   static description: string = 'Copy targets to root directory.'
   static alwaysEvaluate: boolean = true
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     return !!options.copyTargetsToRoot &&
       parameters.every(file => !file.virtual && state.targets.has(file.filePath) && path.dirname(file.filePath) !== '.')
   }

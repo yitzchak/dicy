@@ -5,9 +5,9 @@ import Rule from '../Rule'
 import { Action, Command, Message, ParsedLog, ParserMatch, Reference, Severity } from '../types'
 
 export default class ParseBiberLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set<string>(['BiberLog'])]
+  static parameterTypes: Set<string>[] = [new Set<string>(['BiberLog'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses any biber produced logs.'
 
   async parse () {

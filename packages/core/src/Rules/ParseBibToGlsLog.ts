@@ -3,9 +3,9 @@ import Rule from '../Rule'
 import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['BibToGlsLog'])]
+  static parameterTypes: Set<string>[] = [new Set(['BibToGlsLog'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses any bib2gls produced logs.'
 
   async parse () {

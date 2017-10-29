@@ -4,7 +4,7 @@ import { Action, Command } from '../types'
 
 export default class ParseOptionsFile extends Rule {
   static commands: Set<Command> = new Set<Command>(['load'])
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
   static description: string = 'Parses the YAML option file.'
 
   async preEvaluate () {

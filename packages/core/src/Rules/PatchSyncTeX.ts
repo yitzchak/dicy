@@ -7,7 +7,7 @@ function escapePath (filePath: string): string {
 }
 
 export default class PatchSyncTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [
+  static parameterTypes: Set<string>[] = [
     new Set(['KnitrConcordance']),
     new Set(['SyncTeX'])
   ]

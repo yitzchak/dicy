@@ -10,13 +10,13 @@ import { Action, Command, CommandOptions, OptionsInterface, Phase } from '../typ
 const JAPANESE_BIBTEX_PATTERN = /^u?pbibtex$/
 
 export default class BibTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [
+  static parameterTypes: Set<string>[] = [
     new Set(['LaTeXAuxilary']),
     new Set(['ParsedLaTeXAuxilary'])
   ]
   static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     return state.isGrandparentOf(parameters[0], parameters[1]) &&
       !!parameters[1].value && parameters[1].value.commands && !!parameters[1].value.commands.includes('bibdata')
   }
@@ -28,7 +28,7 @@ export default class BibTeX extends Rule {
     ])
   }
 
-  async getFileActions (file: File): Promise<Array<Action>> {
+  async getFileActions (file: File): Promise<Action[]> {
     switch (file.type) {
       case 'ParsedLaTeXLog':
         const { name } = path.parse(this.firstParameter.filePath)
@@ -47,7 +47,7 @@ export default class BibTeX extends Rule {
 
   constructCommand (): CommandOptions {
     const engine = this.options.bibtexEngine
-    const args: Array<string> = [engine]
+    const args: string[] = [engine]
 
     if (JAPANESE_BIBTEX_PATTERN.test(engine)) {
       if (this.options.kanji) {

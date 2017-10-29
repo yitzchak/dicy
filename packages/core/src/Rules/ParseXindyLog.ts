@@ -5,10 +5,10 @@ import Rule from '../Rule'
 import { Action, Command, ParsedLog, ParserMatch, Reference, Severity } from '../types'
 
 export default class ParsedXindyLog extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set(['XindyLog'])]
+  static parameterTypes: Set<string>[] = [new Set(['XindyLog'])]
   static commands: Set<Command> = new Set<Command>(['build', 'log'])
   static description: string = 'Parses the logs produced by xindy and texindy.'
-  static defaultActions: Array<Action> = ['parse']
+  static defaultActions: Action[] = ['parse']
 
   /**
    * Parse the xindy log.

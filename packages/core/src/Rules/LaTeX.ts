@@ -11,14 +11,14 @@ const RERUN_LATEX_PATTERN = /(rerun LaTeX|(?:Citation|Label)\(s\) may have chang
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
-  static parameterTypes: Array<Set<string>> = [new Set([
+  static parameterTypes: Set<string>[] = [new Set([
     'LaTeX',
     'LiterateHaskell',
     'LiterateAgda'
   ])]
   static description: string = 'Runs the required latex variant.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
+  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
     return parameters.some(file =>
       ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType || ''))) ||
       (file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'none') ||
@@ -36,7 +36,7 @@ export default class LaTeX extends Rule {
     ])
   }
 
-  async getFileActions (file: File): Promise<Array<Action>> {
+  async getFileActions (file: File): Promise<Action[]> {
     switch (file.type) {
       case 'ParsedFileListing':
         return ['updateDependencies']
