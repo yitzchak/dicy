@@ -35,7 +35,7 @@ export default class ApplyOptions extends Rule {
     ]
 
     const inputs: Array<File> = await this.getResolvedInputs(optionPaths)
-    const optionSet: Array<Object> = inputs.map(file => file.value || {})
+    const optionSet: Array<any> = inputs.map(file => file.value || {})
     const loadUserOptions: boolean = optionSet.reduce(
       (loadUserOptions, options) => ('loadUserOptions' in options) ? options.loadUserOptions : loadUserOptions,
       DEFAULT_OPTIONS.loadUserOptions)
@@ -53,16 +53,20 @@ export default class ApplyOptions extends Rule {
     // Reset the options and assign from from the inputs
     this.state.resetOptions()
 
-    for (const options: Object of optionSet) {
+    for (const options of optionSet) {
       this.assignOptions(options)
     }
   }
 
   checkForConfigurationChange (previousOptions: Object): void {
     // Ignore options that don't actually change the build.
-    const matcher = (objValue, srcValue, key, object, source) => {
-      const schema = this.state.optionSchema.get(key.toString())
-      if (schema && schema.noInvalidate) return true
+    const matcher = (value: any, other: any, key?: string | number | symbol): boolean => {
+      if (key) {
+        const schema = this.state.optionSchema.get(key.toString())
+        if (schema && schema.noInvalidate) return true
+      }
+
+      return false
     }
 
     if (!_.isMatchWith(this.state.options, previousOptions, matcher)) {

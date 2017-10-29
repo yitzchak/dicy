@@ -1,4 +1,4 @@
-import path from 'path'
+import * as path from 'path'
 
 import File from '../File'
 import Log from '../Log'
@@ -66,7 +66,7 @@ export default class EpsToPdf extends Rule {
       if (call) {
         // There is a matching call so scrape the options from it.
         if (call.options.outfile) {
-          this.options.epstopdfOutputPath = call.options.outfile
+          this.options.epstopdfOutputPath = call.options.outfile.toString()
         } else if (call.args.length > 2) {
           this.options.epstopdfOutputPath = call.args[2]
         }

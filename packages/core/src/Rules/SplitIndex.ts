@@ -15,7 +15,7 @@ export default class SplitIndex extends Rule {
   static description: string = 'Runs splitindex on any index files.'
 
   static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
-    const parsedLog: ?ParsedLog = parameters[1].value
+    const parsedLog: ParsedLog | undefined = parameters[1].value
     const base = path.basename(parameters[0].filePath)
     const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)
     const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
@@ -43,7 +43,7 @@ export default class SplitIndex extends Rule {
   async preEvaluate (): Promise<void> {
     if (!this.actions.has('run')) return
 
-    const parsedLog: ?ParsedLog = this.secondParameter.value
+    const parsedLog: ParsedLog | undefined = this.secondParameter.value
     const { base } = path.parse(this.firstParameter.filePath)
 
     // If the correct makeindex call is found in the log then delete the run

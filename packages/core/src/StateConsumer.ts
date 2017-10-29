@@ -7,16 +7,24 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 
-import { globOptions, Message, KillToken, OptionsInterface } from './types'
+import {
+  Command,
+  GlobOptions,
+  KillToken,
+  Message,
+  OptionsInterface,
+  Phase,
+  ProcessResults
+} from './types'
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
 export default class StateConsumer {
   state: State
   options: OptionsInterface
-  consumerOptions: Object = {}
+  consumerOptions: {[name: string]: any} = {}
   jobName: string | undefined
-  env: Object
+  env: { [name: string]: string }
 
   constructor (state: State, options: OptionsInterface) {
     this.state = state
@@ -27,7 +35,7 @@ export default class StateConsumer {
           : target[key]
       },
       set: (target, key, value) => {
-        this.setOption(this.consumerOptions, key, value)
+        this.setOption(this.consumerOptions, key.toString(), value)
         return true
       },
       ownKeys: target => {
@@ -40,7 +48,6 @@ export default class StateConsumer {
     })
     this.env = {
       OUTDIR: this.options.outputDirectory || '.',
-      // $FlowIgnore
       OUTEXT: `.${this.options.outputFormat}`,
       JOB: this.options.jobName || this.state.env.NAME
     }
@@ -71,15 +78,15 @@ export default class StateConsumer {
     }
   }
 
-  get killToken (): ?KillToken {
+  get killToken (): KillToken | null {
     return this.state.killToken
   }
 
-  set killToken (value: ?KillToken): void {
+  set killToken (value: KillToken | null) {
     this.state.killToken = value
   }
 
-  assignOptions (options: Object) {
+  assignOptions (options: any) {
     for (const name in options) {
       const value = options[name]
 
@@ -108,7 +115,7 @@ export default class StateConsumer {
     }
   }
 
-  setOption (store: Object, name: string, value: any) {
+  setOption (store: any, name: string, value: any) {
     const schema = this.state.optionSchema.get(name)
     if (schema) {
       let invalidType = false
@@ -149,7 +156,7 @@ export default class StateConsumer {
     if (this.state.killToken && this.state.killToken.error) throw this.state.killToken.error
   }
 
-  get ruleClasses (): Array<Class<Rule>> {
+  get ruleClasses (): Array<new (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File>) => Rule> {
     return this.state.ruleClasses
   }
 
@@ -161,11 +168,11 @@ export default class StateConsumer {
     return this.state.rootPath
   }
 
-  get files (): Iterator<File> {
+  get files (): IterableIterator<File> {
     return this.state.files.values()
   }
 
-  get rules (): Iterator<Rule> {
+  get rules (): IterableIterator<Rule> {
     return this.state.rules.values()
   }
 
@@ -204,13 +211,13 @@ export default class StateConsumer {
     return path.normalize(this.expandVariables(filePath))
   }
 
-  expandVariables (value: string, additionalProperties: Object = {}): string {
+  expandVariables (value: string, additionalProperties: any = {}): string {
     const properties = Object.assign({}, this.state.env, this.env, additionalProperties)
 
     return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
 
-  async globPath (pattern: string, { types = 'all', ignorePattern }: globOptions = {}): Promise<Array<string>> {
+  async globPath (pattern: string, { types = 'all', ignorePattern }: GlobOptions = {}): Promise<Array<string>> {
     try {
       return await fastGlob(this.expandVariables(pattern), {
         cwd: this.rootPath,
@@ -224,8 +231,8 @@ export default class StateConsumer {
     return []
   }
 
-  async getFile (filePath: string): Promise<?File> {
-    const file: ?File = await this.state.getFile(filePath)
+  async getFile (filePath: string): Promise<File | undefined> {
+    const file: File | undefined = await this.state.getFile(filePath)
     if (file && this.options.jobName) file.jobNames.add(this.options.jobName)
     return file
   }
@@ -295,12 +302,12 @@ export default class StateConsumer {
     return this.state.isGrandparentOf(x, y)
   }
 
-  async getResolvedFile (filePath: string): Promise<?File> {
+  async getResolvedFile (filePath: string): Promise<File | undefined> {
     return this.getFile(this.resolvePath(filePath))
   }
 
   // EventEmmitter proxy
-  addListener (eventName: string, listener: Function) {
+  addListener (eventName: string, listener: (...args: any[]) => void) {
     return this.state.addListener(eventName, listener)
   }
 
@@ -324,19 +331,19 @@ export default class StateConsumer {
     return this.state.listeners(eventName)
   }
 
-  on (eventName: string, listener: Function) {
+  on (eventName: string, listener: (...args: any[]) => void) {
     return this.state.on(eventName, listener)
   }
 
-  once (eventName: string, listener: Function) {
+  once (eventName: string, listener: (...args: any[]) => void) {
     return this.state.once(eventName, listener)
   }
 
-  prependListener (eventName: string, listener: Function) {
+  prependListener (eventName: string, listener: (...args: any[]) => void) {
     return this.state.prependListener(eventName, listener)
   }
 
-  prependOnceListener (eventName: string, listener: Function) {
+  prependOnceListener (eventName: string, listener: (...args: any[]) => void) {
     return this.state.prependOnceListener(eventName, listener)
   }
 
@@ -344,7 +351,7 @@ export default class StateConsumer {
     return this.state.removeAllListeners(eventName)
   }
 
-  removeListener (eventName: string, listener: Function) {
+  removeListener (eventName: string, listener: (...args: any[]) => void) {
     return this.state.removeListener(eventName, listener)
   }
 
@@ -352,12 +359,12 @@ export default class StateConsumer {
     return this.state.setMaxListeners(n)
   }
 
-  executeChildProcess (command: string, options: Object): Promise<Object> {
+  executeChildProcess (command: string, options: Object): Promise<ProcessResults> {
     return new Promise((resolve, reject) => {
       let stdout: string
       let stderr: string
       let exited: boolean = false
-      const handleExit = error => {
+      const handleExit = (error: any): void => {
         if (exited) return
         exited = true
 
@@ -368,28 +375,26 @@ export default class StateConsumer {
           resolve({ stdout, stderr })
         }
       }
-      const child = childProcess.spawn(command, options)
+      const child = childProcess.spawn(command, undefined, options)
 
       if (child.pid) this.state.processes.add(child.pid)
       child.on('error', handleExit)
-      child.on('close', (code, signal) => {
+      child.on('close', (code: any, signal: any) => {
         let error
         if (code !== 0 || signal !== null) {
-          error = new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim())
-          // $FlowIgnore
+          error = <any>new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim())
           error.code = code
-          // $FlowIgnore
           error.signal = signal
         }
         handleExit(error)
       })
       if (child.stdout) {
         child.stdout.setEncoding('utf8')
-        child.stdout.on('data', data => { stdout = `${stdout || ''}${data}` })
+        child.stdout.on('data', (data: string) => { stdout = `${stdout || ''}${data}` })
       }
       if (child.stderr) {
         child.stderr.setEncoding('utf8')
-        child.stderr.on('data', data => { stderr = `${stderr || ''}${data}` })
+        child.stderr.on('data', (data: string) => { stderr = `${stderr || ''}${data}` })
       }
     })
   }

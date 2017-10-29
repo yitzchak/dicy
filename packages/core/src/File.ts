@@ -7,7 +7,7 @@ import * as path from 'path'
 import * as readline from 'readline'
 import * as yaml from 'js-yaml'
 
-import { FileType, Parser, ParserMatch, Reference } from './types'
+import { FileCache, FileType, Parser, ParserMatch, Reference } from './types'
 
 export default class File {
   static DEFAULT_PARSING_MODE = 'default'
@@ -44,31 +44,29 @@ export default class File {
    * Construct a new File. Because creating a file required asynchronous file
    * system access this method is used only to initialize the File instance. Used
    * the `create` method to actual create an instance.
-   * @param  {string} realFilePath The actual file system path.
-   * @param  {string} filePath     The file path relative to the project root.
-   * @param  {Date}   timeStamp    The time of the last update provided by cache.
-   * @param  {string} hash         The last content hash provided by cache.
-   * @param  {any}    value        The value of the virtual file.
+   * @param  {string}    realFilePath The actual file system path.
+   * @param  {string}    filePath     The file path relative to the project root.
+   * @param  {FileCache} fileCache    The timestamp, hash and value provided by cache.
    */
-  constructor (realFilePath: string, filePath: string, timeStamp: Date | undefined, hash: string | undefined, value: any | undefined) {
+  constructor (realFilePath: string, filePath: string, fileCache?: FileCache) {
     this.realFilePath = realFilePath
     this.filePath = filePath
-    if (timeStamp) this.timeStamp = timeStamp
-    if (hash) this.hash = hash
-    if (value) this._value = value
+    if (fileCache) {
+      this.timeStamp = fileCache.timeStamp
+      if (fileCache.hash) this.hash = fileCache.hash
+      if (fileCache.value) this._value = fileCache.value
+    }
   }
 
   /**
    * Create a new File.
-   * @param  {string} realFilePath The actual file system path.
-   * @param  {string} filePath     The file path relative to the project root.
-   * @param  {Date}   timeStamp    The time of the last update provided by cache.
-   * @param  {string} hash         The last content hash provided by cache.
-   * @param  {any}    value        The value of the virtual file.
-   * @return {File}                The File instance.
+   * @param  {string}    realFilePath The actual file system path.
+   * @param  {string}    filePath     The file path relative to the project root.
+   * @param  {FileCache} fileCache    The timestamp, hash and value provided by cache.
+   * @return {File}                   The File instance.
    */
-  static async create (realFilePath: string, filePath: string, timeStamp: Date | undefined, hash: string | undefined, value: any | undefined): Promise<File | undefined> {
-    const file: File = new File(realFilePath, filePath, timeStamp, hash, value)
+  static async create (realFilePath: string, filePath: string, fileCache?: FileCache): Promise<File | undefined> {
+    const file: File = new File(realFilePath, filePath, fileCache)
 
     await file.findType()
     // If the file type is not a virtual file type and there is no physical file
@@ -399,7 +397,7 @@ export default class File {
     return File.read(this.realFilePath)
   }
 
-  static async readYaml (filePath: string, fullSchema: boolean = true): Promise<Object> {
+  static async readYaml (filePath: string, fullSchema: boolean = true): Promise<any> {
     const contents = await File.read(filePath)
     return yaml.load(contents, {
       schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA

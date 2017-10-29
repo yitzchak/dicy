@@ -1,6 +1,6 @@
-export type globOptions = {
-  types: 'all' | 'files' | 'directories',
-  ignorePattern: string | Array<string>
+export type GlobOptions = {
+  types?: 'all' | 'files' | 'directories',
+  ignorePattern?: string | Array<string>
 }
 
 export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub'
@@ -141,7 +141,7 @@ export type KillToken = {
 
 export type ShellCall = {
   args: Array<string>,
-  options: Object,
+  options: { [name: string]: string | boolean },
   status: string
 }
 
@@ -164,6 +164,11 @@ export type CommandOptions = {
   stderr?: boolean | string
 }
 
+export type ProcessResults = {
+  stdout: string,
+  stderr: string
+}
+
 export type LineRangeMapping = {
   input: LineRange,
   output: LineRange
@@ -181,7 +186,10 @@ export type SourceMaps = {
 
 // START_AUTO
 
+export type IndexEngine = 'makeindex' | 'mendex' | 'texindy' | 'upmendex'
+
 export interface OptionsInterface {
+  [name: string]: any,
   $BIBINPUTS: string | Array<string>,
   $TEXINPUTS: string | Array<string>,
   bibtexEngine: 'bibtex' | 'bibtex8' | 'bibtexu' | 'pbibtex' | 'upbibtex',
@@ -197,7 +205,7 @@ export interface OptionsInterface {
   indexAutomaticRanges: boolean,
   indexCompressBlanks: boolean,
   indexDictionary?: string,
-  indexEngine: 'makeindex' | 'mendex' | 'texindy' | 'upmendex',
+  indexEngine: IndexEngine,
   indexForceKanji: boolean,
   indexLogPath?: string,
   indexOrdering: 'word' | 'letter',

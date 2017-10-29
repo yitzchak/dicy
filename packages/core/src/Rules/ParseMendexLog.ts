@@ -105,7 +105,7 @@ export default class ParsedMendexLog extends Rule {
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: match.groups._,
+          text: match._,
           source: { file: filePath },
           log: reference
         })
@@ -119,7 +119,7 @@ export default class ParsedMendexLog extends Rule {
         parsedLog.messages.push({
           name,
           severity: 'info',
-          text: match.groups._,
+          text: match._,
           source: { file: filePath },
           log: reference
         })

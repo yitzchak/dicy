@@ -11,7 +11,8 @@ import {
   CommandOptions,
   OptionsInterface,
   ParsedLog,
-  Phase
+  Phase,
+  ProcessResults
 } from './types'
 
 export default class Rule extends StateConsumer {
@@ -30,7 +31,7 @@ export default class Rule extends StateConsumer {
   actions: Map<Action, Set<File>> = new Map()
   failures: Set<Action> = new Set<Action>()
 
-  static async analyzePhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<?Rule> {
+  static async analyzePhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<Rule | undefined> {
     const appliesToPhase: boolean = this.commands.has(command) && this.phases.has(phase) &&
           this.parameterTypes.length === 0
 
@@ -60,7 +61,6 @@ export default class Rule extends StateConsumer {
 
           while (indicies.every(index => index > -1)) {
             const parameters: Array<File> = candidates.map((files, index) => files[indicies[index]])
-            // $FlowIgnore
             const ruleId: string = state.getRuleId(this.name, command, phase, options.jobName, parameters.map(file => file.filePath))
 
             if (!state.rules.has(ruleId) && await this.isApplicable(state, command, phase, options, parameters)) {
@@ -127,9 +127,9 @@ export default class Rule extends StateConsumer {
 
   async initialize () {}
 
-  async phaseInitialize (command: ?Command, phase: ?Phase) {
-    if ((!command || command === this.command) && (!phase || phase === this.phase) && this.constructor.alwaysEvaluate) {
-      if (this.inputs.size === 0) {
+  async phaseInitialize (command: Command, phase: Phase) {
+    if (command === this.command && phase === this.phase && this.constructor.alwaysEvaluate) {
+      if (this.inputs.length === 0) {
         this.addActions()
       } else {
         for (const input of this.inputs) {
@@ -139,9 +139,9 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  async addFileActions (file: File, command: ?Command, phase: ?Phase): Promise<void> {
+  async addFileActions (file: File, command?: Command, phase?: Phase): Promise<void> {
     if ((!command || command === this.command) && (!phase || phase === this.phase) && file.hasBeenUpdated) {
-      const timeStamp: ?Date = this.timeStamp
+      const timeStamp: Date | undefined = this.timeStamp
       const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
       for (const action of await this.getFileActions(file)) {
         if (ruleNeedsUpdate) this.failures.delete(action)
@@ -159,8 +159,8 @@ export default class Rule extends StateConsumer {
   addActions (file?: File, actions?: Array<Action>): void {
     if (!actions) actions = this.constructor.defaultActions
 
-    for (const action of actions) {
-      const files: ?Set<File> = this.actions.get(action)
+    for (const action of actions || []) {
+      const files: Set<File> | undefined = this.actions.get(action)
       if (!files) {
         this.actions.set(action, new Set(file ? [file] : []))
       } else if (file) {
@@ -185,20 +185,20 @@ export default class Rule extends StateConsumer {
     return this.actions.size !== 0
   }
 
-  get timeStamp (): ?Date {
-    return this.outputs.reduce((c, t) => !c || t.timeStamp > c ? t.timeStamp : c, null)
+  get timeStamp (): Date | undefined {
+    return this.outputs.reduce(
+      (timestamp: Date | undefined, file: File): Date | undefined =>
+        !timestamp || file.timeStamp > timestamp ? file.timeStamp : timestamp, undefined)
   }
 
   get inputs (): Array<File> {
     const predecessors = this.state.graph.predecessors(this.id) || []
-    // $FlowIgnore
-    return predecessors.map(filePath => this.state.files.get(filePath)).filter(file => file)
+    return <File[]>predecessors.map(filePath => this.state.files.get(filePath)).filter(file => file)
   }
 
   get outputs (): Array<File> {
     const successors = this.state.graph.successors(this.id) || []
-    // $FlowIgnore
-    return successors.map(filePath => this.state.files.get(filePath)).filter(file => file)
+    return <File[]>successors.map(filePath => this.state.files.get(filePath)).filter(file => file)
   }
 
   async preEvaluate (): Promise<void> {}
@@ -244,7 +244,7 @@ export default class Rule extends StateConsumer {
 
     if (files) {
       for (const file of files.values()) {
-        const parsedLog: ?ParsedLog = file.value
+        const parsedLog: ParsedLog | undefined = file.value
 
         if (parsedLog) {
           if (parsedLog.inputs) await this.getInputs(parsedLog.inputs)
@@ -260,7 +260,7 @@ export default class Rule extends StateConsumer {
     return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
   }
 
-  async executeCommand (commandOptions: CommandOptions): Promise<Object> {
+  async executeCommand (commandOptions: CommandOptions): Promise<ProcessResults> {
     try {
       // We only capture stdout and stderr if explicitly instructed to. This is
       // possibly to conserve some memory, but mostly it is a work around for a
@@ -326,8 +326,8 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  async getOutput (filePath: string): Promise<?File> {
-    let file: ?File = await this.getFile(filePath)
+  async getOutput (filePath: string): Promise<File | undefined> {
+    let file: File | undefined = await this.getFile(filePath)
 
     if (file && !this.hasEdge(this.id, file.filePath)) {
       this.addEdge(this.id, file.filePath)
@@ -354,7 +354,7 @@ export default class Rule extends StateConsumer {
   }
 
   async updateOutputs () {
-    for (const file: File of this.outputs) {
+    for (const file of this.outputs) {
       if (await file.update()) {
         this.emit('fileChanged', {
           type: 'fileChanged',
@@ -365,8 +365,8 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  async getInput (filePath: string): Promise<?File> {
-    let file: ?File = await this.getFile(filePath)
+  async getInput (filePath: string): Promise<File | undefined> {
+    let file: File | undefined = await this.getFile(filePath)
 
     if (file && !this.hasEdge(file.filePath, this.id)) {
       this.addEdge(file.filePath, this.id)
@@ -399,7 +399,7 @@ export default class Rule extends StateConsumer {
     return this.parameters.includes(file)
   }
 
-  async getResolvedInput (filePath: string): Promise<?File> {
+  async getResolvedInput (filePath: string): Promise<File | undefined> {
     const expanded = this.resolvePath(filePath)
     return this.getInput(expanded)
   }
@@ -415,7 +415,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getResolvedOutput (filePath: string): Promise<?File> {
+  async getResolvedOutput (filePath: string): Promise<File | undefined> {
     const expanded = this.resolvePath(filePath)
     return this.getOutput(expanded)
   }
@@ -470,7 +470,7 @@ export default class Rule extends StateConsumer {
         const paths: Array<string> = value.map(filePath => filePath ? this.resolvePath(filePath.toString()) : emptyPath)
 
         if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
-          paths[paths.length - 1] = processOptions.env[envName]
+          paths[paths.length - 1] = processOptions.env[envName] || ''
         }
 
         processOptions.env[envName] = paths.join(path.delimiter)
@@ -489,7 +489,7 @@ export default class Rule extends StateConsumer {
   }
 
   actionTrace (action: Action) {
-    const files: ?Set<File> = this.actions.get(action)
+    const files: Set<File> | undefined = this.actions.get(action)
     this.emit('action', {
       type: 'action',
       action,

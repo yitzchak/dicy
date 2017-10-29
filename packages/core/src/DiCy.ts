@@ -1,6 +1,6 @@
-import _ from 'lodash'
-import path from 'path'
-import readdir from 'readdir-enhanced'
+import * as _ from 'lodash'
+import * as path from 'path'
+import * as readdir from 'readdir-enhanced'
 
 import State from './State'
 import StateConsumer from './StateConsumer'
@@ -40,7 +40,7 @@ export default class DiCy extends StateConsumer {
   async analyzePhase (command: Command, phase: Phase) {
     this.checkForKill()
 
-    for (const ruleClass: Class<Rule> of this.ruleClasses) {
+    for (const ruleClass of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [null] : this.options.jobNames
       for (const jobName of jobNames) {
         const rule = await ruleClass.analyzePhase(this.state, command, phase, this.state.getJobOptions(jobName))
@@ -55,12 +55,12 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     while (true) {
-      const file: ?File = Array.from(this.files).find(file => !file.analyzed)
+      const file: File | undefined = Array.from(this.files).find(file => !file.analyzed)
 
       if (!file) break
 
-      for (const ruleClass: Class<Rule> of this.ruleClasses) {
-        const jobNames = file.jobNames.size === 0 ? [null] : Array.from(file.jobNames.values())
+      for (const ruleClass of this.ruleClasses) {
+        const jobNames: Array<string | null> = file.jobNames.size === 0 ? [null] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
           const rules: Array<Rule> = await ruleClass.analyzeFile(this.state, command, phase, this.state.getJobOptions(jobName), file)
           for (const rule of rules) {
@@ -73,7 +73,7 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  getAvailableRules (command: ?Command): Array<RuleInfo> {
+  getAvailableRules (command?: Command): Array<RuleInfo> {
     return this.ruleClasses
       .filter(rule => !command || rule.commands.has(command))
       .map(rule => ({ name: rule.name, description: rule.description }))
@@ -97,7 +97,7 @@ export default class DiCy extends StateConsumer {
     const primaryCount = (ruleGroup: Array<Rule>) => ruleGroup.reduce(
       (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
       0)
-    const evaluationNeeded = rule => rule.actions.has(action) && rule.command === command && rule.phase === phase
+    const evaluationNeeded = (rule: Rule): boolean => rule.actions.has(action) && rule.command === command && rule.phase === phase
 
     // First separate the rule graph into connected components. For each
     // component only retain rules that are pertinent to the current command,
@@ -111,9 +111,10 @@ export default class DiCy extends StateConsumer {
     // not guaranteed to be a stable sort.
     const rules: Array<Rule> = _.flatten(_.sortBy(this.components
       .map(component => {
-        const ruleGroup = _.sortBy(component.filter(evaluationNeeded), [rule => rule.inputs.length])
+        const ruleGroup = _.sortBy(component.filter(evaluationNeeded), [(rule: Rule) => rule.inputs.length])
+        type RuleGroupRanking = { rank: number, rules: Array<Rule> }
 
-        return ruleGroup.reduce((current, rule) => {
+        return ruleGroup.reduce((current: RuleGroupRanking, rule: Rule): RuleGroupRanking => {
           // Rank the rule by how many other rules it is directly dependent on.
           const rank = ruleGroup.reduce(
             (count, otherRule) => this.isGrandparentOf(rule, otherRule) ? count + 1 : count,
@@ -160,8 +161,7 @@ export default class DiCy extends StateConsumer {
     if (!this.killToken.promise) {
       this.killToken.error = new Error(message)
       this.killToken.promise = new Promise(resolve => {
-        // $FlowIgnore
-        this.killToken.resolve = resolve
+        if (this.killToken) this.killToken.resolve = resolve
         this.killChildProcesses()
       })
     }
@@ -184,10 +184,11 @@ export default class DiCy extends StateConsumer {
     this.killToken = {}
 
     let success = true
+    const phases: Phase[] = ['initialize', 'execute', 'finalize']
 
     try {
       for (const command of commands) {
-        for (const phase: Phase of ['initialize', 'execute', 'finalize']) {
+        for (const phase of phases) {
           await this.runPhase(command, phase)
         }
       }
@@ -207,6 +208,8 @@ export default class DiCy extends StateConsumer {
   }
 
   async runPhase (command: Command, phase: Phase): Promise<void> {
+    const actions: Array<Action> = ['parse', 'updateDependencies', 'run']
+
     this.checkForKill()
 
     for (const file of this.files) {
@@ -223,7 +226,7 @@ export default class DiCy extends StateConsumer {
     for (let cycle = 0; cycle < this.options.phaseCycles; cycle++) {
       let didEvaluation = false
 
-      for (const action of ['parse', 'updateDependencies', 'run']) {
+      for (const action of actions) {
         await this.analyzeFiles(command, phase)
         didEvaluation = await this.evaluate(command, phase, action) || didEvaluation
       }
@@ -237,10 +240,10 @@ export default class DiCy extends StateConsumer {
 
   static async getOptionDefinitions (): Promise<Array<Option>> {
     const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
-    const schema = await File.readYaml(filePath, true)
+    const schema: any = await File.readYaml(filePath, true)
     const options = []
     for (const name in schema) {
-      const option = schema[name]
+      const option: Option = schema[name]
       option.name = name
       options.push(option)
     }

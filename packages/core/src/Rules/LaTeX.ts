@@ -20,7 +20,7 @@ export default class LaTeX extends Rule {
 
   static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
     return parameters.some(file =>
-      ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType))) ||
+      ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType || ''))) ||
       (file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'none') ||
       (file.type === 'LiterateAgda' && options.literateAgdaEngine === 'none')))
   }
@@ -74,14 +74,12 @@ export default class LaTeX extends Rule {
     }
 
     switch (this.options.shellEscape) {
-      case false:
       case 'disabled':
         args.push('-no-shell-escape')
         break
       case 'restricted':
         args.push('-shell-restricted')
         break
-      case true:
       case 'enabled':
         args.push('-shell-escape')
         break

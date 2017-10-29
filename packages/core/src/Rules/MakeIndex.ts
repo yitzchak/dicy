@@ -5,7 +5,15 @@ import Log from '../Log'
 import Rule from '../Rule'
 import State from '../State'
 
-import { Action, Command, CommandOptions, OptionsInterface, ParsedLog, Phase } from '../types'
+import {
+  Action,
+  Command,
+  CommandOptions,
+  IndexEngine,
+  OptionsInterface,
+  ParsedLog,
+  Phase
+} from '../types'
 
 export default class MakeIndex extends Rule {
   static parameterTypes: Array<Set<string>> = [
@@ -19,7 +27,7 @@ export default class MakeIndex extends Rule {
   static description: string = 'Runs makeindex on any index files.'
 
   static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File> = []): Promise<boolean> {
-    const parsedLog: ?ParsedLog = parameters[1].value
+    const parsedLog: ParsedLog | undefined = parameters[1].value
     const base = path.basename(parameters[0].filePath)
     const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)
     const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
@@ -35,7 +43,7 @@ export default class MakeIndex extends Rule {
   async initialize () {
     const ext = path.extname(this.firstParameter.filePath)
     const firstChar = ext[1]
-    const parsedLog: ?ParsedLog = this.secondParameter.value
+    const parsedLog: ParsedLog | undefined = this.secondParameter.value
 
     // Automatically assign style based on index type.
     if (!this.options.indexStyle) {
@@ -87,7 +95,7 @@ export default class MakeIndex extends Rule {
           case 'texindy':
           case 'mendex':
           case 'upmendex':
-            this.options.indexEngine = call.args[0]
+            this.options.indexEngine = <IndexEngine>call.args[0]
             break
           default:
             this.info(`Ignoring unknown index engine \`${call.args[0]}\``)
@@ -96,16 +104,16 @@ export default class MakeIndex extends Rule {
         this.options.indexAutomaticRanges = !call.options.r
         this.options.indexOrdering = call.options.l ? 'letter' : 'word'
         if ('t' in call.options) {
-          this.options.indexLogPath = call.options.t
+          this.options.indexLogPath = call.options.t.toString()
         }
         if ('o' in call.options) {
-          this.options.indexOutputPath = call.options.o
+          this.options.indexOutputPath = call.options.o.toString()
         }
         if ('p' in call.options) {
-          this.options.indexStartPage = call.options.p
+          this.options.indexStartPage = call.options.p.toString()
         }
         if ('s' in call.options) {
-          this.options.indexStyle = call.options.s
+          this.options.indexStyle = call.options.s.toString()
         }
         switch (call.args[0]) {
           case 'makeindex':
@@ -131,12 +139,12 @@ export default class MakeIndex extends Rule {
             }
 
             if (call.options.I) {
-              this.options.kanjiInternal = call.options.I
+              this.options.kanjiInternal = <'euc' | 'sjis' | 'uptex' | 'utf8'>call.options.I.toString()
             }
             // fall through
           case 'upmendex':
             if (call.options.d) {
-              this.options.indexDictionary = call.options.d
+              this.options.indexDictionary = call.options.d.toString()
             }
 
             if (call.options.f) {
@@ -167,7 +175,7 @@ export default class MakeIndex extends Rule {
   async preEvaluate (): Promise<void> {
     if (!this.actions.has('run')) return
 
-    const parsedLog: ?ParsedLog = this.secondParameter.value
+    const parsedLog: ParsedLog | undefined = this.secondParameter.value
     const { base, ext } = path.parse(this.firstParameter.filePath)
     const engine = this.options.indexEngine
 

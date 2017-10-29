@@ -2,7 +2,7 @@ import Rule from '../Rule'
 
 import { CommandOptions, Phase } from '../types'
 
-function escapePath (filePath) {
+function escapePath (filePath: string): string {
   return filePath.replace(/\\/g, '\\\\')
 }
 

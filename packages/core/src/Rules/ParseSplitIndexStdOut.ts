@@ -1,4 +1,4 @@
-import path from 'path'
+import * as path from 'path'
 
 import Rule from '../Rule'
 
@@ -39,7 +39,7 @@ export default class ParseSplitIndexStdOut extends Rule {
         parsedLog.messages.push({
           severity: 'info',
           name: 'splitindex',
-          text: match.groups._
+          text: match._
         })
         parsedLog.outputs.push(this.normalizePath(path.resolve(this.rootPath, match.groups.filePath)))
       }

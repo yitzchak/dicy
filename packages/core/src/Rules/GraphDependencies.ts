@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import * as _ from 'lodash'
 
 import File from '../File'
 import Rule from '../Rule'
@@ -14,15 +14,15 @@ export default class GraphDependencies extends Rule {
   static description: string = 'Creates a GraphViz dependency graph.'
 
   async run () {
-    let lines = []
+    let lines: string[] = []
     const rulesByCommand = _.groupBy(Array.from(this.state.rules.values()), rule => rule.command)
     let level = 0
 
-    function addLine (line) {
+    function addLine (line: string) {
       lines.push(_.repeat(' ', 2 * level) + line)
     }
 
-    function startGraph (name, label) {
+    function startGraph (name?: string, label?: string) {
       if (name && label) {
         addLine(`subgraph "cluster_${name}" {`)
         level++

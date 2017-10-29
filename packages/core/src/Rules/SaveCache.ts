@@ -34,8 +34,7 @@ export default class SaveCache extends Rule {
     }
 
     // Loop through all the files and add them to the cache.
-    for (const file: File of this.files) {
-      // $FlowIgnore
+    for (const file of this.files) {
       const fileCache: FileCache = {
         timeStamp: file.timeStamp,
         jobNames: Array.from(file.jobNames.values())

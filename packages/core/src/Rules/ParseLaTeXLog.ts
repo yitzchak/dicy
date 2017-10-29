@@ -290,7 +290,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/(\([^()[]+|\))/g],
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         const trimPattern = /(^\([\s"]*|[\s"]+$)/g
-        for (const token of match.groups.captures) {
+        for (const token of match.captures) {
           if (token === ')') {
             // Avoid popping main source file off of the stack.
             if (sourcePaths.length > 1) {

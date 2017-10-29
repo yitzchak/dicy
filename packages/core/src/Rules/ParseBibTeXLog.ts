@@ -110,7 +110,7 @@ export default class ParseBibTeXLog extends Rule {
       })
 
       parsedLog.inputs = stdout
-        ? stdout.split('\n').filter(file => file).map(file => this.normalizePath(file))
+        ? stdout.split('\n').filter((file: string) => file).map(file => this.normalizePath(file))
         : []
     } catch (error) {}
 

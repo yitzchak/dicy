@@ -57,7 +57,7 @@ export default class LoadAndValidateCache extends Rule {
     this.cleanCache()
 
     this.state.cacheTimeStamp = await File.getModifiedTime(this.cacheFilePath)
-    const cache: ?Cache = await File.readYaml(this.cacheFilePath)
+    const cache: Cache | undefined = await File.readYaml(this.cacheFilePath)
 
     if (!cache) return true
 
@@ -77,7 +77,7 @@ export default class LoadAndValidateCache extends Rule {
     }
 
     if (cache.rules) {
-      for (const rule: RuleCache of cache.rules) {
+      for (const rule of cache.rules) {
         await this.state.addCachedRule(rule)
       }
     }

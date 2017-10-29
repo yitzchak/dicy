@@ -3,7 +3,7 @@ import * as yargs from 'yargs-parser'
 
 import { Message, ParsedLog, ShellCall } from './types'
 
-const ARGUMENT_PARSERS = {
+const ARGUMENT_PARSERS: { [name: string]: Object } = {
   epstopdf: {
     alias: {
       outfile: 'o'
@@ -141,10 +141,10 @@ const ARGUMENT_PARSERS = {
   }
 }
 
-function splitCommand (command: string) {
+function splitCommand (command: string): Array<string> {
   const args: Array<string> = []
-  let current: ?string
-  let quote: ?string
+  let current: string | null = null
+  let quote: string | null = null
 
   for (let i = 0; i < command.length; i++) {
     const char: string = command.substr(i, 1)
@@ -176,15 +176,15 @@ export default class Log {
     return parsedLog.messages.findIndex(message => message.text.includes(text)) !== -1
   }
 
-  static findMessage (parsedLog: ParsedLog, pattern: string | RegExp): ?Message {
+  static findMessage (parsedLog: ParsedLog, pattern: string | RegExp): Message | undefined {
     return parsedLog.messages.find(message => !!message.text.match(pattern))
   }
 
   static findMessageMatches (parsedLog: ParsedLog, pattern: RegExp, category?: string): Array<Array<string>> {
     return parsedLog.messages
-      // $FlowIgnore
       .map(message => (!category || message.category === category) ? message.text.match(pattern) : null)
-      .filter(match => match)
+      .filter(match => !!match)
+      .map(match => match || [])
   }
 
   static filterCalls (parsedLog: ParsedLog, command: string | RegExp, filePath?: string, status?: string): Array<ShellCall> {
@@ -193,7 +193,7 @@ export default class Log {
       (!status || call.status.startsWith(status)))
   }
 
-  static findCall (parsedLog: ParsedLog, command: string | RegExp, filePath?: string, status?: string): ?ShellCall {
+  static findCall (parsedLog: ParsedLog, command: string | RegExp, filePath?: string, status?: string): ShellCall | undefined {
     return parsedLog.calls.find(call => !!call.args[0].match(command) &&
       (!filePath || call.args.includes(filePath)) &&
       (!status || call.status.startsWith(status)))
@@ -201,8 +201,9 @@ export default class Log {
 
   static parseCall (command: string, status: string = 'executed'): ShellCall {
     const args = splitCommand(command)
-    if (args[0] in ARGUMENT_PARSERS) {
-      const argv = yargs(args, ARGUMENT_PARSERS[args[0]])
+    const parser: Object | undefined = ARGUMENT_PARSERS[args[0]]
+    if (parser) {
+      const argv = yargs(args, parser)
       return {
         args: argv._,
         options: _.omitBy(_.omitBy(_.omit(argv, ['_', '$0']), _.isUndefined), v => v === false),

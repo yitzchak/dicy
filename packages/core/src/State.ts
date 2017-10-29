@@ -30,18 +30,18 @@ export default class State extends EventEmitter {
   rootPath: string
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
-  options: Object = {}
+  options: {[name: string]: any} = {}
   defaultOptions: OptionsInterface
   optionSchema: Map<string, Option> = new Map()
   graphProperties: GraphProperties = {}
   ruleClasses: Array<{ new(state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: Array<File>): Rule }> = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set<number>()
-  env: Object
+  env: {[name: string]: string}
   targets: Set<string> = new Set<string>()
   killToken: KillToken | null
   graph: Graph = new Graph()
-  optionProxies: { [jobName: string | null]: OptionsInterface } = {}
+  optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
   constructor (filePath: string, schema: Array<Option> = []) {
     super()
@@ -49,7 +49,7 @@ export default class State extends EventEmitter {
     const { dir, base, name, ext } = path.parse(resolveFilePath)
     this.filePath = base
     this.rootPath = dir
-    this.defaultOptions = {}
+    this.defaultOptions = <OptionsInterface>{}
     for (const option of schema) {
       this.optionSchema.set(option.name, option)
       for (const alias of option.aliases || []) {
@@ -78,7 +78,7 @@ export default class State extends EventEmitter {
   async getTargetPaths (absolute: boolean = false): Promise<Array<string>> {
     const results: Array<string> = []
     for (const target of this.targets.values()) {
-      const file: File | null = await this.getFile(target)
+      const file: File | undefined = await this.getFile(target)
       if (file) results.push(absolute ? file.realFilePath : target)
     }
     return results
@@ -87,7 +87,7 @@ export default class State extends EventEmitter {
   async getTargetFiles (): Promise<Array<File>> {
     const results: Array<File> = []
     for (const target of this.targets.values()) {
-      const file: File | null = await this.getFile(target)
+      const file: File | undefined = await this.getFile(target)
       if (file) results.push(file)
     }
     return results
@@ -136,11 +136,10 @@ export default class State extends EventEmitter {
     if (RuleClass) {
       const parameters: Array<File> = []
       for (const filePath of cache.parameters) {
-        const parameter = await this.getFile(filePath)
+        const parameter: File | undefined = await this.getFile(filePath)
         if (!parameter) break
         parameters.push(parameter)
       }
-      // $FlowIgnore
       const rule: Rule = new RuleClass(this, cache.command, cache.phase, options, parameters)
       this.addNode(rule.id)
       await rule.initialize()
@@ -151,7 +150,7 @@ export default class State extends EventEmitter {
         // At least one of the outputs is missing or the rule should always run.
         rule.addActions()
       }
-      for (const input: File of rule.inputs) {
+      for (const input of rule.inputs) {
         await rule.addFileActions(input)
       }
     }
@@ -191,12 +190,12 @@ export default class State extends EventEmitter {
     this.graphProperties = {}
   }
 
-  async getFile (filePath: string, { timeStamp, hash, value }: FileCache): Promise<File | undefined> {
+  async getFile (filePath: string, fileCache?: FileCache): Promise<File | undefined> {
     filePath = this.normalizePath(filePath)
     let file: File | undefined = this.files.get(filePath)
 
     if (!file) {
-      file = await File.create(path.resolve(this.rootPath, filePath), filePath, timeStamp, hash, value)
+      file = await File.create(path.resolve(this.rootPath, filePath), filePath, fileCache)
       if (!file) {
         this.graph.removeNode(filePath)
         this.emit('fileRemoved', {
@@ -220,7 +219,7 @@ export default class State extends EventEmitter {
   async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true) {
     const invalidRules: Array<Rule> = []
 
-    for (const rule: Rule of this.rules.values()) {
+    for (const rule of this.rules.values()) {
       if (rule.jobName === jobName) {
         if (await rule.removeFile(file)) {
           // This file is one of the parameters of the rule so we need to remove
@@ -230,7 +229,7 @@ export default class State extends EventEmitter {
       }
     }
 
-    for (const rule: Rule of invalidRules) {
+    for (const rule of invalidRules) {
       this.removeNode(rule.id)
     }
 
@@ -249,8 +248,8 @@ export default class State extends EventEmitter {
     }
   }
 
-  assignSubOptions (to: Object, from: Object) {
-    for (const name: string in from) {
+  assignSubOptions (to: {[name: string]: any}, from: {[name: string]: any}) {
+    for (const name in from) {
       if (from.hasOwnProperty(name)) {
         const value: any = from[name]
         if (typeof value !== 'object' || Array.isArray(value)) {
@@ -276,18 +275,18 @@ export default class State extends EventEmitter {
   }
 
   resetOptions () {
-    for (const name: string of Object.getOwnPropertyNames(this.options)) {
+    for (const name of Object.getOwnPropertyNames(this.options)) {
       delete this.options[name]
     }
 
     this.assignOptions(this.defaultOptions)
   }
 
-  getJobOptions (jobName: ?string = null): OptionsInterface {
-    let optionProxy: OptionsInterface = this.optionProxies[jobName]
+  getJobOptions (jobName: string | null = null): OptionsInterface {
+    let optionProxy: OptionsInterface | undefined = this.optionProxies.get(jobName)
 
     if (!optionProxy) {
-      this.optionProxies[jobName] = optionProxy = new Proxy(this.options, {
+      optionProxy = <OptionsInterface>new Proxy(this.options, {
         get: (target, name) => {
           if (name === 'jobNames') {
             if ('jobName' in target) return [target.jobName]
@@ -304,7 +303,7 @@ export default class State extends EventEmitter {
             }
           }
 
-          const schema: Option | void = this.optionSchema.get(name)
+          const schema: Option | void = this.optionSchema.get(name.toString())
 
           if (schema && schema.type === 'boolean') {
             return !!target[name]
@@ -331,6 +330,8 @@ export default class State extends EventEmitter {
           return Array.from(keys.values())
         }
       })
+
+      this.optionProxies.set(jobName, optionProxy)
     }
 
     return optionProxy
@@ -339,7 +340,7 @@ export default class State extends EventEmitter {
   get components (): Array<Array<Rule>> {
     if (!this.graphProperties.components) {
       this.graphProperties.components = alg.components(this.graph)
-        .map(component => component.map(id => this.rules.get(id)).filter(rule => rule))
+        .map(component => <Rule[]>component.map(id => this.rules.get(id)).filter(rule => rule))
         .filter(component => component.length > 0)
     }
 
@@ -349,23 +350,24 @@ export default class State extends EventEmitter {
   isGrandparentOf (x: File | Rule, y: File | Rule): boolean {
     const xLabel: string = getLabel(x)
     const yLabel: string = getLabel(y)
+    const predecessors: Array<string> = this.graph.predecessors(yLabel) || []
 
-    return this.graph.predecessors(yLabel).some(file => this.graph.predecessors(file).some(r => r === xLabel))
+    return predecessors.some(file => (this.graph.predecessors(file) || []).some(r => r === xLabel))
   }
 
   getInputRules (file: File): Array<Rule> {
     const successors = this.graph.successors(file.filePath) || []
-    // $FlowIgnore
-    return successors.map(id => this.rules.get(id)).filter(rule => rule)
+    return <Rule[]>successors.map(id => this.rules.get(id)).filter(rule => rule)
   }
 
   getOutputRules (file: File): Array<Rule> {
     const predecessors = this.graph.predecessors(file.filePath) || []
-    // $FlowIgnore
-    return predecessors.map(id => this.rules.get(id)).filter(rule => rule)
+    return <Rule[]>predecessors.map(id => this.rules.get(id)).filter(rule => rule)
   }
 
   isOutputOf (file: File, ruleId: string): boolean {
-    return this.graph.inEdges(file.filePath).some(edge => edge.v.startsWith(ruleId))
+    const inEdges = this.graph.inEdges(file.filePath) || []
+
+    return inEdges.some(edge => edge.v.startsWith(ruleId))
   }
 }
