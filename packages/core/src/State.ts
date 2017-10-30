@@ -49,7 +49,6 @@ export default class State extends EventEmitter {
     const { dir, base, name, ext } = path.parse(resolveFilePath)
     this.filePath = base
     this.rootPath = dir,
-  DEFAULT_OPTIONS
     this.defaultOptions = {} as OptionsInterface
     for (const option of schema) {
       this.optionSchema.set(option.name, option)
