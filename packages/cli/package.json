@@ -40,6 +40,9 @@
   },
   "devDependencies": {
     "@types/graphlib": "^2.1.4",
+    "@types/js-yaml": "^3.9.1",
+    "@types/lodash": "^4.14.80",
+    "@types/yargs": "^8.0.2",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",

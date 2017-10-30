@@ -1,18 +1,17 @@
 #! /usr/bin/env node
-/* @flow */
 
 import 'babel-polyfill'
-import _ from 'lodash'
-import chalk from 'chalk'
-import cliui from 'cliui'
-import path from 'path'
-import yargs from 'yargs'
-import yaml from 'js-yaml'
+import * as _ from 'lodash'
+import * as chalk from 'chalk'
+import * as cliui from 'cliui'
+import * as path from 'path'
+import * as yargs from 'yargs'
+import * as yaml from 'js-yaml'
 
 import { DiCy, File } from '@dicy/core'
 
 // $FlowIgnore
-const columns = Math.min(Math.max(process.stdout.columns, 80), 132)
+const columns = Math.min(Math.max(process.stdout.columns || 80, 80), 132)
 
 const optionNames = {}
 const commandLists = {}
@@ -51,7 +50,7 @@ const handler = async (argv) => {
       return printRow('', chalk.dim(`[${label}] ${reference.file}${start}${end}`))
     }
 
-    function printRow (severity, text) {
+    function printRow (severity: string, text: string) {
       ui.div({
         text: severity || '',
         width: severityColumnWidth
