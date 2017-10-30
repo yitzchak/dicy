@@ -35,7 +35,7 @@ export default class ParsedXindyLog extends Rule {
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
-          severity: <Severity>match.groups.severity.toLowerCase(),
+          severity: match.groups.severity.toLowerCase() as Severity,
           text: `${match.groups.text} ${match.groups.file}`,
           source: { file: path.normalize(match.groups.file) },
           log: reference
@@ -48,7 +48,7 @@ export default class ParsedXindyLog extends Rule {
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         parsedLog.messages.push({
           name,
-          severity: <Severity>match.groups.severity.toLowerCase(),
+          severity: match.groups.severity.toLowerCase() as Severity,
           text: match.groups.text,
           source: { file: filePath },
           log: reference

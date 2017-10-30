@@ -19,7 +19,7 @@ export default class CopyTargetsToRoot extends Rule {
   async initialize () {
     // Remove the old target and replace with the new one.
     this.removeTarget(this.firstParameter.filePath)
-    await this.addResolvedTarget('$BASE_0')
+    this.addResolvedTarget('$BASE_0')
   }
 
   async run () {

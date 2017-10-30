@@ -2,9 +2,7 @@ import * as semver from 'semver'
 
 import File from '../File'
 import Rule from '../Rule'
-import { CACHE_VERSION } from '../types'
-
-import { Command, Phase, RuleCache, Cache } from '../types'
+import { CACHE_VERSION, Command, Phase, Cache } from '../types'
 
 export default class LoadAndValidateCache extends Rule {
   static phases: Set<Phase> = new Set<Phase>(['initialize'])
@@ -35,7 +33,7 @@ export default class LoadAndValidateCache extends Rule {
       }
     } else {
       this.info('Skipping loading build cache from disk since `loadCache` is not set.')
-      this.cleanCache()
+      await this.cleanCache()
     }
 
     // Get the main source file just in case it wasn't added by the cache load.
@@ -45,16 +43,16 @@ export default class LoadAndValidateCache extends Rule {
     return true
   }
 
-  cleanCache () {
+  async cleanCache () {
     for (const jobName of this.options.jobNames) {
       for (const file of this.files) {
-        this.state.deleteFile(file, jobName, false)
+        await this.state.deleteFile(file, jobName, false)
       }
     }
   }
 
   async loadCache () {
-    this.cleanCache()
+    await this.cleanCache()
 
     this.state.cacheTimeStamp = await File.getModifiedTime(this.cacheFilePath)
     const cache: Cache | undefined = await File.readYaml(this.cacheFilePath)
@@ -98,7 +96,7 @@ export default class LoadAndValidateCache extends Rule {
 
     for (const jobName of this.options.jobNames) {
       for (const file of files) {
-        this.state.deleteFile(file, jobName, false)
+        await this.state.deleteFile(file, jobName, false)
       }
     }
 

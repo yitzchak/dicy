@@ -66,7 +66,8 @@ export default class Clean extends Rule {
       this.emit('fileDeleted', { type: 'fileDeleted', file: filePath })
     }
 
-    const candidateDirectories: string[] = <string[]>await fastGlob('**/*', { cwd: this.rootPath, onlyDirs: true, bashNative: [] })
+    const globOptions = { cwd: this.rootPath, onlyDirs: true, bashNative: [] }
+    const candidateDirectories: string[] = await fastGlob('**/*', globOptions) as string[]
     candidateDirectories.reverse()
 
     for (const filePath of candidateDirectories) {

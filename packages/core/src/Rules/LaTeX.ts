@@ -30,7 +30,7 @@ export default class LaTeX extends Rule {
       '$OUTDIR/$JOB.fls-ParsedFileListing',
       '$OUTDIR/$JOB.log-ParsedLaTeXLog'
     ])
-    await this.addResolvedTargets([
+    this.addResolvedTargets([
       '$OUTDIR/$JOB$OUTEXT',
       '$OUTDIR/$JOB.synctex.gz'
     ])

@@ -1,9 +1,13 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint-config-standard"
-    ],
-    "jsRules": {},
-    "rules": {},
-    "rulesDirectory": []
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint-config-standard"
+  ],
+  "jsRules": {},
+  "linterOptions": {
+    "typeCheck": true,
+    "format": "stylish"
+  },
+  "rules": {},
+  "rulesDirectory": []
 }

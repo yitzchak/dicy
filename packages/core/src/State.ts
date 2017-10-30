@@ -33,7 +33,6 @@ export default class State extends EventEmitter {
   options: {[name: string]: any} = {}
   defaultOptions: OptionsInterface
   optionSchema: Map<string, Option> = new Map()
-  private graphProperties: GraphProperties = {}
   ruleClasses: typeof Rule[] = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set<number>()
@@ -43,13 +42,15 @@ export default class State extends EventEmitter {
   graph: Graph = new Graph()
   optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
+  private graphProperties: GraphProperties = {}
+
   constructor (filePath: string, schema: Option[] = []) {
     super()
     const resolveFilePath: string = path.resolve(filePath)
     const { dir, base, name, ext } = path.parse(resolveFilePath)
     this.filePath = base
     this.rootPath = dir
-    this.defaultOptions = <OptionsInterface>{}
+    this.defaultOptions = {} as OptionsInterface
     for (const option of schema) {
       this.optionSchema.set(option.name, option)
       for (const alias of option.aliases || []) {
@@ -286,7 +287,7 @@ export default class State extends EventEmitter {
     let optionProxy: OptionsInterface | undefined = this.optionProxies.get(jobName)
 
     if (!optionProxy) {
-      optionProxy = <OptionsInterface>new Proxy(this.options, {
+      optionProxy = new Proxy(this.options, {
         get: (target, name) => {
           if (name === 'jobNames') {
             if ('jobName' in target) return [target.jobName]
@@ -329,7 +330,7 @@ export default class State extends EventEmitter {
 
           return Array.from(keys.values())
         }
-      })
+      }) as OptionsInterface
 
       this.optionProxies.set(jobName, optionProxy)
     }
@@ -340,7 +341,7 @@ export default class State extends EventEmitter {
   get components (): Rule[][] {
     if (!this.graphProperties.components) {
       this.graphProperties.components = alg.components(this.graph)
-        .map(component => <Rule[]>component.map(id => this.rules.get(id)).filter(rule => rule))
+        .map(component => component.map(id => this.rules.get(id)).filter(rule => rule) as Rule[])
         .filter(component => component.length > 0)
     }
 
@@ -357,12 +358,12 @@ export default class State extends EventEmitter {
 
   getInputRules (file: File): Rule[] {
     const successors = this.graph.successors(file.filePath) || []
-    return <Rule[]>successors.map(id => this.rules.get(id)).filter(rule => rule)
+    return successors.map(id => this.rules.get(id)).filter(rule => rule) as Rule[]
   }
 
   getOutputRules (file: File): Rule[] {
     const predecessors = this.graph.predecessors(file.filePath) || []
-    return <Rule[]>predecessors.map(id => this.rules.get(id)).filter(rule => rule)
+    return predecessors.map(id => this.rules.get(id)).filter(rule => rule) as Rule[]
   }
 
   isOutputOf (file: File, ruleId: string): boolean {

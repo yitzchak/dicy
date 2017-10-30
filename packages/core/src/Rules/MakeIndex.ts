@@ -95,7 +95,7 @@ export default class MakeIndex extends Rule {
           case 'texindy':
           case 'mendex':
           case 'upmendex':
-            this.options.indexEngine = <IndexEngine>call.args[0]
+            this.options.indexEngine = call.args[0] as IndexEngine
             break
           default:
             this.info(`Ignoring unknown index engine \`${call.args[0]}\``)
@@ -139,9 +139,9 @@ export default class MakeIndex extends Rule {
             }
 
             if (call.options.I) {
-              this.options.kanjiInternal = <'euc' | 'sjis' | 'uptex' | 'utf8'>call.options.I.toString()
+              this.options.kanjiInternal = call.options.I.toString() as 'euc' | 'sjis' | 'uptex' | 'utf8'
             }
-            // fall through
+            // falls through
           case 'upmendex':
             if (call.options.d) {
               this.options.indexDictionary = call.options.d.toString()

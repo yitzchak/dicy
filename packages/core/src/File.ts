@@ -80,6 +80,104 @@ export default class File {
   }
 
   /**
+   * Load the file types from the resource file `resources/file-types.yaml`
+   */
+  static async loadFileTypes (): Promise<void> {
+    if (!this.fileTypes) {
+      const fileTypesPath = path.resolve(__dirname, '..', 'resources', 'file-types.yaml')
+      const value: {[name: string]: FileType} = (await this.readYaml(fileTypesPath)) as {[name: string]: FileType}
+
+      // Create a new map and iterate through each type in the file and save it
+      // to the map.
+      this.fileTypes = new Map()
+      for (const name in value) {
+        this.fileTypes.set(name, value[name])
+      }
+    }
+  }
+
+  static read (filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, { encoding: 'utf-8' }, (error, data) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(data.toString())
+        }
+      })
+    })
+  }
+
+  static async readYaml (filePath: string, fullSchema: boolean = true): Promise<any> {
+    const contents = await File.read(filePath)
+    return yaml.load(contents, {
+      schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
+    })
+  }
+
+  static write (filePath: string, value: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(filePath, value, { encoding: 'utf-8' }, (error) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
+  }
+
+  static async writeYaml (filePath: string, value: Object, fullSchema: boolean = false): Promise<void> {
+    const contents = yaml.dump(value, {
+      skipInvalid: true,
+      schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
+    })
+    await fs.writeFile(filePath, contents)
+  }
+
+  static canRead (filePath: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      fs.access(filePath, fs.constants.R_OK, error => resolve(!error))
+    })
+  }
+
+  static getModifiedTime (filePath: string): Promise<Date> {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (error, stat) => resolve(error ? new Date() : stat.mtime))
+    })
+  }
+
+  static isFile (filePath: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (error, stat) => resolve(!error && stat.isFile()))
+    })
+  }
+
+  static isDirectory (filePath: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (error, stat) => resolve(!error && stat.isDirectory()))
+    })
+  }
+
+  static remove (filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.remove(filePath, error => error ? reject(error) : resolve())
+    })
+  }
+
+  static ensureDir (filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.ensureDir(filePath, error => error ? reject(error) : resolve())
+    })
+  }
+
+  static copy (from: string, to: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.copy(from, to, error => error ? reject(error) : resolve())
+    })
+  }
+
+  /**
    * Parse the file using a list of Parsers.
    * @param  {Parser[]}      parsers   List of parsers to apply.
    * @param  {string => boolean}  isWrapped A function to test for line wrapping.
@@ -226,23 +324,6 @@ export default class File {
   }
 
   /**
-   * Load the file types from the resource file `resources/file-types.yaml`
-   */
-  static async loadFileTypes (): Promise<void> {
-    if (!this.fileTypes) {
-      const fileTypesPath = path.resolve(__dirname, '..', 'resources', 'file-types.yaml')
-      const value: {[name: string]: FileType} = <{[name: string]: FileType}>(await this.readYaml(fileTypesPath))
-
-      // Create a new map and iterate through each type in the file and save it
-      // to the map.
-      this.fileTypes = new Map()
-      for (const name in value) {
-        this.fileTypes.set(name, value[name])
-      }
-    }
-  }
-
-  /**
    * Find the type of a file by iterating through the available types and
    * testing each one.
    * @return {void}
@@ -381,101 +462,20 @@ export default class File {
     this.hasBeenUpdated = this.hasBeenUpdated || updated
   }
 
-  static read (filePath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      fs.readFile(filePath, { encoding: 'utf-8' }, (error, data) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(data.toString())
-        }
-      })
-    })
-  }
-
   read (): Promise<string> {
     return File.read(this.realFilePath)
-  }
-
-  static async readYaml (filePath: string, fullSchema: boolean = true): Promise<any> {
-    const contents = await File.read(filePath)
-    return yaml.load(contents, {
-      schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
-    })
   }
 
   readYaml (): Promise<Object> {
     return File.readYaml(this.realFilePath)
   }
 
-  static write (filePath: string, value: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      fs.writeFile(filePath, value, { encoding: 'utf-8' }, (error) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve()
-        }
-      })
-    })
-  }
-
   write (value: string): Promise<void> {
     return File.write(this.realFilePath, value)
   }
 
-  static async writeYaml (filePath: string, value: Object, fullSchema: boolean = false): Promise<void> {
-    const contents = yaml.dump(value, {
-      skipInvalid: true,
-      schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
-    })
-    await fs.writeFile(filePath, contents)
-  }
-
-  static canRead (filePath: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      fs.access(filePath, fs.constants.R_OK, error => resolve(!error))
-    })
-  }
-
   canRead (): Promise<boolean> {
     return File.canRead(this.realFilePath)
-  }
-
-  static getModifiedTime (filePath: string): Promise<Date> {
-    return new Promise((resolve, reject) => {
-      fs.stat(filePath, (error, stat) => resolve(error ? new Date() : stat.mtime))
-    })
-  }
-
-  static isFile (filePath: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      fs.stat(filePath, (error, stat) => resolve(!error && stat.isFile()))
-    })
-  }
-
-  static isDirectory (filePath: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      fs.stat(filePath, (error, stat) => resolve(!error && stat.isDirectory()))
-    })
-  }
-
-  static remove (filePath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      fs.remove(filePath, error => error ? reject(error) : resolve())
-    })
-  }
-
-  static ensureDir (filePath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      fs.ensureDir(filePath, error => error ? reject(error) : resolve())
-    })
-  }
-
-  static copy (from: string, to: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      fs.copy(from, to, error => error ? reject(error) : resolve())
-    })
   }
 
   copy (to: string): Promise<void> {

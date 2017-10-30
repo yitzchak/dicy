@@ -1,5 +1,3 @@
-
-
 import Rule from '../Rule'
 
 import { Action, Command, Message, ParsedLog, ParserMatch, Reference, Severity } from '../types'
@@ -69,7 +67,7 @@ export default class ParseBiberLog extends Rule {
         }
 
         const message: Message = {
-          severity: <Severity>(severity),
+          severity: severity as Severity,
           name: 'Biber',
           text: match.groups.text,
           log: reference

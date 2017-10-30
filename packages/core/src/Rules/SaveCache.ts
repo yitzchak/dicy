@@ -1,9 +1,15 @@
 import File from '../File'
 import Rule from '../Rule'
 import State from '../State'
-import { CACHE_VERSION } from '../types'
-
-import { Command, FileCache, Cache, Phase, OptionsInterface, RuleCache } from '../types'
+import {
+  CACHE_VERSION,
+  Command,
+  FileCache,
+  Cache,
+  Phase,
+  OptionsInterface,
+  RuleCache
+} from '../types'
 
 export default class SaveCache extends Rule {
   static commands: Set<Command> = new Set<Command>(['save'])

@@ -289,5 +289,6 @@ DiCy.getOptionDefinitions().then(definitions => {
   createCommand(['build', 'log'], 'Build the inputs and report messages from any logs.')
   createCommand(['build', 'log', 'clean'], 'Build the inputs, report messages from any logs, and then clean up.')
 
+  /* tslint:disable:no-unused-expression */
   yargs.argv
 }, error => { console.log(error) })

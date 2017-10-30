@@ -2,7 +2,7 @@ import * as _ from 'lodash'
 
 import Rule from '../Rule'
 
-import { Command, SourceMap, LineRange, LineRangeMapping, ParsedLog, SourceMaps } from '../types'
+import { Command, LineRange, LineRangeMapping, ParsedLog, SourceMaps } from '../types'
 
 function inRange (range: LineRange, line: number) {
   return range.start <= line && range.end >= line

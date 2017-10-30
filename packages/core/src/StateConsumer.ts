@@ -219,14 +219,16 @@ export default class StateConsumer {
 
   async globPath (pattern: string, { types = 'all', ignorePattern }: GlobOptions = {}): Promise<string[]> {
     try {
-      return <string[]>await fastGlob(this.expandVariables(pattern), {
+      return await fastGlob(this.expandVariables(pattern), {
         cwd: this.rootPath,
         bashNative: [],
         onlyFiles: types === 'files',
         onlyDirs: types === 'directories',
         ignore: ignorePattern
-      })
-    } catch (error) {}
+      }) as string[]
+    } catch (error) {
+      this.error(error.toString())
+    }
 
     return []
   }
@@ -382,7 +384,7 @@ export default class StateConsumer {
       child.on('close', (code: any, signal: any) => {
         let error
         if (code !== 0 || signal !== null) {
-          error = <any>new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim())
+          error = new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim()) as any
           error.code = code
           error.signal = signal
         }

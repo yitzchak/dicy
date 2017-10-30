@@ -31,6 +31,30 @@ export default class Rule extends StateConsumer {
   actions: Map<Action, Set<File>> = new Map()
   failures: Set<Action> = new Set<Action>()
 
+  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []) {
+    super(state, options)
+
+    this.parameters = parameters
+    this.command = command
+    this.phase = phase
+    this.id = state.getRuleId(this.constructor.name, command, phase, options.jobName, parameters.map(file => file.filePath))
+
+    this.parameters.forEach((file, index) => {
+      const { dir, base, name, ext } = path.parse(file.filePath)
+      const rootPath = path.dirname(file.realFilePath)
+
+      this.env[`FILEPATH_${index}`] = file.filePath
+      this.env[`ROOTDIR_${index}`] = rootPath
+      this.env[`DIR_${index}`] = dir || '.'
+      this.env[`BASE_${index}`] = base
+      this.env[`NAME_${index}`] = name
+      this.env[`EXT_${index}`] = ext
+
+      if (options.jobName) file.jobNames.add(options.jobName)
+      state.addEdge(file.filePath, this.id)
+    })
+  }
+
   static async analyzePhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<Rule | undefined> {
     const appliesToPhase: boolean = this.commands.has(command) && this.phases.has(phase) &&
           this.parameterTypes.length === 0
@@ -89,30 +113,6 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []) {
-    super(state, options)
-
-    this.parameters = parameters
-    this.command = command
-    this.phase = phase
-    this.id = state.getRuleId(this.constructor.name, command, phase, options.jobName, parameters.map(file => file.filePath))
-
-    this.parameters.forEach((file, index) => {
-      const { dir, base, name, ext } = path.parse(file.filePath)
-      const rootPath = path.dirname(file.realFilePath)
-
-      this.env[`FILEPATH_${index}`] = file.filePath
-      this.env[`ROOTDIR_${index}`] = rootPath
-      this.env[`DIR_${index}`] = dir || '.'
-      this.env[`BASE_${index}`] = base
-      this.env[`NAME_${index}`] = name
-      this.env[`EXT_${index}`] = ext
-
-      if (options.jobName) file.jobNames.add(options.jobName)
-      state.addEdge(file.filePath, this.id)
-    })
-  }
-
   error (text: string, name?: string) {
     super.error(text, name || this.id)
   }
@@ -125,10 +125,11 @@ export default class Rule extends StateConsumer {
     super.info(text, name || this.id)
   }
 
+  /* tslint:disable:no-empty */
   async initialize () {}
 
   async phaseInitialize (command: Command, phase: Phase) {
-    if (command === this.command && phase === this.phase && (<typeof Rule>this.constructor).alwaysEvaluate) {
+    if (command === this.command && phase === this.phase && (this.constructor as typeof Rule).alwaysEvaluate) {
       if (this.inputs.length === 0) {
         this.addActions()
       } else {
@@ -153,11 +154,11 @@ export default class Rule extends StateConsumer {
   }
 
   async getFileActions (file: File): Promise<Action[]> {
-    return (<typeof Rule>this.constructor).defaultActions
+    return (this.constructor as typeof Rule).defaultActions
   }
 
   addActions (file?: File, actions?: Action[]): void {
-    if (!actions) actions = (<typeof Rule>this.constructor).defaultActions
+    if (!actions) actions = (this.constructor as typeof Rule).defaultActions
 
     for (const action of actions || []) {
       const files: Set<File> | undefined = this.actions.get(action)
@@ -193,12 +194,12 @@ export default class Rule extends StateConsumer {
 
   get inputs (): File[] {
     const predecessors = this.state.graph.predecessors(this.id) || []
-    return <File[]>predecessors.map(filePath => this.state.files.get(filePath)).filter(file => file)
+    return predecessors.map(filePath => this.state.files.get(filePath)).filter(file => file) as File[]
   }
 
   get outputs (): File[] {
     const successors = this.state.graph.successors(this.id) || []
-    return <File[]>successors.map(filePath => this.state.files.get(filePath)).filter(file => file)
+    return successors.map(filePath => this.state.files.get(filePath)).filter(file => file) as File[]
   }
 
   async preEvaluate (): Promise<void> {}

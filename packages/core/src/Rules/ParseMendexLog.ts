@@ -35,7 +35,7 @@ export default class ParsedMendexLog extends Rule {
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         const message: Message = {
           name,
-          severity: <Severity>match.groups.severity.toLowerCase(),
+          severity: match.groups.severity.toLowerCase() as Severity,
           text: match.groups.text,
           source: { file: filePath },
           log: reference

@@ -25,6 +25,18 @@ export default class DiCy extends StateConsumer {
     return builder
   }
 
+  static async getOptionDefinitions (): Promise<Option[]> {
+    const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
+    const schema: any = await File.readYaml(filePath, true)
+    const options = []
+    for (const name in schema) {
+      const option: Option = schema[name]
+      option.name = name
+      options.push(option)
+    }
+    return options
+  }
+
   async initialize () {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
     const entries: string[] = await readdir.async(ruleClassPath)
@@ -236,18 +248,6 @@ export default class DiCy extends StateConsumer {
 
       if (!didEvaluation) break
     }
-  }
-
-  static async getOptionDefinitions (): Promise<Option[]> {
-    const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
-    const schema: any = await File.readYaml(filePath, true)
-    const options = []
-    for (const name in schema) {
-      const option: Option = schema[name]
-      option.name = name
-      options.push(option)
-    }
-    return options
   }
 
   async updateOptions (options: Object = {}, user: boolean = false): Promise<Object> {

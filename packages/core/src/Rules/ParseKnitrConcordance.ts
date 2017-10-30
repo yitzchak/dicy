@@ -30,7 +30,7 @@ export default class ParseKnitrConcordance extends Rule {
       patterns: [/^\\Sconcordance\{concordance:([^:]*):([^:]*):([^}]*)\}$/],
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         // Split up the indicies in preparation to decode the RLE array.
-        const encodedIndicies: number[] = match.groups.indicies.split(/\s+/).map(x => parseInt(x))
+        const encodedIndicies: number[] = match.groups.indicies.split(/\s+/).map(x => parseInt(x, 10))
         const mappings: LineRangeMapping[] = []
         let inputLine: number = 1
         let outputLine: number = 1

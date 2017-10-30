@@ -1,6 +1,6 @@
 import Rule from '../Rule'
 
-import { Command, Message, ParsedLog } from '../types'
+import { Command, ParsedLog } from '../types'
 
 export default class ReportLogMessages extends Rule {
   static parameterTypes: Set<string>[] = [new Set([

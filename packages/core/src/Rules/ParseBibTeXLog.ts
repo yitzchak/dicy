@@ -1,5 +1,3 @@
-
-
 import Rule from '../Rule'
 
 import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
@@ -112,7 +110,9 @@ export default class ParseBibTeXLog extends Rule {
       parsedLog.inputs = stdout
         ? stdout.split('\n').filter((file: string) => file).map(file => this.normalizePath(file))
         : []
-    } catch (error) {}
+    } catch (error) {
+      this.error(error.toString())
+    }
 
     output.value = parsedLog
 

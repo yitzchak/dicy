@@ -43,6 +43,7 @@ export default class ParseLaTeXLog extends Rule {
     await this.firstParameter.parse([{
       // Ignore intro line
       patterns: [/^This is/],
+      /* tslint:disable:no-empty */
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {}
     }, {
       // Input file name
@@ -110,7 +111,7 @@ export default class ParseLaTeXLog extends Rule {
       patterns: [/^(.+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         const message: Message = {
-          severity: <Severity>match.groups.severity.toLowerCase(),
+          severity: match.groups.severity.toLowerCase() as Severity,
           name,
           category: match.groups.category,
           text: match.groups.text,
@@ -191,7 +192,7 @@ export default class ParseLaTeXLog extends Rule {
       ],
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
         const message: Message = {
-          severity: <Severity>match.groups.severity,
+          severity: match.groups.severity as Severity,
           name,
           category: match.groups.category,
           source: { file: sourcePaths[0] },
