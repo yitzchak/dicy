@@ -33,7 +33,7 @@ export default class State extends EventEmitter {
   options: {[name: string]: any} = {}
   defaultOptions: OptionsInterface
   optionSchema: Map<string, Option> = new Map()
-  graphProperties: GraphProperties = {}
+  private graphProperties: GraphProperties = {}
   ruleClasses: typeof Rule[] = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set<number>()

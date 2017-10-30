@@ -2,22 +2,29 @@
 
 import 'babel-polyfill'
 import * as _ from 'lodash'
-import * as chalk from 'chalk'
+import chalk from 'chalk'
 import * as cliui from 'cliui'
 import * as path from 'path'
 import * as yargs from 'yargs'
 import * as yaml from 'js-yaml'
 
-import { DiCy, File } from '@dicy/core'
+import {
+  Command,
+  DiCy,
+  Event,
+  File,
+  LogEvent,
+  Message,
+  Reference
+} from '@dicy/core'
 
-// $FlowIgnore
 const columns = Math.min(Math.max(process.stdout.columns || 80, 80), 132)
 
-const optionNames = {}
-const commandLists = {}
+const optionNames: {[name: string]: string} = {}
+const commandLists: any = {}
 
-const handler = async (argv) => {
-  const options = {}
+const handler = async (argv: any) => {
+  const options: {[name: string]: any} = {}
   for (const name in argv) {
     const value = argv[name]
     if (name in optionNames && value !== undefined && value !== false) {
@@ -25,21 +32,19 @@ const handler = async (argv) => {
     }
   }
   const commands = commandLists[argv._]
-  const {
-    saveEvents = [],
-    verbose = false,
-    consoleEventOutput = false,
-    inputs = []
-  } = argv
-  const eventData = {}
+  const inputs: string[] = argv.inputs || []
+  const saveEvents: string[] = argv.saveEvents || []
+  const verbose: boolean = !!argv.verbose
+  const consoleEventOutput: boolean = !!argv.consoleEventOutput
+  const eventData: any = {}
 
-  function log (message) {
+  function log (message: Message) {
     if (consoleEventOutput) return
 
     const ui = cliui()
     const severityColumnWidth = 10
 
-    function printReference (reference, label) {
+    function printReference (reference: Reference | undefined, label: string) {
       if (!reference) return
       const start = reference.range && reference.range.start
         ? ` @ ${reference.range.start}`
@@ -60,7 +65,7 @@ const handler = async (argv) => {
       })
     }
 
-    let severity
+    let severity: string
 
     switch (message.severity) {
       case 'error':
@@ -80,7 +85,7 @@ const handler = async (argv) => {
       text = `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ${message.text}`
     }
 
-    text.split('\n').forEach((line, index) => printRow(index === 0 ? severity : '', index === 0 ? line : `- ${line}`))
+    text.split('\n').forEach((line: string, index: number) => printRow(index === 0 ? severity : '', index === 0 ? line : `- ${line}`))
 
     printReference(message.source, 'Source')
     printReference(message.log, 'Log')
@@ -91,7 +96,7 @@ const handler = async (argv) => {
   let success = true
 
   for (const filePath of inputs) {
-    const events = []
+    const events: Event[] = []
     const dicy = await DiCy.create(path.resolve(filePath), options)
     dicy
       .on('log', log)
@@ -164,8 +169,8 @@ yargs
   .help()
 
 DiCy.getOptionDefinitions().then(definitions => {
-  function getOptions (commands) {
-    const options = {
+  function getOptions (commands: Command[]) {
+    const options: { [name: string]: any } = {
       'save-events': {
         array: true,
         description: 'List of event types to save in YAML format. By default this will save to a file <name>-events.yaml unless --console-event-output is enabled.'
@@ -185,9 +190,9 @@ DiCy.getOptionDefinitions().then(definitions => {
       // Skip environment variables
       if (definition.name.startsWith('$') || definition.name.includes('_')) continue
 
-      if (definition.commands && !definition.commands.some(command => commands.includes(command))) continue
+      if (definition.commands && !definition.commands.some(command => commands.includes(command as Command))) continue
 
-      const addOption = (name, option) => {
+      const addOption = (name: string, option: any) => {
         optionNames[name] = definition.name
         if (definition.values) {
           // $FlowIgnore
@@ -202,7 +207,6 @@ DiCy.getOptionDefinitions().then(definitions => {
 
       switch (definition.type) {
         case 'strings':
-        case 'numbers':
           addOption(name, {
             type: 'array',
             alias,
@@ -252,7 +256,7 @@ DiCy.getOptionDefinitions().then(definitions => {
     return options
   }
 
-  function createCommand (commands, description) {
+  function createCommand (commands: Command[], description: string) {
     const name = commands.join(',')
     const alias = commands.map(c => c.substr(0, 1)).join('')
 
@@ -266,9 +270,9 @@ DiCy.getOptionDefinitions().then(definitions => {
       .command({
         command: `${name} <inputs...>`,
         aliases: [alias],
-        description,
+        describe: description,
         builder: yargs => {
-          yargs
+          return yargs
             .options(getOptions(commands))
             .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
         },
@@ -285,5 +289,5 @@ DiCy.getOptionDefinitions().then(definitions => {
   createCommand(['build', 'log'], 'Build the inputs and report messages from any logs.')
   createCommand(['build', 'log', 'clean'], 'Build the inputs, report messages from any logs, and then clean up.')
 
-  yargs.parse()
+  yargs()
 }, error => { console.log(error) })
