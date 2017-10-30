@@ -45,6 +45,7 @@ describe('CreateOutputTree', () => {
 
   describe('run', () => {
     let dirs
+    let ensureDirSpy: jasmine.Spy
 
     function createTree (rule: CreateOutputTree) {
       dirs = ['foo/bar', 'quux/baz', 'wibble/angle/dangle'].map(dir => path.resolve(rule.rootPath, dir))
@@ -52,7 +53,7 @@ describe('CreateOutputTree', () => {
     }
 
     beforeEach(async (done) => {
-      spyOn(File, 'ensureDir')
+      ensureDirSpy = spyOn(File, 'ensureDir')
       done()
     })
 
@@ -71,7 +72,7 @@ describe('CreateOutputTree', () => {
       await createTree(rule)
 
       expect(await rule.run()).toBeTruthy()
-      expect(File.ensureDir.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
+      expect(ensureDirSpy.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
     })
@@ -95,7 +96,7 @@ describe('CreateOutputTree', () => {
       await createTree(rule)
 
       expect(await rule.run()).toBeTruthy()
-      expect(File.ensureDir.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
+      expect(ensureDirSpy.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
     })
@@ -121,7 +122,7 @@ describe('CreateOutputTree', () => {
       await createTree(rule)
 
       expect(await rule.run()).toBeTruthy()
-      expect(File.ensureDir.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
+      expect(ensureDirSpy.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
     })

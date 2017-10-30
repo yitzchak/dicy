@@ -375,7 +375,7 @@ export default class StateConsumer {
           resolve({ stdout, stderr })
         }
       }
-      const child = childProcess.spawn(command, undefined, options)
+      const child = childProcess.spawn(command, options)
 
       if (child.pid) this.state.processes.add(child.pid)
       child.on('error', handleExit)

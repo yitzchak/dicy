@@ -59,11 +59,11 @@ export function partitionMessages (received: Array<Event>, expected: Array<Event
 
   for (const event of _.uniqWith(received, _.isEqual)) {
     let index = missing.findIndex(candidate =>
-      _.isMatchWith(event, candidate, (x: any, y: any, key: number | string | symbol) => key === 'file'
+      _.isMatchWith(event, candidate, <_.isMatchCustomizer>((x: any, y: any, key: number | string | symbol): boolean | undefined => key === 'file'
         ? compareFilePaths(x, y)
         : ((typeof x === 'string' && typeof y === 'string')
           ? stringCompare(x, y)
-          : undefined)))
+          : undefined))))
     if (index === -1) {
       improper.push(event)
     } else {
@@ -144,10 +144,4 @@ export async function initializeRule ({ RuleClass, command, phase, jobName, file
   await rule.initialize()
 
   return { dicy, rule, options: jobOptions }
-}
-
-declare module jasmine {
-  interface ArrayLikeMatchers<T> {
-    toReceiveEvents: (util: any, customEqualityTesters: any) => void;
-  }
 }

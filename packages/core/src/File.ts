@@ -119,7 +119,7 @@ export default class File {
             matched = matches.every(match => !!match)
             if (matched) {
               const parserMatch: ParserMatch = {
-                _: matches.map(match => matches[0]).join('\n'),
+                _: matches.map(match => match ? match[0] : '').join('\n'),
                 captures: [],
                 groups: {}
               }
