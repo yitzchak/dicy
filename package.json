@@ -61,15 +61,6 @@
     "yargs-parser": "^8.0.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^4.0.3",
-    "@types/graphlib": "^2.1.4",
-    "@types/jasmine": "^2.6.2",
-    "@types/js-yaml": "^3.9.1",
-    "@types/lodash": "^4.14.80",
-    "@types/node": "^8.0.47",
-    "@types/semver": "^5.4.0",
-    "@types/temp": "^0.8.31",
-    "@types/yargs": "^8.0.2",
     "chalk-cli": "^4.0.0",
     "jasmine-ts": "^0.2.1",
     "jasmine": "^2.8.0",
@@ -82,7 +73,7 @@
     "tosource": "^1.0.0",
     "ts-node": "^3.3.0",
     "tslint-config-standard": "^7.0.0",
-    "typescript": "^2.5.3",
+    "typescript": "^2.5.3"
   },
   "remarkConfig": {
     "plugins": [
