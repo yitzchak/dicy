@@ -13,7 +13,6 @@ import {
   DiCy,
   Event,
   File,
-  LogEvent,
   Message,
   Reference
 } from '@dicy/core'

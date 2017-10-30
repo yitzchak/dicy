@@ -13,8 +13,7 @@ import {
   OptionsInterface,
   OptionInterfaceMap,
   Phase,
-  RuleCache,
-  DEFAULT_OPTIONS
+  RuleCache
 } from './types'
 
 function getLabel (x: File | Rule): string {
@@ -49,7 +48,8 @@ export default class State extends EventEmitter {
     const resolveFilePath: string = path.resolve(filePath)
     const { dir, base, name, ext } = path.parse(resolveFilePath)
     this.filePath = base
-    this.rootPath = dir
+    this.rootPath = dir,
+  DEFAULT_OPTIONS
     this.defaultOptions = {} as OptionsInterface
     for (const option of schema) {
       this.optionSchema.set(option.name, option)
@@ -203,7 +203,7 @@ export default class State extends EventEmitter {
           type: 'fileRemoved',
           file: filePath
         })
-        return
+        return undefined
       }
       this.addNode(filePath)
       this.emit('fileAdded', {

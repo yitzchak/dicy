@@ -8,12 +8,10 @@ import File from './File'
 import Rule from './Rule'
 
 import {
-  Command,
   GlobOptions,
   KillToken,
   Message,
   OptionsInterface,
-  Phase,
   ProcessResults
 } from './types'
 
@@ -68,7 +66,7 @@ export default class StateConsumer {
   async replaceResolvedTarget (oldFilePath: string, newFilePath: string) {
     const x = this.resolvePath(oldFilePath)
     if (this.state.targets.has(x)) {
-      await this.addResolvedTarget(newFilePath)
+      this.addResolvedTarget(newFilePath)
     }
   }
 
@@ -366,6 +364,7 @@ export default class StateConsumer {
       let stdout: string
       let stderr: string
       let exited: boolean = false
+      const child = childProcess.spawn(command, options)
       const handleExit = (error: any): void => {
         if (exited) return
         exited = true
@@ -377,7 +376,6 @@ export default class StateConsumer {
           resolve({ stdout, stderr })
         }
       }
-      const child = childProcess.spawn(command, options)
 
       if (child.pid) this.state.processes.add(child.pid)
       child.on('error', handleExit)

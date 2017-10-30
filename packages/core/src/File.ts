@@ -71,7 +71,7 @@ export default class File {
     await file.findType()
     // If the file type is not a virtual file type and there is no physical file
     // then just quit.
-    if (!file.virtual && !await File.canRead(realFilePath)) return
+    if (!file.virtual && !await File.canRead(realFilePath)) return undefined
     // Check for an update to file in case it has changed since the cache was
     // finalized.
     await file.update()
