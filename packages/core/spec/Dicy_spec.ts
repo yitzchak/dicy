@@ -30,7 +30,7 @@ describe('DiCy', () => {
 
   describe('can successfully build', () => {
     for (const name of tests) {
-      it(name, async (done) => {
+      const spec: any = it(name, async (done) => {
         let expected = { types: [], events: [] }
         let events: any[] = []
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
@@ -52,7 +52,7 @@ describe('DiCy', () => {
 
         for (const command of dicy.options.check || []) {
           if (!await doCheck(command)) {
-            pending(`Skipped test since required program is not available (\`${command}\` was not successful).`)
+            spec.pend(`Skipped test since required program is not available (\`${command}\` was not successful).`)
             done()
             return
           }
