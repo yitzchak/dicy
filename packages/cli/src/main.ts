@@ -193,7 +193,6 @@ DiCy.getOptionDefinitions().then(definitions => {
       const addOption = (name: string, option: any) => {
         optionNames[name] = definition.name
         if (definition.values) {
-          // $FlowIgnore
           option.choices = definition.values
         }
         options[name] = option

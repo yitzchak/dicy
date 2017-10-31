@@ -29,7 +29,7 @@
     "fix-ts": "echo Fixing TypeScript... | chalk yellowBright bold && tslint --fix --format stylish --project tsconfig.json",
     "fix-md": "echo Fixing MarkDown... | chalk yellowBright bold && remark . -o",
     "flow-typed-update": "flow-typed install --overwrite --skip",
-    "format-yaml": "babel-node scripts/format-yaml.js",
+    "format-yaml": "ts-node scripts/format-yaml.ts",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
     "lint": "npm run lint-md && npm run lint-ts",
@@ -37,8 +37,8 @@
     "lint-md": "echo Linting MarkDown... | chalk yellowBright bold && remark .",
     "specs": "echo Running core specs... | chalk yellowBright bold && cd packages/core && npm test",
     "test": "npm run lint && npm run specs",
-    "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
-    "update-types": "babel-node scripts/update-types && eslint --fix packages/core/src/types.js"
+    "update-dependencies": "lerna exec -- ts-node ../../scripts/update-dependencies.ts",
+    "update-types": "ts-node scripts/update-types"
   },
   "dependencies": {
     "chalk": "^2.1.0",

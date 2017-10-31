@@ -1,16 +1,14 @@
-/* @flow */
-
-import fs from 'fs-extra'
-import path from 'path'
+import * as fs from 'fs-extra'
+import * as path from 'path'
 import toSource from 'tosource'
 
 import { DiCy } from '../packages/core/src/main'
-import type { Option } from '../packages/core/src/types'
+import { Option } from '../packages/core/src/types'
 
 async function main () {
   const filePath = path.join(__dirname, '../packages/core/src/types.js')
   const previous = await fs.readFile(filePath, 'utf8')
-  const options: Array<Option> = await DiCy.getOptionDefinitions()
+  const options: Option[] = await DiCy.getOptionDefinitions()
   const defaultOptions = {}
   const properties = options.map(option => {
     let property: string = option.name.includes('$') ? `'${option.name}'` : option.name
@@ -25,9 +23,6 @@ async function main () {
       property += option.values.map(x => toSource(x).replace(/"/g, '\'')).join(' | ')
     } else {
       switch (option.type) {
-        case 'numbers':
-          property += 'Array<number>'
-          break
         case 'strings':
           property += 'Array<string>'
           break
@@ -53,7 +48,7 @@ export interface OptionsInterface {
 
 export const DEFAULT_OPTIONS = ${toSource(defaultOptions)}
 
-// END_AUTO`), 'utf8')
+// END_AUTO`), { encoding: 'utf8' })
 }
 
 main()
