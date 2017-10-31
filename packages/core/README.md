@@ -70,12 +70,10 @@ via the library interface.
 
 ## Library Usage
 
-The primary class for usage is the `DiCy` class. The library requires a
-polyfill for `Set`/`Map` usage such as `babel-polyfill`. For instance, to build
+The primary class for usage is the `DiCy` class. For instance, to build
 `foo.tex` and report any log messages:
 
 ```javascript
-import 'babel-polyfill'
 import { DiCy } from '@dicy/core'
 
 const builder = await DiCy.create('foo.tex', { synctex: true })
