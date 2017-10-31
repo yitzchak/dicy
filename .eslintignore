@@ -1,5 +1,0 @@
-decls/*
-flow-typed/*
-packages/*/node_modules/*
-packages/*/lib/*
-node_modules/*

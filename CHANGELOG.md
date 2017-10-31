@@ -3,6 +3,12 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased][]
+
+### Changed
+-   Use Node Boron LTS thereby removing need foe Map/Set polyfill.
+-   Use TypeScript instead of Flow.
+
 ## [v0.11.0][] — 2017-10-25
 
 ### Added
@@ -189,6 +195,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     `sage`.
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
+
+[unreleased]: https://github.com/yitzchak/dicy/compare/v0.11.0...master
 
 [v0.11.0]: https://github.com/yitzchak/dicy/compare/v0.10.1...v0.11.0
 

@@ -17,7 +17,7 @@
   "contributors": [],
   "homepage": "https://yitzchak.github.io/dicy/",
   "engines": {
-    "node": ">=7.0.0"
+    "node": ">=6.9.0"
   },
   "license": "MIT",
   "scripts": {
@@ -25,24 +25,22 @@
     "clean": "lerna clean --yes",
     "create-fixtures": "scripts/create-fixtures",
     "dicy": "node packages/cli/lib/main.js",
-    "fix": "npm run fix-md && npm run fix-js",
-    "fix-js": "echo Fixing JavaScript... | chalk yellowBright bold && eslint --color --fix packages",
+    "fix": "npm run fix-md && npm run fix-ts",
+    "fix-ts": "echo Fixing TypeScript... | chalk yellowBright bold && tslint --fix --format stylish --project tsconfig.json",
     "fix-md": "echo Fixing MarkDown... | chalk yellowBright bold && remark . -o",
     "flow-typed-update": "flow-typed install --overwrite --skip",
-    "format-yaml": "babel-node scripts/format-yaml.js",
+    "format-yaml": "ts-node scripts/format-yaml.ts",
     "lerna-publish": "lerna publish",
     "lerna-updated": "lerna updated",
-    "lint": "npm run lint-md && npm run lint-js",
-    "lint-js": "echo Linting JavaScript... | chalk yellowBright bold && eslint --color packages",
+    "lint": "npm run lint-md && npm run lint-ts",
+    "lint-ts": "echo Linting TypeScript... | chalk yellowBright bold && tslint --format stylish --project tsconfig.json",
     "lint-md": "echo Linting MarkDown... | chalk yellowBright bold && remark .",
     "specs": "echo Running core specs... | chalk yellowBright bold && cd packages/core && npm test",
     "test": "npm run lint && npm run specs",
-    "update-dependencies": "lerna exec -- node ../../scripts/update-dependencies.js",
-    "update-types": "babel-node scripts/update-types && eslint --fix packages/core/src/types.js"
+    "update-dependencies": "lerna exec -- ts-node ../../scripts/update-dependencies.ts",
+    "update-types": "ts-node scripts/update-types && npm run fix-ts"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "babel-runtime": "^6.26.0",
     "chalk": "^2.1.0",
     "cliui": "^3.2.0",
     "command-join": "^2.0.0",
@@ -56,57 +54,26 @@
     "semver": "^5.4.1",
     "temp": "^0.8.3",
     "tree-kill": "^1.2.0",
+    "tslint": "^5.8.0",
     "yargs": "^10.0.3",
     "yargs-parser": "^8.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-plugin-transform-strict-mode": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-flow": "^6.23.0",
-    "babel-preset-stage-3": "^6.24.1",
-    "babel-register": "^6.26.0",
+    "@types/fs-extra": "^4.0.3",
+    "@types/lodash": "^4.14.80",
     "chalk-cli": "^4.0.0",
-    "eslint": "^4.8.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-flowtype": "^2.39.1",
-    "eslint-plugin-flowtype-errors": "^3.3.4",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.2.0",
-    "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "^0.57.2",
-    "flow-typed": "^2.2.0",
     "jasmine": "^2.8.0",
+    "jasmine-ts": "^0.2.1",
     "lerna": "^2.4.0",
     "remark-cli": "^4.0.0",
     "remark-preset-lint-consistent": "^2.0.1",
     "remark-preset-lint-markdown-style-guide": "^2.1.1",
     "remark-preset-lint-recommended": "^3.0.1",
     "rimraf": "^2.6.2",
-    "tosource": "^1.0.0"
-  },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "node": "7.0.0"
-          }
-        }
-      ],
-      "stage-3",
-      "flow"
-    ],
-    "plugins": [
-      "transform-runtime",
-      "transform-class-properties",
-      "transform-strict-mode"
-    ]
+    "tosource": "^1.0.0",
+    "ts-node": "^3.3.0",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.5.3"
   },
   "remarkConfig": {
     "plugins": [
