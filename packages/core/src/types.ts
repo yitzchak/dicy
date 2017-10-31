@@ -186,19 +186,53 @@ export type SourceMaps = {
 
 // START_AUTO
 
+export type BibtexEngine = 'bibtex' | 'bibtex8' | 'bibtexu' | 'pbibtex' | 'upbibtex'
+
+export type DviToPdfEngine = 'dvipdfm' | 'xdvipdfmx' | 'dvipdfmx'
+
+export type EpstopdfBoundingBox = 'default' | 'exact' | 'hires'
+
 export type IndexEngine = 'makeindex' | 'mendex' | 'texindy' | 'upmendex'
+
+export type IndexOrdering = 'word' | 'letter'
+
+export type IndexSorting = 'default' | 'german' | 'thai' | 'locale'
+
+export type Kanji = 'euc' | 'jis' | 'sjis' | 'uptex' | 'utf8'
+
+export type KanjiInternal = 'euc' | 'sjis' | 'uptex' | 'utf8'
+
+export type Lhs2texStyle = 'poly' | 'math' | 'newCode' | 'code' | 'typewriter' | 'verbatim'
+
+export type LiterateAgdaEngine = 'agda' | 'lhs2TeX' | 'none'
+
+export type LiterateHaskellEngine = 'lhs2TeX' | 'none'
+
+export type OutputFormat = 'dvi' | 'pdf' | 'ps' | 'svg'
+
+export type PweaveOutputFormat = 'tex' | 'texminted' | 'texpweave' | 'texpygments'
+
+export type ShellEscape = 'disabled' | 'restricted' | 'enabled'
 
 export interface OptionsInterface {
   [name: string]: any,
   $BIBINPUTS: string | string[],
+  $BLTXMLINPUTS?: string | string[],
+  $BSTINPUTS?: string | string[],
+  $CLUAINPUTS?: string | string[],
+  $LUAINPUTS?: string | string[],
+  $MFINPUTS?: string | string[],
+  $MPINPUTS?: string | string[],
+  $PATH?: string | string[],
   $TEXINPUTS: string | string[],
-  bibtexEngine: 'bibtex' | 'bibtex8' | 'bibtexu' | 'pbibtex' | 'upbibtex',
+  $TEXPICTS?: string | string[],
+  bibtexEngine: BibtexEngine,
   check?: string[],
   cleanPatterns: string[],
   copyTargetsToRoot: boolean,
-  dviToPdfEngine: 'dvipdfm' | 'xdvipdfmx' | 'dvipdfmx',
+  dviToPdfEngine: DviToPdfEngine,
   engine: string,
-  epstopdfBoundingBox: 'default' | 'exact' | 'hires',
+  epstopdfBoundingBox: EpstopdfBoundingBox,
   epstopdfOutputPath: string,
   epstopdfRestricted: boolean,
   filePath: string,
@@ -208,55 +242,52 @@ export interface OptionsInterface {
   indexEngine: IndexEngine,
   indexForceKanji: boolean,
   indexLogPath?: string,
-  indexOrdering: 'word' | 'letter',
+  indexOrdering: IndexOrdering,
   indexOutputPath?: string,
-  indexSorting: 'default' | 'german' | 'thai' | 'locale',
+  indexSorting: IndexSorting,
   indexStartPage?: string,
   indexStyle?: string,
   intermediatePostScript: boolean,
   jobName?: string,
   jobNames: string[],
-  kanji?: 'euc' | 'jis' | 'sjis' | 'uptex' | 'utf8',
-  kanjiInternal?: 'euc' | 'sjis' | 'uptex' | 'utf8',
+  kanji?: Kanji,
+  kanjiInternal?: KanjiInternal,
   knitrConcordance: boolean,
   knitrOutputPath: string,
-  lhs2texStyle: 'poly' | 'math' | 'newCode' | 'code' | 'typewriter' | 'verbatim',
-  literateAgdaEngine: 'agda' | 'lhs2TeX' | 'none',
-  literateHaskellEngine: 'lhs2TeX' | 'none',
+  lhs2texStyle: Lhs2texStyle,
+  literateAgdaEngine: LiterateAgdaEngine,
+  literateHaskellEngine: LiterateHaskellEngine,
   loadCache: boolean,
   loadUserOptions: boolean,
   outputDirectory?: string,
-  outputFormat: 'dvi' | 'pdf' | 'ps' | 'svg',
+  outputFormat: OutputFormat,
   phaseCycles: number,
   pweaveCacheDirectory: string,
   pweaveDocumentationMode: boolean,
   pweaveFigureDirectory: string,
   pweaveKernel: string,
-  pweaveOutputFormat: 'tex' | 'texminted' | 'texpweave' | 'texpygments',
+  pweaveOutputFormat: PweaveOutputFormat,
   pweaveOutputPath: string,
   saveCache: boolean,
-  severity: 'info' | 'warning' | 'error',
-  shellEscape?: 'disabled' | 'restricted' | 'enabled',
+  severity: Severity,
+  shellEscape?: ShellEscape,
   synctex: boolean,
   validateCache: boolean
 }
 
-export const DEFAULT_OPTIONS = {
-  $BIBINPUTS: [ '$ROOTDIR',
-    '$ROOTDIR/$OUTDIR',
-    '' ],
+export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
+  '$ROOTDIR/$OUTDIR',
+  '' ],
   $TEXINPUTS: [ '$ROOTDIR',
     '$ROOTDIR/$OUTDIR',
     '' ],
   bibtexEngine: 'bibtex',
   cleanPatterns: [ '$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)',
     '/$OUTDIR/_minted-$JOB/*' ],
-  copyTargetsToRoot: false,
   dviToPdfEngine: 'xdvipdfmx',
   engine: 'pdflatex',
   epstopdfBoundingBox: 'default',
   epstopdfOutputPath: '$DIR_0/$NAME_0.pdf',
-  epstopdfRestricted: false,
   indexAutomaticRanges: true,
   indexEngine: 'makeindex',
   indexOrdering: 'word',
@@ -277,8 +308,7 @@ export const DEFAULT_OPTIONS = {
   pweaveOutputPath: '$JOB.tex',
   saveCache: true,
   severity: 'warning',
-  validateCache: true
-}
+  validateCache: true }
 
 // END_AUTO
 

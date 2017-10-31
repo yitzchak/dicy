@@ -38,7 +38,7 @@
     "specs": "echo Running core specs... | chalk yellowBright bold && cd packages/core && npm test",
     "test": "npm run lint && npm run specs",
     "update-dependencies": "lerna exec -- ts-node ../../scripts/update-dependencies.ts",
-    "update-types": "ts-node scripts/update-types"
+    "update-types": "ts-node scripts/update-types && npm run fix-ts"
   },
   "dependencies": {
     "chalk": "^2.1.0",
@@ -59,9 +59,11 @@
     "yargs-parser": "^8.0.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^4.0.3",
+    "@types/lodash": "^4.14.80",
     "chalk-cli": "^4.0.0",
-    "jasmine-ts": "^0.2.1",
     "jasmine": "^2.8.0",
+    "jasmine-ts": "^0.2.1",
     "lerna": "^2.4.0",
     "remark-cli": "^4.0.0",
     "remark-preset-lint-consistent": "^2.0.1",

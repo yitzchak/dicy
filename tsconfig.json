@@ -16,6 +16,7 @@
   "include": [
     "packages/*/src",
     "packages/*/spec",
-    "packages/*/ext-types"
+    "packages/*/ext-types",
+    "ext-types"
   ]
 }
