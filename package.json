@@ -17,7 +17,7 @@
   "contributors": [],
   "homepage": "https://yitzchak.github.io/dicy/",
   "engines": {
-    "node": ">=7.0.0"
+    "node": ">=6.9.0"
   },
   "license": "MIT",
   "scripts": {
@@ -41,8 +41,6 @@
     "update-types": "babel-node scripts/update-types && eslint --fix packages/core/src/types.js"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "babel-runtime": "^6.26.0",
     "chalk": "^2.1.0",
     "cliui": "^3.2.0",
     "command-join": "^2.0.0",

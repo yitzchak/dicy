@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import SplitIndex from '../../src/Rules/SplitIndex'
 import { initializeRule, RuleDefinition } from '../helpers'
 

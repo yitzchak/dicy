@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import PsToPdf from '../../src/Rules/PsToPdf'
 import { initializeRule, RuleDefinition } from '../helpers'
 

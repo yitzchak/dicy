@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import File from '../../src/File'
 import ParseSplitIndexStdErr from '../../src/Rules/ParseSplitIndexStdErr'
 import { initializeRule } from '../helpers'

@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import EpsToPdf from '../../src/Rules/EpsToPdf'
 import { initializeRule, RuleDefinition } from '../helpers'
 

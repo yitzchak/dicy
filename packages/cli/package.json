@@ -26,12 +26,11 @@
   "contributors": [],
   "homepage": "https://yitzchak.github.io/dicy/",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=6.9.0"
   },
   "license": "MIT",
   "dependencies": {
     "@dicy/core": "^0.11.0",
-    "babel-polyfill": "^6.26.0",
     "chalk": "^2.3.0",
     "cliui": "^3.2.0",
     "js-yaml": "^3.10.0",

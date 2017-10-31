@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import CheckForMissingBuildRule from '../../src/Rules/CheckForMissingBuildRule'
 import Rule from '../../src/Rule'
 import { initializeRule, RuleDefinition } from '../helpers'

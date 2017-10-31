@@ -1,6 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
 import * as path from 'path'
 
 import File from '../../src/File'

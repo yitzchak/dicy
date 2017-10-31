@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import Asymptote from '../../src/Rules/Asymptote'
 import { initializeRule, RuleDefinition } from '../helpers'
 

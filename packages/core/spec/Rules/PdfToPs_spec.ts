@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import PdfToPs from '../../src/Rules/PdfToPs'
 import { initializeRule, RuleDefinition } from '../helpers'
 

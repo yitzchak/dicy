@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 
-import 'babel-polyfill'
 import * as _ from 'lodash'
 import chalk from 'chalk'
 import * as cliui from 'cliui'

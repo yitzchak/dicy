@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import Agda from '../../src/Rules/Agda'
 import { initializeRule, RuleDefinition } from '../helpers'
 

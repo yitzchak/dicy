@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import File from '../../src/File'
 import ParseLaTeXMagic from '../../src/Rules/ParseLaTeXMagic'
 import { initializeRule, RuleDefinition } from '../helpers'

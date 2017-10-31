@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import LhsToTeX from '../../src/Rules/LhsToTeX'
 import { initializeRule, RuleDefinition } from '../helpers'
 

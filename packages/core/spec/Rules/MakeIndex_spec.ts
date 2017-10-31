@@ -1,7 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
-import 'babel-polyfill'
-
 import MakeIndex from '../../src/Rules/MakeIndex'
 import { initializeRule, RuleDefinition } from '../helpers'
 
