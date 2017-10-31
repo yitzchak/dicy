@@ -23,6 +23,7 @@ export default class CreateOutputTree extends Rule {
       types: 'directories',
       ignorePattern: outputDirectories.map(outputDirectory => `${outputDirectory}/**`)
     })
+    directories.push('.')
 
     await Promise.all(directories.map(directory => File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory || '.', directory))))
 
