@@ -2,7 +2,6 @@
   "compilerOptions": {
     "allowJs": true,
     "alwaysStrict": true,
-    "declaration": true,
     "lib": ["ES2016", "ES2017", "ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -17,6 +16,6 @@
   "include": [
     "packages/*/src",
     "packages/*/spec",
-    "packages/*/types"
+    "packages/*/ext-types"
   ]
 }

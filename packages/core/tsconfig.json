@@ -3,6 +3,7 @@
     "allowJs": false,
     "alwaysStrict": true,
     "declaration": true,
+    "declarationDir": "types",
     "lib": ["ES2016", "ES2017", "ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -16,6 +17,6 @@
   },
   "include": [
     "src",
-    "types"
+    "ext-types"
   ]
 }

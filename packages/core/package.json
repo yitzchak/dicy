@@ -10,7 +10,7 @@
   ],
   "bugs": "https://github.com/yitzchak/dicy/issues",
   "main": "lib/main.js",
-  "types": "lib/main.d.ts",
+  "types": "types/main.d.ts",
   "scripts": {
     "test": "jasmine-ts",
     "compile": "rimraf lib && tsc",
