@@ -27,13 +27,13 @@ describe('SaveCache', () => {
     const options = rule.state.getJobOptions()
 
     loadRule = new Rule(rule.state, 'load', 'execute', options)
-    dicy.addRule(loadRule)
+    await dicy.addRule(loadRule)
 
     finalizeRule = new Rule(rule.state, 'load', 'finalize', options)
-    dicy.addRule(finalizeRule)
+    await dicy.addRule(finalizeRule)
 
     otherRule = new Rule(rule.state, 'build', 'execute', options)
-    dicy.addRule(otherRule)
+    await dicy.addRule(otherRule)
 
     spyOn(File, 'writeYaml').and.callFake(() => Promise.resolve())
 

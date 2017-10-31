@@ -3,7 +3,7 @@
     "allowJs": false,
     "alwaysStrict": true,
     "declaration": true,
-    "lib": ["ESNext"],
+    "lib": ["ES2016", "ES2017", "ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -12,7 +12,7 @@
     "pretty": true,
     "sourceMap": false,
     "strictNullChecks": true,
-    "target": "ES6"
+    "target": "ES2015"
   },
   "include": [
     "src",

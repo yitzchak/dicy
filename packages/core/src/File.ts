@@ -226,7 +226,7 @@ export default class File {
                 m = m.concat(...matches.map(match => match ? match.slice(1) : []))
                 const names = parser.names || []
                 names.map((name, index) => {
-                  if (m[index] !== undefined) parserMatch.groups[name] = m[index]
+                  if (m.length > index) parserMatch.groups[name] = m[index]
                 })
               } else {
                 let m: string[] = []

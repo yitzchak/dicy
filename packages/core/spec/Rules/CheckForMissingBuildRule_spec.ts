@@ -49,7 +49,7 @@ describe('CheckForMissingBuildRule', () => {
       if (file) {
         const otherRule = new Rule(rule.state, 'build', 'execute', options, [file])
 
-        dicy.addRule(otherRule)
+        await dicy.addRule(otherRule)
 
         expect(await rule.run()).toBe(true)
         expect(rule.log).not.toHaveBeenCalled()
@@ -81,7 +81,7 @@ describe('CheckForMissingBuildRule', () => {
       if (file) {
         const otherRule = new Rule(rule.state, 'build', 'execute', options, [file])
 
-        dicy.addRule(otherRule)
+        await dicy.addRule(otherRule)
 
         expect(await rule.run()).toBe(true)
         expect(rule.log).not.toHaveBeenCalled()

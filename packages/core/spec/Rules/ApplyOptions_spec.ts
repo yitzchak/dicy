@@ -17,7 +17,7 @@ describe('ApplyOptions', () => {
       const { rule } = await initialize()
       const yaml: File | undefined = await rule.getResolvedFile('$NAME.yaml-ParsedYAML')
       const magic: File | undefined = await rule.getResolvedFile('$BASE-ParsedLaTeXMagic')
-      const applyOptions: ApplyOptions = <ApplyOptions>rule
+      const applyOptions: ApplyOptions = rule as ApplyOptions
 
       expect(yaml).toBeDefined()
       expect(magic).toBeDefined()
@@ -54,15 +54,15 @@ describe('ApplyOptions', () => {
       const options = rule.state.getJobOptions()
 
       loadRule = new Rule(rule.state, 'load', 'execute', options)
-      dicy.addRule(loadRule)
+      await dicy.addRule(loadRule)
 
       finalizeRule = new Rule(rule.state, 'load', 'finalize', options)
-      dicy.addRule(finalizeRule)
+      await dicy.addRule(finalizeRule)
 
       otherRule = new Rule(rule.state, 'build', 'execute', options)
-      dicy.addRule(otherRule)
+      await dicy.addRule(otherRule)
 
-      applyOptions = <ApplyOptions>rule
+      applyOptions = rule as ApplyOptions
 
       done()
     })

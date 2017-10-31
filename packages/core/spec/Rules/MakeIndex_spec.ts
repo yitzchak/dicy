@@ -612,7 +612,7 @@ describe('MakeIndex', () => {
         options: { indexStartPage: 'odd' }
       })
 
-      expect(rule.constructCommand().args).toEqual(<any>jasmine.arrayContaining(['-p', 'odd']))
+      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-p', 'odd']) as any)
 
       done()
     })
@@ -622,7 +622,7 @@ describe('MakeIndex', () => {
         options: { indexStyle: 'foo.ist' }
       })
 
-      expect(rule.constructCommand().args).toEqual(<any>jasmine.arrayContaining(['-s', 'foo.ist']))
+      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-s', 'foo.ist']) as any)
 
       done()
     })
@@ -672,7 +672,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', kanjiInternal: 'euc' }
       })
 
-      expect(rule.constructCommand().args).toEqual(<any>jasmine.arrayContaining(['-I', 'euc']))
+      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-I', 'euc']) as any)
 
       done()
     })
@@ -682,7 +682,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', indexDictionary: 'foo' }
       })
 
-      expect(rule.constructCommand().args).toEqual(<any>jasmine.arrayContaining(['-d', '{{foo}}']))
+      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-d', '{{foo}}']) as any)
 
       done()
     })

@@ -83,7 +83,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       expect(rule.state.targets).not.toContain(rule.firstParameter.filePath)
-      expect(await rule.state.targets).toContain('PortableDocumentFormat.pdf')
+      expect(rule.state.targets).toContain('PortableDocumentFormat.pdf')
 
       done()
     })

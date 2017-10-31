@@ -59,11 +59,11 @@ export function partitionMessages (received: Array<Event>, expected: Array<Event
 
   for (const event of _.uniqWith(received, _.isEqual)) {
     let index = missing.findIndex(candidate =>
-      _.isMatchWith(event, candidate, <_.isMatchCustomizer>((x: any, y: any, key: number | string | symbol): boolean | undefined => key === 'file'
+      _.isMatchWith(event, candidate, ((x: any, y: any, key: number | string | symbol): boolean | undefined => key === 'file'
         ? compareFilePaths(x, y)
         : ((typeof x === 'string' && typeof y === 'string')
           ? stringCompare(x, y)
-          : undefined))))
+          : undefined)) as _.isMatchCustomizer))
     if (index === -1) {
       improper.push(event)
     } else {
