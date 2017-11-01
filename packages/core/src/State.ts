@@ -217,6 +217,8 @@ export default class State extends EventEmitter {
   }
 
   async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true) {
+    if (file.readOnly) return
+
     const invalidRules: Rule[] = []
 
     for (const rule of this.rules.values()) {

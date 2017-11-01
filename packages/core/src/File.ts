@@ -26,6 +26,8 @@ export default class File {
   // If it is a virtual or a physical file. Virtual files are usually in-memory
   // copies of parsed files such as log files.
   virtual: boolean = false
+  // Read only files cannot be deleted nor have their value changed
+  readOnly: boolean = false
   // A hash of the file contents. Used to verify that file has actually changed
   // when the timestamp changes
   hash: string
@@ -316,6 +318,7 @@ export default class File {
   }
 
   set value (value: any | undefined) {
+    if (this.readOnly) return
     if (!_.isEqual(value, this._value)) {
       this.hasBeenUpdated = true
       this.timeStamp = new Date()

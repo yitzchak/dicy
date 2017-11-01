@@ -46,7 +46,13 @@ export default class DiCy extends StateConsumer {
 
   async setInstanceOptions (options: Object = {}) {
     const instance = await this.getFile('dicy-instance.yaml-ParsedYAML')
-    if (instance) instance.value = options
+    if (instance) {
+      instance.readOnly = false
+      instance.value = options
+      instance.readOnly = true
+    } else {
+      this.error('Unable to set instance options.')
+    }
   }
 
   async analyzePhase (command: Command, phase: Phase) {
