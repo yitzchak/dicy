@@ -54,6 +54,7 @@ export default class ApplyOptions extends Rule {
     for (const options of optionSet) {
       this.assignOptions(options)
     }
+    console.log(this.state.options)
   }
 
   checkForConfigurationChange (previousOptions: Object): void {
