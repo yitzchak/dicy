@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Use Node Boron LTS thereby removing need foe Map/Set polyfill.
 -   Use TypeScript instead of Flow.
 
+### Fixed
+-   Regression which prevented output directory from being created.
+
 ## [v0.11.0][] — 2017-10-25
 
 ### Added

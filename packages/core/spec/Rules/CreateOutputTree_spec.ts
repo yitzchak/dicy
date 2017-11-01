@@ -62,6 +62,7 @@ describe('CreateOutputTree', () => {
         options: { outputDirectory: 'foo' }
       })
       const expectedDirectories = [
+        'foo',
         'foo/quux',
         'foo/quux/baz',
         'foo/wibble',
@@ -88,6 +89,7 @@ describe('CreateOutputTree', () => {
         }
       })
       const expectedDirectories = [
+        'foo',
         'foo/wibble',
         'foo/wibble/angle',
         'foo/wibble/angle/dangle'
@@ -112,6 +114,7 @@ describe('CreateOutputTree', () => {
         }
       })
       const expectedDirectories = [
+        'foo',
         'foo/quux',
         'foo/quux/baz',
         'foo/wibble',
