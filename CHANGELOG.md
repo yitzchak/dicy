@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 -   Regression which prevented output directory from being created.
+-   Instance options set from the command line or passed to the library
+    interface are now protected from cache cleaning.
 
 ## [v0.11.0][] — 2017-10-25
 
