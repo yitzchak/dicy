@@ -53,7 +53,7 @@ async function main () {
 ${decl.join('\n\n')}
 
 export interface OptionsInterface {
-  ${properties.join(',\n  ')}
+  ${properties.join('\n  ')}
 }
 
 export const DEFAULT_OPTIONS = ${toSource(defaultOptions)}
