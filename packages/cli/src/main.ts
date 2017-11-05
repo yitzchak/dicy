@@ -1,18 +1,22 @@
 #! /usr/bin/env node
 
 import * as _ from 'lodash'
-import chalk from 'chalk'
 import * as cliui from 'cliui'
+import * as fs from 'fs-extra'
 import * as path from 'path'
-import * as yargs from 'yargs'
 import * as yaml from 'js-yaml'
+import * as yargs from 'yargs'
+import chalk from 'chalk'
 
 import {
+  ActionEvent,
   Command,
+  CommandEvent,
   DiCy,
   Event,
-  File,
+  FileEvent,
   Message,
+  Option,
   Reference
 } from '@dicy/core'
 
@@ -98,7 +102,7 @@ const handler = async (argv: any) => {
     const dicy = await DiCy.create(path.resolve(filePath), options)
     dicy
       .on('log', log)
-      .on('action', event => {
+      .on('action', (event: ActionEvent) => {
         if (verbose) {
           const triggerText = event.triggers.length !== 0 ? ` triggered by updates to ${event.triggers}` : ''
           log({
@@ -108,14 +112,14 @@ const handler = async (argv: any) => {
           })
         }
       })
-      .on('command', event => {
+      .on('command', (event: CommandEvent) => {
         log({
           severity: 'info',
           name: event.rule,
           text: `Executing \`${event.command}\``
         })
       })
-      .on('fileDeleted', event => {
+      .on('fileDeleted', (event: FileEvent) => {
         if (!event.virtual) {
           log({
             severity: 'info',
@@ -126,7 +130,7 @@ const handler = async (argv: any) => {
       })
 
     for (const type of saveEvents) {
-      dicy.on(type, event => { events.push(event) })
+      dicy.on(type, (event: Event) => { events.push(event) })
     }
 
     process.on('SIGTERM', () => dicy.kill())
@@ -148,7 +152,8 @@ const handler = async (argv: any) => {
         eventData[filePath] = data
       } else {
         const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
-        await File.writeYaml(eventFilePath, data)
+        const contents = yaml.safeDump(eventData, { skipInvalid: true })
+        await fs.writeFile(eventFilePath, contents)
       }
     }
   }
@@ -166,7 +171,7 @@ yargs
   .demandCommand(1, 'You need to specify a command.')
   .help()
 
-DiCy.getOptionDefinitions().then(definitions => {
+DiCy.getOptionDefinitions().then((definitions: Option[]) => {
   function getOptions (commands: Command[]) {
     const options: { [name: string]: any } = {
       'save-events': {

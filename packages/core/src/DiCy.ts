@@ -12,7 +12,7 @@ import { Action, Command, Option, Phase, RuleInfo } from './types'
 const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
 
 export default class DiCy extends StateConsumer {
-  static async create (filePath: string, options: Object = {}) {
+  static async create (filePath: string, options: object = {}) {
     const schema = await DiCy.getOptionDefinitions()
     const state = new State(filePath, schema)
     const builder = new DiCy(state, state.getJobOptions())
@@ -44,7 +44,7 @@ export default class DiCy extends StateConsumer {
       .map(entry => require(path.join(ruleClassPath, entry)).default)
   }
 
-  async setInstanceOptions (options: Object = {}) {
+  async setInstanceOptions (options: object = {}) {
     const instance = await this.getFile('dicy-instance.yaml-ParsedYAML')
     if (instance) {
       instance.readOnly = false
@@ -231,7 +231,7 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     for (const file of this.files) {
-      file.hasBeenUpdated = file.hasBeenUpdatedCache
+      file.restoreUpdateFlag()
       file.analyzed = false
     }
 
@@ -256,7 +256,7 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  async updateOptions (options: Object = {}, user: boolean = false): Promise<Object> {
+  async updateOptions (options: object = {}, user: boolean = false): Promise<object> {
     const normalizedOptions = {}
     const filePath = this.resolvePath(user ? '$HOME/.dicy.yaml' : '$ROOTDIR/$NAME.yaml')
 

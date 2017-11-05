@@ -56,7 +56,7 @@ export default class ApplyOptions extends Rule {
     }
   }
 
-  checkForConfigurationChange (previousOptions: Object): void {
+  checkForConfigurationChange (previousOptions: object): void {
     // Ignore options that don't actually change the build.
     const matcher = (value: any, other: any, key?: string | number | symbol): boolean => {
       if (key) {

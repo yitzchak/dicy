@@ -14,9 +14,9 @@ export default class File {
   static fileTypes: Map<string, FileType>
 
   // The complete and real file path in the file system.
-  realFilePath: string
+  readonly realFilePath: string
   // The file path relative to the project root.
-  filePath: string
+  readonly filePath: string
   // The main type of the file, i.e. LaTeX, BibTeX, ...
   type: string
   // An optional sub type. Usually the document class for LaTeX documents.
@@ -36,11 +36,11 @@ export default class File {
   // Has the file been analyzed in the current cycle?
   analyzed: boolean = false
   // Has the file been updated in the current cycle?
-  _hasBeenUpdated: boolean = false
+  private _hasBeenUpdated: boolean = false
   // Has the file been changed during the current run?
-  hasBeenUpdatedCache: boolean = false
+  private hasBeenUpdatedCache: boolean = false
   // The value of the virtual file.
-  _value: any | undefined
+  private _value: any | undefined
 
   /**
    * Construct a new File. Because creating a file required asynchronous file
@@ -129,7 +129,7 @@ export default class File {
     })
   }
 
-  static async writeYaml (filePath: string, value: Object, fullSchema: boolean = false): Promise<void> {
+  static async writeYaml (filePath: string, value: object, fullSchema: boolean = false): Promise<void> {
     const contents = yaml.dump(value, {
       skipInvalid: true,
       schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
@@ -313,6 +313,10 @@ export default class File {
     this.hasBeenUpdatedCache = value || this.hasBeenUpdatedCache
   }
 
+  restoreUpdateFlag (): void {
+    this.hasBeenUpdated = this.hasBeenUpdatedCache
+  }
+
   get value (): any | undefined {
     return this._value
   }
@@ -469,7 +473,7 @@ export default class File {
     return File.read(this.realFilePath)
   }
 
-  readYaml (): Promise<Object> {
+  readYaml (): Promise<object> {
     return File.readYaml(this.realFilePath)
   }
 

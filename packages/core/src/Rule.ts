@@ -193,13 +193,11 @@ export default class Rule extends StateConsumer {
   }
 
   get inputs (): File[] {
-    const predecessors = this.state.graph.predecessors(this.id) || []
-    return predecessors.map(filePath => this.state.files.get(filePath)).filter(file => file) as File[]
+    return this.state.getInputs(this)
   }
 
   get outputs (): File[] {
-    const successors = this.state.graph.successors(this.id) || []
-    return successors.map(filePath => this.state.files.get(filePath)).filter(file => file) as File[]
+    return this.state.getOutputs(this)
   }
 
   async preEvaluate (): Promise<void> {}
@@ -450,7 +448,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  constructProcessOptions (cd: string, stdin: boolean, stdout: boolean, stderr: boolean): Object {
+  constructProcessOptions (cd: string, stdin: boolean, stdout: boolean, stderr: boolean): object {
     const processOptions = {
       cwd: this.resolvePath(cd),
       env: Object.assign({}, process.env),

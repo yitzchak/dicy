@@ -51,7 +51,7 @@ export default class ParseLaTeXMagic extends Rule {
         let jobMagic = magic
 
         if (match.groups.jobName) {
-          // There is a job name specified so create a jobs object.
+          // There is a job name specified so create a jobs Object.
           if (!('jobs' in magic)) magic.jobs = {}
 
           if (match.groups.jobName in magic.jobs) {

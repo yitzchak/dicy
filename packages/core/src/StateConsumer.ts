@@ -359,7 +359,7 @@ export default class StateConsumer {
     return this.state.setMaxListeners(n)
   }
 
-  executeChildProcess (command: string, options: Object): Promise<ProcessResults> {
+  executeChildProcess (command: string, options: object): Promise<ProcessResults> {
     return new Promise((resolve, reject) => {
       let stdout: string
       let stderr: string

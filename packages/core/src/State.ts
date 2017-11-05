@@ -25,8 +25,8 @@ type GraphProperties = {
 }
 
 export default class State extends EventEmitter {
-  filePath: string
-  rootPath: string
+  readonly filePath: string
+  readonly rootPath: string
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: {[name: string]: any} = {}
@@ -38,10 +38,10 @@ export default class State extends EventEmitter {
   env: {[name: string]: string}
   targets: Set<string> = new Set<string>()
   killToken: KillToken | null
-  graph: Graph = new Graph()
-  optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
+  private graph: Graph = new Graph()
   private graphProperties: GraphProperties = {}
+  private optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
   constructor (filePath: string, schema: Option[] = []) {
     super()
@@ -272,7 +272,7 @@ export default class State extends EventEmitter {
     }
   }
 
-  assignOptions (options: Object) {
+  assignOptions (options: object) {
     this.assignSubOptions(this.options, options)
   }
 
@@ -371,5 +371,15 @@ export default class State extends EventEmitter {
     const inEdges = this.graph.inEdges(file.filePath) || []
 
     return inEdges.some(edge => edge.v.startsWith(ruleId))
+  }
+
+  getInputs (rule: Rule): File[] {
+    const predecessors = this.graph.predecessors(rule.id) || []
+    return predecessors.map(filePath => this.files.get(filePath)).filter(file => file) as File[]
+  }
+
+  getOutputs (rule: Rule): File[] {
+    const successors = this.graph.successors(rule.id) || []
+    return successors.map(filePath => this.files.get(filePath)).filter(file => file) as File[]
   }
 }
