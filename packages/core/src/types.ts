@@ -1,5 +1,5 @@
-export type GlobOptions = {
-  types?: 'all' | 'files' | 'directories',
+export interface GlobOptions {
+  types?: 'all' | 'files' | 'directories'
   ignorePattern?: string | string[]
 }
 
@@ -9,178 +9,172 @@ export type Phase = 'initialize' | 'execute' | 'finalize'
 
 export type Action = 'parse' | 'run' | 'updateDependencies'
 
-export type RuleInfo = {
-  name: string,
+export interface RuleInfo {
+  name: string
   description: string
 }
 
-export type FileType = {
-  fileName?: RegExp,
-  contents?: RegExp,
-  hashSkip?: RegExp,
+export interface FileType {
+  fileName?: RegExp
+  contents?: RegExp
+  hashSkip?: RegExp
   hashFilter?: string
 }
 
-export type FileCache = {
-  timeStamp: Date,
-  hash?: string,
-  type?: string,
-  subType?: string,
-  value?: any,
+export interface FileCache {
+  timeStamp: Date
+  hash?: string
+  type?: string
+  subType?: string
+  value?: any
   jobNames?: string[]
 }
 
-export type RuleCache = {
-  name: string,
-  command: Command,
-  phase: Phase,
-  jobName?: string,
-  parameters: string[],
-  inputs: string[],
+export interface RuleCache {
+  name: string
+  command: Command
+  phase: Phase
+  jobName?: string
+  parameters: string[]
+  inputs: string[]
   outputs: string[]
 }
 
-export type Cache = {
-  version: string,
-  filePath: string,
-  options: Object,
-  files: { [filePath: string]: FileCache },
+export interface Cache {
+  version: string
+  filePath: string
+  options: object
+  files: { [filePath: string]: FileCache }
   rules: RuleCache[]
 }
 
 export const CACHE_VERSION = '0.10.0'
 
-export type LineRange = {
-  start: number,
+export interface LineRange {
+  start: number
   end: number
 }
 
-export type Reference = {
-  file: string,
+export interface Reference {
+  file: string
   range?: LineRange
 }
 
-export type ParserMatch = {
-  _: string,
-  captures: string[],
+export interface ParserMatch {
+  _: string
+  captures: string[]
   groups: {[name: string]: string}
 }
 
-export type Parser = {
-  modes?: string[],
-  names?: string[],
-  patterns: RegExp[],
+export interface Parser {
+  modes?: string[]
+  names?: string[]
+  patterns: RegExp[]
   evaluate: (mode: string, reference: Reference, match: ParserMatch) => string | void
 }
 
 export type Severity = 'info' | 'warning' | 'error'
 
-export type Message = {
-  severity: Severity,
-  text: string,
-  name?: string,
-  category?: string,
-  source?: Reference,
+export interface Message {
+  severity: Severity
+  text: string
+  name?: string
+  category?: string
+  source?: Reference
   log?: Reference
 }
 
-export type LogEvent = {
-  type: 'log',
-  severity: Severity,
-  text: string,
-  name?: string,
-  category?: string,
-  source?: Reference,
-  log?: Reference
+export interface LogEvent extends Message {
+  type: 'log'
 }
 
-export type ActionEvent = {
-  type: 'action',
-  rule: string,
-  action: string,
+export interface ActionEvent {
+  type: 'action'
+  rule: string
+  action: string
   triggers: string[]
 }
 
-export type CommandEvent = {
-  type: 'command',
-  rule: string,
+export interface CommandEvent {
+  type: 'command'
+  rule: string
   command: string
 }
 
-export type FileEvent = {
-  type: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved',
-  file: string,
+export interface FileEvent {
+  type: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved'
+  file: string
   virtual?: boolean
 }
 
-export type InputOutputEvent = {
-  type: 'inputAdded' | 'outputAdded',
-  rule: string,
-  file: string,
+export interface InputOutputEvent {
+  type: 'inputAdded' | 'outputAdded'
+  rule: string
+  file: string
   virtual?: boolean
 }
 
 export type Event = LogEvent | ActionEvent | CommandEvent | FileEvent | InputOutputEvent
 
-export type Option = {
-  name: string,
-  type: 'string' | 'strings' | 'number' | 'boolean' | 'variable',
-  defaultValue?: any,
-  description: string,
-  values?: any[],
-  aliases?: string[],
-  commands?: string[],
+export interface Option {
+  name: string
+  type: 'string' | 'strings' | 'number' | 'boolean' | 'variable'
+  defaultValue?: any
+  description: string
+  values?: any[]
+  aliases?: string[]
+  commands?: string[]
   noInvalidate?: boolean
 }
 
-export type KillToken = {
-  error?: Error,
-  resolve?: Function,
+export interface KillToken {
+  error?: Error
+  resolve?: Function
   promise?: Promise<void>
 }
 
-export type ShellCall = {
-  args: string[],
-  options: { [name: string]: string | boolean },
+export interface ShellCall {
+  args: string[]
+  options: { [name: string]: string | boolean }
   status: string
 }
 
-export type ParsedLog = {
-  inputs: string[],
-  outputs: string[],
-  messages: Message[],
+export interface ParsedLog {
+  inputs: string[]
+  outputs: string[]
+  messages: Message[]
   calls: ShellCall[]
 }
 
-export type CommandOptions = {
-  args: string[],
-  cd: string,
-  severity: Severity,
-  inputs?: string[],
-  outputs?: string[],
-  globbedInputs?: string[],
-  globbedOutputs?: string[],
-  stdout?: boolean | string,
+export interface CommandOptions {
+  args: string[]
+  cd: string
+  severity: Severity
+  inputs?: string[]
+  outputs?: string[]
+  globbedInputs?: string[]
+  globbedOutputs?: string[]
+  stdout?: boolean | string
   stderr?: boolean | string
 }
 
-export type ProcessResults = {
-  stdout: string,
+export interface ProcessResults {
+  stdout: string
   stderr: string
 }
 
-export type LineRangeMapping = {
-  input: LineRange,
+export interface LineRangeMapping {
+  input: LineRange
   output: LineRange
 }
 
-export type SourceMap = {
-  input: string,
-  output: string,
+export interface SourceMap {
+  input: string
+  output: string
   mappings: LineRangeMapping[]
 }
 
-export type SourceMaps = {
+export interface SourceMaps {
   maps: SourceMap[]
 }
 
@@ -215,63 +209,63 @@ export type PweaveOutputFormat = 'tex' | 'texminted' | 'texpweave' | 'texpygment
 export type ShellEscape = 'disabled' | 'restricted' | 'enabled'
 
 export interface OptionsInterface {
-  [name: string]: any,
-  $BIBINPUTS: string | string[],
-  $BLTXMLINPUTS?: string | string[],
-  $BSTINPUTS?: string | string[],
-  $CLUAINPUTS?: string | string[],
-  $LUAINPUTS?: string | string[],
-  $MFINPUTS?: string | string[],
-  $MPINPUTS?: string | string[],
-  $PATH?: string | string[],
-  $TEXINPUTS: string | string[],
-  $TEXPICTS?: string | string[],
-  bibtexEngine: BibtexEngine,
-  check?: string[],
-  cleanPatterns: string[],
-  copyTargetsToRoot: boolean,
-  dviToPdfEngine: DviToPdfEngine,
-  engine: string,
-  epstopdfBoundingBox: EpstopdfBoundingBox,
-  epstopdfOutputPath: string,
-  epstopdfRestricted: boolean,
-  filePath: string,
-  indexAutomaticRanges: boolean,
-  indexCompressBlanks: boolean,
-  indexDictionary?: string,
-  indexEngine: IndexEngine,
-  indexForceKanji: boolean,
-  indexLogPath?: string,
-  indexOrdering: IndexOrdering,
-  indexOutputPath?: string,
-  indexSorting: IndexSorting,
-  indexStartPage?: string,
-  indexStyle?: string,
-  intermediatePostScript: boolean,
-  jobName?: string,
-  jobNames: string[],
-  kanji?: Kanji,
-  kanjiInternal?: KanjiInternal,
-  knitrConcordance: boolean,
-  knitrOutputPath: string,
-  lhs2texStyle: Lhs2texStyle,
-  literateAgdaEngine: LiterateAgdaEngine,
-  literateHaskellEngine: LiterateHaskellEngine,
-  loadCache: boolean,
-  loadUserOptions: boolean,
-  outputDirectory?: string,
-  outputFormat: OutputFormat,
-  phaseCycles: number,
-  pweaveCacheDirectory: string,
-  pweaveDocumentationMode: boolean,
-  pweaveFigureDirectory: string,
-  pweaveKernel: string,
-  pweaveOutputFormat: PweaveOutputFormat,
-  pweaveOutputPath: string,
-  saveCache: boolean,
-  severity: Severity,
-  shellEscape?: ShellEscape,
-  synctex: boolean,
+  [name: string]: any
+  $BIBINPUTS: string | string[]
+  $BLTXMLINPUTS?: string | string[]
+  $BSTINPUTS?: string | string[]
+  $CLUAINPUTS?: string | string[]
+  $LUAINPUTS?: string | string[]
+  $MFINPUTS?: string | string[]
+  $MPINPUTS?: string | string[]
+  $PATH?: string | string[]
+  $TEXINPUTS: string | string[]
+  $TEXPICTS?: string | string[]
+  bibtexEngine: BibtexEngine
+  check?: string[]
+  cleanPatterns: string[]
+  copyTargetsToRoot: boolean
+  dviToPdfEngine: DviToPdfEngine
+  engine: string
+  epstopdfBoundingBox: EpstopdfBoundingBox
+  epstopdfOutputPath: string
+  epstopdfRestricted: boolean
+  filePath: string
+  indexAutomaticRanges: boolean
+  indexCompressBlanks: boolean
+  indexDictionary?: string
+  indexEngine: IndexEngine
+  indexForceKanji: boolean
+  indexLogPath?: string
+  indexOrdering: IndexOrdering
+  indexOutputPath?: string
+  indexSorting: IndexSorting
+  indexStartPage?: string
+  indexStyle?: string
+  intermediatePostScript: boolean
+  jobName?: string
+  jobNames: string[]
+  kanji?: Kanji
+  kanjiInternal?: KanjiInternal
+  knitrConcordance: boolean
+  knitrOutputPath: string
+  lhs2texStyle: Lhs2texStyle
+  literateAgdaEngine: LiterateAgdaEngine
+  literateHaskellEngine: LiterateHaskellEngine
+  loadCache: boolean
+  loadUserOptions: boolean
+  outputDirectory?: string
+  outputFormat: OutputFormat
+  phaseCycles: number
+  pweaveCacheDirectory: string
+  pweaveDocumentationMode: boolean
+  pweaveFigureDirectory: string
+  pweaveKernel: string
+  pweaveOutputFormat: PweaveOutputFormat
+  pweaveOutputPath: string
+  saveCache: boolean
+  severity: Severity
+  shellEscape?: ShellEscape
+  synctex: boolean
   validateCache: boolean
 }
 
@@ -312,4 +306,4 @@ export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
 
 // END_AUTO
 
-export type OptionInterfaceMap = { [name: string]: OptionsInterface }
+export interface OptionInterfaceMap { [name: string]: OptionsInterface }
