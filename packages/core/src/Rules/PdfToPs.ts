@@ -1,16 +1,15 @@
-import State from '../State'
+import { Command, Phase, CommandOptions } from '../types'
 import File from '../File'
 import Rule from '../Rule'
-
-import { Command, Phase, CommandOptions, OptionsInterface } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class PdfToPs extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['PortableDocumentFormat'])]
   static description: string = 'Converts PDF to PS using pdf2ps. Enabled by the `pdfProducer` option.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if output format is ps
-    return options.outputFormat === 'ps'
+    return consumer.options.outputFormat === 'ps'
   }
 
   async initialize () {

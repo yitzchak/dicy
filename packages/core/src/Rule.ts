@@ -32,7 +32,7 @@ export default class Rule extends StateConsumer {
   failures: Set<Action> = new Set<Action>()
 
   constructor (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []) {
-    super(state, options)
+    super(state, options, true)
 
     this.parameters = parameters
     this.command = command
@@ -51,29 +51,29 @@ export default class Rule extends StateConsumer {
       this.env[`EXT_${index}`] = ext
 
       if (options.jobName) file.jobNames.add(options.jobName)
-      state.addEdge(file.filePath, this.id)
+      this.addInput(this, file)
     })
   }
 
-  static async analyzePhase (state: State, command: Command, phase: Phase, options: OptionsInterface): Promise<Rule | undefined> {
+  static async analyzePhase (consumer: StateConsumer, command: Command, phase: Phase): Promise<Rule | undefined> {
     const appliesToPhase: boolean = this.commands.has(command) && this.phases.has(phase) &&
           this.parameterTypes.length === 0
 
-    if (appliesToPhase && await this.isApplicable(state, command, phase, options)) {
-      const rule = new this(state, command, phase, options)
+    if (appliesToPhase && await this.isApplicable(consumer, command, phase)) {
+      const rule = new this(consumer.state, command, phase, consumer.options)
       await rule.initialize()
       if (this.alwaysEvaluate) rule.addActions()
       return rule
     }
   }
 
-  static async analyzeFile (state: State, command: Command, phase: Phase, options: OptionsInterface, file: File): Promise<Rule[]> {
+  static async analyzeFile (consumer: StateConsumer, command: Command, phase: Phase, file: File): Promise<Rule[]> {
     const rules: Rule[] = []
     const appliesToFile: boolean = this.commands.has(command) && this.phases.has(phase) &&
           this.parameterTypes.some(types => file && file.inTypeSet(types))
 
     if (appliesToFile) {
-      const files: File[] = Array.from(state.files.values()).filter(file => !options.jobName || file.jobNames.has(options.jobName))
+      const files: File[] = Array.from(consumer.files).filter(file => !consumer.options.jobName || file.jobNames.has(consumer.options.jobName))
 
       for (let i = 0; i < this.parameterTypes.length; i++) {
         if (file.inTypeSet(this.parameterTypes[i])) {
@@ -85,10 +85,10 @@ export default class Rule extends StateConsumer {
 
           while (indicies.every(index => index > -1)) {
             const parameters: File[] = candidates.map((files, index) => files[indicies[index]])
-            const ruleId: string = state.getRuleId(this.name, command, phase, options.jobName, parameters.map(file => file.filePath))
+            const ruleId: string = consumer.getRuleId(this.name, command, phase, consumer.options.jobName, parameters.map(file => file.filePath))
 
-            if (!state.rules.has(ruleId) && await this.isApplicable(state, command, phase, options, parameters)) {
-              const rule = new this(state, command, phase, options, parameters)
+            if (!consumer.hasRule(ruleId) && await this.isApplicable(consumer, command, phase, parameters)) {
+              const rule = new this(consumer.state, command, phase, consumer.options, parameters)
               await rule.initialize()
               if (this.alwaysEvaluate) rule.addActions(file)
               rules.push(rule)
@@ -109,7 +109,7 @@ export default class Rule extends StateConsumer {
     return rules
   }
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return true
   }
 
@@ -193,11 +193,11 @@ export default class Rule extends StateConsumer {
   }
 
   get inputs (): File[] {
-    return this.state.getInputs(this)
+    return this.getInputFiles(this)
   }
 
   get outputs (): File[] {
-    return this.state.getOutputs(this)
+    return this.getOutputFiles(this)
   }
 
   async preEvaluate (): Promise<void> {}
@@ -328,8 +328,8 @@ export default class Rule extends StateConsumer {
   async getOutput (filePath: string): Promise<File | undefined> {
     let file: File | undefined = await this.getFile(filePath)
 
-    if (file && !this.hasEdge(this.id, file.filePath)) {
-      this.addEdge(this.id, file.filePath)
+    if (file && !this.hasOutput(this, file)) {
+      this.addOutput(this, file)
       this.emit('outputAdded', {
         type: 'outputAdded',
         rule: this.id,
@@ -367,8 +367,8 @@ export default class Rule extends StateConsumer {
   async getInput (filePath: string): Promise<File | undefined> {
     let file: File | undefined = await this.getFile(filePath)
 
-    if (file && !this.hasEdge(file.filePath, this.id)) {
-      this.addEdge(file.filePath, this.id)
+    if (file && !this.hasInput(this, file)) {
+      this.addInput(this, file)
       this.emit('inputAdded', {
         type: 'inputAdded',
         rule: this.id,
@@ -392,8 +392,8 @@ export default class Rule extends StateConsumer {
   }
 
   async removeFile (file: File): Promise<boolean> {
-    this.state.removeEdge(this.id, file.filePath)
-    this.state.removeEdge(file.filePath, this.id)
+    this.removeInput(this, file)
+    this.removeOutput(this, file)
 
     return this.parameters.includes(file)
   }

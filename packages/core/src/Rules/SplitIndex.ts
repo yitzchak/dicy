@@ -1,11 +1,10 @@
 import * as path from 'path'
 
+import { Action, Command, CommandOptions, ParsedLog, Phase } from '../types'
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
-import State from '../State'
-
-import { Action, Command, CommandOptions, OptionsInterface, ParsedLog, Phase } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class SplitIndex extends Rule {
   static parameterTypes: Set<string>[] = [
@@ -14,11 +13,11 @@ export default class SplitIndex extends Rule {
   ]
   static description: string = 'Runs splitindex on any index files.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     const parsedLog: ParsedLog | undefined = parameters[1].value
     const base = path.basename(parameters[0].filePath)
     const messagePattern = new RegExp(`(Using splitted index at ${base}|Remember to run \\(pdf\\)latex again after calling \`splitindex')`)
-    const wasGeneratedBySplitIndex = state.isOutputOf(parameters[0], 'SplitIndex')
+    const wasGeneratedBySplitIndex = consumer.isOutputOf(parameters[0], 'SplitIndex')
     const splitindexCall = !!parsedLog && !!Log.findCall(parsedLog, 'splitindex', base)
     const splitindexMessage = !!parsedLog && !!Log.findMessage(parsedLog, messagePattern)
 

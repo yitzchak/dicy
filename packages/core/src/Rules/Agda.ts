@@ -1,16 +1,15 @@
+import { CommandOptions, Command, Phase } from '../types'
 import File from '../File'
 import Rule from '../Rule'
-import State from '../State'
-
-import { CommandOptions, Command, OptionsInterface, Phase } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class Agda extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['LiterateAgda'])]
   static description: string = 'Runs agda on lagda files.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if the literate Agda engine is set to agda
-    return options.literateAgdaEngine === 'agda'
+    return consumer.options.literateAgdaEngine === 'agda'
   }
 
   constructCommand (): CommandOptions {

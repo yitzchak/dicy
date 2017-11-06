@@ -1,15 +1,14 @@
-import File from '../File'
-import Rule from '../Rule'
-import State from '../State'
 import {
   CACHE_VERSION,
   Command,
   FileCache,
   Cache,
   Phase,
-  OptionsInterface,
   RuleCache
 } from '../types'
+import File from '../File'
+import Rule from '../Rule'
+import StateConsumer from '../StateConsumer'
 
 export default class SaveCache extends Rule {
   static commands: Set<Command> = new Set<Command>(['save'])
@@ -17,9 +16,9 @@ export default class SaveCache extends Rule {
   static ignoreJobName: boolean = true
   static description: string = 'Saves file and rule status to a cache (-cache.yaml) to assist with rebuilding.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if saveCache is enabled
-    return options.saveCache
+    return consumer.options.saveCache
   }
 
   async preEvaluate () {
@@ -34,7 +33,7 @@ export default class SaveCache extends Rule {
     const cache: Cache = {
       version: CACHE_VERSION,
       filePath: this.filePath,
-      options: this.state.options,
+      options: this.serializedOptions,
       files: {},
       rules: []
     }
@@ -85,7 +84,7 @@ export default class SaveCache extends Rule {
 
     // Save the cache and update the timestamp.
     await File.writeYaml(cacheFilePath, cache)
-    this.state.cacheTimeStamp = await File.getModifiedTime(cacheFilePath)
+    this.cacheTimeStamp = await File.getModifiedTime(cacheFilePath)
 
     return true
   }

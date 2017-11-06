@@ -1,19 +1,18 @@
 import * as path from 'path'
 
-import State from '../State'
+import { Command, Phase } from '../types'
 import File from '../File'
 import Rule from '../Rule'
-
-import { Command, OptionsInterface, Phase } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class CopyTargetsToRoot extends Rule {
   static parameterTypes: Set<string>[] = [new Set<string>(['*'])]
   static description: string = 'Copy targets to root directory.'
   static alwaysEvaluate: boolean = true
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
-    return !!options.copyTargetsToRoot &&
-      parameters.every(file => !file.virtual && state.targets.has(file.filePath) && path.dirname(file.filePath) !== '.')
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return !!consumer.options.copyTargetsToRoot &&
+      parameters.every(file => !file.virtual && consumer.targets.includes(file.filePath) && path.dirname(file.filePath) !== '.')
   }
 
   async initialize () {

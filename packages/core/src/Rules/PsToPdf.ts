@@ -1,16 +1,15 @@
-import State from '../State'
+import { Command, Phase, CommandOptions } from '../types'
 import File from '../File'
 import Rule from '../Rule'
-
-import { Command, Phase, CommandOptions, OptionsInterface } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class PsToPdf extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['PostScript'])]
   static description: string = 'Converts PS to PDF using ps2pdf.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if output format is pdf
-    return options.outputFormat === 'pdf'
+    return consumer.options.outputFormat === 'pdf'
   }
 
   async initialize () {

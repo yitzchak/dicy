@@ -15,19 +15,19 @@ async function initialize ({
 describe('Agda', () => {
   describe('isApplicable', () => {
     it('returns true if literateAgdaEngine is \'agda\'', async (done) => {
-      const { rule, options } = await initialize()
+      const { rule } = await initialize()
 
-      expect(await Agda.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await Agda.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'agda\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { literateAgdaEngine: 'lhs2TeX' }
       })
 
-      expect(await Agda.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await Agda.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })

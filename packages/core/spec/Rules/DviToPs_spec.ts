@@ -15,31 +15,31 @@ async function initialize ({
 describe('DviToPs', () => {
   describe('isApplicable', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputFormat: 'ps' }
       })
 
-      expect(await DviToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await DviToPs.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if outputFormat is \'pdf\' and intermediatePostScript is set', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputFormat: 'pdf', intermediatePostScript: true }
       })
 
-      expect(await DviToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await DviToPs.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'ps\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputFormat: 'dvi' }
       })
 
-      expect(await DviToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await DviToPs.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })

@@ -19,8 +19,8 @@ export default class LoadAndValidateCache extends Rule {
 
   async run () {
     if (this.options.loadCache) {
-      if (await File.canRead(this.cacheFilePath) && (!this.state.cacheTimeStamp ||
-        this.state.cacheTimeStamp < await File.getModifiedTime(this.cacheFilePath))) {
+      if (await File.canRead(this.cacheFilePath) && (!this.cacheTimeStamp ||
+        this.cacheTimeStamp < await File.getModifiedTime(this.cacheFilePath))) {
         this.info('Loading build cache from disk as it is newer then in-memory build cache.')
         await this.loadCache()
       } else {
@@ -46,7 +46,7 @@ export default class LoadAndValidateCache extends Rule {
   async cleanCache () {
     for (const jobName of this.options.jobNames) {
       for (const file of this.files) {
-        await this.state.deleteFile(file, jobName, false)
+        await this.deleteFile(file, jobName, false)
       }
     }
   }
@@ -54,29 +54,31 @@ export default class LoadAndValidateCache extends Rule {
   async loadCache () {
     await this.cleanCache()
 
-    this.state.cacheTimeStamp = await File.getModifiedTime(this.cacheFilePath)
+    this.cacheTimeStamp = await File.getModifiedTime(this.cacheFilePath)
     const cache: Cache | undefined = await File.readYaml(this.cacheFilePath)
 
     if (!cache) return true
 
     if (!cache.version) {
       this.warning('Skipping load of build cache since no version tag was found in the cache.')
+      return true
     } else if (!semver.satisfies(cache.version, `^${CACHE_VERSION}`)) {
       this.warning(`Skipping load of build cache since version tag \`v${cache.version}\` does not match \`^${CACHE_VERSION}\`.`)
       return true
     }
 
-    this.state.assignOptions(cache.options)
+    this.resetOptions()
+    this.assignOptions(cache.options)
 
     if (cache.files) {
       for (const filePath in cache.files) {
-        await this.state.getFile(filePath, cache.files[filePath])
+        await this.addCachedFile(filePath, cache.files[filePath])
       }
     }
 
     if (cache.rules) {
       for (const rule of cache.rules) {
-        await this.state.addCachedRule(rule)
+        await this.addCachedRule(rule)
       }
     }
   }
@@ -96,7 +98,7 @@ export default class LoadAndValidateCache extends Rule {
 
     for (const jobName of this.options.jobNames) {
       for (const file of files) {
-        await this.state.deleteFile(file, jobName, false)
+        await this.deleteFile(file, jobName, false)
       }
     }
 

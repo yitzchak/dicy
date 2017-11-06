@@ -14,29 +14,29 @@ async function initialize ({ RuleClass = CreateOutputTree, ...rest }: RuleDefini
 describe('CreateOutputTree', () => {
   describe('isApplicable', () => {
     it('returns false if outputDirectory is not set.', async (done) => {
-      const { rule, options } = await initialize()
+      const { rule } = await initialize()
 
-      expect(await CreateOutputTree.isApplicable(rule.state, 'build', 'initialize', options)).toBe(false)
+      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBe(false)
 
       done()
     })
 
     it('returns false if outputDirectory is set to current directory.', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputDirectory: '.' }
       })
 
-      expect(await CreateOutputTree.isApplicable(rule.state, 'build', 'initialize', options)).toBe(false)
+      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBe(false)
 
       done()
     })
 
     it('returns true if outputDirectory is set.', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputDirectory: 'foo' }
       })
 
-      expect(await CreateOutputTree.isApplicable(rule.state, 'build', 'initialize', options)).toBe(true)
+      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBe(true)
 
       done()
     })

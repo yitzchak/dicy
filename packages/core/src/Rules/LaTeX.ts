@@ -1,9 +1,8 @@
+import { Action, Command, CommandOptions, Phase } from '../types'
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
-import State from '../State'
-
-import { Action, Command, CommandOptions, OptionsInterface, Phase } from '../types'
+import StateConsumer from '../StateConsumer'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const JAPANESE_LATEX_PATTERN = /^u?platex$/
@@ -18,11 +17,11 @@ export default class LaTeX extends Rule {
   ])]
   static description: string = 'Runs the required latex variant.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return parameters.some(file =>
-      ((file.type === 'LaTeX' && (file.filePath === state.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType || ''))) ||
-      (file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'none') ||
-      (file.type === 'LiterateAgda' && options.literateAgdaEngine === 'none')))
+      ((file.type === 'LaTeX' && (file.filePath === consumer.filePath || !SUB_FILE_SUB_TYPES.includes(file.subType || ''))) ||
+      (file.type === 'LiterateHaskell' && consumer.options.literateHaskellEngine === 'none') ||
+      (file.type === 'LiterateAgda' && consumer.options.literateAgdaEngine === 'none')))
   }
 
   async initialize () {

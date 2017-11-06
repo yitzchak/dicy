@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import { EventEmitter } from 'events'
 import * as childProcess from 'child_process'
 import * as kill from 'tree-kill'
@@ -7,12 +8,16 @@ import * as path from 'path'
 import State from './State'
 import File from './File'
 import Rule from './Rule'
-
 import {
+  RuleCache,
+  Command,
+  FileCache,
   GlobOptions,
   KillToken,
   Message,
+  Option,
   OptionsInterface,
+  Phase,
   ProcessResults
 } from './types'
 
@@ -21,30 +26,32 @@ const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 export default class StateConsumer implements EventEmitter {
   state: State
   options: OptionsInterface
-  consumerOptions: {[name: string]: any} = {}
+  privateOptions: {[name: string]: any} = {}
   jobName: string | undefined
   env: { [name: string]: string }
 
-  constructor (state: State, options: OptionsInterface) {
+  constructor (state: State, options: OptionsInterface, hasPrivateOptions: boolean = false) {
     this.state = state
-    this.options = new Proxy(options, {
-      get: (target, key) => {
-        return key in this.consumerOptions
-          ? this.consumerOptions[key]
-          : target[key]
-      },
-      set: (target, key, value) => {
-        this.setOption(this.consumerOptions, key.toString(), value)
-        return true
-      },
-      ownKeys: target => {
-        const keys = new Set(Object.keys(this.consumerOptions))
+    this.options = hasPrivateOptions
+      ? new Proxy(options, {
+        get: (target, key) => {
+          return key in this.privateOptions
+            ? this.privateOptions[key]
+            : target[key]
+        },
+        set: (target, key, value) => {
+          this.setOption(this.privateOptions, key.toString(), value)
+          return true
+        },
+        ownKeys: target => {
+          const keys = new Set(Object.keys(this.privateOptions))
 
-        Object.keys(target).forEach(key => keys.add(key))
+          Object.keys(target).forEach(key => keys.add(key))
 
-        return Array.from(keys.values())
-      }
-    })
+          return Array.from(keys.values())
+        }
+      })
+      : options
     this.env = {
       OUTDIR: this.options.outputDirectory || '.',
       OUTEXT: `.${this.options.outputFormat}`,
@@ -77,6 +84,18 @@ export default class StateConsumer implements EventEmitter {
     }
   }
 
+  get targets (): string[] {
+    return Array.from(this.state.targets)
+  }
+
+  getTargetPaths (): Promise<string[]> {
+    return this.state.getTargetPaths()
+  }
+
+  getTargetFiles (): Promise<File[]> {
+    return this.state.getTargetFiles()
+  }
+
   get killToken (): KillToken | null {
     return this.state.killToken
   }
@@ -85,15 +104,33 @@ export default class StateConsumer implements EventEmitter {
     this.state.killToken = value
   }
 
-  assignOptions (options: any) {
+  get cacheTimeStamp (): Date {
+    return this.state.cacheTimeStamp
+  }
+
+  set cacheTimeStamp (timeStamp: Date) {
+    this.state.cacheTimeStamp = timeStamp
+  }
+
+  get serializedOptions (): object {
+    return _.cloneDeep(this.state.options)
+  }
+
+  resetOptions () {
+    this.state.resetOptions()
+  }
+
+  assignOptions (options: any, store?: any) {
+    if (!store) store = this.state.options
+
     for (const name in options) {
       const value = options[name]
 
       if (name === 'jobs') {
-        let jobs = this.state.options.jobs
+        let jobs = store.jobs
 
         if (!jobs) {
-          this.state.options.jobs = jobs = {}
+          store.jobs = jobs = {}
         }
 
         for (const jobName in value) {
@@ -109,13 +146,17 @@ export default class StateConsumer implements EventEmitter {
           }
         }
       } else {
-        this.setOption(this.state.options, name, value)
+        this.setOption(store, name, value)
       }
     }
   }
 
+  getOptionSchema (name: string): Option | undefined {
+    return this.state.optionSchema.get(name)
+  }
+
   setOption (store: any, name: string, value: any) {
-    const schema = this.state.optionSchema.get(name)
+    const schema: Option | undefined = this.state.optionSchema.get(name)
     if (schema) {
       let invalidType = false
 
@@ -159,6 +200,10 @@ export default class StateConsumer implements EventEmitter {
     return this.state.ruleClasses
   }
 
+  set ruleClasses (rules: typeof Rule[]) {
+    this.state.ruleClasses = rules
+  }
+
   get filePath (): string {
     return this.state.filePath
   }
@@ -175,31 +220,20 @@ export default class StateConsumer implements EventEmitter {
     return this.state.rules.values()
   }
 
-  get targets (): string[] {
-    const targets: Set<string> = new Set<string>()
-
-    for (const rule of this.rules) {
-      for (const file of rule.outputs) {
-        const ext = path.extname(file.filePath)
-        if (ext === `.${this.options.outputFormat}` || (ext === '.xdv' && this.options.outputFormat === 'dvi')) {
-          targets.add(file.filePath)
-        }
-      }
-    }
-
-    return Array.from(targets.values())
+  deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
+    return this.state.deleteFile(file, jobName, unlink)
   }
 
-  getTargetPaths (): Promise<string[]> {
-    return this.state.getTargetPaths()
+  addRule (rule: Rule): Promise<void> {
+    return this.state.addRule(rule)
   }
 
-  getTargetFiles (): Promise<File[]> {
-    return this.state.getTargetFiles()
+  removeRule (rule: Rule): void {
+    this.state.removeRule(rule)
   }
 
-  async addRule (rule: Rule): Promise<void> {
-    await this.state.addRule(rule)
+  hasRule (id: string): boolean {
+    return this.state.rules.has(id)
   }
 
   normalizePath (filePath: string) {
@@ -279,24 +313,28 @@ export default class StateConsumer implements EventEmitter {
     return this.state.components
   }
 
-  addNode (x: string): void {
-    this.state.addNode(x)
+  hasInput (rule: Rule, file: File): boolean {
+    return this.state.hasEdge(file.filePath, rule.id)
   }
 
-  removeNode (x: string): void {
-    this.state.addNode(x)
+  hasOutput (rule: Rule, file: File): boolean {
+    return this.state.hasEdge(rule.id, file.filePath)
   }
 
-  hasEdge (x: string, y: string): boolean {
-    return this.state.hasEdge(x, y)
+  addInput (rule: Rule, file: File): void {
+    this.state.addEdge(file.filePath, rule.id)
   }
 
-  addEdge (x: string, y: string): void {
-    this.state.addEdge(x, y)
+  addOutput (rule: Rule, file: File): void {
+    this.state.addEdge(rule.id, file.filePath)
   }
 
-  removeEdge (x: string, y: string): void {
-    this.state.removeEdge(x, y)
+  removeInput (rule: Rule, file: File): void {
+    this.state.removeEdge(file.filePath, rule.id)
+  }
+
+  removeOutput (rule: Rule, file: File): void {
+    this.state.removeEdge(rule.id, file.filePath)
   }
 
   isGrandparentOf (x: File | Rule, y: File | Rule): boolean {
@@ -417,5 +455,37 @@ export default class StateConsumer implements EventEmitter {
 
   isOutputOf (file: File, ruleId: string): boolean {
     return this.state.isOutputOf(file, ruleId)
+  }
+
+  getJobOptions (jobName: string | null = null): OptionsInterface {
+    return this.state.getJobOptions(jobName)
+  }
+
+  getInputRules (file: File): Rule[] {
+    return this.state.getInputRules(file)
+  }
+
+  getOutputRules (file: File): Rule[] {
+    return this.state.getOutputRules(file)
+  }
+
+  getInputFiles (rule: Rule): File[] {
+    return this.state.getInputs(rule)
+  }
+
+  getOutputFiles (rule: Rule): File[] {
+    return this.state.getOutputs(rule)
+  }
+
+  getRuleId (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): string {
+    return this.state.getRuleId(name, command, phase, jobName, parameters)
+  }
+
+  addCachedRule (cache: RuleCache): Promise<void> {
+    return this.state.addCachedRule(cache)
+  }
+
+  async addCachedFile (filePath: string, fileCache: FileCache): Promise<void> {
+    await this.state.getFile(filePath, fileCache)
   }
 }

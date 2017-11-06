@@ -15,7 +15,7 @@ export default class ApplyOptions extends Rule {
 
   async run (): Promise<boolean> {
     // Save the old options so we can tell if they have changed.
-    const previousOptions = _.cloneDeep(this.state.options)
+    const previousOptions = this.serializedOptions
 
     await this.doAssignOptions()
     this.checkForConfigurationChange(previousOptions)
@@ -49,7 +49,7 @@ export default class ApplyOptions extends Rule {
     }
 
     // Reset the options and assign from from the inputs
-    this.state.resetOptions()
+    this.resetOptions()
 
     for (const options of optionSet) {
       this.assignOptions(options)
@@ -60,14 +60,14 @@ export default class ApplyOptions extends Rule {
     // Ignore options that don't actually change the build.
     const matcher = (value: any, other: any, key?: string | number | symbol): boolean => {
       if (key) {
-        const schema = this.state.optionSchema.get(key.toString())
+        const schema = this.getOptionSchema(key.toString())
         if (schema && schema.noInvalidate) return true
       }
 
       return false
     }
 
-    if (!_.isMatchWith(this.state.options, previousOptions, matcher)) {
+    if (!_.isMatchWith(this.serializedOptions, previousOptions, matcher)) {
       const rules: Rule[] = Array.from(this.rules)
         .filter(rule => rule.command !== 'load' || rule.phase === 'finalize')
 
@@ -76,7 +76,7 @@ export default class ApplyOptions extends Rule {
         // in the finalize phase.
         this.warning('Options have changed. Resetting all rules.')
         for (const rule of rules) {
-          this.state.removeRule(rule)
+          this.removeRule(rule)
         }
       }
     }

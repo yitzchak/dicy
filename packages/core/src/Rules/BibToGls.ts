@@ -1,12 +1,11 @@
 import File from '../File'
 import Rule from '../Rule'
-import State from '../State'
+import StateConsumer from '../StateConsumer'
 
 import {
   Action,
   Command,
   CommandOptions,
-  OptionsInterface,
   Phase
 } from '../types'
 
@@ -17,8 +16,8 @@ export default class BibToGls extends Rule {
   ]
   static description: string = 'Runs bib2gls to process bibliography files (bib) when need is detected.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
-    return state.isGrandparentOf(parameters[0], parameters[1]) &&
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return consumer.isGrandparentOf(parameters[0], parameters[1]) &&
       !!parameters[1].value && !!parameters[1].value.commands &&
       !!parameters[1].value.commands.includes('glsxtr@resource')
   }

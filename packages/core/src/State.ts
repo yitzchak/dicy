@@ -122,7 +122,7 @@ export default class State extends EventEmitter {
     rule.addActions()
   }
 
-  removeRule (rule: Rule) {
+  removeRule (rule: Rule): void {
     this.rules.delete(rule.id)
     this.removeNode(rule.id)
   }
@@ -216,7 +216,7 @@ export default class State extends EventEmitter {
     return file
   }
 
-  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true) {
+  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
     if (file.readOnly) return
 
     const invalidRules: Rule[] = []
@@ -276,7 +276,7 @@ export default class State extends EventEmitter {
     this.assignSubOptions(this.options, options)
   }
 
-  resetOptions () {
+  resetOptions (): void {
     for (const name of Object.getOwnPropertyNames(this.options)) {
       delete this.options[name]
     }
