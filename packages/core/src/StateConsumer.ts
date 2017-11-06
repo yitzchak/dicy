@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events'
 import * as childProcess from 'child_process'
 import * as kill from 'tree-kill'
 import fastGlob from 'fast-glob'
@@ -17,7 +18,7 @@ import {
 
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
-export default class StateConsumer {
+export default class StateConsumer implements EventEmitter {
   state: State
   options: OptionsInterface
   consumerOptions: {[name: string]: any} = {}
@@ -307,56 +308,64 @@ export default class StateConsumer {
   }
 
   // EventEmmitter proxy
-  addListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.addListener(eventName, listener)
+  addListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.addListener(event, listener)
+    return this
   }
 
-  emit (eventName: string, ...args: any[]) {
-    return this.state.emit(eventName, ...args)
+  emit (event: string | symbol, ...args: any[]): boolean {
+    return this.state.emit(event, ...args)
   }
 
-  eventNames () {
+  eventNames (): (string | symbol)[] {
     return this.state.eventNames()
   }
 
-  getMaxListeners () {
-    return this.state.eventNames()
+  getMaxListeners (): number {
+    return this.state.getMaxListeners()
   }
 
-  listenerCount (eventName: string) {
-    return this.state.listenerCount(eventName)
+  listenerCount (event: string | symbol) {
+    return this.state.listenerCount(event)
   }
 
-  listeners (eventName: string) {
-    return this.state.listeners(eventName)
+  listeners (event: string | symbol) {
+    return this.state.listeners(event)
   }
 
-  on (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.on(eventName, listener)
+  on (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.on(event, listener)
+    return this
   }
 
-  once (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.once(eventName, listener)
+  once (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.once(event, listener)
+    return this
   }
 
-  prependListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.prependListener(eventName, listener)
+  prependListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.prependListener(event, listener)
+    return this
   }
 
-  prependOnceListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.prependOnceListener(eventName, listener)
+  prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.prependOnceListener(event, listener)
+    return this
   }
 
-  removeAllListeners (eventName: string) {
-    return this.state.removeAllListeners(eventName)
+  removeAllListeners (event: string | symbol): this {
+    this.state.removeAllListeners(event)
+    return this
   }
 
-  removeListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.removeListener(eventName, listener)
+  removeListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.removeListener(event, listener)
+    return this
   }
 
-  setMaxListeners (n: number) {
-    return this.state.setMaxListeners(n)
+  setMaxListeners (n: number): this {
+    this.state.setMaxListeners(n)
+    return this
   }
 
   executeChildProcess (command: string, options: object): Promise<ProcessResults> {
