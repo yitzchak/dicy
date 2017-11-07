@@ -5,7 +5,9 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as temp from 'temp'
 
-import { DiCy, File, Rule } from '../src/main'
+import DiCy from '../src/DiCy'
+import File from '../src/File'
+import Rule from '../src/Rule'
 import { Command, Event, Phase } from '../src/types'
 
 export async function cloneFixtures () {

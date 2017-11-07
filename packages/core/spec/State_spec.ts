@@ -1,6 +1,6 @@
 /// <reference path="../node_modules/@types/jasmine/index.d.ts" />
 
-import { State } from '../src/main'
+import State from '../src/State'
 
 describe('State', () => {
   let state: State
