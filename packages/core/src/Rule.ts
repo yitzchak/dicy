@@ -357,7 +357,7 @@ export default class Rule extends StateConsumer {
       if (await file.update()) {
         this.emit('fileChanged', {
           type: 'fileChanged',
-          file,
+          file: file.filePath,
           virtual: file.virtual
         })
       }

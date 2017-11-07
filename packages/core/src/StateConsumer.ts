@@ -9,19 +9,25 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  RuleCache,
+  ActionEvent,
   Command,
+  CommandEvent,
   FileCache,
+  FileEvent,
   GlobOptions,
+  InputOutputEvent,
   KillToken,
+  LogEvent,
   Message,
   Option,
   OptionsInterface,
   Phase,
-  ProcessResults
+  ProcessResults,
+  RuleCache,
+  Severity
 } from './types'
 
-const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
+const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
 
 export default class StateConsumer implements EventEmitter {
   readonly state: State
@@ -29,23 +35,23 @@ export default class StateConsumer implements EventEmitter {
   readonly jobName: string | undefined
   readonly env: { [name: string]: string }
 
-  private localOptions: {[name: string]: any} = {}
+  private readonly localOptions: { [name: string]: any } = {}
 
   constructor (state: State, options: OptionsInterface, hasLocalOptions: boolean = false) {
     this.state = state
     this.options = hasLocalOptions
       ? new Proxy(options, {
-        get: (target, key) => {
+        get: (target: OptionsInterface, key: PropertyKey): any => {
           return key in this.localOptions
             ? this.localOptions[key]
             : target[key]
         },
-        set: (target, key, value) => {
+        set: (target: OptionsInterface, key: PropertyKey, value: any) => {
           this.setOption(this.localOptions, key.toString(), value)
           return true
         },
-        ownKeys: target => {
-          const keys = new Set(Object.keys(this.localOptions))
+        ownKeys: (target: OptionsInterface): string[] => {
+          const keys: Set<string> = new Set(Object.keys(this.localOptions))
 
           Object.keys(target).forEach(key => keys.add(key))
 
@@ -73,8 +79,8 @@ export default class StateConsumer implements EventEmitter {
   }
 
   async replaceResolvedTarget (oldFilePath: string, newFilePath: string) {
-    const x = this.resolvePath(oldFilePath)
-    if (this.state.targets.has(x)) {
+    const resolvedOldFilePath: string = this.resolvePath(oldFilePath)
+    if (this.state.targets.has(resolvedOldFilePath)) {
       this.addResolvedTarget(newFilePath)
     }
   }
@@ -125,7 +131,7 @@ export default class StateConsumer implements EventEmitter {
     if (!store) store = this.state.options
 
     for (const name in options) {
-      const value = options[name]
+      const value: any = options[name]
 
       if (name === 'jobs') {
         let jobs = store.jobs
@@ -135,7 +141,7 @@ export default class StateConsumer implements EventEmitter {
         }
 
         for (const jobName in value) {
-          const subOptions = value[jobName]
+          const subOptions: any = value[jobName]
           let jobOptions = jobs[jobName]
 
           if (!jobOptions) {
@@ -159,7 +165,7 @@ export default class StateConsumer implements EventEmitter {
   setOption (store: any, name: string, value: any) {
     const schema: Option | undefined = this.state.optionSchema.get(name)
     if (schema) {
-      let invalidType = false
+      let invalidType: boolean = false
 
       switch (schema.type) {
         case 'string':
@@ -246,7 +252,7 @@ export default class StateConsumer implements EventEmitter {
   }
 
   expandVariables (value: string, additionalProperties: any = {}): string {
-    const properties = Object.assign({}, this.state.env, this.env, additionalProperties)
+    const properties: any = Object.assign({}, this.state.env, this.env, additionalProperties)
 
     return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
@@ -276,16 +282,16 @@ export default class StateConsumer implements EventEmitter {
   async getFiles (filePaths: string[]): Promise<File[]> {
     const files: File[] = []
     for (const filePath of filePaths) {
-      const file = await this.getFile(filePath)
+      const file: File | undefined = await this.getFile(filePath)
       if (file) files.push(file)
     }
     return files
   }
 
   async getGlobbedFiles (pattern: string): Promise<File[]> {
-    const files = []
+    const files: File[] = []
     for (const filePath of await this.globPath(pattern)) {
-      const file = await this.getFile(filePath)
+      const file: File | undefined = await this.getFile(filePath)
       if (file) files.push(file)
     }
     return files
@@ -304,7 +310,7 @@ export default class StateConsumer implements EventEmitter {
   }
 
   log (message: Message): void {
-    const severity = this.options.severity || 'warning'
+    const severity: Severity = this.options.severity || 'warning'
     if ((severity === 'warning' && message.severity === 'info') ||
       (severity === 'error' && message.severity !== 'error')) return
     this.emit('log', { type: 'log', ...message })
@@ -347,11 +353,21 @@ export default class StateConsumer implements EventEmitter {
   }
 
   // EventEmmitter proxy
+  addListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  addListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  addListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  addListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  addListener (event: 'log', listener: (arg: LogEvent) => void): this
   addListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.addListener(event, listener)
     return this
   }
 
+  emit (event: 'action', arg: ActionEvent): boolean
+  emit (event: 'command', arg: CommandEvent): boolean
+  emit (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', arg: FileEvent): boolean
+  emit (event: 'inputAdded' | 'outputAdded', arg: InputOutputEvent): boolean
+  emit (event: 'log', arg: LogEvent): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return this.state.emit(event, ...args)
   }
@@ -372,21 +388,41 @@ export default class StateConsumer implements EventEmitter {
     return this.state.listeners(event)
   }
 
+  on (event: 'action', listener: (arg: ActionEvent) => void): this
+  on (event: 'command', listener: (arg: CommandEvent) => void): this
+  on (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  on (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  on (event: 'log', listener: (arg: LogEvent) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.on(event, listener)
     return this
   }
 
+  once (event: 'action', listener: (arg: ActionEvent) => void): this
+  once (event: 'command', listener: (arg: CommandEvent) => void): this
+  once (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  once (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  once (event: 'log', listener: (arg: LogEvent) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.once(event, listener)
     return this
   }
 
+  prependListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  prependListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  prependListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  prependListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  prependListener (event: 'log', listener: (arg: LogEvent) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependListener(event, listener)
     return this
   }
 
+  prependOnceListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  prependOnceListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  prependOnceListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  prependOnceListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  prependOnceListener (event: 'log', listener: (arg: LogEvent) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependOnceListener(event, listener)
     return this
@@ -397,6 +433,11 @@ export default class StateConsumer implements EventEmitter {
     return this
   }
 
+  removeListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  removeListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  removeListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  removeListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  removeListener (event: 'log', listener: (arg: LogEvent) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.removeListener(event, listener)
     return this
@@ -444,7 +485,7 @@ export default class StateConsumer implements EventEmitter {
       if (child.pid) this.state.processes.add(child.pid)
       child.on('error', handleExit)
       child.on('close', (code: any, signal: any) => {
-        let error
+        let error: any
         if (code !== 0 || signal !== null) {
           error = new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim()) as any
           error.code = code
