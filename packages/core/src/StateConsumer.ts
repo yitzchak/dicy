@@ -24,27 +24,28 @@ import {
 const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
 
 export default class StateConsumer implements EventEmitter {
-  state: State
-  options: OptionsInterface
-  privateOptions: {[name: string]: any} = {}
-  jobName: string | undefined
-  env: { [name: string]: string }
+  readonly state: State
+  readonly options: OptionsInterface
+  readonly jobName: string | undefined
+  readonly env: { [name: string]: string }
 
-  constructor (state: State, options: OptionsInterface, hasPrivateOptions: boolean = false) {
+  private localOptions: {[name: string]: any} = {}
+
+  constructor (state: State, options: OptionsInterface, hasLocalOptions: boolean = false) {
     this.state = state
-    this.options = hasPrivateOptions
+    this.options = hasLocalOptions
       ? new Proxy(options, {
         get: (target, key) => {
-          return key in this.privateOptions
-            ? this.privateOptions[key]
+          return key in this.localOptions
+            ? this.localOptions[key]
             : target[key]
         },
         set: (target, key, value) => {
-          this.setOption(this.privateOptions, key.toString(), value)
+          this.setOption(this.localOptions, key.toString(), value)
           return true
         },
         ownKeys: target => {
-          const keys = new Set(Object.keys(this.privateOptions))
+          const keys = new Set(Object.keys(this.localOptions))
 
           Object.keys(target).forEach(key => keys.add(key))
 
@@ -290,19 +291,19 @@ export default class StateConsumer implements EventEmitter {
     return files
   }
 
-  error (text: string, name: string = 'DiCy') {
+  error (text: string, name: string = 'DiCy'): void {
     this.log({ severity: 'error', name, text })
   }
 
-  warning (text: string, name: string = 'DiCy') {
+  warning (text: string, name: string = 'DiCy'): void {
     this.log({ severity: 'warning', name, text })
   }
 
-  info (text: string, name: string = 'DiCy') {
+  info (text: string, name: string = 'DiCy'): void {
     this.log({ severity: 'info', name, text })
   }
 
-  log (message: Message) {
+  log (message: Message): void {
     const severity = this.options.severity || 'warning'
     if ((severity === 'warning' && message.severity === 'info') ||
       (severity === 'error' && message.severity !== 'error')) return
@@ -406,6 +407,22 @@ export default class StateConsumer implements EventEmitter {
     return this
   }
 
+  /**
+   * Kill all child processes.
+   */
+  killChildProcesses (): void {
+    for (const pid of this.state.processes.values()) {
+      kill(pid)
+    }
+    this.state.processes.clear()
+  }
+
+  /**
+   * Execute a child process
+   * @param  {string}                  command The command line. Should be quoted.
+   * @param  {object}                  options Options passed to spawn.
+   * @return {Promise<ProcessResults>}         Result of process including output.
+   */
   executeChildProcess (command: string, options: object): Promise<ProcessResults> {
     return new Promise((resolve, reject) => {
       let stdout: string
@@ -446,13 +463,6 @@ export default class StateConsumer implements EventEmitter {
     })
   }
 
-  killChildProcesses () {
-    for (const pid of this.state.processes.values()) {
-      kill(pid)
-    }
-    this.state.processes.clear()
-  }
-
   isOutputOf (file: File, ruleId: string): boolean {
     return this.state.isOutputOf(file, ruleId)
   }
@@ -470,14 +480,14 @@ export default class StateConsumer implements EventEmitter {
   }
 
   getInputFiles (rule: Rule): File[] {
-    return this.state.getInputs(rule)
+    return this.state.getInputFiles(rule)
   }
 
   getOutputFiles (rule: Rule): File[] {
-    return this.state.getOutputs(rule)
+    return this.state.getOutputFiles(rule)
   }
 
-  getRuleId (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): string {
+  getRuleId (name: string, command: Command, phase: Phase, jobName: string | null = null, parameters: string[] = []): string {
     return this.state.getRuleId(name, command, phase, jobName, parameters)
   }
 

@@ -24,10 +24,10 @@ export default class Rule extends StateConsumer {
   static defaultActions: Action[] = ['run']
   static description: string = ''
 
-  id: string
-  command: Command
-  phase: Phase
-  parameters: File[] = []
+  readonly id: string
+  readonly command: Command
+  readonly phase: Phase
+  readonly parameters: File[] = []
   actions: Map<Action, Set<File>> = new Map()
   failures: Set<Action> = new Set<Action>()
 

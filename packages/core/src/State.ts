@@ -57,7 +57,7 @@ export default class State extends EventEmitter {
       }
       if (option.defaultValue) this.defaultOptions[option.name] = option.defaultValue
     }
-    this.assignOptions(this.defaultOptions)
+    this.resetOptions()
 
     this.env = Object.assign({}, process.env, {
       FILEPATH: base,
@@ -156,12 +156,12 @@ export default class State extends EventEmitter {
     }
   }
 
-  getRuleId (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): string {
+  getRuleId (name: string, command: Command, phase: Phase, jobName: string | null = null, parameters: string[] = []): string {
     const items: string[] = [command, phase, jobName || ''].concat(parameters)
     return `${name}(${items.join(';')})`
   }
 
-  getRule (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): Rule | undefined {
+  getRule (name: string, command: Command, phase: Phase, jobName: string | null = null, parameters: string[] = []): Rule | undefined {
     const id: string = this.getRuleId(name, command, phase, jobName, parameters)
     return this.rules.get(id)
   }
@@ -250,38 +250,12 @@ export default class State extends EventEmitter {
     }
   }
 
-  assignSubOptions (to: {[name: string]: any}, from: {[name: string]: any}) {
-    for (const name in from) {
-      if (from.hasOwnProperty(name)) {
-        const value: any = from[name]
-        if (typeof value !== 'object' || Array.isArray(value)) {
-          const schema: Option | void = this.optionSchema.get(name)
-          if (schema) {
-            to[schema.name] = value
-          } else if (name.startsWith('$')) {
-            // It's an environment variable
-            to[name] = value
-          } else {
-            // Tell somebody!
-          }
-        } else {
-          if (!(name in to)) to[name] = {}
-          this.assignSubOptions(to[name], value)
-        }
-      }
-    }
-  }
-
-  assignOptions (options: object) {
-    this.assignSubOptions(this.options, options)
-  }
-
   resetOptions (): void {
     for (const name of Object.getOwnPropertyNames(this.options)) {
       delete this.options[name]
     }
 
-    this.assignOptions(this.defaultOptions)
+    Object.assign(this.options, this.defaultOptions)
   }
 
   getJobOptions (jobName: string | null = null): OptionsInterface {
@@ -373,12 +347,12 @@ export default class State extends EventEmitter {
     return inEdges.some(edge => edge.v.startsWith(ruleId))
   }
 
-  getInputs (rule: Rule): File[] {
+  getInputFiles (rule: Rule): File[] {
     const predecessors = this.graph.predecessors(rule.id) || []
     return predecessors.map(filePath => this.files.get(filePath)).filter(file => file) as File[]
   }
 
-  getOutputs (rule: Rule): File[] {
+  getOutputFiles (rule: Rule): File[] {
     const successors = this.graph.successors(rule.id) || []
     return successors.map(filePath => this.files.get(filePath)).filter(file => file) as File[]
   }

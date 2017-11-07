@@ -12,7 +12,7 @@ import { Action, Command, Option, Phase, RuleInfo } from './types'
 const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
 
 export default class DiCy extends StateConsumer {
-  consumers: Map<string | null, StateConsumer> = new Map<string | null, StateConsumer>()
+  private consumers: Map<string | null, StateConsumer> = new Map<string | null, StateConsumer>()
 
   static async create (filePath: string, options: object = {}) {
     const schema = await DiCy.getOptionDefinitions()
@@ -22,7 +22,7 @@ export default class DiCy extends StateConsumer {
     await builder.initialize()
     await builder.setInstanceOptions(options)
 
-    state.assignOptions(options)
+    builder.assignOptions(options)
 
     return builder
   }
