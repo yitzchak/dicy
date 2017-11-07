@@ -1,0 +1,41 @@
+{
+  "name": "@dicy/server",
+  "description": "JSON-RPC server for DiCy.",
+  "keywords": [
+    "latex",
+    "knitr",
+    "sage",
+    "biblatex"
+  ],
+  "bugs": "https://github.com/yitzchak/dicy/issues",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "jasmine",
+    "compile": "rimraf lib && tsc",
+    "prepublish": "npm run compile"
+  },
+  "bin": {
+    "dicy-server": "lib/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yitzchak/dicy.git"
+  },
+  "author": "Tarn Burton <twburton@gmail.com>",
+  "contributors": [],
+  "homepage": "https://yitzchak.github.io/dicy/",
+  "engines": {
+    "node": ">=6.9.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@dicy/core": "^0.11.0",
+    "vscode-jsonrpc": "^3.5.0",
+    "yargs": "^10.0.3"
+  },
+  "devDependencies": {
+    "@types/yargs": "^8.0.2",
+    "rimraf": "^2.6.1",
+    "typescript": "^2.5.3"
+  }
+}
