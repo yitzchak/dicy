@@ -79,7 +79,7 @@ export class Client {
   private fileChangedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileChanged')
   private fileDeletedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileAdded')
   private fileRemovedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileRemoved')
-  private getTargetPathsRequest = new rpc.RequestType1<string, string[], void, void>('getTargetPaths')
+  private getTargetPathsRequest = new rpc.RequestType2<string, boolean, string[], void, void>('getTargetPaths')
   private inputAddedNotification = new rpc.NotificationType2<string, InputOutputEvent, void>('inputAdded')
   private killRequest = new rpc.RequestType1<string, boolean, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, LogEvent, void>('log')
@@ -105,8 +105,8 @@ export class Client {
     this.connection.sendNotification(this.exitNotification)
   }
 
-  getTargetPaths (filePath: string): Promise<string[]> {
-    return this.connection.sendRequest(this.getTargetPathsRequest, filePath)
+  getTargetPaths (filePath: string, absolute: boolean = false): Promise<string[]> {
+    return this.connection.sendRequest(this.getTargetPathsRequest, filePath, absolute)
   }
 
   delete (filePath: string): Promise<void> {

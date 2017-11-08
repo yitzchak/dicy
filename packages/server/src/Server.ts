@@ -13,7 +13,7 @@ export default class Server {
   private fileChangedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileChanged')
   private fileDeletedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
   private fileRemovedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileRemoved')
-  private getTargetPathsRequest = new rpc.RequestType1<string, string[], void, void>('getTargetPaths')
+  private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
   private inputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('inputAdded')
   private killRequest = new rpc.RequestType1<string, boolean, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, dicy.LogEvent, void>('log')
@@ -92,10 +92,10 @@ export default class Server {
     process.exit(0)
   }
 
-  async getTargetPaths (filePath: string): Promise<string[]> {
+  async getTargetPaths (filePath: string, absolute: boolean = true): Promise<string[]> {
     let builder: dicy.DiCy = await this.getDiCy(filePath)
 
-    return builder.getTargetPaths()
+    return builder.getTargetPaths(absolute)
   }
 
   async delete (filePath: string): Promise<void> {

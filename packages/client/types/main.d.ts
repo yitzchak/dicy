@@ -67,7 +67,7 @@ export interface Option {
 export interface Client {
   start (argv: any): Promise<void>;
   exit (): void;
-  getTargetPaths (filePath: string): Promise<string[]>;
+  getTargetPaths (filePath: string, absolute: boolean): Promise<string[]>;
   delete (filePath: string): Promise<void>;
   kill (filePath: string): Promise<void>;
   setInstanceOptions (filePath: string, options: object): Promise<boolean>;
