@@ -1,8 +1,7 @@
+import { CommandOptions, Command, Phase } from '../types'
 import File from '../File'
 import Rule from '../Rule'
-import State from '../State'
-
-import { CommandOptions, Command, OptionsInterface, Phase } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class LhsToTeX extends Rule {
   static parameterTypes: Set<string>[] = [new Set([
@@ -11,9 +10,9 @@ export default class LhsToTeX extends Rule {
   ])]
   static description: string = 'Runs lhs2TeX on lhs or lagda files.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
-    return parameters.some(file => ((file.type === 'LiterateHaskell' && options.literateHaskellEngine === 'lhs2TeX') ||
-      (file.type === 'LiterateAgda' && options.literateAgdaEngine === 'lhs2TeX')))
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return parameters.some(file => ((file.type === 'LiterateHaskell' && consumer.options.literateHaskellEngine === 'lhs2TeX') ||
+      (file.type === 'LiterateAgda' && consumer.options.literateAgdaEngine === 'lhs2TeX')))
   }
 
   constructCommand (): CommandOptions {

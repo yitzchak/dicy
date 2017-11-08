@@ -58,7 +58,7 @@ export default class Clean extends Rule {
     }
 
     for (const file of files.values()) {
-      await this.state.deleteFile(file, this.options.jobName)
+      await this.deleteFile(file, this.options.jobName)
     }
 
     for (const filePath of directories) {

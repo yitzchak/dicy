@@ -1,5 +1,15 @@
+export {
+  ActionEvent,
+  Command,
+  CommandEvent,
+  Event,
+  FileEvent,
+  InputOutputEvent,
+  LineRange,
+  LogEvent,
+  Message,
+  Option,
+  Reference,
+  Severity
+} from './types'
 export { default as DiCy } from './DiCy'
-export { default as State } from './State'
-export { default as File } from './File'
-export { default as Rule } from './Rule'
-export * from './types'

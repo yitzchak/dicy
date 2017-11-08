@@ -16,25 +16,25 @@ async function initialize ({
 describe('CheckForMissingBuildRule', () => {
   describe('isApplicable', () => {
     it('returns true if the parameter is the main source file.', async (done) => {
-      const { dicy, rule, options } = await initialize({
+      const { rule } = await initialize({
         parameters: [{
           filePath: 'LaTeX_article.tex'
         }]
       })
 
-      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await CheckForMissingBuildRule.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if the parameter is not the main source file.', async (done) => {
-      const { dicy, rule, options } = await initialize({
+      const { rule } = await initialize({
         parameters: [{
           filePath: 'LaTeX_standalone.tex'
         }]
       })
 
-      expect(await CheckForMissingBuildRule.isApplicable(dicy.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await CheckForMissingBuildRule.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })

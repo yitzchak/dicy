@@ -1,3 +1,5 @@
+import * as _ from 'lodash'
+import { EventEmitter } from 'events'
 import * as childProcess from 'child_process'
 import * as kill from 'tree-kill'
 import fastGlob from 'fast-glob'
@@ -6,44 +8,57 @@ import * as path from 'path'
 import State from './State'
 import File from './File'
 import Rule from './Rule'
-
 import {
+  ActionEvent,
+  Command,
+  CommandEvent,
+  FileCache,
+  FileEvent,
   GlobOptions,
+  InputOutputEvent,
   KillToken,
+  LogEvent,
   Message,
+  Option,
   OptionsInterface,
-  ProcessResults
+  Phase,
+  ProcessResults,
+  RuleCache,
+  Severity
 } from './types'
 
-const VARIABLE_PATTERN = /\$\{?(\w+)\}?/g
+const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
 
-export default class StateConsumer {
-  state: State
-  options: OptionsInterface
-  consumerOptions: {[name: string]: any} = {}
-  jobName: string | undefined
-  env: { [name: string]: string }
+export default class StateConsumer implements EventEmitter {
+  readonly state: State
+  readonly options: OptionsInterface
+  readonly jobName: string | undefined
+  readonly env: { [name: string]: string }
 
-  constructor (state: State, options: OptionsInterface) {
+  private readonly localOptions: { [name: string]: any } = {}
+
+  constructor (state: State, options: OptionsInterface, hasLocalOptions: boolean = false) {
     this.state = state
-    this.options = new Proxy(options, {
-      get: (target, key) => {
-        return key in this.consumerOptions
-          ? this.consumerOptions[key]
-          : target[key]
-      },
-      set: (target, key, value) => {
-        this.setOption(this.consumerOptions, key.toString(), value)
-        return true
-      },
-      ownKeys: target => {
-        const keys = new Set(Object.keys(this.consumerOptions))
+    this.options = hasLocalOptions
+      ? new Proxy(options, {
+        get: (target: OptionsInterface, key: PropertyKey): any => {
+          return key in this.localOptions
+            ? this.localOptions[key]
+            : target[key]
+        },
+        set: (target: OptionsInterface, key: PropertyKey, value: any) => {
+          this.setOption(this.localOptions, key.toString(), value)
+          return true
+        },
+        ownKeys: (target: OptionsInterface): string[] => {
+          const keys: Set<string> = new Set(Object.keys(this.localOptions))
 
-        Object.keys(target).forEach(key => keys.add(key))
+          Object.keys(target).forEach(key => keys.add(key))
 
-        return Array.from(keys.values())
-      }
-    })
+          return Array.from(keys.values())
+        }
+      })
+      : options
     this.env = {
       OUTDIR: this.options.outputDirectory || '.',
       OUTEXT: `.${this.options.outputFormat}`,
@@ -64,8 +79,8 @@ export default class StateConsumer {
   }
 
   async replaceResolvedTarget (oldFilePath: string, newFilePath: string) {
-    const x = this.resolvePath(oldFilePath)
-    if (this.state.targets.has(x)) {
+    const resolvedOldFilePath: string = this.resolvePath(oldFilePath)
+    if (this.state.targets.has(resolvedOldFilePath)) {
       this.addResolvedTarget(newFilePath)
     }
   }
@@ -76,6 +91,18 @@ export default class StateConsumer {
     }
   }
 
+  get targets (): string[] {
+    return Array.from(this.state.targets)
+  }
+
+  getTargetPaths (): Promise<string[]> {
+    return this.state.getTargetPaths()
+  }
+
+  getTargetFiles (): Promise<File[]> {
+    return this.state.getTargetFiles()
+  }
+
   get killToken (): KillToken | null {
     return this.state.killToken
   }
@@ -84,19 +111,37 @@ export default class StateConsumer {
     this.state.killToken = value
   }
 
-  assignOptions (options: any) {
+  get cacheTimeStamp (): Date {
+    return this.state.cacheTimeStamp
+  }
+
+  set cacheTimeStamp (timeStamp: Date) {
+    this.state.cacheTimeStamp = timeStamp
+  }
+
+  get serializedOptions (): object {
+    return _.cloneDeep(this.state.options)
+  }
+
+  resetOptions () {
+    this.state.resetOptions()
+  }
+
+  assignOptions (options: any, store?: any) {
+    if (!store) store = this.state.options
+
     for (const name in options) {
-      const value = options[name]
+      const value: any = options[name]
 
       if (name === 'jobs') {
-        let jobs = this.state.options.jobs
+        let jobs = store.jobs
 
         if (!jobs) {
-          this.state.options.jobs = jobs = {}
+          store.jobs = jobs = {}
         }
 
         for (const jobName in value) {
-          const subOptions = value[jobName]
+          const subOptions: any = value[jobName]
           let jobOptions = jobs[jobName]
 
           if (!jobOptions) {
@@ -108,15 +153,19 @@ export default class StateConsumer {
           }
         }
       } else {
-        this.setOption(this.state.options, name, value)
+        this.setOption(store, name, value)
       }
     }
   }
 
+  getOptionSchema (name: string): Option | undefined {
+    return this.state.optionSchema.get(name)
+  }
+
   setOption (store: any, name: string, value: any) {
-    const schema = this.state.optionSchema.get(name)
+    const schema: Option | undefined = this.state.optionSchema.get(name)
     if (schema) {
-      let invalidType = false
+      let invalidType: boolean = false
 
       switch (schema.type) {
         case 'string':
@@ -158,6 +207,10 @@ export default class StateConsumer {
     return this.state.ruleClasses
   }
 
+  set ruleClasses (rules: typeof Rule[]) {
+    this.state.ruleClasses = rules
+  }
+
   get filePath (): string {
     return this.state.filePath
   }
@@ -174,31 +227,20 @@ export default class StateConsumer {
     return this.state.rules.values()
   }
 
-  get targets (): string[] {
-    const targets: Set<string> = new Set<string>()
-
-    for (const rule of this.rules) {
-      for (const file of rule.outputs) {
-        const ext = path.extname(file.filePath)
-        if (ext === `.${this.options.outputFormat}` || (ext === '.xdv' && this.options.outputFormat === 'dvi')) {
-          targets.add(file.filePath)
-        }
-      }
-    }
-
-    return Array.from(targets.values())
+  deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
+    return this.state.deleteFile(file, jobName, unlink)
   }
 
-  getTargetPaths (): Promise<string[]> {
-    return this.state.getTargetPaths()
+  addRule (rule: Rule): Promise<void> {
+    return this.state.addRule(rule)
   }
 
-  getTargetFiles (): Promise<File[]> {
-    return this.state.getTargetFiles()
+  removeRule (rule: Rule): void {
+    this.state.removeRule(rule)
   }
 
-  async addRule (rule: Rule): Promise<void> {
-    await this.state.addRule(rule)
+  hasRule (id: string): boolean {
+    return this.state.rules.has(id)
   }
 
   normalizePath (filePath: string) {
@@ -210,7 +252,7 @@ export default class StateConsumer {
   }
 
   expandVariables (value: string, additionalProperties: any = {}): string {
-    const properties = Object.assign({}, this.state.env, this.env, additionalProperties)
+    const properties: any = Object.assign({}, this.state.env, this.env, additionalProperties)
 
     return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
@@ -240,35 +282,35 @@ export default class StateConsumer {
   async getFiles (filePaths: string[]): Promise<File[]> {
     const files: File[] = []
     for (const filePath of filePaths) {
-      const file = await this.getFile(filePath)
+      const file: File | undefined = await this.getFile(filePath)
       if (file) files.push(file)
     }
     return files
   }
 
   async getGlobbedFiles (pattern: string): Promise<File[]> {
-    const files = []
+    const files: File[] = []
     for (const filePath of await this.globPath(pattern)) {
-      const file = await this.getFile(filePath)
+      const file: File | undefined = await this.getFile(filePath)
       if (file) files.push(file)
     }
     return files
   }
 
-  error (text: string, name: string = 'DiCy') {
+  error (text: string, name: string = 'DiCy'): void {
     this.log({ severity: 'error', name, text })
   }
 
-  warning (text: string, name: string = 'DiCy') {
+  warning (text: string, name: string = 'DiCy'): void {
     this.log({ severity: 'warning', name, text })
   }
 
-  info (text: string, name: string = 'DiCy') {
+  info (text: string, name: string = 'DiCy'): void {
     this.log({ severity: 'info', name, text })
   }
 
-  log (message: Message) {
-    const severity = this.options.severity || 'warning'
+  log (message: Message): void {
+    const severity: Severity = this.options.severity || 'warning'
     if ((severity === 'warning' && message.severity === 'info') ||
       (severity === 'error' && message.severity !== 'error')) return
     this.emit('log', { type: 'log', ...message })
@@ -278,24 +320,28 @@ export default class StateConsumer {
     return this.state.components
   }
 
-  addNode (x: string): void {
-    this.state.addNode(x)
+  hasInput (rule: Rule, file: File): boolean {
+    return this.state.hasEdge(file.filePath, rule.id)
   }
 
-  removeNode (x: string): void {
-    this.state.addNode(x)
+  hasOutput (rule: Rule, file: File): boolean {
+    return this.state.hasEdge(rule.id, file.filePath)
   }
 
-  hasEdge (x: string, y: string): boolean {
-    return this.state.hasEdge(x, y)
+  addInput (rule: Rule, file: File): void {
+    this.state.addEdge(file.filePath, rule.id)
   }
 
-  addEdge (x: string, y: string): void {
-    this.state.addEdge(x, y)
+  addOutput (rule: Rule, file: File): void {
+    this.state.addEdge(rule.id, file.filePath)
   }
 
-  removeEdge (x: string, y: string): void {
-    this.state.removeEdge(x, y)
+  removeInput (rule: Rule, file: File): void {
+    this.state.removeEdge(file.filePath, rule.id)
+  }
+
+  removeOutput (rule: Rule, file: File): void {
+    this.state.removeEdge(rule.id, file.filePath)
   }
 
   isGrandparentOf (x: File | Rule, y: File | Rule): boolean {
@@ -307,59 +353,118 @@ export default class StateConsumer {
   }
 
   // EventEmmitter proxy
-  addListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.addListener(eventName, listener)
+  addListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  addListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  addListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  addListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  addListener (event: 'log', listener: (arg: LogEvent) => void): this
+  addListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.addListener(event, listener)
+    return this
   }
 
-  emit (eventName: string, ...args: any[]) {
-    return this.state.emit(eventName, ...args)
+  emit (event: 'action', arg: ActionEvent): boolean
+  emit (event: 'command', arg: CommandEvent): boolean
+  emit (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', arg: FileEvent): boolean
+  emit (event: 'inputAdded' | 'outputAdded', arg: InputOutputEvent): boolean
+  emit (event: 'log', arg: LogEvent): boolean
+  emit (event: string | symbol, ...args: any[]): boolean {
+    return this.state.emit(event, ...args)
   }
 
-  eventNames () {
+  eventNames (): (string | symbol)[] {
     return this.state.eventNames()
   }
 
-  getMaxListeners () {
-    return this.state.eventNames()
+  getMaxListeners (): number {
+    return this.state.getMaxListeners()
   }
 
-  listenerCount (eventName: string) {
-    return this.state.listenerCount(eventName)
+  listenerCount (event: string | symbol) {
+    return this.state.listenerCount(event)
   }
 
-  listeners (eventName: string) {
-    return this.state.listeners(eventName)
+  listeners (event: string | symbol) {
+    return this.state.listeners(event)
   }
 
-  on (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.on(eventName, listener)
+  on (event: 'action', listener: (arg: ActionEvent) => void): this
+  on (event: 'command', listener: (arg: CommandEvent) => void): this
+  on (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  on (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  on (event: 'log', listener: (arg: LogEvent) => void): this
+  on (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.on(event, listener)
+    return this
   }
 
-  once (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.once(eventName, listener)
+  once (event: 'action', listener: (arg: ActionEvent) => void): this
+  once (event: 'command', listener: (arg: CommandEvent) => void): this
+  once (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  once (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  once (event: 'log', listener: (arg: LogEvent) => void): this
+  once (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.once(event, listener)
+    return this
   }
 
-  prependListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.prependListener(eventName, listener)
+  prependListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  prependListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  prependListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  prependListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  prependListener (event: 'log', listener: (arg: LogEvent) => void): this
+  prependListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.prependListener(event, listener)
+    return this
   }
 
-  prependOnceListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.prependOnceListener(eventName, listener)
+  prependOnceListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  prependOnceListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  prependOnceListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  prependOnceListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  prependOnceListener (event: 'log', listener: (arg: LogEvent) => void): this
+  prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.prependOnceListener(event, listener)
+    return this
   }
 
-  removeAllListeners (eventName: string) {
-    return this.state.removeAllListeners(eventName)
+  removeAllListeners (event: string | symbol): this {
+    this.state.removeAllListeners(event)
+    return this
   }
 
-  removeListener (eventName: string, listener: (...args: any[]) => void) {
-    return this.state.removeListener(eventName, listener)
+  removeListener (event: 'action', listener: (arg: ActionEvent) => void): this
+  removeListener (event: 'command', listener: (arg: CommandEvent) => void): this
+  removeListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
+  removeListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
+  removeListener (event: 'log', listener: (arg: LogEvent) => void): this
+  removeListener (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.removeListener(event, listener)
+    return this
   }
 
-  setMaxListeners (n: number) {
-    return this.state.setMaxListeners(n)
+  setMaxListeners (n: number): this {
+    this.state.setMaxListeners(n)
+    return this
   }
 
-  executeChildProcess (command: string, options: Object): Promise<ProcessResults> {
+  /**
+   * Kill all child processes.
+   */
+  killChildProcesses (): void {
+    for (const pid of this.state.processes.values()) {
+      kill(pid)
+    }
+    this.state.processes.clear()
+  }
+
+  /**
+   * Execute a child process
+   * @param  {string}                  command The command line. Should be quoted.
+   * @param  {object}                  options Options passed to spawn.
+   * @return {Promise<ProcessResults>}         Result of process including output.
+   */
+  executeChildProcess (command: string, options: object): Promise<ProcessResults> {
     return new Promise((resolve, reject) => {
       let stdout: string
       let stderr: string
@@ -380,7 +485,7 @@ export default class StateConsumer {
       if (child.pid) this.state.processes.add(child.pid)
       child.on('error', handleExit)
       child.on('close', (code: any, signal: any) => {
-        let error
+        let error: any
         if (code !== 0 || signal !== null) {
           error = new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim()) as any
           error.code = code
@@ -399,14 +504,39 @@ export default class StateConsumer {
     })
   }
 
-  killChildProcesses () {
-    for (const pid of this.state.processes.values()) {
-      kill(pid)
-    }
-    this.state.processes.clear()
-  }
-
   isOutputOf (file: File, ruleId: string): boolean {
     return this.state.isOutputOf(file, ruleId)
+  }
+
+  getJobOptions (jobName: string | null = null): OptionsInterface {
+    return this.state.getJobOptions(jobName)
+  }
+
+  getInputRules (file: File): Rule[] {
+    return this.state.getInputRules(file)
+  }
+
+  getOutputRules (file: File): Rule[] {
+    return this.state.getOutputRules(file)
+  }
+
+  getInputFiles (rule: Rule): File[] {
+    return this.state.getInputFiles(rule)
+  }
+
+  getOutputFiles (rule: Rule): File[] {
+    return this.state.getOutputFiles(rule)
+  }
+
+  getRuleId (name: string, command: Command, phase: Phase, jobName: string | null = null, parameters: string[] = []): string {
+    return this.state.getRuleId(name, command, phase, jobName, parameters)
+  }
+
+  addCachedRule (cache: RuleCache): Promise<void> {
+    return this.state.addCachedRule(cache)
+  }
+
+  async addCachedFile (filePath: string, fileCache: FileCache): Promise<void> {
+    await this.state.getFile(filePath, fileCache)
   }
 }

@@ -4,7 +4,8 @@ import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 import * as childProcess from 'child_process'
 
-import { DiCy, File } from '../src/main'
+import DiCy from '../src/DiCy'
+import File from '../src/File'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000

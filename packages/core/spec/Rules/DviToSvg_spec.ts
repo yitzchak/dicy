@@ -15,21 +15,21 @@ async function initialize ({
 describe('DviToSvg', () => {
   describe('isApplicable', () => {
     it('returns true if outputFormat is \'svg\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputFormat: 'svg' }
       })
 
-      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await DviToSvg.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'svg\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputFormat: 'dvi' }
       })
 
-      expect(await DviToSvg.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await DviToSvg.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })

@@ -19,57 +19,57 @@ async function initialize ({
 describe('CopyTargetsToRoot', () => {
   describe('isApplicable', () => {
     it('returns true if parameter is a target', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { copyTargetsToRoot: true }
       })
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if parameter is a virtual file', async (done) => {
       const filePath = 'file-types/foo.bar-ParsedLaTeXLog'
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { copyTargetsToRoot: true },
         parameters: [{ filePath }]
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if parameter is already in the root', async (done) => {
       const filePath = 'error-warning.log'
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { copyTargetsToRoot: true },
         parameters: [{ filePath }]
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if parameter is not a target', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { copyTargetsToRoot: true }
       })
 
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns false if copyTargetsToRoot is not set', async (done) => {
-      const { rule, options } = await initialize()
+      const { rule } = await initialize()
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })

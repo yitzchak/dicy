@@ -17,15 +17,15 @@ async function initialize ({
 describe('SplitIndex', () => {
   describe('isApplicable', () => {
     it('returns false if there are no splitindex notices in the log.', async (done) => {
-      const { rule, options } = await initialize()
+      const { rule } = await initialize()
 
-      expect(await SplitIndex.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })
 
     it('returns true if there are splitindex notices in the log.', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         parameters: [{
           filePath: 'IndexControlFile.idx'
         }, {
@@ -42,13 +42,13 @@ describe('SplitIndex', () => {
         }]
       })
 
-      expect(await SplitIndex.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if there are splitindex calls in the log.', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         parameters: [{
           filePath: 'IndexControlFile.idx'
         }, {
@@ -66,7 +66,7 @@ describe('SplitIndex', () => {
         }]
       })
 
-      expect(await SplitIndex.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })

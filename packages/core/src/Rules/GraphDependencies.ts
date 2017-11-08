@@ -15,7 +15,7 @@ export default class GraphDependencies extends Rule {
 
   async run () {
     let lines: string[] = []
-    const rulesByCommand = _.groupBy(Array.from(this.state.rules.values()), rule => rule.command)
+    const rulesByCommand = _.groupBy(Array.from(this.rules), rule => rule.command)
     let level = 0
 
     function addLine (line: string) {

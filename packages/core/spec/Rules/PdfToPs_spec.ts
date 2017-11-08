@@ -15,21 +15,21 @@ async function initialize ({
 describe('PdfToPs', () => {
   describe('isApplicable', () => {
     it('returns true if outputFormat is \'ps\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputFormat: 'ps' }
       })
 
-      expect(await PdfToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await PdfToPs.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if outputFormat is not \'ps\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await PdfToPs.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await PdfToPs.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })

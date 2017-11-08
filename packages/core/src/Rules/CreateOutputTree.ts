@@ -1,23 +1,22 @@
 import * as _ from 'lodash'
 import * as path from 'path'
 
+import { Command, Phase } from '../types'
 import File from '../File'
 import Rule from '../Rule'
-import State from '../State'
-
-import { Command, OptionsInterface, Phase } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class CreateOutputTree extends Rule {
   static phases: Set<Phase> = new Set<Phase>(['initialize'])
   static alwaysEvaluate: boolean = true
   static description: string = 'Create directory tree for aux files when `outputDirectory` is set.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
-    return !!options.outputDirectory && options.outputDirectory !== '.'
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return !!consumer.options.outputDirectory && consumer.options.outputDirectory !== '.'
   }
 
   async run () {
-    const outputDirectories: string[] = _.uniq(this.options.jobNames.map(jobName => this.state.getJobOptions(jobName).outputDirectory || '.')
+    const outputDirectories: string[] = _.uniq(this.options.jobNames.map(jobName => this.getJobOptions(jobName).outputDirectory || '.')
       .filter(outputDirectory => outputDirectory !== '.'))
     const directories = ['.'].concat(await this.globPath('**/*', {
       types: 'directories',

@@ -3,7 +3,7 @@ import * as yargs from 'yargs-parser'
 
 import { Message, ParsedLog, ShellCall } from './types'
 
-const ARGUMENT_PARSERS: { [name: string]: Object } = {
+const ARGUMENT_PARSERS: { [name: string]: object } = {
   epstopdf: {
     alias: {
       outfile: 'o'
@@ -201,7 +201,7 @@ export default class Log {
 
   static parseCall (command: string, status: string = 'executed'): ShellCall {
     const args = splitCommand(command)
-    const parser: Object | undefined = ARGUMENT_PARSERS[args[0]]
+    const parser: object | undefined = ARGUMENT_PARSERS[args[0]]
     if (parser) {
       const argv = yargs(args, parser)
       return {

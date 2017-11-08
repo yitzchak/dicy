@@ -12,7 +12,9 @@ import { Action, Command, Option, Phase, RuleInfo } from './types'
 const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
 
 export default class DiCy extends StateConsumer {
-  static async create (filePath: string, options: Object = {}) {
+  private consumers: Map<string | null, StateConsumer> = new Map<string | null, StateConsumer>()
+
+  static async create (filePath: string, options: object = {}) {
     const schema = await DiCy.getOptionDefinitions()
     const state = new State(filePath, schema)
     const builder = new DiCy(state, state.getJobOptions())
@@ -20,7 +22,7 @@ export default class DiCy extends StateConsumer {
     await builder.initialize()
     await builder.setInstanceOptions(options)
 
-    state.assignOptions(options)
+    builder.assignOptions(options)
 
     return builder
   }
@@ -40,11 +42,22 @@ export default class DiCy extends StateConsumer {
   async initialize () {
     const ruleClassPath: string = path.join(__dirname, 'Rules')
     const entries: string[] = await readdir.async(ruleClassPath)
-    this.state.ruleClasses = entries
+    this.ruleClasses = entries
       .map(entry => require(path.join(ruleClassPath, entry)).default)
   }
 
-  async setInstanceOptions (options: Object = {}) {
+  getConsumer (jobName: string | null): StateConsumer {
+    let consumer: StateConsumer | undefined = this.consumers.get(jobName)
+
+    if (!consumer) {
+      consumer = new StateConsumer(this.state, this.getJobOptions(jobName))
+      this.consumers.set(jobName, consumer)
+    }
+
+    return consumer
+  }
+
+  async setInstanceOptions (options: object = {}) {
     const instance = await this.getFile('dicy-instance.yaml-ParsedYAML')
     if (instance) {
       instance.readOnly = false
@@ -61,7 +74,7 @@ export default class DiCy extends StateConsumer {
     for (const ruleClass of this.ruleClasses) {
       const jobNames = ruleClass.ignoreJobName ? [null] : this.options.jobNames
       for (const jobName of jobNames) {
-        const rule = await ruleClass.analyzePhase(this.state, command, phase, this.state.getJobOptions(jobName))
+        const rule = await ruleClass.analyzePhase(this.getConsumer(jobName), command, phase)
         if (rule) {
           await this.addRule(rule)
         }
@@ -80,7 +93,7 @@ export default class DiCy extends StateConsumer {
       for (const ruleClass of this.ruleClasses) {
         const jobNames: (string | null)[] = file.jobNames.size === 0 ? [null] : Array.from(file.jobNames.values())
         for (const jobName of jobNames) {
-          const rules: Rule[] = await ruleClass.analyzeFile(this.state, command, phase, this.state.getJobOptions(jobName), file)
+          const rules: Rule[] = await ruleClass.analyzeFile(this.getConsumer(jobName), command, phase, file)
           for (const rule of rules) {
             await this.addRule(rule)
           }
@@ -166,7 +179,7 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     for (const file of this.files) {
-      for (const rule of this.state.getInputRules(file)) {
+      for (const rule of this.getInputRules(file)) {
         await rule.addFileActions(file, command, phase)
       }
       file.hasBeenUpdated = false
@@ -231,7 +244,7 @@ export default class DiCy extends StateConsumer {
     this.checkForKill()
 
     for (const file of this.files) {
-      file.hasBeenUpdated = file.hasBeenUpdatedCache
+      file.restoreUpdateFlag()
       file.analyzed = false
     }
 
@@ -256,16 +269,16 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  async updateOptions (options: Object = {}, user: boolean = false): Promise<Object> {
+  async updateOptions (options: object = {}, user: boolean = false): Promise<object> {
     const normalizedOptions = {}
     const filePath = this.resolvePath(user ? '$HOME/.dicy.yaml' : '$ROOTDIR/$NAME.yaml')
 
     if (await File.canRead(filePath)) {
       const currentOptions = await File.readYaml(filePath)
-      this.state.assignSubOptions(normalizedOptions, currentOptions)
+      this.assignOptions(currentOptions, normalizedOptions)
     }
 
-    this.state.assignSubOptions(normalizedOptions, options)
+    this.assignOptions(options, normalizedOptions)
     await File.writeYaml(filePath, normalizedOptions)
 
     return normalizedOptions

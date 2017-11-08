@@ -25,8 +25,8 @@ type GraphProperties = {
 }
 
 export default class State extends EventEmitter {
-  filePath: string
-  rootPath: string
+  readonly filePath: string
+  readonly rootPath: string
   files: Map<string, File> = new Map()
   rules: Map<string, Rule> = new Map()
   options: {[name: string]: any} = {}
@@ -38,10 +38,10 @@ export default class State extends EventEmitter {
   env: {[name: string]: string}
   targets: Set<string> = new Set<string>()
   killToken: KillToken | null
-  graph: Graph = new Graph()
-  optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
+  private graph: Graph = new Graph()
   private graphProperties: GraphProperties = {}
+  private optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
   constructor (filePath: string, schema: Option[] = []) {
     super()
@@ -57,7 +57,7 @@ export default class State extends EventEmitter {
       }
       if (option.defaultValue) this.defaultOptions[option.name] = option.defaultValue
     }
-    this.assignOptions(this.defaultOptions)
+    this.resetOptions()
 
     this.env = Object.assign({}, process.env, {
       FILEPATH: base,
@@ -122,7 +122,7 @@ export default class State extends EventEmitter {
     rule.addActions()
   }
 
-  removeRule (rule: Rule) {
+  removeRule (rule: Rule): void {
     this.rules.delete(rule.id)
     this.removeNode(rule.id)
   }
@@ -156,12 +156,12 @@ export default class State extends EventEmitter {
     }
   }
 
-  getRuleId (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): string {
+  getRuleId (name: string, command: Command, phase: Phase, jobName: string | null = null, parameters: string[] = []): string {
     const items: string[] = [command, phase, jobName || ''].concat(parameters)
     return `${name}(${items.join(';')})`
   }
 
-  getRule (name: string, command: Command, phase: Phase, jobName: string | undefined, parameters: string[] = []): Rule | undefined {
+  getRule (name: string, command: Command, phase: Phase, jobName: string | null = null, parameters: string[] = []): Rule | undefined {
     const id: string = this.getRuleId(name, command, phase, jobName, parameters)
     return this.rules.get(id)
   }
@@ -216,7 +216,7 @@ export default class State extends EventEmitter {
     return file
   }
 
-  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true) {
+  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
     if (file.readOnly) return
 
     const invalidRules: Rule[] = []
@@ -250,38 +250,12 @@ export default class State extends EventEmitter {
     }
   }
 
-  assignSubOptions (to: {[name: string]: any}, from: {[name: string]: any}) {
-    for (const name in from) {
-      if (from.hasOwnProperty(name)) {
-        const value: any = from[name]
-        if (typeof value !== 'object' || Array.isArray(value)) {
-          const schema: Option | void = this.optionSchema.get(name)
-          if (schema) {
-            to[schema.name] = value
-          } else if (name.startsWith('$')) {
-            // It's an environment variable
-            to[name] = value
-          } else {
-            // Tell somebody!
-          }
-        } else {
-          if (!(name in to)) to[name] = {}
-          this.assignSubOptions(to[name], value)
-        }
-      }
-    }
-  }
-
-  assignOptions (options: Object) {
-    this.assignSubOptions(this.options, options)
-  }
-
-  resetOptions () {
+  resetOptions (): void {
     for (const name of Object.getOwnPropertyNames(this.options)) {
       delete this.options[name]
     }
 
-    this.assignOptions(this.defaultOptions)
+    Object.assign(this.options, this.defaultOptions)
   }
 
   getJobOptions (jobName: string | null = null): OptionsInterface {
@@ -371,5 +345,15 @@ export default class State extends EventEmitter {
     const inEdges = this.graph.inEdges(file.filePath) || []
 
     return inEdges.some(edge => edge.v.startsWith(ruleId))
+  }
+
+  getInputFiles (rule: Rule): File[] {
+    const predecessors = this.graph.predecessors(rule.id) || []
+    return predecessors.map(filePath => this.files.get(filePath)).filter(file => file) as File[]
+  }
+
+  getOutputFiles (rule: Rule): File[] {
+    const successors = this.graph.successors(rule.id) || []
+    return successors.map(filePath => this.files.get(filePath)).filter(file => file) as File[]
   }
 }

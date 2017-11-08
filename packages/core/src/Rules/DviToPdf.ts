@@ -1,17 +1,16 @@
-import State from '../State'
+import { Command, CommandOptions, Phase } from '../types'
 import File from '../File'
 import Rule from '../Rule'
-
-import { Command, CommandOptions, OptionsInterface, Phase } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class DviToPdf extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['DeviceIndependentFile'])]
   static description: string = 'Converts DVI to PDF using (x)dvipdfm(x).'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if output format is pdf and intermediate PostScript generation
     // is off.
-    return options.outputFormat === 'pdf' && !options.intermediatePostScript
+    return consumer.options.outputFormat === 'pdf' && !consumer.options.intermediatePostScript
   }
 
   async initialize () {

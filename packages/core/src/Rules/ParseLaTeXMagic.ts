@@ -25,7 +25,7 @@ export default class ParseLaTeXMagic extends Rule {
       names: ['jobName', 'name', 'value'],
       patterns: [/^%\s*!T[eE]X\s+(?:([^:]+?)\s*:\s*)?(\$?\w+)\s*=\s*(.*?)\s*$/],
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
-        const schema = this.state.optionSchema.get(match.groups.name)
+        const schema = this.getOptionSchema(match.groups.name)
         let value: any = match.groups.value
 
         if (schema) {
@@ -51,7 +51,7 @@ export default class ParseLaTeXMagic extends Rule {
         let jobMagic = magic
 
         if (match.groups.jobName) {
-          // There is a job name specified so create a jobs object.
+          // There is a job name specified so create a jobs Object.
           if (!('jobs' in magic)) magic.jobs = {}
 
           if (match.groups.jobName in magic.jobs) {

@@ -1,11 +1,10 @@
 import * as path from 'path'
 
+import { Action, ShellCall, Command, Phase, CommandOptions, ParsedLog } from '../types'
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
-import State from '../State'
-
-import { Action, ShellCall, Command, Phase, CommandOptions, OptionsInterface, ParsedLog } from '../types'
+import StateConsumer from '../StateConsumer'
 
 export default class EpsToPdf extends Rule {
   static parameterTypes: Set<string>[] = [
@@ -14,13 +13,13 @@ export default class EpsToPdf extends Rule {
   ]
   static description: string = 'Converts EPS to PDF using epstopdf.'
 
-  static async isApplicable (state: State, command: Command, phase: Phase, options: OptionsInterface, parameters: File[] = []): Promise<boolean> {
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     switch (parameters[1].type) {
       case 'Nil':
         // If there is not a LaTeX log present then only apply epstopdf when the
         // main source file is an EPS.
-        return parameters[0].filePath === path.normalize(options.filePath) &&
-          options.outputFormat === 'pdf'
+        return parameters[0].filePath === path.normalize(consumer.options.filePath) &&
+          consumer.options.outputFormat === 'pdf'
       case 'ParsedLaTeXLog':
         // When there is a LaTeX log present only apply epstopdf if there are
         // specific calls present, usually from the epstopdf package.

@@ -15,30 +15,30 @@ async function initialize ({
 describe('LhsToTeX', () => {
   describe('isApplicable', () => {
     it('returns true if file type is \'LiterateHaskell\'', async (done) => {
-      const { rule, options } = await initialize()
+      const { rule } = await initialize()
 
-      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns true if literateAgdaEngine is \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         parameters: [{ filePath: 'LiterateAgda.lagda' }],
         options: { literateAgdaEngine: 'lhs2TeX' }
       })
 
-      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(true)
+      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
 
       done()
     })
 
     it('returns false if literateAgdaEngine is not \'lhs2TeX\' and file type is \'LiterateAgda\'', async (done) => {
-      const { rule, options } = await initialize({
+      const { rule } = await initialize({
         parameters: [{ filePath: 'LiterateAgda.lagda' }]
       })
 
-      expect(await LhsToTeX.isApplicable(rule.state, 'build', 'execute', options, rule.parameters)).toBe(false)
+      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
 
       done()
     })
