@@ -2,18 +2,25 @@ import * as dicy from '@dicy/core'
 import * as rpc from 'vscode-jsonrpc'
 
 export default class Server {
-  cachedDiCy: Map<string, dicy.DiCy> = new Map<string, dicy.DiCy>()
-  connection: any
+  private cachedDiCy: Map<string, dicy.DiCy> = new Map<string, dicy.DiCy>()
+  private connection: any
 
-  actionNotification = new rpc.NotificationType2<string, dicy.ActionEvent, void>('action')
-  commandNotification = new rpc.NotificationType2<string, dicy.CommandEvent, void>('command')
-  fileAddedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
-  fileChangedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileChanged')
-  fileDeletedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
-  fileRemovedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileRemoved')
-  inputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('inputAdded')
-  logNotification = new rpc.NotificationType2<string, dicy.LogEvent, void>('log')
-  outputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('outputAdded')
+  private actionNotification = new rpc.NotificationType2<string, dicy.ActionEvent, void>('action')
+  private commandNotification = new rpc.NotificationType2<string, dicy.CommandEvent, void>('command')
+  private deleteRequest = new rpc.RequestType1<string, boolean, void, void>('delete')
+  private exitNotification = new rpc.NotificationType0<void>('exit')
+  private fileAddedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
+  private fileChangedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileChanged')
+  private fileDeletedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
+  private fileRemovedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileRemoved')
+  private getTargetPathsRequest = new rpc.RequestType1<string, string[], void, void>('getTargetPaths')
+  private inputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('inputAdded')
+  private killRequest = new rpc.RequestType1<string, boolean, void, void>('kill')
+  private logNotification = new rpc.NotificationType2<string, dicy.LogEvent, void>('log')
+  private outputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('outputAdded')
+  private runRequest = new rpc.RequestType2<string, dicy.Command[], boolean, void, void>('run')
+  private setInstanceOptionsRequest = new rpc.RequestType2<string, object, void, void, void>('setInstanceOptions')
+  private updateOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, object, void, void>('updateOptions')
 
   constructor (argv: any) {
     let transport: [rpc.MessageReader, rpc.MessageWriter]
@@ -30,26 +37,27 @@ export default class Server {
 
     this.connection = rpc.createMessageConnection(transport[0], transport[1])
 
-    this.connection.onRequest(new rpc.RequestType1<string, boolean, void, void>('delete'),
+    this.connection.onRequest(this.deleteRequest,
       (filePath: string): Promise<void> => this.delete(filePath))
 
-    this.connection.onNotification(new rpc.NotificationType0<void>('exit'), (): void => this.exit())
+    this.connection.onNotification(this.exitNotification,
+      (): void => this.exit())
 
-    this.connection.onRequest(new rpc.RequestType1<string, string[], void, void>('getTargetPaths'),
+    this.connection.onRequest(this.getTargetPathsRequest,
       async (filePath: string): Promise<string[]> => this.getTargetPaths(filePath))
 
-    this.connection.onRequest(new rpc.RequestType1<string, boolean, void, void>('kill'),
+    this.connection.onRequest(this.killRequest,
       (filePath: string): Promise<void> => this.kill(filePath))
 
-    this.connection.onRequest(new rpc.RequestType2<string, dicy.Command[], boolean, void, void>('run'),
+    this.connection.onRequest(this.runRequest,
       (filePath: string, commands: dicy.Command[]): Promise<boolean> => this.run(filePath, commands))
 
-    this.connection.onRequest(new rpc.RequestType2<string, object, void, void, void>('setInstanceOptions'),
+    this.connection.onRequest(this.setInstanceOptionsRequest,
       async (filePath: string, options: object): Promise<void> => {
         await this.getDiCy(filePath, options)
       })
 
-    this.connection.onRequest(new rpc.RequestType3<string, object, boolean | undefined, object, void, void>('updateOptions'),
+    this.connection.onRequest(this.updateOptionsRequest,
       async (filePath: string, options: object, user?: boolean): Promise<object> => this.updateOptions(filePath, options, user))
   }
 
