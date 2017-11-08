@@ -1,5 +1,6 @@
 {
   "name": "@dicy/server",
+  "version": "0.11.0",
   "description": "JSON-RPC server for DiCy.",
   "keywords": [
     "latex",
