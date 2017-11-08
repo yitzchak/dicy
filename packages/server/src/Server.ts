@@ -16,14 +16,14 @@ export default class Server {
   outputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('outputAdded')
 
   constructor (argv: any) {
-    let transport: any
+    let transport: [rpc.MessageReader, rpc.MessageWriter]
 
     if (argv.nodeIpc) {
       transport = [new rpc.IPCMessageReader(process), new rpc.IPCMessageWriter(process)]
     } else if (argv.port) {
       transport = rpc.createServerSocketTransport(argv.port)
     } else if (argv.pipe) {
-      transport = rpc.createServerPipeTransport(argv.port)
+      transport = rpc.createServerPipeTransport(argv.pipe)
     } else {
       transport = [new rpc.StreamMessageReader(process.stdout), new rpc.StreamMessageWriter(process.stdin)]
     }
@@ -32,6 +32,8 @@ export default class Server {
 
     this.connection.onRequest(new rpc.RequestType1<string, boolean, void, void>('delete'),
       (filePath: string): Promise<void> => this.delete(filePath))
+
+    this.connection.onNotification(new rpc.NotificationType0<void>('exit'), (): void => this.exit())
 
     this.connection.onRequest(new rpc.RequestType1<string, string[], void, void>('getTargetPaths'),
       async (filePath: string): Promise<string[]> => this.getTargetPaths(filePath))
@@ -76,6 +78,10 @@ export default class Server {
     }
 
     return builder
+  }
+
+  exit (): void {
+    process.exit(0)
   }
 
   async getTargetPaths (filePath: string): Promise<string[]> {
