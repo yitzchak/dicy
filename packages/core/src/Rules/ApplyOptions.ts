@@ -58,16 +58,18 @@ export default class ApplyOptions extends Rule {
 
   checkForConfigurationChange (previousOptions: object): void {
     // Ignore options that don't actually change the build.
-    const matcher = (value: any, other: any, key?: string | number | symbol): boolean => {
+    type foo = (value: any, other: any, key?: string | number | symbol) => boolean
+    const matcher = (value: any, other: any, key?: string | number | symbol): boolean | undefined => {
       if (key) {
         const schema = this.getOptionSchema(key.toString())
+        if (!schema) console.log(key)
         if (schema && schema.noInvalidate) return true
       }
 
-      return false
+      return undefined
     }
 
-    if (!_.isMatchWith(this.serializedOptions, previousOptions, matcher)) {
+    if (!_.isMatchWith(this.serializedOptions, previousOptions, matcher as foo)) {
       const rules: Rule[] = Array.from(this.rules)
         .filter(rule => rule.command !== 'load' || rule.phase === 'finalize')
 
