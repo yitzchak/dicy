@@ -6,8 +6,8 @@ export default class Server {
   private connection: any
 
   private actionNotification = new rpc.NotificationType2<string, dicy.ActionEvent, void>('action')
+  private clearRequest = new rpc.RequestType1<string | undefined, boolean, void, void>('clear')
   private commandNotification = new rpc.NotificationType2<string, dicy.CommandEvent, void>('command')
-  private deleteRequest = new rpc.RequestType1<string, boolean, void, void>('delete')
   private exitNotification = new rpc.NotificationType0<void>('exit')
   private fileAddedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
   private fileChangedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileChanged')
@@ -15,7 +15,7 @@ export default class Server {
   private fileRemovedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileRemoved')
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
   private inputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('inputAdded')
-  private killRequest = new rpc.RequestType1<string, boolean, void, void>('kill')
+  private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, dicy.LogEvent, void>('log')
   private outputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('outputAdded')
   private runRequest = new rpc.RequestType2<string, dicy.Command[], boolean, void, void>('run')
@@ -37,8 +37,8 @@ export default class Server {
 
     this.connection = rpc.createMessageConnection(transport[0], transport[1])
 
-    this.connection.onRequest(this.deleteRequest,
-      (filePath: string): Promise<void> => this.delete(filePath))
+    this.connection.onRequest(this.clearRequest,
+      (filePath?: string): Promise<void> => this.clear(filePath))
 
     this.connection.onNotification(this.exitNotification,
       (): void => this.exit())
@@ -47,7 +47,7 @@ export default class Server {
       async (filePath: string): Promise<string[]> => this.getTargetPaths(filePath))
 
     this.connection.onRequest(this.killRequest,
-      (filePath: string): Promise<void> => this.kill(filePath))
+      (filePath?: string): Promise<void> => this.kill(filePath))
 
     this.connection.onRequest(this.runRequest,
       (filePath: string, commands: dicy.Command[]): Promise<boolean> => this.run(filePath, commands))
@@ -93,35 +93,43 @@ export default class Server {
   }
 
   async getTargetPaths (filePath: string, absolute: boolean = true): Promise<string[]> {
-    let builder: dicy.DiCy = await this.getDiCy(filePath)
-
+    const builder: dicy.DiCy = await this.getDiCy(filePath)
     return builder.getTargetPaths(absolute)
   }
 
-  async delete (filePath: string): Promise<void> {
-    let builder: dicy.DiCy | undefined = this.cachedDiCy.get(filePath)
+  async clear (filePath?: string): Promise<void> {
+    if (filePath) {
+      const builder: dicy.DiCy | undefined = this.cachedDiCy.get(filePath)
 
-    if (builder) {
-      builder.removeAllListeners()
-      this.cachedDiCy.delete(filePath)
+      if (builder) {
+        builder.removeAllListeners()
+        this.cachedDiCy.delete(filePath)
+      }
+    } else {
+      for (const builder of this.cachedDiCy.values()) {
+        builder.removeAllListeners()
+      }
+      this.cachedDiCy.clear()
     }
   }
 
-  async kill (filePath: string): Promise<void> {
-    let builder: dicy.DiCy = await this.getDiCy(filePath)
-
-    return builder.kill()
+  async kill (filePath?: string): Promise<void> {
+    if (filePath) {
+      const builder: dicy.DiCy = await this.getDiCy(filePath)
+      await builder.kill()
+    } else {
+      const killJobs = Array.from(this.cachedDiCy.values()).map(builder => builder.kill())
+      await Promise.all(killJobs)
+    }
   }
 
   async run (filePath: string, commands: dicy.Command[]): Promise<boolean> {
-    let builder: dicy.DiCy = await this.getDiCy(filePath)
-
+    const builder: dicy.DiCy = await this.getDiCy(filePath)
     return builder.run(...commands)
   }
 
   async updateOptions (filePath: string, options: object, user?: boolean): Promise<object> {
-    let builder: dicy.DiCy = await this.getDiCy(filePath)
-
+    const builder: dicy.DiCy = await this.getDiCy(filePath)
     return builder.updateOptions(options, user)
   }
 }

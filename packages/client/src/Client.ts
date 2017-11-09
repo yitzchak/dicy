@@ -72,8 +72,8 @@ export class Client {
   private connection: any
 
   private actionNotification = new rpc.NotificationType2<string, ActionEvent, void>('action')
+  private clearRequest = new rpc.RequestType1<string | undefined, boolean, void, void>('clear')
   private commandNotification = new rpc.NotificationType2<string, CommandEvent, void>('command')
-  private deleteRequest = new rpc.RequestType1<string, boolean, void, void>('delete')
   private exitNotification = new rpc.NotificationType0<void>('exit')
   private fileAddedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileAdded')
   private fileChangedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileChanged')
@@ -81,7 +81,7 @@ export class Client {
   private fileRemovedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileRemoved')
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean, string[], void, void>('getTargetPaths')
   private inputAddedNotification = new rpc.NotificationType2<string, InputOutputEvent, void>('inputAdded')
-  private killRequest = new rpc.RequestType1<string, boolean, void, void>('kill')
+  private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, LogEvent, void>('log')
   private outputAddedNotification = new rpc.NotificationType2<string, InputOutputEvent, void>('outputAdded')
   private runRequest = new rpc.RequestType2<string, Command[], boolean, void, void>('run')
@@ -109,11 +109,11 @@ export class Client {
     return this.connection.sendRequest(this.getTargetPathsRequest, filePath, absolute)
   }
 
-  delete (filePath: string): Promise<void> {
-    return this.connection.sendRequest(this.deleteRequest, filePath)
+  clear (filePath?: string): Promise<void> {
+    return this.connection.sendRequest(this.clearRequest, filePath)
   }
 
-  kill (filePath: string): Promise<void> {
+  kill (filePath?: string): Promise<void> {
     return this.connection.sendRequest(this.killRequest, filePath)
   }
 

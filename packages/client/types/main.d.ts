@@ -68,8 +68,8 @@ export interface Client {
   start (argv: any): Promise<void>;
   exit (): void;
   getTargetPaths (filePath: string, absolute: boolean): Promise<string[]>;
-  delete (filePath: string): Promise<void>;
-  kill (filePath: string): Promise<void>;
+  clear (filePath?: string): Promise<void>;
+  kill (filePath?: string): Promise<void>;
   setInstanceOptions (filePath: string, options: object): Promise<boolean>;
   run (filePath: string, commands: Command[]): Promise<boolean>;
   updateOptions (filePath: string, options: object, user?: boolean): Promise<object>;
