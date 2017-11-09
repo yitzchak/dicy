@@ -77,7 +77,7 @@ export class Client {
   private exitNotification = new rpc.NotificationType0<void>('exit')
   private fileAddedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileAdded')
   private fileChangedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileChanged')
-  private fileDeletedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileAdded')
+  private fileDeletedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileDeleted')
   private fileRemovedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileRemoved')
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean, string[], void, void>('getTargetPaths')
   private inputAddedNotification = new rpc.NotificationType2<string, InputOutputEvent, void>('inputAdded')

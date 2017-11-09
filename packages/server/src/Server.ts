@@ -11,7 +11,7 @@ export default class Server {
   private exitNotification = new rpc.NotificationType0<void>('exit')
   private fileAddedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
   private fileChangedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileChanged')
-  private fileDeletedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
+  private fileDeletedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileDeleted')
   private fileRemovedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileRemoved')
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
   private inputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('inputAdded')
