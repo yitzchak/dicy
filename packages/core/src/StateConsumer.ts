@@ -95,8 +95,8 @@ export default class StateConsumer implements EventEmitter {
     return Array.from(this.state.targets)
   }
 
-  getTargetPaths (): Promise<string[]> {
-    return this.state.getTargetPaths()
+  getTargetPaths (absolute: boolean = false): Promise<string[]> {
+    return this.state.getTargetPaths(absolute)
   }
 
   getTargetFiles (): Promise<File[]> {

@@ -69,7 +69,7 @@ export interface Option {
 export class DiCy extends EventEmitter {
   static create(filePath: string, options?: object): Promise<DiCy>;
   static getOptionDefinitions(): Promise<Option[]>;
-  getTargetPaths (): Promise<string[]>;
+  getTargetPaths (absolute?: boolean): Promise<string[]>;
   kill(message?: string): Promise<void>;
   resolvePath (filePath: string): string;
   run(...commands: Command[]): Promise<boolean>;
