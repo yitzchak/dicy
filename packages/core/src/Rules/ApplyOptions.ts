@@ -16,6 +16,7 @@ export default class ApplyOptions extends Rule {
   async run (): Promise<boolean> {
     // Save the old options so we can tell if they have changed.
     const previousOptions = this.serializedOptions
+    console.log(`sdfsdf ${previousOptions}`)
 
     await this.doAssignOptions()
     this.checkForConfigurationChange(previousOptions)
@@ -62,6 +63,7 @@ export default class ApplyOptions extends Rule {
     const matcher = (value: any, other: any, key?: string | number | symbol): boolean | undefined => {
       if (key) {
         const schema = this.getOptionSchema(key.toString())
+        if (!schema) console.log(key)
         if (schema && schema.noInvalidate) return true
       }
 
