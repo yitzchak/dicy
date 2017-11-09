@@ -62,7 +62,6 @@ export default class ApplyOptions extends Rule {
     const matcher = (value: any, other: any, key?: string | number | symbol): boolean | undefined => {
       if (key) {
         const schema = this.getOptionSchema(key.toString())
-        if (!schema) console.log(key)
         if (schema && schema.noInvalidate) return true
       }
 
