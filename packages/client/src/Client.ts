@@ -145,7 +145,7 @@ export class Client {
     this.connection.onNotification(this.fileChangedNotification, handler)
   }
 
-  onFileDeleted (handler: (filePath: string, event: CommandEvent) => void): void {
+  onFileDeleted (handler: (filePath: string, event: FileEvent) => void): void {
     this.connection.onNotification(this.fileDeletedNotification, handler)
   }
 
