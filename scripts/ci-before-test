@@ -5,7 +5,8 @@ npm run update-dependencies
 
 echo Bootstrapping...
 if [[ "${APPVEYOR:-}" == true ]]; then
-  npm run bootstrap -- --ignore=@dicy/cli
+  npm run bootstrap -- --scope=@dicy/core
+  npm run bootstrap -- --scope=@dicy/server
 fi
 
 npm run bootstrap
