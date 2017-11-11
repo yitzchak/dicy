@@ -41,7 +41,7 @@ rm -rf output
 cd ../builder-tests
 
 for file in {*.tex,*.lhs,*.lagda,*.Rnw,*.Pnw}; do
-  echo "Creating event archive for $file"
-  node ../../../../cli/lib/main.js bl --save-events=command,log --no-load-user-options "$file" &>/dev/null
-  node ../../../../cli/lib/main.js s --no-load-user-options "$file" &>/dev/null
+  echo "Creating log for $file"
+  node ../../../../cli/lib/main.js bl --save-log "$file" &>/dev/null
+  node ../../../../cli/lib/main.js s "$file" &>/dev/null
 done
