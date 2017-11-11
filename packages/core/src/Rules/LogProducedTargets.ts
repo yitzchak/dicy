@@ -2,7 +2,7 @@ import Rule from '../Rule'
 
 import { Phase } from '../types'
 
-export default class ReportProducedTargets extends Rule {
+export default class LogProducedTargets extends Rule {
   static phases: Set<Phase> = new Set<Phase>(['finalize'])
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
