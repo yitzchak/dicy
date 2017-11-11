@@ -32,7 +32,8 @@ const handler = async (argv: any) => {
   }
   const commands = commandLists[argv._]
   const inputs: string[] = argv.inputs || []
-  const saveLog: boolean = !!argv.saveLog
+  const saveLog: boolean = !!argv['save-log']
+  console.log(saveLog)
 
   function log (message: Message) {
     const ui = cliui()
