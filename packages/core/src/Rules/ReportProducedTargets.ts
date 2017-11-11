@@ -10,7 +10,7 @@ export default class ReportProducedTargets extends Rule {
 
   async run () {
     for (const target of await this.getTargetPaths()) {
-      this.info(`Produced \`${target}\``)
+      this.info(`Produced \`${target}\``, 'target')
     }
     return true
   }

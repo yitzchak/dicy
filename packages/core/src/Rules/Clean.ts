@@ -63,7 +63,7 @@ export default class Clean extends Rule {
 
     for (const filePath of directories) {
       await File.remove(path.resolve(this.rootPath, filePath))
-      this.info(`Deleting \`${filePath}\``)
+      this.info(`Deleting \`${filePath}\``, 'file')
     }
 
     const globOptions = { cwd: this.rootPath, onlyDirs: true, bashNative: [] }
@@ -75,7 +75,7 @@ export default class Clean extends Rule {
       const contents = await readdir.async(realFilePath)
       if (contents.length === 0) {
         await File.remove(realFilePath)
-        this.info(`Deleting \`${filePath}\``)
+        this.info(`Deleting \`${filePath}\``, 'file')
       }
     }
 

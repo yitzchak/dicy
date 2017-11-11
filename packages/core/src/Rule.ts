@@ -113,20 +113,20 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  error (text: string, name?: string) {
-    super.error(text, name || this.id)
+  error (text: string, category?: string, name?: string) {
+    super.error(text, category, name || this.id)
   }
 
-  warning (text: string, name?: string) {
-    super.warning(text, name || this.id)
+  warning (text: string, category?: string, name?: string) {
+    super.warning(text, category, name || this.id)
   }
 
-  info (text: string, name?: string) {
-    super.info(text, name || this.id)
+  info (text: string, category?: string, name?: string) {
+    super.info(text, category, name || this.id)
   }
 
-  trace (text: string, name?: string) {
-    super.trace(text, name || this.id)
+  trace (text: string, category?: string, name?: string) {
+    super.trace(text, category, name || this.id)
   }
 
   /* tslint:disable:no-empty */
@@ -276,7 +276,7 @@ export default class Rule extends StateConsumer {
       const command = commandJoin(commandOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
         .replace(/(['"])\^?&(['"])/g, '$1$2')
 
-      this.info(`Executing \`${command}\``)
+      this.info(`Executing \`${command}\``, 'command')
 
       const result = await this.executeChildProcess(command, options)
 
@@ -330,7 +330,7 @@ export default class Rule extends StateConsumer {
 
     if (file && !this.hasOutput(this, file)) {
       this.addOutput(this, file)
-      this.trace(`Output added: \`${file.filePath}\``)
+      this.trace(`Output added: \`${file.filePath}\``, 'output')
     }
 
     return file
@@ -350,7 +350,7 @@ export default class Rule extends StateConsumer {
   async updateOutputs () {
     for (const file of this.outputs) {
       if (await file.update()) {
-        this.trace(`File changed: \`${file.filePath}\``)
+        this.trace(`File changed: \`${file.filePath}\``, 'file')
       }
     }
   }
@@ -360,7 +360,7 @@ export default class Rule extends StateConsumer {
 
     if (file && !this.hasInput(this, file)) {
       this.addInput(this, file)
-      this.trace(`Input added: \`${file.filePath}\``)
+      this.trace(`Input added: \`${file.filePath}\``, 'input')
     }
 
     return file
@@ -478,6 +478,6 @@ export default class Rule extends StateConsumer {
     const triggers: string[] = files ? Array.from(files).map(file => file.filePath) : []
     const triggerText = triggers.length !== 0 ? ` triggered by updates to ${triggers}` : ''
 
-    this.trace(`Evaluating ${action} action${triggerText}`)
+    this.trace(`Evaluating ${action} action${triggerText}`, 'action')
   }
 }

@@ -9,13 +9,9 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  ActionEvent,
   Command,
-  CommandEvent,
   FileCache,
-  FileEvent,
   GlobOptions,
-  InputOutputEvent,
   KillToken,
   LogEvent,
   Message,
@@ -250,7 +246,7 @@ export default class StateConsumer implements EventEmitter {
     if (file.jobNames.size === 0) {
       if (unlink) {
         await file.delete()
-        if (!file.virtual) this.info(`Deleting \`${file.filePath}\``)
+        if (!file.virtual) this.info(`Deleting \`${file.filePath}\``, 'file')
       }
       this.removeFile(file)
     }
@@ -326,20 +322,20 @@ export default class StateConsumer implements EventEmitter {
     return files
   }
 
-  error (text: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'error', name, text })
+  error (text: string, category?: string, name: string = 'DiCy'): void {
+    this.log({ severity: 'error', category, name, text })
   }
 
-  warning (text: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'warning', name, text })
+  warning (text: string, category?: string, name: string = 'DiCy'): void {
+    this.log({ severity: 'warning', category, name, text })
   }
 
-  info (text: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'info', name, text })
+  info (text: string, category?: string, name: string = 'DiCy'): void {
+    this.log({ severity: 'info', category, name, text })
   }
 
-  trace (text: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'trace', name, text })
+  trace (text: string, category?: string, name: string = 'DiCy'): void {
+    this.log({ severity: 'trace', category, name, text })
   }
 
   log (...messages: Message[]): void {
@@ -391,20 +387,12 @@ export default class StateConsumer implements EventEmitter {
   }
 
   // EventEmmitter proxy
-  addListener (event: 'action', listener: (arg: ActionEvent) => void): this
-  addListener (event: 'command', listener: (arg: CommandEvent) => void): this
-  addListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
-  addListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
   addListener (event: 'log', listener: (arg: LogEvent) => void): this
   addListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.addListener(event, listener)
     return this
   }
 
-  emit (event: 'action', arg: ActionEvent): boolean
-  emit (event: 'command', arg: CommandEvent): boolean
-  emit (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', arg: FileEvent): boolean
-  emit (event: 'inputAdded' | 'outputAdded', arg: InputOutputEvent): boolean
   emit (event: 'log', arg: LogEvent): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return this.state.emit(event, ...args)
@@ -426,40 +414,24 @@ export default class StateConsumer implements EventEmitter {
     return this.state.listeners(event)
   }
 
-  on (event: 'action', listener: (arg: ActionEvent) => void): this
-  on (event: 'command', listener: (arg: CommandEvent) => void): this
-  on (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
-  on (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
   on (event: 'log', listener: (arg: LogEvent) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.on(event, listener)
     return this
   }
 
-  once (event: 'action', listener: (arg: ActionEvent) => void): this
-  once (event: 'command', listener: (arg: CommandEvent) => void): this
-  once (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
-  once (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
   once (event: 'log', listener: (arg: LogEvent) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.once(event, listener)
     return this
   }
 
-  prependListener (event: 'action', listener: (arg: ActionEvent) => void): this
-  prependListener (event: 'command', listener: (arg: CommandEvent) => void): this
-  prependListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
-  prependListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
   prependListener (event: 'log', listener: (arg: LogEvent) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependListener(event, listener)
     return this
   }
 
-  prependOnceListener (event: 'action', listener: (arg: ActionEvent) => void): this
-  prependOnceListener (event: 'command', listener: (arg: CommandEvent) => void): this
-  prependOnceListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
-  prependOnceListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
   prependOnceListener (event: 'log', listener: (arg: LogEvent) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependOnceListener(event, listener)
@@ -471,10 +443,6 @@ export default class StateConsumer implements EventEmitter {
     return this
   }
 
-  removeListener (event: 'action', listener: (arg: ActionEvent) => void): this
-  removeListener (event: 'command', listener: (arg: CommandEvent) => void): this
-  removeListener (event: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved', listener: (arg: FileEvent) => void): this
-  removeListener (event: 'inputAdded' | 'outputAdded', listener: (arg: InputOutputEvent) => void): this
   removeListener (event: 'log', listener: (arg: LogEvent) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.removeListener(event, listener)
