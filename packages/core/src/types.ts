@@ -73,7 +73,7 @@ export interface Parser {
   evaluate: (mode: string, reference: Reference, match: ParserMatch) => string | void
 }
 
-export type Severity = 'info' | 'warning' | 'error'
+export type Severity = 'trace' | 'info' | 'warning' | 'error'
 
 export interface Message {
   severity: Severity
@@ -84,37 +84,10 @@ export interface Message {
   log?: Reference
 }
 
-export interface LogEvent extends Message {
+export interface LogEvent {
   type: 'log'
+  messages: Message[]
 }
-
-export interface ActionEvent {
-  type: 'action'
-  rule: string
-  action: string
-  triggers: string[]
-}
-
-export interface CommandEvent {
-  type: 'command'
-  rule: string
-  command: string
-}
-
-export interface FileEvent {
-  type: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved'
-  file: string
-  virtual?: boolean
-}
-
-export interface InputOutputEvent {
-  type: 'inputAdded' | 'outputAdded'
-  rule: string
-  file: string
-  virtual?: boolean
-}
-
-export type Event = LogEvent | ActionEvent | CommandEvent | FileEvent | InputOutputEvent
 
 export interface Option {
   name: string

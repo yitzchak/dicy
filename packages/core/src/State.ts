@@ -127,6 +127,11 @@ export default class State extends EventEmitter {
     this.removeNode(rule.id)
   }
 
+  removeFile (file: File): void {
+    this.files.delete(file.filePath)
+    this.removeNode(file.filePath)
+  }
+
   async addCachedRule (cache: RuleCache): Promise<void> {
     const options: OptionsInterface = this.getJobOptions(cache.jobName)
     const id: string = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, cache.parameters)
@@ -198,56 +203,13 @@ export default class State extends EventEmitter {
       file = await File.create(path.resolve(this.rootPath, filePath), filePath, fileCache)
       if (!file) {
         this.graph.removeNode(filePath)
-        this.emit('fileRemoved', {
-          type: 'fileRemoved',
-          file: filePath
-        })
         return undefined
       }
       this.addNode(filePath)
-      this.emit('fileAdded', {
-        type: 'fileAdded',
-        file: filePath,
-        virtual: file.virtual
-      })
       this.files.set(filePath, file)
     }
 
     return file
-  }
-
-  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
-    if (file.readOnly) return
-
-    const invalidRules: Rule[] = []
-
-    for (const rule of this.rules.values()) {
-      if (rule.jobName === jobName) {
-        if (await rule.removeFile(file)) {
-          // This file is one of the parameters of the rule so we need to remove
-          // the rule.
-          invalidRules.push(rule)
-        }
-      }
-    }
-
-    for (const rule of invalidRules) {
-      this.removeNode(rule.id)
-    }
-
-    if (jobName) file.jobNames.delete(jobName)
-    if (file.jobNames.size === 0) {
-      if (unlink) {
-        await file.delete()
-        this.emit('fileDeleted', {
-          type: 'fileDeleted',
-          file: file.filePath,
-          virtual: file.virtual
-        })
-      }
-      this.removeNode(file.filePath)
-      this.files.delete(file.filePath)
-    }
   }
 
   resetOptions (): void {

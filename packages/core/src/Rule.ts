@@ -125,6 +125,10 @@ export default class Rule extends StateConsumer {
     super.info(text, name || this.id)
   }
 
+  trace (text: string, name?: string) {
+    super.trace(text, name || this.id)
+  }
+
   /* tslint:disable:no-empty */
   async initialize () {}
 
@@ -272,11 +276,7 @@ export default class Rule extends StateConsumer {
       const command = commandJoin(commandOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
         .replace(/(['"])\^?&(['"])/g, '$1$2')
 
-      this.emit('command', {
-        type: 'command',
-        rule: this.id,
-        command
-      })
+      this.info(`Executing \`${command}\``)
 
       const result = await this.executeChildProcess(command, options)
 
@@ -330,12 +330,7 @@ export default class Rule extends StateConsumer {
 
     if (file && !this.hasOutput(this, file)) {
       this.addOutput(this, file)
-      this.emit('outputAdded', {
-        type: 'outputAdded',
-        rule: this.id,
-        file: file.filePath,
-        virtual: file.virtual
-      })
+      this.trace(`Output added: \`${file.filePath}\``)
     }
 
     return file
@@ -355,11 +350,7 @@ export default class Rule extends StateConsumer {
   async updateOutputs () {
     for (const file of this.outputs) {
       if (await file.update()) {
-        this.emit('fileChanged', {
-          type: 'fileChanged',
-          file: file.filePath,
-          virtual: file.virtual
-        })
+        this.trace(`File changed: \`${file.filePath}\``)
       }
     }
   }
@@ -369,12 +360,7 @@ export default class Rule extends StateConsumer {
 
     if (file && !this.hasInput(this, file)) {
       this.addInput(this, file)
-      this.emit('inputAdded', {
-        type: 'inputAdded',
-        rule: this.id,
-        file: file.filePath,
-        virtual: file.virtual
-      })
+      this.trace(`Input added: \`${file.filePath}\``)
     }
 
     return file
@@ -391,7 +377,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async removeFile (file: File): Promise<boolean> {
+  async removeFileFromRule (file: File): Promise<boolean> {
     this.removeInput(this, file)
     this.removeOutput(this, file)
 
@@ -489,11 +475,9 @@ export default class Rule extends StateConsumer {
 
   actionTrace (action: Action) {
     const files: Set<File> | undefined = this.actions.get(action)
-    this.emit('action', {
-      type: 'action',
-      action,
-      rule: this.id,
-      triggers: files ? Array.from(files).map(file => file.filePath) : []
-    })
+    const triggers: string[] = files ? Array.from(files).map(file => file.filePath) : []
+    const triggerText = triggers.length !== 0 ? ` triggered by updates to ${triggers}` : ''
+
+    this.trace(`Evaluating ${action} action${triggerText}`)
   }
 }

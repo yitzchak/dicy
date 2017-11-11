@@ -401,6 +401,7 @@ severity:
   noInvalidate: true
   type: string
   values:
+    - trace
     - info
     - warning
     - error

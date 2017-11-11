@@ -9,12 +9,9 @@ import * as yargs from 'yargs'
 import chalk from 'chalk'
 
 import {
-  ActionEvent,
   Command,
-  CommandEvent,
   DiCy,
-  Event,
-  FileEvent,
+  LogEvent,
   Message,
   Option,
   Reference
@@ -35,14 +32,9 @@ const handler = async (argv: any) => {
   }
   const commands = commandLists[argv._]
   const inputs: string[] = argv.inputs || []
-  const saveEvents: string[] = argv.saveEvents || []
-  const verbose: boolean = !!argv.verbose
-  const consoleEventOutput: boolean = !!argv.consoleEventOutput
-  const eventData: any = {}
+  const saveLog: boolean = !!argv.saveLog
 
   function log (message: Message) {
-    if (consoleEventOutput) return
-
     const ui = cliui()
     const severityColumnWidth = 10
 
@@ -76,6 +68,9 @@ const handler = async (argv: any) => {
       case 'warning':
         severity = chalk.yellow('(WARNING)')
         break
+      case 'trace':
+        severity = '(TRACE)'
+        break
       default:
         severity = chalk.blue('(INFO)')
         break
@@ -98,68 +93,24 @@ const handler = async (argv: any) => {
   let success = true
 
   for (const filePath of inputs) {
-    const events: Event[] = []
+    let messages: Message[] = []
     const dicy = await DiCy.create(path.resolve(filePath), options)
     dicy
-      .on('log', log)
-      .on('action', (event: ActionEvent) => {
-        if (verbose) {
-          const triggerText = event.triggers.length !== 0 ? ` triggered by updates to ${event.triggers}` : ''
-          log({
-            severity: 'info',
-            name: event.rule,
-            text: `[${event.rule}] Evaluating ${event.action} action${triggerText}`
-          })
-        }
+      .on('log', (event: LogEvent) => {
+        messages = messages.concat(event.messages)
+        event.messages.forEach(log)
       })
-      .on('command', (event: CommandEvent) => {
-        log({
-          severity: 'info',
-          name: event.rule,
-          text: `Executing \`${event.command}\``
-        })
-      })
-      .on('fileDeleted', (event: FileEvent) => {
-        if (!event.virtual) {
-          log({
-            severity: 'info',
-            name: 'DiCy',
-            text: `Deleting \`${event.file}\``
-          })
-        }
-      })
-
-    for (const type of saveEvents) {
-      dicy.on(type, (event: Event) => { events.push(event) })
-    }
 
     process.on('SIGTERM', () => dicy.kill())
     process.on('SIGINT', () => dicy.kill())
 
     success = await dicy.run(...commands) || success
 
-    for (const target of await dicy.getTargetPaths()) {
-      log({
-        severity: 'info',
-        name: 'DiCy',
-        text: `Produced \`${target}\``
-      })
+    if (saveLog) {
+      const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
+      const contents = yaml.safeDump(messages, { skipInvalid: true })
+      await fs.writeFile(logFilePath, contents)
     }
-
-    if (saveEvents.length !== 0) {
-      const data = { types: saveEvents, events }
-      if (consoleEventOutput) {
-        eventData[filePath] = data
-      } else {
-        const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
-        const contents = yaml.safeDump(eventData, { skipInvalid: true })
-        await fs.writeFile(eventFilePath, contents)
-      }
-    }
-  }
-
-  if (consoleEventOutput) {
-    console.log(yaml.safeDump(eventData))
   }
 
   process.exit(success ? 0 : 1)
@@ -174,18 +125,9 @@ yargs
 DiCy.getOptionDefinitions().then((definitions: Option[]) => {
   function getOptions (commands: Command[]) {
     const options: { [name: string]: any } = {
-      'save-events': {
-        array: true,
-        description: 'List of event types to save in YAML format. By default this will save to a file <name>-events.yaml unless --console-event-output is enabled.'
-      },
-      verbose: {
-        alias: 'v',
+      'save-log': {
         boolean: true,
-        description: 'Be verbose in command output.'
-      },
-      'console-event-output': {
-        boolean: true,
-        description: 'Output saved events in YAML format to console. This will supress all other output.'
+        description: 'Save the log as a YAML file <name>-log.yaml.'
       }
     }
 

@@ -24,9 +24,7 @@ export default class ReportLogMessages extends Rule {
 
     // Not much here, just log each message, if there are any.
     if (parsedLog && parsedLog.messages) {
-      for (const message of parsedLog.messages) {
-        this.log(message)
-      }
+      this.log(...parsedLog.messages)
     }
     return true
   }

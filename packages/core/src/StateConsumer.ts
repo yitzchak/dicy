@@ -227,8 +227,33 @@ export default class StateConsumer implements EventEmitter {
     return this.state.rules.values()
   }
 
-  deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
-    return this.state.deleteFile(file, jobName, unlink)
+  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
+    if (file.readOnly) return
+
+    const invalidRules: Rule[] = []
+
+    for (const rule of this.rules) {
+      if (rule.jobName === jobName) {
+        if (await rule.removeFileFromRule(file)) {
+          // This file is one of the parameters of the rule so we need to remove
+          // the rule.
+          invalidRules.push(rule)
+        }
+      }
+    }
+
+    for (const rule of invalidRules) {
+      this.removeRule(rule)
+    }
+
+    if (jobName) file.jobNames.delete(jobName)
+    if (file.jobNames.size === 0) {
+      if (unlink) {
+        await file.delete()
+        if (!file.virtual) this.info(`Deleting \`${file.filePath}\``)
+      }
+      this.removeFile(file)
+    }
   }
 
   addRule (rule: Rule): Promise<void> {
@@ -237,6 +262,10 @@ export default class StateConsumer implements EventEmitter {
 
   removeRule (rule: Rule): void {
     this.state.removeRule(rule)
+  }
+
+  removeFile (file: File): void {
+    this.state.removeFile(file)
   }
 
   hasRule (id: string): boolean {
@@ -309,11 +338,20 @@ export default class StateConsumer implements EventEmitter {
     this.log({ severity: 'info', name, text })
   }
 
-  log (message: Message): void {
+  trace (text: string, name: string = 'DiCy'): void {
+    this.log({ severity: 'trace', name, text })
+  }
+
+  log (...messages: Message[]): void {
     const severity: Severity = this.options.severity || 'warning'
-    if ((severity === 'warning' && message.severity === 'info') ||
-      (severity === 'error' && message.severity !== 'error')) return
-    this.emit('log', { type: 'log', ...message })
+    if (severity !== 'trace') {
+      messages = messages.filter(message => (message.severity === 'info' && severity === 'info') ||
+        (message.severity === 'warning' && (severity === 'info' || severity === 'warning')) ||
+        message.severity === 'error')
+    }
+    if (messages.length > 0) {
+      this.emit('log', { type: 'log', messages })
+    }
   }
 
   get components (): Rule[][] {
