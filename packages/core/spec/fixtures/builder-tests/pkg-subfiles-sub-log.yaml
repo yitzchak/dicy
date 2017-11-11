@@ -1,0 +1,36 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-subfiles-sub.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-subfiles-sub.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-subfiles-sub.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-subfiles-sub.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-subfiles-master.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-subfiles-master.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-subfiles-master.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-subfiles-master.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-subfiles-sub.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-subfiles-sub.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-subfiles-sub.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-subfiles-sub.tex`

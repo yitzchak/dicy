@@ -1,0 +1,18 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-feynmp.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-feynmp.tex`
+- severity: info
+  category: command
+  name: MetaPost(build;execute;;pkg-feynmp-mpost.mp)
+  text: >-
+    Executing `mpost -file-line-error -interaction=batchmode -recorder
+    pkg-feynmp-mpost.mp`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-feynmp.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-feynmp.tex`

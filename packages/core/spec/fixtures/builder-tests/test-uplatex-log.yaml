@@ -1,0 +1,50 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;test-uplatex.tex)
+  text: >-
+    Executing `uplatex -file-line-error -interaction=batchmode -recorder
+    -kanji-internal=euc test-uplatex.tex`
+- severity: info
+  category: command
+  name: DviToPdf(build;execute;;test-uplatex.dvi)
+  text: Executing `xdvipdfmx -o test-uplatex.pdf test-uplatex.dvi`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;test-uplatex.aux;test-uplatex.aux-ParsedLaTeXAuxilary)
+  text: Executing `upbibtex -kanji-internal=euc test-uplatex.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;;test-uplatex.blg)
+  text: >-
+    Executing `kpsewhich test-uplatex.aux biblatex.bst test-uplatex-blx.bib
+    baz.bib`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;test-uplatex.tex)
+  text: >-
+    Executing `uplatex -file-line-error -interaction=batchmode -recorder
+    -kanji-internal=euc test-uplatex.tex`
+- severity: info
+  category: command
+  name: DviToPdf(build;execute;;test-uplatex.dvi)
+  text: Executing `xdvipdfmx -o test-uplatex.pdf test-uplatex.dvi`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;test-uplatex.aux;test-uplatex.aux-ParsedLaTeXAuxilary)
+  text: Executing `upbibtex -kanji-internal=euc test-uplatex.aux`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;test-uplatex.tex)
+  text: >-
+    Executing `uplatex -file-line-error -interaction=batchmode -recorder
+    -kanji-internal=euc test-uplatex.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;test-uplatex.aux;test-uplatex.aux-ParsedLaTeXAuxilary)
+  text: Executing `upbibtex -kanji-internal=euc test-uplatex.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;;test-uplatex.blg)
+  text: >-
+    Executing `kpsewhich test-uplatex.aux biblatex.bst test-uplatex-blx.bib
+    baz.bib`

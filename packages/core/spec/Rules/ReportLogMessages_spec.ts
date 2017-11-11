@@ -37,8 +37,7 @@ describe('ReportLogMessages', () => {
       expect(rule.log).toHaveBeenCalledWith({
         severity: 'info',
         text: 'foo'
-      })
-      expect(rule.log).toHaveBeenCalledWith({
+      }, {
         severity: 'warning',
         text: 'bar'
       })

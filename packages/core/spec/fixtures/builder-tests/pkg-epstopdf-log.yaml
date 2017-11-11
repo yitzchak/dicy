@@ -1,0 +1,28 @@
+- severity: info
+  category: command
+  name: EpsToPdf(build;execute;dicy-3;images/dicy-3.eps;x.y-Nil)
+  text: Executing `epstopdf --outfile=images/dicy-3.pdf images/dicy-3.eps`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-epstopdf.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 -shell-escape pkg-epstopdf.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;pkg-epstopdf.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 -no-shell-escape pkg-epstopdf.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;pkg-epstopdf.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 -no-shell-escape pkg-epstopdf.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-epstopdf.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 -shell-escape pkg-epstopdf.tex`

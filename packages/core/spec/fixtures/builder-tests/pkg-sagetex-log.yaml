@@ -1,0 +1,32 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-sagetex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-sagetex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-sagetex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-sagetex.tex`
+- severity: info
+  category: command
+  name: Sage(build;execute;job-1;job-1.sagetex.sage)
+  text: Executing `sage job-1.sagetex.sage`
+- severity: info
+  category: command
+  name: Sage(build;execute;job-2;output/job-2.sagetex.sage)
+  text: Executing `sage job-2.sagetex.sage`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-sagetex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-sagetex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-sagetex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-sagetex.tex`

@@ -1,0 +1,72 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-asymptote.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-asymptote.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;pkg-asymptote.tex)
+  text: >-
+    Executing `xelatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-4;pkg-asymptote.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-4 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: Asymptote(build;execute;job-1;job-1-1.asy)
+  text: Executing `asy -vv job-1-1.asy`
+- severity: info
+  category: command
+  name: Asymptote(build;execute;job-2;output/job-2-1.asy)
+  text: Executing `asy -vv job-2-1.asy`
+- severity: info
+  category: command
+  name: Asymptote(build;execute;job-3;job-3-1.asy)
+  text: Executing `asy -vv job-3-1.asy`
+- severity: info
+  category: command
+  name: Asymptote(build;execute;job-4;job-4-1.asy)
+  text: Executing `asy -vv job-4-1.asy`
+- severity: info
+  category: command
+  name: DviToPdf(build;execute;job-4;job-4.dvi)
+  text: Executing `xdvipdfmx -o job-4.pdf job-4.dvi`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;pkg-asymptote.tex)
+  text: >-
+    Executing `xelatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-4;pkg-asymptote.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-4 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-asymptote.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-asymptote.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-asymptote.tex`
+- severity: info
+  category: command
+  name: DviToPdf(build;execute;job-4;job-4.dvi)
+  text: Executing `xdvipdfmx -o job-4.pdf job-4.dvi`

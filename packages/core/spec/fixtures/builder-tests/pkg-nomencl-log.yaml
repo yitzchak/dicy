@@ -1,0 +1,119 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-nomencl.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-nomencl.tex`
+- severity: info
+  category: command
+  name: MakeIndex(build;execute;job-1;job-1.nlo;job-1.log-ParsedLaTeXLog)
+  text: Executing `makeindex -t job-1.nlg -o job-1.nls -s nomencl.ist job-1.nlo`
+- severity: info
+  category: command
+  name: >-
+    MakeIndex(build;execute;job-2;output/job-2.nlo;output/job-2.log-ParsedLaTeXLog)
+  text: >-
+    Executing `makeindex -t output/job-2.nlg -o output/job-2.nls -s nomencl.ist
+    output/job-2.nlo`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-nomencl.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-nomencl.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-nomencl.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-nomencl.tex`
+- severity: error
+  name: makeindex
+  text: Unknown specifier lethead_prefix.
+  category: Input style
+  log:
+    file: job-1.nlg
+    range:
+      start: 3
+      end: 4
+  source:
+    file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+    range:
+      start: 70
+      end: 70
+- severity: error
+  name: makeindex
+  text: Unknown specifier lethead_suffix.
+  category: Input style
+  log:
+    file: job-1.nlg
+    range:
+      start: 5
+      end: 6
+  source:
+    file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+    range:
+      start: 71
+      end: 71
+- severity: error
+  name: makeindex
+  text: Unknown specifier lethead_flag.
+  category: Input style
+  log:
+    file: job-1.nlg
+    range:
+      start: 7
+      end: 8
+  source:
+    file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+    range:
+      start: 72
+      end: 72
+- severity: error
+  name: makeindex
+  text: Unknown specifier lethead_prefix.
+  category: Input style
+  log:
+    file: output/job-2.nlg
+    range:
+      start: 3
+      end: 4
+  source:
+    file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+    range:
+      start: 70
+      end: 70
+- severity: error
+  name: makeindex
+  text: Unknown specifier lethead_suffix.
+  category: Input style
+  log:
+    file: output/job-2.nlg
+    range:
+      start: 5
+      end: 6
+  source:
+    file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+    range:
+      start: 71
+      end: 71
+- severity: error
+  name: makeindex
+  text: Unknown specifier lethead_flag.
+  category: Input style
+  log:
+    file: output/job-2.nlg
+    range:
+      start: 7
+      end: 8
+  source:
+    file: /usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist
+    range:
+      start: 72
+      end: 72

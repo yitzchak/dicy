@@ -1,0 +1,32 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-glossaries.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-glossaries.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-glossaries.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-glossaries.tex`
+- severity: info
+  category: command
+  name: MakeGlossaries(build;execute;job-1;job-1.glo)
+  text: Executing `makeglossaries job-1`
+- severity: info
+  category: command
+  name: MakeGlossaries(build;execute;job-2;output/job-2.glo)
+  text: Executing `makeglossaries -d output job-2`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-glossaries.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-glossaries.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-glossaries.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-glossaries.tex`

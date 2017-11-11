@@ -1,0 +1,50 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-multibib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-multibib.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;pkg-multibib.aux;pkg-multibib.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex pkg-multibib.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;;pkg-multibib.blg)
+  text: Executing `kpsewhich pkg-multibib.aux plain.bst foo.bib`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;other.aux;other.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex other.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;;other.blg)
+  text: Executing `kpsewhich other.aux alpha.bst foo.bib`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-multibib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-multibib.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;pkg-multibib.aux;pkg-multibib.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex pkg-multibib.aux`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;other.aux;other.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex other.aux`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-multibib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-multibib.tex`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;;pkg-multibib.blg)
+  text: Executing `kpsewhich pkg-multibib.aux plain.bst foo.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;;other.blg)
+  text: Executing `kpsewhich other.aux alpha.bst foo.bib`

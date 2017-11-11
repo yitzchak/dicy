@@ -1,0 +1,70 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-natbib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-natbib.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-natbib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-natbib.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;job-1;job-1.aux;job-1.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex job-1.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex job-2.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;job-1;job-1.blg)
+  text: Executing `kpsewhich job-1.aux plainnat.bst foo.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;job-2;output/job-2.blg)
+  text: Executing `kpsewhich job-2.aux plainnat.bst foo.bib`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-natbib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-natbib.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-natbib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-natbib.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;job-1;job-1.aux;job-1.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex job-1.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex job-2.aux`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-natbib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 pkg-natbib.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-natbib.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 pkg-natbib.tex`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;job-1;job-1.blg)
+  text: Executing `kpsewhich job-1.aux plainnat.bst foo.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;job-2;output/job-2.blg)
+  text: Executing `kpsewhich job-2.aux plainnat.bst foo.bib`

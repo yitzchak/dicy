@@ -1,0 +1,32 @@
+- severity: info
+  category: command
+  name: LhsToTeX(build;execute;job-1;test-lhs2TeX.lhs)
+  text: Executing `lhs2TeX -o test-lhs2TeX.tex test-lhs2TeX.lhs`
+- severity: info
+  category: command
+  name: LhsToTeX(build;execute;job-2;test-lhs2TeX.lhs)
+  text: Executing `lhs2TeX -o test-lhs2TeX.tex test-lhs2TeX.lhs`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;test-lhs2TeX.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 test-lhs2TeX.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;test-lhs2TeX.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 test-lhs2TeX.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;test-lhs2TeX.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 test-lhs2TeX.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;test-lhs2TeX.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 test-lhs2TeX.tex`

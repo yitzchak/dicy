@@ -323,28 +323,31 @@ export default class StateConsumer implements EventEmitter {
   }
 
   error (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'error', category, name, text })
+    this.log(_.pickBy({ severity: 'error', category, name, text }) as Message)
   }
 
   warning (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'warning', category, name, text })
+    this.log(_.pickBy({ severity: 'warning', category, name, text }) as Message)
   }
 
   info (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'info', category, name, text })
+    this.log(_.pickBy({ severity: 'info', category, name, text }) as Message)
   }
 
   trace (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log({ severity: 'trace', category, name, text })
+    this.log(_.pickBy({ severity: 'trace', category, name, text }) as Message)
   }
 
   log (...messages: Message[]): void {
     const severity: Severity = this.options.severity || 'warning'
-    if (severity !== 'trace') {
-      messages = messages.filter(message => (message.severity === 'info' && severity === 'info') ||
-        (message.severity === 'warning' && (severity === 'info' || severity === 'warning')) ||
-        message.severity === 'error')
-    }
+    const logCategory: string | undefined = this.options.logCategory
+
+    messages = messages.filter(message => severity === 'trace' ||
+      (severity === 'info' && message.severity !== 'trace') ||
+      (severity === 'warning' && (message.severity === 'warning' || message.severity === 'error')) ||
+      (severity === 'error' && message.severity === 'error') ||
+      (logCategory && message.category === logCategory))
+
     if (messages.length > 0) {
       this.emit('log', { type: 'log', messages })
     }

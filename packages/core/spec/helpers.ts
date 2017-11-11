@@ -8,7 +8,7 @@ import * as temp from 'temp'
 import DiCy from '../src/DiCy'
 import File from '../src/File'
 import Rule from '../src/Rule'
-import { Command, Event, Phase } from '../src/types'
+import { Command, Phase, Message } from '../src/types'
 
 export async function cloneFixtures () {
   const tempPath = fs.realpathSync(temp.mkdirSync('dicy'))
@@ -17,25 +17,17 @@ export async function cloneFixtures () {
   return tempPath
 }
 
-function formatMessage (event: Event) {
-  switch (event.type) {
-    case 'command':
-      return `  [${event.rule}] Executing command \`${event.command}\``
-    case 'action':
-      const triggerText = event.triggers.length === 0 ? '' : ` triggered by ${event.triggers.join(', ')}`
-      return `  [${event.rule}] Evaluating ${event.action}${triggerText}`
-    case 'log':
-      const parts = []
+function formatMessage (event: Message) {
+  const parts = []
 
-      if (event.name) parts.push(`[${event.name}]`)
-      if (event.category) parts.push(`${event.category}:`)
-      parts.push(event.text)
+  if (event.name) parts.push(`[${event.name}]`)
+  if (event.category) parts.push(`${event.category}:`)
+  parts.push(event.text)
 
-      return `  ${parts.join(' ')}`
-  }
+  return `  ${parts.join(' ')}`
 }
 
-function constructMessage (found: Array<Event>, missing: Array<Event>) {
+function constructMessage (found: Message[], missing: Message[]) {
   const lines = []
   if (found.length !== 0) {
     lines.push('Did not expect the following events:', ...found.map(formatMessage))
@@ -54,7 +46,7 @@ function stringCompare (x: string, y: string): boolean {
   return x.replace(/[/\\'"^]/g, '') === y.replace(/[/\\'"^]/g, '')
 }
 
-export function partitionMessages (received: Array<Event>, expected: Array<Event>) {
+export function partitionMessages (received: Message[], expected: Message[]) {
   let proper = []
   let improper = []
   let missing = _.uniqWith(expected, _.isEqual)
@@ -78,9 +70,9 @@ export function partitionMessages (received: Array<Event>, expected: Array<Event
 }
 
 export const customMatchers = {
-  toReceiveEvents (util: any, customEqualityTesters: any) {
+  toReceiveMessages (util: any, customEqualityTesters: any) {
     return {
-      compare: function (received: Array<Event>, expected: Array<Event>) {
+      compare: function (received: Message[], expected: Message[]) {
         const { proper, improper, missing } = partitionMessages(received, expected)
 
         const pass = improper.length === 0 && missing.length === 0

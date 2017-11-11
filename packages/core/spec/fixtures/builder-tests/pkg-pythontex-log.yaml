@@ -1,0 +1,32 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-pythontex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-1 pkg-pythontex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-pythontex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-2 pkg-pythontex.tex`
+- severity: info
+  category: command
+  name: PythonTeX(build;execute;job-1;output/job-1.pytxcode)
+  text: Executing `pythontex job-1`
+- severity: info
+  category: command
+  name: PythonTeX(build;execute;job-2;job-2.pytxcode)
+  text: Executing `pythontex job-2`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-pythontex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-1 pkg-pythontex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-pythontex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-2 pkg-pythontex.tex`

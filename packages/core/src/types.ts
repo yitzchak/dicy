@@ -226,6 +226,7 @@ export interface OptionsInterface {
   literateHaskellEngine: LiterateHaskellEngine
   loadCache: boolean
   loadUserOptions: boolean
+  logCategory?: string
   outputDirectory?: string
   outputFormat: OutputFormat
   phaseCycles: number
