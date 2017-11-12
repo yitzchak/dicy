@@ -29,7 +29,7 @@ cache:
 
 install:
   - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
-  - set ASYMPTOTE_HOME=%MIKTEX_HOME%\asymptote
+  - set "ASYMPTOTE_HOME=C:\Program Files\MiKTeX 2.9\asymptote"
   - sh ./scripts/ci-install
 
 before_test:
