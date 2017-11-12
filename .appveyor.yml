@@ -12,6 +12,7 @@ clone_depth: 1
 environment:
   global:
     MIKTEX_HOME: '%PROGRAMFILES%\MiKTeX 2.9'
+    ASYMPTOTE_HOME: '%MIKTEX_HOME%\asymptote'
     PYTHON: C:\Python36
     R_HOME: '%PROGRAMFILES%\R'
     R_LIBS_USER: '%USERPROFILE%\R\library'
