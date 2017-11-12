@@ -16,7 +16,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   cinst miktex
 
   echo Installing TeX packages...
-  initexmf --set-config-value=[MPM]AutoInstall=0
+  initexmf --admin --set-config-value=[MPM]AutoInstall=0
   mpm --admin --install-some=scripts\\miktex-packages
   initexmf --admin --update-fndb
 
