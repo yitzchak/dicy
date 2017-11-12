@@ -1,0 +1,52 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;test-latex.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 test-latex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;test-latex.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-2 test-latex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;test-latex.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 test-latex.tex`
+- severity: info
+  category: command
+  name: DviToPdf(build;execute;job-1;job-1.dvi)
+  text: Executing `xdvipdfmx -o job-1.pdf job-1.dvi`
+- severity: info
+  category: command
+  name: DviToPs(build;execute;job-2;job-2.dvi)
+  text: Executing `dvips -o job-2.ps job-2.dvi`
+- severity: info
+  category: command
+  name: DviToPs(build;execute;job-3;job-3.dvi)
+  text: Executing `dvips -o job-3.ps job-3.dvi`
+- severity: info
+  category: command
+  name: PsToPdf(build;execute;job-2;job-2.ps)
+  text: Executing `ps2pdf job-2.ps job-2.pdf`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;test-latex.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 test-latex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;test-latex.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-2 test-latex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;test-latex.tex)
+  text: >-
+    Executing `latex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 test-latex.tex`

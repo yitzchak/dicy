@@ -1,0 +1,38 @@
+- severity: info
+  category: command
+  name: Pweave(build;execute;job-1;test-pweave.Pnw)
+  text: >-
+    Executing `pweave --format=tex --output=job-1.tex
+    --cache-directory=pweave-cache-for-job-1
+    --figure-directory=pweave-figures-for-job-1 test-pweave.Pnw`
+- severity: info
+  category: command
+  name: Pweave(build;execute;job-2;test-pweave.Pnw)
+  text: >-
+    Executing `pweave --format=texminted --output=job-2.tex
+    --cache-directory=pweave-cache-for-job-2
+    --figure-directory=pweave-figures-for-job-2 test-pweave.Pnw`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;job-1.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 job-1.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;job-2.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-2 -shell-escape job-2.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;job-1.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 job-1.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;job-2.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-2 -shell-escape job-2.tex`

@@ -1,0 +1,123 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=bibtex-1 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=bibtex-2 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=biber-1 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=biber-2 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: Biber(build;execute;biber-1;biber-1.bcf)
+  text: Executing `biber biber-1.bcf`
+- severity: info
+  category: command
+  name: Biber(build;execute;biber-2;output/biber-2.bcf)
+  text: Executing `biber output/biber-2.bcf`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;bibtex-1;bibtex-1.aux;bibtex-1.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex bibtex-1.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;bibtex-2;output/bibtex-2.aux;output/bibtex-2.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex bibtex-2.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;bibtex-1;bibtex-1.blg)
+  text: Executing `kpsewhich bibtex-1.aux biblatex.bst bibtex-1-blx.bib foo.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;bibtex-2;output/bibtex-2.blg)
+  text: Executing `kpsewhich bibtex-2.aux biblatex.bst bibtex-2-blx.bib foo.bib`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=biber-1 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=biber-2 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=bibtex-1 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=bibtex-2 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;bibtex-1;bibtex-1.aux;bibtex-1.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex bibtex-1.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;bibtex-2;output/bibtex-2.aux;output/bibtex-2.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex bibtex-2.aux`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;biber-1;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=biber-1 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;biber-2;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=biber-2 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=bibtex-1 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;bibtex-2;pkg-biblatex.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=bibtex-2 pkg-biblatex.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;bibtex-1;bibtex-1.aux;bibtex-1.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex bibtex-1.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;bibtex-2;output/bibtex-2.aux;output/bibtex-2.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex bibtex-2.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;bibtex-1;bibtex-1.blg)
+  text: Executing `kpsewhich bibtex-1.aux biblatex.bst bibtex-1-blx.bib foo.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;bibtex-2;output/bibtex-2.blg)
+  text: Executing `kpsewhich bibtex-2.aux biblatex.bst bibtex-2-blx.bib foo.bib`

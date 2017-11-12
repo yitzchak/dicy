@@ -1,0 +1,12 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-minted.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -shell-escape pkg-minted.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-minted.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -shell-escape pkg-minted.tex`

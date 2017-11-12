@@ -311,6 +311,10 @@ loadUserOptions:
     Enable loading of options from YAML configuration file found in the user's home
     directory.
   type: boolean
+logCategory:
+  description: Specific log category to display.
+  type: string
+  noInvalidate: true
 outputDirectory:
   aliases:
     - o
@@ -401,6 +405,7 @@ severity:
   noInvalidate: true
   type: string
   values:
+    - trace
     - info
     - warning
     - error

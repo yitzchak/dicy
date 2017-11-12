@@ -1,0 +1,35 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-glossaries-extra.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 -no-shell-escape pkg-glossaries-extra.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-glossaries-extra.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 -no-shell-escape
+    pkg-glossaries-extra.tex`
+- severity: info
+  category: command
+  name: BibToGls(build;execute;job-1;job-1.aux;job-1.aux-ParsedLaTeXAuxilary)
+  text: Executing `bib2gls -t job-1.gelg job-1`
+- severity: info
+  category: command
+  name: >-
+    BibToGls(build;execute;job-2;output/job-2.aux;output/job-2.aux-ParsedLaTeXAuxilary)
+  text: Executing `bib2gls -t job-2.gelg -d output job-2`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;pkg-glossaries-extra.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 -no-shell-escape pkg-glossaries-extra.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;pkg-glossaries-extra.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 -no-shell-escape
+    pkg-glossaries-extra.tex`

@@ -1,0 +1,32 @@
+- severity: info
+  category: command
+  name: Agda(build;execute;job-1;test-agda.lagda)
+  text: Executing `agda --latex --latex-dir=. test-agda.lagda`
+- severity: info
+  category: command
+  name: Agda(build;execute;job-2;test-agda.lagda)
+  text: Executing `agda --latex --latex-dir=. test-agda.lagda`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;test-agda.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 test-agda.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;test-agda.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 test-agda.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;test-agda.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 test-agda.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;test-agda.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 test-agda.tex`

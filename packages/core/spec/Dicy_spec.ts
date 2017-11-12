@@ -6,6 +6,7 @@ import * as childProcess from 'child_process'
 
 import DiCy from '../src/DiCy'
 import File from '../src/File'
+import { LogEvent, Message } from '../src/types'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
@@ -31,20 +32,18 @@ describe('DiCy', () => {
   describe('can successfully build', () => {
     for (const name of tests) {
       const spec: any = it(name, async (done) => {
-        let expected = { types: [], events: [] }
-        let events: any[] = []
+        let expected: Message[] = []
+        let messages: Message[] = []
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
         // Initialize dicy and listen for messages
         dicy = await DiCy.create(filePath)
 
-        // Load the event archive
-        const eventFilePath = dicy.resolvePath('$ROOTDIR/$NAME-events.yaml')
-        if (await File.canRead(eventFilePath)) {
-          expected = await File.readYaml(eventFilePath)
-          for (const type of expected.types) {
-            dicy.on(type, event => { events.push(event) })
-          }
+        // Load the log archive
+        const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
+        if (await File.canRead(logFilePath)) {
+          expected = await File.readYaml(logFilePath)
+          dicy.on('log', (event: LogEvent) => { messages = messages.concat(event.messages) })
         }
 
         // Run the builder
@@ -60,7 +59,7 @@ describe('DiCy', () => {
 
         expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
 
-        if (expected.types.length !== 0) expect(events).toReceiveEvents(expected.events)
+        expect(messages).toReceiveMessages(expected)
 
         done()
       }, ASYNC_TIMEOUT)

@@ -1,0 +1,75 @@
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-bibtopic.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-bibtopic.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-bibtopic.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-bibtopic.tex`
+- severity: info
+  category: command
+  name: BibTeX(build;execute;;btaux.aux;btaux.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex btaux.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;;pkg-bibtopic1.aux;pkg-bibtopic1.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex pkg-bibtopic1.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;;pkg-bibtopic2.aux;pkg-bibtopic2.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex pkg-bibtopic2.aux`
+- severity: info
+  category: command
+  name: >-
+    BibTeX(build;execute;;pkg-bibtopic3.aux;pkg-bibtopic3.aux-ParsedLaTeXAuxilary)
+  text: Executing `bibtex pkg-bibtopic3.aux`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;;btaux.blg)
+  text: Executing `kpsewhich btaux.aux plain.bst foo.bib bar.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;;pkg-bibtopic1.blg)
+  text: Executing `kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;;pkg-bibtopic2.blg)
+  text: Executing `kpsewhich pkg-bibtopic2.aux plain.bst bar.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(build;execute;;pkg-bibtopic3.blg)
+  text: Executing `kpsewhich pkg-bibtopic3.aux plain.bst foo.bib bar.bib`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-bibtopic.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-bibtopic.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;pkg-bibtopic.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    pkg-bibtopic.tex`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;;btaux.blg)
+  text: Executing `kpsewhich btaux.aux plain.bst foo.bib bar.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;;pkg-bibtopic2.blg)
+  text: Executing `kpsewhich pkg-bibtopic2.aux plain.bst bar.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;;pkg-bibtopic3.blg)
+  text: Executing `kpsewhich pkg-bibtopic3.aux plain.bst foo.bib bar.bib`
+- severity: info
+  category: command
+  name: ParseBibTeXLog(log;execute;;pkg-bibtopic1.blg)
+  text: Executing `kpsewhich pkg-bibtopic1.aux alpha.bst foo.bib`
