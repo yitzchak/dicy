@@ -24,37 +24,10 @@ export interface Message {
   log?: Reference
 }
 
-export interface LogEvent extends Message {
+export interface LogEvent {
   type: 'log'
+  messages: Message[]
 }
-
-export interface ActionEvent {
-  type: 'action'
-  rule: string
-  action: string
-  triggers: string[]
-}
-
-export interface CommandEvent {
-  type: 'command'
-  rule: string
-  command: string
-}
-
-export interface FileEvent {
-  type: 'fileChanged' | 'fileAdded' | 'fileDeleted' | 'fileRemoved'
-  file: string
-  virtual?: boolean
-}
-
-export interface InputOutputEvent {
-  type: 'inputAdded' | 'outputAdded'
-  rule: string
-  file: string
-  virtual?: boolean
-}
-
-export type Event = LogEvent | ActionEvent | CommandEvent | FileEvent | InputOutputEvent
 
 export interface Option {
   name: string
@@ -71,19 +44,11 @@ export class Client {
   private server: cp.ChildProcess
   private connection: any
 
-  private actionNotification = new rpc.NotificationType2<string, ActionEvent, void>('action')
   private clearRequest = new rpc.RequestType1<string | undefined, boolean, void, void>('clear')
-  private commandNotification = new rpc.NotificationType2<string, CommandEvent, void>('command')
   private exitNotification = new rpc.NotificationType0<void>('exit')
-  private fileAddedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileAdded')
-  private fileChangedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileChanged')
-  private fileDeletedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileDeleted')
-  private fileRemovedNotification = new rpc.NotificationType2<string, FileEvent, void>('fileRemoved')
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean, string[], void, void>('getTargetPaths')
-  private inputAddedNotification = new rpc.NotificationType2<string, InputOutputEvent, void>('inputAdded')
   private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, LogEvent, void>('log')
-  private outputAddedNotification = new rpc.NotificationType2<string, InputOutputEvent, void>('outputAdded')
   private runRequest = new rpc.RequestType2<string, Command[], boolean, void, void>('run')
   private setInstanceOptionsRequest = new rpc.RequestType2<string, object, void, void, void>('setInstanceOptions')
   private updateOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, object, void, void>('updateOptions')
@@ -129,39 +94,7 @@ export class Client {
     return this.connection.sendRequest(this.updateOptionsRequest, filePath, options, user)
   }
 
-  onAction (handler: (filePath: string, event: ActionEvent) => void): void {
-    this.connection.onNotification(this.actionNotification, handler)
-  }
-
-  onCommand (handler: (filePath: string, event: CommandEvent) => void): void {
-    this.connection.onNotification(this.commandNotification, handler)
-  }
-
-  onFileAdded (handler: (filePath: string, event: FileEvent) => void): void {
-    this.connection.onNotification(this.fileAddedNotification, handler)
-  }
-
-  onFileChanged (handler: (filePath: string, event: FileEvent) => void): void {
-    this.connection.onNotification(this.fileChangedNotification, handler)
-  }
-
-  onFileDeleted (handler: (filePath: string, event: FileEvent) => void): void {
-    this.connection.onNotification(this.fileDeletedNotification, handler)
-  }
-
-  onFileRemoved (handler: (filePath: string, event: FileEvent) => void): void {
-    this.connection.onNotification(this.fileRemovedNotification, handler)
-  }
-
-  onInputAdded (handler: (filePath: string, event: InputOutputEvent) => void): void {
-    this.connection.onNotification(this.inputAddedNotification, handler)
-  }
-
   onLog (handler: (filePath: string, event: LogEvent) => void): void {
     this.connection.onNotification(this.logNotification, handler)
-  }
-
-  onOutputAdded (handler: (filePath: string, event: InputOutputEvent) => void): void {
-    this.connection.onNotification(this.outputAddedNotification, handler)
   }
 }

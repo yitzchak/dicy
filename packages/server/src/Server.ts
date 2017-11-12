@@ -5,19 +5,11 @@ export default class Server {
   private cachedDiCy: Map<string, dicy.DiCy> = new Map<string, dicy.DiCy>()
   private connection: any
 
-  private actionNotification = new rpc.NotificationType2<string, dicy.ActionEvent, void>('action')
   private clearRequest = new rpc.RequestType1<string | undefined, boolean, void, void>('clear')
-  private commandNotification = new rpc.NotificationType2<string, dicy.CommandEvent, void>('command')
   private exitNotification = new rpc.NotificationType0<void>('exit')
-  private fileAddedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileAdded')
-  private fileChangedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileChanged')
-  private fileDeletedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileDeleted')
-  private fileRemovedNotification = new rpc.NotificationType2<string, dicy.FileEvent, void>('fileRemoved')
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
-  private inputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('inputAdded')
   private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, dicy.LogEvent, void>('log')
-  private outputAddedNotification = new rpc.NotificationType2<string, dicy.InputOutputEvent, void>('outputAdded')
   private runRequest = new rpc.RequestType2<string, dicy.Command[], boolean, void, void>('run')
   private setInstanceOptionsRequest = new rpc.RequestType2<string, object, void, void, void>('setInstanceOptions')
   private updateOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, object, void, void>('updateOptions')
@@ -73,16 +65,8 @@ export default class Server {
     } else {
       builder = await dicy.DiCy.create(filePath, options)
       this.cachedDiCy.set(filePath, builder)
-      builder
-        .on('action', (event: dicy.ActionEvent) => this.connection.sendNotification(this.actionNotification, filePath, event))
-        .on('command', (event: dicy.CommandEvent) => this.connection.sendNotification(this.commandNotification, filePath, event))
-        .on('fileAdded', (event: dicy.FileEvent) => this.connection.sendNotification(this.fileAddedNotification, filePath, event))
-        .on('fileChanged', (event: dicy.FileEvent) => this.connection.sendNotification(this.fileChangedNotification, filePath, event))
-        .on('fileDeleted', (event: dicy.FileEvent) => this.connection.sendNotification(this.fileDeletedNotification, filePath, event))
-        .on('fileRemoved', (event: dicy.FileEvent) => this.connection.sendNotification(this.fileRemovedNotification, filePath, event))
-        .on('inputAdded', (event: dicy.InputOutputEvent) => this.connection.sendNotification(this.inputAddedNotification, filePath, event))
-        .on('log', (event: dicy.LogEvent) => this.connection.sendNotification(this.logNotification, filePath, event))
-        .on('ouputAdded', (event: dicy.InputOutputEvent) => this.connection.sendNotification(this.outputAddedNotification, filePath, event))
+      builder.on('log', (event: dicy.LogEvent) =>
+        this.connection.sendNotification(this.logNotification, filePath, event))
     }
 
     return builder
