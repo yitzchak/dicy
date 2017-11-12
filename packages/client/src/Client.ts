@@ -13,7 +13,7 @@ export interface Reference {
   range?: LineRange
 }
 
-export declare type Severity = 'info' | 'warning' | 'error'
+export declare type Severity = 'trace' | 'info' | 'warning' | 'error'
 
 export interface Message {
   severity: Severity
