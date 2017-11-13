@@ -549,8 +549,6 @@ $PATH:
   -
 ```
 
-[action]: events#action
-
 [build]: commands#build
 
 [clean]: commands#clean
@@ -570,5 +568,3 @@ $PATH:
 [outputformat]: #outputformat
 
 [save]: commands#save
-
-[severity]: #severity
