@@ -57,17 +57,6 @@ export default class DiCy extends StateConsumer {
     return consumer
   }
 
-  async setInstanceOptions (options: object = {}) {
-    const instance = await this.getFile('dicy-instance.yaml-ParsedYAML')
-    if (instance) {
-      instance.readOnly = false
-      instance.value = options
-      instance.readOnly = true
-    } else {
-      this.error('Unable to set instance options.')
-    }
-  }
-
   async analyzePhase (command: Command, phase: Phase) {
     this.checkForKill()
 
@@ -269,18 +258,58 @@ export default class DiCy extends StateConsumer {
     }
   }
 
-  async updateOptions (options: object = {}, user: boolean = false): Promise<object> {
-    const normalizedOptions = {}
-    const filePath = this.resolvePath(user ? '$HOME/.dicy.yaml' : '$ROOTDIR/$NAME.yaml')
+  async setInstanceOptions (options: object, merge: boolean = false): Promise<void> {
+    return this.setOptions(await this.getFile('dicy-instance.yaml-ParsedYAML'), options, merge)
+  }
 
-    if (await File.canRead(filePath)) {
-      const currentOptions = await File.readYaml(filePath)
-      this.assignOptions(currentOptions, normalizedOptions)
+  setUserOptions (options: object, merge: boolean = false): Promise<void> {
+    return this.setOptions('$HOME/.dicy.yaml', options, merge)
+  }
+
+  setDirectoryOptions (options: object, merge: boolean = false): Promise<void> {
+    return this.setOptions('$ROOTDIR/.dicy.yaml', options, merge)
+  }
+
+  setProjectOptions (options: object, merge: boolean = false): Promise<void> {
+    return this.setOptions('$ROOTDIR/$NAME.yaml', options, merge)
+  }
+
+  private async setOptions (file: string | File | undefined, options: object = {}, merge: boolean = false): Promise<void> {
+    if (!file) {
+      this.error('Unable to set options.')
+      return
+    }
+
+    const normalizedOptions = {}
+
+    if (typeof file === 'string') file = this.resolvePath(file)
+
+    if (merge) {
+      let current
+
+      if (typeof file === 'string') {
+        if (await File.canRead(file)) {
+          current = await File.readYaml(file)
+        }
+      } else {
+        current = file.value
+      }
+
+      if (current) {
+        this.assignOptions(current, normalizedOptions)
+      } else {
+        this.warning('Unable to retrieve current options.')
+      }
     }
 
     this.assignOptions(options, normalizedOptions)
-    await File.writeYaml(filePath, normalizedOptions)
 
-    return normalizedOptions
+    if (typeof file === 'string') {
+      await File.writeYaml(file, normalizedOptions)
+    } else {
+      file.readOnly = false
+      file.value = normalizedOptions
+      file.readOnly = true
+    }
   }
 }

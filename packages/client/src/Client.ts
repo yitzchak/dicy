@@ -48,12 +48,14 @@ export class Client extends EventEmitter {
 
   private clearRequest = new rpc.RequestType1<string | undefined, boolean, void, void>('clear')
   private exitNotification = new rpc.NotificationType0<void>('exit')
-  private getTargetPathsRequest = new rpc.RequestType2<string, boolean, string[], void, void>('getTargetPaths')
+  private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
   private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, LogEvent, void>('log')
   private runRequest = new rpc.RequestType2<string, Command[], boolean, void, void>('run')
-  private setInstanceOptionsRequest = new rpc.RequestType2<string, object, void, void, void>('setInstanceOptions')
-  private updateOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, object, void, void>('updateOptions')
+  private setDirectoryOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setDirectoryOptions')
+  private setInstanceOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setInstanceOptions')
+  private setProjectOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setProjectOptions')
+  private setUserOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setUserOptions')
 
   constructor (autoStart: boolean = false) {
     super()
@@ -93,7 +95,7 @@ export class Client extends EventEmitter {
     }
   }
 
-  async getTargetPaths (filePath: string, absolute: boolean = false): Promise<string[]> {
+  async getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]> {
     await this.bootstrap()
     return this.connection.sendRequest(this.getTargetPathsRequest, filePath, absolute)
   }
@@ -108,18 +110,28 @@ export class Client extends EventEmitter {
     return this.connection.sendRequest(this.killRequest, filePath)
   }
 
-  async setInstanceOptions (filePath: string, options: object): Promise<boolean> {
+  async setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
     await this.bootstrap()
-    return this.connection.sendRequest(this.setInstanceOptionsRequest, filePath, options)
+    return this.connection.sendRequest(this.setInstanceOptionsRequest, filePath, options, merge)
+  }
+
+  async setUserOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
+    await this.bootstrap()
+    return this.connection.sendRequest(this.setUserOptionsRequest, filePath, options, merge)
+  }
+
+  async setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
+    await this.bootstrap()
+    return this.connection.sendRequest(this.setDirectoryOptionsRequest, filePath, options, merge)
+  }
+
+  async setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
+    await this.bootstrap()
+    return this.connection.sendRequest(this.setProjectOptionsRequest, filePath, options, merge)
   }
 
   async run (filePath: string, commands: Command[]): Promise<boolean> {
     await this.bootstrap()
     return this.connection.sendRequest(this.runRequest, filePath, commands)
-  }
-
-  async updateOptions (filePath: string, options: object, user?: boolean): Promise<object> {
-    await this.bootstrap()
-    return this.connection.sendRequest(this.updateOptionsRequest, filePath, options, user)
   }
 }

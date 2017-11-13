@@ -40,27 +40,30 @@ export interface Option {
 }
 
 export class DiCy extends EventEmitter {
-  static create(filePath: string, options?: object): Promise<DiCy>;
-  static getOptionDefinitions(): Promise<Option[]>;
+  static create (filePath: string, options?: object): Promise<DiCy>;
+  static getOptionDefinitions (): Promise<Option[]>;
   getTargetPaths (absolute?: boolean): Promise<string[]>;
-  kill(message?: string): Promise<void>;
+  kill (message?: string): Promise<void>;
   resolvePath (filePath: string): string;
-  run(...commands: Command[]): Promise<boolean>;
-  setInstanceOptions(options?: object): Promise<void>;
-  updateOptions(options?: object, user?: boolean): Promise<object>;
+  run (...commands: Command[]): Promise<boolean>;
 
-  on (event: 'log', listener: (arg: LogEvent) => void): this;
+  setInstanceOptions (options: object, merge: boolean | undefined): Promise<void>;
+  setUserOptions (options: object, merge: boolean | undefined): Promise<void>;
+  setDirectoryOptions (options: object, merge: boolean | undefined): Promise<void>;
+  setProjectOptions (options: object, merge: boolean | undefined): Promise<void>;
+
+  on (event: 'log', listener: (event: LogEvent) => void): this;
   on (event: string | symbol, listener: (...args: any[]) => void): this;
 
-  once (event: 'log', listener: (arg: LogEvent) => void): this;
+  once (event: 'log', listener: (event: LogEvent) => void): this;
   once (event: string | symbol, listener: (...args: any[]) => void): this;
 
-  prependListener (event: 'log', listener: (arg: LogEvent) => void): this;
+  prependListener (event: 'log', listener: (event: LogEvent) => void): this;
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this;
 
-  prependOnceListener (event: 'log', listener: (arg: LogEvent) => void): this;
+  prependOnceListener (event: 'log', listener: (event: LogEvent) => void): this;
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this;
 
-  removeListener (event: 'log', listener: (arg: LogEvent) => void): this;
+  removeListener (event: 'log', listener: (event: LogEvent) => void): this;
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this;
 }

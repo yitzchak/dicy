@@ -11,8 +11,10 @@ export default class Server {
   private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
   private logNotification = new rpc.NotificationType2<string, dicy.LogEvent, void>('log')
   private runRequest = new rpc.RequestType2<string, dicy.Command[], boolean, void, void>('run')
-  private setInstanceOptionsRequest = new rpc.RequestType2<string, object, void, void, void>('setInstanceOptions')
-  private updateOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, object, void, void>('updateOptions')
+  private setDirectoryOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setDirectoryOptions')
+  private setInstanceOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setInstanceOptions')
+  private setProjectOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setProjectOptions')
+  private setUserOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setUserOptions')
 
   constructor (argv: any) {
     let transport: [rpc.MessageReader, rpc.MessageWriter]
@@ -36,7 +38,7 @@ export default class Server {
       (): void => this.exit())
 
     this.connection.onRequest(this.getTargetPathsRequest,
-      async (filePath: string): Promise<string[]> => this.getTargetPaths(filePath))
+      async (filePath: string, absolute?: boolean): Promise<string[]> => this.getTargetPaths(filePath, absolute))
 
     this.connection.onRequest(this.killRequest,
       (filePath?: string): Promise<void> => this.kill(filePath))
@@ -45,25 +47,27 @@ export default class Server {
       (filePath: string, commands: dicy.Command[]): Promise<boolean> => this.run(filePath, commands))
 
     this.connection.onRequest(this.setInstanceOptionsRequest,
-      async (filePath: string, options: object): Promise<void> => {
-        await this.getDiCy(filePath, options)
-      })
+      async (filePath: string, options: object, merge?: boolean): Promise<void> => this.setInstanceOptions(filePath, options, merge))
 
-    this.connection.onRequest(this.updateOptionsRequest,
-      async (filePath: string, options: object, user?: boolean): Promise<object> => this.updateOptions(filePath, options, user))
+    this.connection.onRequest(this.setUserOptionsRequest,
+      async (filePath: string, options: object, merge?: boolean): Promise<void> => this.setUserOptions(filePath, options, merge))
+
+    this.connection.onRequest(this.setDirectoryOptionsRequest,
+      async (filePath: string, options: object, merge?: boolean): Promise<void> => this.setDirectoryOptions(filePath, options, merge))
+
+    this.connection.onRequest(this.setProjectOptionsRequest,
+      async (filePath: string, options: object, merge?: boolean): Promise<void> => this.setProjectOptions(filePath, options, merge))
   }
 
   start () {
     this.connection.listen()
   }
 
-  async getDiCy (filePath: string, options?: object): Promise<dicy.DiCy> {
+  async getDiCy (filePath: string): Promise<dicy.DiCy> {
     let builder: dicy.DiCy | undefined = this.cachedDiCy.get(filePath)
 
-    if (builder) {
-      if (options) await builder.setInstanceOptions(options)
-    } else {
-      builder = await dicy.DiCy.create(filePath, options)
+    if (!builder) {
+      builder = await dicy.DiCy.create(filePath)
       this.cachedDiCy.set(filePath, builder)
       builder.on('log', (event: dicy.LogEvent) =>
         this.connection.sendNotification(this.logNotification, filePath, event))
@@ -76,7 +80,27 @@ export default class Server {
     process.exit(0)
   }
 
-  async getTargetPaths (filePath: string, absolute: boolean = true): Promise<string[]> {
+  async setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
+    const builder: dicy.DiCy = await this.getDiCy(filePath)
+    return builder.setInstanceOptions(options, merge)
+  }
+
+  async setUserOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
+    const builder: dicy.DiCy = await this.getDiCy(filePath)
+    return builder.setUserOptions(options, merge)
+  }
+
+  async setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
+    const builder: dicy.DiCy = await this.getDiCy(filePath)
+    return builder.setProjectOptions(options, merge)
+  }
+
+  async setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
+    const builder: dicy.DiCy = await this.getDiCy(filePath)
+    return builder.setDirectoryOptions(options, merge)
+  }
+
+  async getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]> {
     const builder: dicy.DiCy = await this.getDiCy(filePath)
     return builder.getTargetPaths(absolute)
   }
@@ -110,10 +134,5 @@ export default class Server {
   async run (filePath: string, commands: dicy.Command[]): Promise<boolean> {
     const builder: dicy.DiCy = await this.getDiCy(filePath)
     return builder.run(...commands)
-  }
-
-  async updateOptions (filePath: string, options: object, user?: boolean): Promise<object> {
-    const builder: dicy.DiCy = await this.getDiCy(filePath)
-    return builder.updateOptions(options, user)
   }
 }
