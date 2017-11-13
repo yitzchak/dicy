@@ -17,5 +17,5 @@ function updateDependencies (me: any , ref: any) {
 
 if (updateDependencies(me.dependencies, ref.dependencies) || updateDependencies(me.devDependencies, ref.devDependencies)) {
   console.log('Updating dependencies for ' + path.basename(process.cwd()))
-  fs.writeFileSync('package.json', JSON.stringify(me, null, 2))
+  fs.writeFileSync('package.json', JSON.stringify(me, null, 2) + '\n')
 }
