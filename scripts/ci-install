@@ -13,12 +13,13 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   cinst R.Project --allow-empty-checksums --ia="/DIR=\"${R_HOME}\""
 
   echo Installing MikTeX...
-  cinst miktex
+  curl -fsSL -o basic-miktex-x64.exe http://mirrors.ctan.org/tex-archive/systems/win32/miktex/setup/basic-miktex-x64.exe
+  ./basic-miktex-x64 --unattended --shared
 
   echo Installing TeX packages...
   initexmf --admin --set-config-value=[MPM]AutoInstall=0
-  mpm --admin --install-some=scripts\\miktex-packages
-  initexmf --admin --update-fndb
+  mpm --admin --update-db --update --install-some=scripts\\miktex-packages
+  pdflatex -version
 
   echo Installing package dependencies...
   npm install
