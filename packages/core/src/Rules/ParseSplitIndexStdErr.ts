@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Reference } from '@dicy/types'
 
-import { Action, ParsedLog, ParserMatch, Reference } from '../types'
+import Rule from '../Rule'
+import { Action, ParsedLog, ParserMatch } from '../types'
 
 export default class ParseSplitIndexStdOut extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['SplitIndexStdErr'])]

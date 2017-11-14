@@ -13,7 +13,6 @@
     "pretty": true,
     "sourceMap": false,
     "strictNullChecks": true,
-    "stripInternal": true,
     "target": "ES2015"
   },
   "include": [

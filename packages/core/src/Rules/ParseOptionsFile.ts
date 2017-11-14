@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command } from '@dicy/types'
 
-import { Action, Command } from '../types'
+import Rule from '../Rule'
+import { Action } from '../types'
 
 export default class ParseOptionsFile extends Rule {
   static commands: Set<Command> = new Set<Command>(['load'])

@@ -1,8 +1,10 @@
 import * as semver from 'semver'
 
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
-import { CACHE_VERSION, Command, Phase, Cache } from '../types'
+import { CACHE_VERSION, Phase, Cache } from '../types'
 
 export default class LoadAndValidateCache extends Rule {
   static phases: Set<Phase> = new Set<Phase>(['initialize'])

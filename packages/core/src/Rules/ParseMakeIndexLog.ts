@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command, Reference } from '@dicy/types'
 
-import { Action, Command, ParsedLog, Reference, ParserMatch } from '../types'
+import Rule from '../Rule'
+import { Action, ParsedLog, ParserMatch } from '../types'
 
 const MESSAGE_PATTERN = /^\s+--\s*(.*)$/
 

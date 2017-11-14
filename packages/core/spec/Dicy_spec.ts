@@ -6,7 +6,7 @@ import * as childProcess from 'child_process'
 
 import DiCy from '../src/DiCy'
 import File from '../src/File'
-import { LogEvent, Message } from '../src/types'
+import { LogEvent, Message } from '@dicy/types'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000

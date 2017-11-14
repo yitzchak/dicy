@@ -1,10 +1,12 @@
 import * as path from 'path'
 
-import { Action, ShellCall, Command, Phase, CommandOptions, ParsedLog } from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { Action, ShellCall, Phase, CommandOptions, ParsedLog } from '../types'
 
 export default class EpsToPdf extends Rule {
   static parameterTypes: Set<string>[] = [

@@ -3,13 +3,12 @@ import * as path from 'path'
 import * as _ from 'lodash'
 var toSource = require('tosource')
 
-import { DiCy } from '../packages/core/src/main'
-import { Option } from '../packages/core/src/types'
+import { getOptionDefinitions, OptionDefinition } from '../packages/types/src/main'
 
 async function main () {
-  const filePath = path.join(__dirname, '../packages/core/src/types.ts')
+  const filePath = path.join(__dirname, '../packages/types/src/types.ts')
   const previous = await fs.readFile(filePath, 'utf8')
-  const options: Option[] = await DiCy.getOptionDefinitions()
+  const options: OptionDefinition[] = await getOptionDefinitions()
   const defaultOptions: any = {}
   const decl: string[] = []
   const properties = ['[name: string]: any'].concat(options.map(option => {

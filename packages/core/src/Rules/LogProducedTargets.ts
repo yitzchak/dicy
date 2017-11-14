@@ -1,5 +1,4 @@
 import Rule from '../Rule'
-
 import { Phase } from '../types'
 
 export default class LogProducedTargets extends Rule {

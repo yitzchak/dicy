@@ -1,8 +1,10 @@
 import * as _ from 'lodash'
 
+import { Command, DEFAULT_OPTIONS } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
-import { DEFAULT_OPTIONS, Command, Phase } from '../types'
+import { Phase } from '../types'
 
 export default class ApplyOptions extends Rule {
   static commands: Set<Command> = new Set<Command>(['load'])

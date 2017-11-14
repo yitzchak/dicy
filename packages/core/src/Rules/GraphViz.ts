@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command } from '@dicy/types'
 
-import { Command, CommandOptions } from '../types'
+import Rule from '../Rule'
+import { CommandOptions } from '../types'
 
 export default class GraphViz extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['GraphViz'])]

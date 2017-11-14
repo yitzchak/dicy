@@ -1,16 +1,9 @@
+import { Command, Message, Reference, Severity } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
 import Log from '../Log'
-
-import {
-  Action,
-  Command,
-  Message,
-  ParsedLog,
-  ParserMatch,
-  Reference,
-  Severity
-} from '../types'
+import { Action, ParsedLog, ParserMatch } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 

@@ -1,10 +1,12 @@
 import * as _ from 'lodash'
 import * as path from 'path'
 
-import { Command, Phase } from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { Phase } from '../types'
 
 export default class CreateOutputTree extends Rule {
   static phases: Set<Phase> = new Set<Phase>(['initialize'])

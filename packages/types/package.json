@@ -1,7 +1,7 @@
 {
-  "name": "@dicy/client",
+  "name": "@dicy/types",
   "version": "0.11.0",
-  "description": "JSON-RPC client for DiCy.",
+  "description": "Shared types for DiCy.",
   "keywords": [
     "latex",
     "knitr",
@@ -14,8 +14,7 @@
   "scripts": {
     "test": "jasmine",
     "compile": "rimraf lib && tsc",
-    "prepublish": "npm run compile",
-    "server": "dicy-server"
+    "prepublish": "npm run compile"
   },
   "repository": {
     "type": "git",
@@ -29,13 +28,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@dicy/server": "^0.11.0",
-    "@dicy/types": "^0.11.0",
-    "vscode-jsonrpc": "^3.5.0"
+    "fs-extra": "^4.0.2",
+    "js-yaml": "^3.10.0"
   },
   "devDependencies": {
     "@types/node": "^8.0.47",
     "rimraf": "^2.6.2",
-    "typescript": "^2.5.3"
+    "typescript": "^2.5.3",
+    "tosource": "^1.0.0"
   }
 }

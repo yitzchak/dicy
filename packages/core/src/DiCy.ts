@@ -2,20 +2,21 @@ import * as _ from 'lodash'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 
+import { getOptionDefinitions, Command, Builder } from '@dicy/types'
+
 import State from './State'
 import StateConsumer from './StateConsumer'
 import File from './File'
 import Rule from './Rule'
-
-import { Action, Command, Option, Phase, RuleInfo } from './types'
+import { Action, Phase, RuleInfo } from './types'
 
 const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
 
-export default class DiCy extends StateConsumer {
+export default class DiCy extends StateConsumer implements Builder {
   private consumers: Map<string | null, StateConsumer> = new Map<string | null, StateConsumer>()
 
   static async create (filePath: string, options: object = {}) {
-    const schema = await DiCy.getOptionDefinitions()
+    const schema = await getOptionDefinitions()
     const state = new State(filePath, schema)
     const builder = new DiCy(state, state.getJobOptions())
 
@@ -25,18 +26,6 @@ export default class DiCy extends StateConsumer {
     builder.assignOptions(options)
 
     return builder
-  }
-
-  static async getOptionDefinitions (): Promise<Option[]> {
-    const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
-    const schema: any = await File.readYaml(filePath, true)
-    const options = []
-    for (const name in schema) {
-      const option: Option = schema[name]
-      option.name = name
-      options.push(option)
-    }
-    return options
   }
 
   async initialize () {

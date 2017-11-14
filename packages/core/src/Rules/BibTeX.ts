@@ -1,11 +1,12 @@
 import * as path from 'path'
 
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-
-import { Action, Command, CommandOptions, Phase } from '../types'
+import { Action, CommandOptions, Phase } from '../types'
 
 const JAPANESE_BIBTEX_PATTERN = /^u?pbibtex$/
 

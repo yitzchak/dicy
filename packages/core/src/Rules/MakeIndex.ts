@@ -1,17 +1,12 @@
 import * as path from 'path'
 
-import {
-  Action,
-  Command,
-  CommandOptions,
-  IndexEngine,
-  ParsedLog,
-  Phase
-} from '../types'
+import { Command, IndexEngine } from '@dicy/types'
+
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { Action, CommandOptions, ParsedLog, Phase } from '../types'
 
 export default class MakeIndex extends Rule {
   static parameterTypes: Set<string>[] = [

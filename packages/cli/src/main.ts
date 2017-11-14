@@ -9,11 +9,12 @@ import * as yargs from 'yargs'
 import chalk from 'chalk'
 
 import {
+  getOptionDefinitions,
   Command,
   DiCy,
   LogEvent,
   Message,
-  Option,
+  OptionDefinition,
   Reference
 } from '@dicy/core'
 
@@ -123,7 +124,7 @@ yargs
   .demandCommand(1, 'You need to specify a command.')
   .help()
 
-DiCy.getOptionDefinitions().then((definitions: Option[]) => {
+getOptionDefinitions().then((definitions: OptionDefinition[]) => {
   function getOptions (commands: Command[]) {
     const options: { [name: string]: any } = {
       'save-log': {

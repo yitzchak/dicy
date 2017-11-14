@@ -1,14 +1,9 @@
-import {
-  CACHE_VERSION,
-  Command,
-  FileCache,
-  Cache,
-  Phase,
-  RuleCache
-} from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { CACHE_VERSION, FileCache, Cache, Phase, RuleCache } from '../types'
 
 export default class SaveCache extends Rule {
   static commands: Set<Command> = new Set<Command>(['save'])

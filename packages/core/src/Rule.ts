@@ -1,15 +1,14 @@
 import * as path from 'path'
 const commandJoin = require('command-join')
 
+import { Command, OptionsInterface } from '@dicy/types'
+
 import State from './State'
 import File from './File'
 import StateConsumer from './StateConsumer'
-
 import {
   Action,
-  Command,
   CommandOptions,
-  OptionsInterface,
   ParsedLog,
   Phase,
   ProcessResults

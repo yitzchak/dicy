@@ -1,13 +1,7 @@
-import Rule from '../Rule'
+import { Command, Reference } from '@dicy/types'
 
-import {
-  Action,
-  Command,
-  LineRangeMapping,
-  ParserMatch,
-  Reference,
-  SourceMaps
-} from '../types'
+import Rule from '../Rule'
+import { Action, LineRangeMapping, ParserMatch, SourceMaps } from '../types'
 
 const WRAPPED_LINE_PATTERN = /%$/
 

@@ -1,8 +1,9 @@
 import * as path from 'path'
 
-import Rule from '../Rule'
+import { Reference } from '@dicy/types'
 
-import { Action, ParsedLog, Reference, ParserMatch } from '../types'
+import Rule from '../Rule'
+import { Action, ParsedLog, ParserMatch } from '../types'
 
 export default class ParseFileListing extends Rule {
   static parameterTypes: Set<string>[] = [new Set<string>(['FileListing'])]

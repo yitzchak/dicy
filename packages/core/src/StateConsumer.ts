@@ -5,22 +5,25 @@ import * as kill from 'tree-kill'
 import fastGlob from 'fast-glob'
 import * as path from 'path'
 
+import {
+  Command,
+  LogEvent,
+  Message,
+  OptionDefinition,
+  OptionsInterface,
+  Severity
+} from '@dicy/types'
+
 import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  Command,
   FileCache,
   GlobOptions,
   KillToken,
-  LogEvent,
-  Message,
-  Option,
-  OptionsInterface,
   Phase,
   ProcessResults,
-  RuleCache,
-  Severity
+  RuleCache
 } from './types'
 
 const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
@@ -154,12 +157,12 @@ export default class StateConsumer implements EventEmitter {
     }
   }
 
-  getOptionSchema (name: string): Option | undefined {
+  getOptionSchema (name: string): OptionDefinition | undefined {
     return this.state.optionSchema.get(name)
   }
 
   setOption (store: any, name: string, value: any) {
-    const schema: Option | undefined = this.state.optionSchema.get(name)
+    const schema: OptionDefinition | undefined = this.state.optionSchema.get(name)
     if (schema) {
       let invalidType: boolean = false
 

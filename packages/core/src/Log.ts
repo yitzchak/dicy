@@ -1,7 +1,9 @@
 import * as _ from 'lodash'
 import * as yargs from 'yargs-parser'
 
-import { Message, ParsedLog, ShellCall } from './types'
+import { Message } from '@dicy/types'
+
+import { ParsedLog, ShellCall } from './types'
 
 const ARGUMENT_PARSERS: { [name: string]: object } = {
   epstopdf: {

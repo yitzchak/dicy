@@ -2,15 +2,13 @@ import { alg, Graph } from 'graphlib'
 import { EventEmitter } from 'events'
 import * as path from 'path'
 
+import { Command, OptionDefinition, OptionsInterface } from '@dicy/types'
+
 import File from './File'
 import Rule from './Rule'
-
 import {
-  Command,
   FileCache,
   KillToken,
-  Option,
-  OptionsInterface,
   OptionInterfaceMap,
   Phase,
   RuleCache
@@ -31,7 +29,7 @@ export default class State extends EventEmitter {
   rules: Map<string, Rule> = new Map()
   options: {[name: string]: any} = {}
   defaultOptions: OptionsInterface
-  optionSchema: Map<string, Option> = new Map()
+  optionSchema: Map<string, OptionDefinition> = new Map()
   ruleClasses: typeof Rule[] = []
   cacheTimeStamp: Date
   processes: Set<number> = new Set<number>()
@@ -43,7 +41,7 @@ export default class State extends EventEmitter {
   private graphProperties: GraphProperties = {}
   private optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
-  constructor (filePath: string, schema: Option[] = []) {
+  constructor (filePath: string, schema: OptionDefinition[] = []) {
     super()
     const resolveFilePath: string = path.resolve(filePath)
     const { dir, base, name, ext } = path.parse(resolveFilePath)
@@ -241,7 +239,7 @@ export default class State extends EventEmitter {
             }
           }
 
-          const schema: Option | void = this.optionSchema.get(name.toString())
+          const schema: OptionDefinition | void = this.optionSchema.get(name.toString())
 
           if (schema && schema.type === 'boolean') {
             return !!target[name]

@@ -7,7 +7,9 @@ import * as path from 'path'
 import * as readline from 'readline'
 import * as yaml from 'js-yaml'
 
-import { FileCache, FileType, Parser, ParserMatch, Reference } from './types'
+import { Reference } from '@dicy/types'
+
+import { FileCache, FileType, Parser, ParserMatch } from './types'
 
 export default class File {
   static DEFAULT_PARSING_MODE = 'default'

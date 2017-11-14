@@ -3,10 +3,10 @@ import * as micromatch from 'micromatch'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
-
-import { Command } from '../types'
 
 export default class Clean extends Rule {
   static commands: Set<Command> = new Set<Command>(['clean', 'scrub'])

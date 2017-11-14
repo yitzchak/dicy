@@ -1,60 +1,35 @@
 import { EventEmitter } from 'events'
 import * as cp from 'child_process'
 import * as rpc from 'vscode-jsonrpc'
+import { BuilderManager, Command, LogEvent } from '@dicy/types'
 
-export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub'
-
-export interface LineRange {
-  start: number
-  end: number
-}
-
-export interface Reference {
-  file: string
-  range?: LineRange
-}
-
-export declare type Severity = 'trace' | 'info' | 'warning' | 'error'
-
-export interface Message {
-  severity: Severity
-  text: string
-  name?: string
-  category?: string
-  source?: Reference
-  log?: Reference
-}
-
-export interface LogEvent {
-  type: 'log'
-  messages: Message[]
-}
-
-export interface Option {
-  name: string
-  type: 'string' | 'strings' | 'number' | 'boolean' | 'variable'
-  defaultValue?: any
-  description: string
-  values?: any[]
-  aliases?: string[]
-  commands?: string[]
-  noInvalidate?: boolean
-}
-
-export class Client extends EventEmitter {
+export class Client extends EventEmitter implements BuilderManager {
+  /** @internal */
   private autoStart: boolean
+  /** @internal */
   private connection: any
+  /** @internal */
   private server: cp.ChildProcess
 
+  /** @internal */
   private clearRequest = new rpc.RequestType1<string | undefined, boolean, void, void>('clear')
+  /** @internal */
   private exitNotification = new rpc.NotificationType0<void>('exit')
+  /** @internal */
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
+  /** @internal */
   private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
+  /** @internal */
   private logNotification = new rpc.NotificationType2<string, LogEvent, void>('log')
+  /** @internal */
   private runRequest = new rpc.RequestType2<string, Command[], boolean, void, void>('run')
+  /** @internal */
   private setDirectoryOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setDirectoryOptions')
+  /** @internal */
   private setInstanceOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setInstanceOptions')
+  /** @internal */
   private setProjectOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setProjectOptions')
+  /** @internal */
   private setUserOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setUserOptions')
 
   constructor (autoStart: boolean = false) {
