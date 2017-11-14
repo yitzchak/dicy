@@ -19,6 +19,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   initexmf --admin --set-config-value=[MPM]AutoInstall=0
   mpm --admin --install-some=scripts\\miktex-packages
   initexmf --admin --update-fndb
+  pdflatex -version
 
   echo Installing package dependencies...
   npm install
