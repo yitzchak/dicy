@@ -12,6 +12,7 @@ clone_depth: 1
 environment:
   global:
     MIKTEX_HOME: '%PROGRAMFILES%\MiKTeX 2.9'
+    ASYMPTOTE_HOME: '%PROGRAMFILES%\MiKTeX 2.9\asymptote'
     PYTHON: C:\Python36
     R_HOME: '%PROGRAMFILES%\R'
     R_LIBS_USER: '%USERPROFILE%\R\library'
@@ -21,21 +22,20 @@ cache:
   - '%R_LIBS_USER%'
   - '%LOCALAPPDATA%\pip\Cache'
 
-init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# init:
+#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin;%MIKTEX_HOME%\miktex\bin\x64;%R_HOME%\bin;%PYTHON%\Scripts
-  - set "ASYMPTOTE_HOME=C:\Program Files\MiKTeX 2.9\asymptote"
   - sh ./scripts/ci-install
 
 before_test:
   - sh ./scripts/ci-before-test
 
-test_script: []
-  # - npm test
+test_script:
+  - npm test
 
 build: off
