@@ -5,10 +5,12 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as temp from 'temp'
 
+import { Command, Message } from '@dicy/types'
+
 import DiCy from '../src/DiCy'
 import File from '../src/File'
 import Rule from '../src/Rule'
-import { Command, Phase, Message } from '../src/types'
+import { Phase } from '../src/types'
 
 export async function cloneFixtures () {
   const tempPath = fs.realpathSync(temp.mkdirSync('dicy'))
