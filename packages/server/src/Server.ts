@@ -5,8 +5,8 @@ export default class Server {
   private cache: dicy.BuilderCacheInterface = new dicy.DiCy()
   private connection: any
 
-  private clearRequest = new rpc.RequestType1<string, boolean, void, void>('clear')
-  private clearAllRequest = new rpc.RequestType0<boolean, void, void>('clear')
+  private clearRequest = new rpc.RequestType1<string, void, void, void>('clear')
+  private clearAllRequest = new rpc.RequestType0<void, void, void>('clear')
   private exitNotification = new rpc.NotificationType0<void>('exit')
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
   private killRequest = new rpc.RequestType2<string, string | undefined, void, void, void>('kill')

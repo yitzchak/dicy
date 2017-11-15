@@ -62,9 +62,9 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   private cachedBuilders: Map<string, Builder> = new Map<string, Builder>()
 
   /** @internal */
-  private clearRequest = new rpc.RequestType1<string, boolean, void, void>('clear')
+  private clearRequest = new rpc.RequestType1<string, void, void, void>('clear')
   /** @internal */
-  private clearAllRequest = new rpc.RequestType0<boolean, void, void>('clear')
+  private clearAllRequest = new rpc.RequestType0<void, void, void>('clear')
   /** @internal */
   private exitNotification = new rpc.NotificationType0<void>('exit')
   /** @internal */
