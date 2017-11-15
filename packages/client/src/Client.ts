@@ -1,24 +1,69 @@
 import { EventEmitter } from 'events'
 import * as cp from 'child_process'
 import * as rpc from 'vscode-jsonrpc'
-import { BuilderManager, Command, LogEvent } from '@dicy/types'
+import { BuilderInterface, BuilderCacheInterface, Command, LogEvent } from '@dicy/types'
 
-export class Client extends EventEmitter implements BuilderManager {
+class Builder extends EventEmitter implements BuilderInterface {
+  cache: BuilderCacheInterface
+  filePath: string
+
+  constructor (cache: BuilderCacheInterface, filePath: string) {
+    super()
+    this.cache = cache
+    this.filePath = filePath
+  }
+
+  getTargetPaths (absolute?: boolean): Promise<string[]> {
+    return this.cache.getTargetPaths(this.filePath, absolute)
+  }
+
+  kill (message?: string): Promise<void> {
+    return this.cache.kill(this.filePath, message)
+  }
+
+  run (commands: Command[]): Promise<boolean> {
+    return this.cache.run(this.filePath, commands)
+  }
+
+  setInstanceOptions (options: object, merge?: boolean): Promise<void> {
+    return this.cache.setInstanceOptions(this.filePath, options, merge)
+  }
+
+  setUserOptions (options: object, merge?: boolean): Promise<void> {
+    return this.cache.setUserOptions(this.filePath, options, merge)
+  }
+
+  setDirectoryOptions (options: object, merge?: boolean): Promise<void> {
+    return this.cache.setDirectoryOptions(this.filePath, options, merge)
+  }
+
+  setProjectOptions (options: object, merge?: boolean): Promise<void> {
+    return this.cache.setProjectOptions(this.filePath, options, merge)
+  }
+}
+
+export default class Client extends EventEmitter implements BuilderCacheInterface {
   /** @internal */
   private autoStart: boolean
   /** @internal */
   private connection: any
   /** @internal */
   private server: cp.ChildProcess
+  /** @internal */
+  private cachedBuilders: Map<string, BuilderInterface> = new Map<string, BuilderInterface>()
 
   /** @internal */
-  private clearRequest = new rpc.RequestType1<string | undefined, boolean, void, void>('clear')
+  private clearRequest = new rpc.RequestType1<string, boolean, void, void>('clear')
+  /** @internal */
+  private clearAllRequest = new rpc.RequestType0<boolean, void, void>('clear')
   /** @internal */
   private exitNotification = new rpc.NotificationType0<void>('exit')
   /** @internal */
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
   /** @internal */
-  private killRequest = new rpc.RequestType1<string | undefined, void, void, void>('kill')
+  private killRequest = new rpc.RequestType2<string, string | undefined, void, void, void>('kill')
+  /** @internal */
+  private killAllRequest = new rpc.RequestType1<string | undefined, void, void, void>('killAll')
   /** @internal */
   private logNotification = new rpc.NotificationType2<string, LogEvent, void>('log')
   /** @internal */
@@ -37,6 +82,7 @@ export class Client extends EventEmitter implements BuilderManager {
     this.autoStart = autoStart
   }
 
+  /** @internal */
   async bootstrap (): Promise<void> {
     if (this.autoStart && !this.server) await this.start()
   }
@@ -70,37 +116,62 @@ export class Client extends EventEmitter implements BuilderManager {
     }
   }
 
+  async destroy (): Promise<void> {
+    this.exit()
+  }
+
+  async get (filePath: string): Promise<BuilderInterface> {
+    let builder: BuilderInterface | undefined = this.cachedBuilders.get(filePath)
+
+    if (!builder) {
+      builder = new Builder(this, filePath)
+      this.cachedBuilders.set(filePath, builder)
+    }
+
+    return builder
+  }
+
   async getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]> {
     await this.bootstrap()
     return this.connection.sendRequest(this.getTargetPathsRequest, filePath, absolute)
   }
 
-  async clear (filePath?: string): Promise<void> {
+  async clear (filePath: string): Promise<void> {
     await this.bootstrap()
     return this.connection.sendRequest(this.clearRequest, filePath)
   }
 
-  async kill (filePath?: string): Promise<void> {
+  async clearAll (): Promise<void> {
     await this.bootstrap()
-    return this.connection.sendRequest(this.killRequest, filePath)
+    return this.connection.sendRequest(this.clearAllRequest)
   }
 
-  async setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
+  async kill (filePath: string, message?: string): Promise<void> {
+    await this.bootstrap()
+    return this.connection.sendRequest(this.killRequest, filePath, message)
+  }
+
+  async killAll (message?: string): Promise<void> {
+    await this.bootstrap()
+    return this.connection.sendRequest(this.killAllRequest, message)
+  }
+
+  async setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
     await this.bootstrap()
     return this.connection.sendRequest(this.setInstanceOptionsRequest, filePath, options, merge)
   }
 
-  async setUserOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
+  async setUserOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
     await this.bootstrap()
     return this.connection.sendRequest(this.setUserOptionsRequest, filePath, options, merge)
   }
 
-  async setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
+  async setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
     await this.bootstrap()
     return this.connection.sendRequest(this.setDirectoryOptionsRequest, filePath, options, merge)
   }
 
-  async setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<boolean> {
+  async setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
     await this.bootstrap()
     return this.connection.sendRequest(this.setProjectOptionsRequest, filePath, options, merge)
   }

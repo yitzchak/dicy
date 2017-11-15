@@ -2,7 +2,7 @@ import * as _ from 'lodash'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 
-import { getOptionDefinitions, Command, Builder } from '@dicy/types'
+import { getOptionDefinitions, Command, BuilderInterface } from '@dicy/types'
 
 import State from './State'
 import StateConsumer from './StateConsumer'
@@ -12,13 +12,13 @@ import { Action, Phase, RuleInfo } from './types'
 
 const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
 
-export default class DiCy extends StateConsumer implements Builder {
+export default class Builder extends StateConsumer implements BuilderInterface {
   private consumers: Map<string | null, StateConsumer> = new Map<string | null, StateConsumer>()
 
   static async create (filePath: string, options: object = {}) {
     const schema = await getOptionDefinitions()
     const state = new State(filePath, schema)
-    const builder = new DiCy(state, state.getJobOptions())
+    const builder = new Builder(state, state.getJobOptions())
 
     await builder.initialize()
     await builder.setInstanceOptions(options)
@@ -178,7 +178,7 @@ export default class DiCy extends StateConsumer implements Builder {
     return this.killToken.promise
   }
 
-  async run (...commands: Command[]): Promise<boolean> {
+  async run (commands: Command[]): Promise<boolean> {
     if (this.killToken) {
       this.error('Build currently in progress')
       return false

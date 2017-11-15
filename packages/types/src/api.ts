@@ -18,16 +18,16 @@ export async function getOptionDefinitions (): Promise<OptionDefinition[]> {
   return options
 }
 
-export interface Builder extends EventEmitter {
+export interface BuilderInterface extends EventEmitter {
   getTargetPaths (absolute?: boolean): Promise<string[]>
-  kill (message?: string): Promise<void>
-  resolvePath (filePath: string): string
-  run (...commands: Command[]): Promise<boolean>
 
-  setInstanceOptions (options: object, merge: boolean | undefined): Promise<void>
-  setUserOptions (options: object, merge: boolean | undefined): Promise<void>
-  setDirectoryOptions (options: object, merge: boolean | undefined): Promise<void>
-  setProjectOptions (options: object, merge: boolean | undefined): Promise<void>
+  kill (message?: string): Promise<void>
+  run (commands: Command[]): Promise<boolean>
+
+  setInstanceOptions (options: object, merge?: boolean): Promise<void>
+  setUserOptions (options: object, merge?: boolean): Promise<void>
+  setDirectoryOptions (options: object, merge?: boolean): Promise<void>
+  setProjectOptions (options: object, merge?: boolean): Promise<void>
 
   on (event: 'log', listener: (event: LogEvent) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this
@@ -45,15 +45,22 @@ export interface Builder extends EventEmitter {
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this
 }
 
-export interface BuilderManager extends EventEmitter {
+export interface BuilderCacheInterface extends EventEmitter {
+  get (filePath: string): Promise<BuilderInterface>
+  clear (filePath: string): Promise<void>
+  clearAll (): Promise<void>
+  destroy (): Promise<void>
+
   getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]>
-  clear (filePath?: string): Promise<void>
-  kill (filePath?: string): Promise<void>
-  setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<boolean>
-  setUserOptions (filePath: string, options: object, merge?: boolean): Promise<boolean>
-  setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<boolean>
-  setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<boolean>
+
+  kill (filePath: string, message?: string): Promise<void>
+  killAll (message?: string): Promise<void>
   run (filePath: string, commands: Command[]): Promise<boolean>
+
+  setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<void>
+  setUserOptions (filePath: string, options: object, merge?: boolean): Promise<void>
+  setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<void>
+  setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<void>
 
   on (event: 'log', listener: (filePath: string, event: LogEvent) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this

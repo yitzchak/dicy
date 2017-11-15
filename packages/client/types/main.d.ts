@@ -1,2 +1,2 @@
 export * from '@dicy/types';
-export * from './Client';
+export { default as DiCy } from './Client';

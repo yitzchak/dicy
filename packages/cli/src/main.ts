@@ -93,10 +93,12 @@ const handler = async (argv: any) => {
   }
 
   let success = true
+  const cache = new DiCy()
 
   for (const filePath of inputs) {
     let messages: Message[] = []
-    const dicy = await DiCy.create(path.resolve(filePath), options)
+    const dicy = await cache.get(path.resolve(filePath))
+    await dicy.setInstanceOptions(options)
     dicy
       .on('log', (event: LogEvent) => {
         messages = messages.concat(event.messages)
@@ -106,14 +108,17 @@ const handler = async (argv: any) => {
     process.on('SIGTERM', () => dicy.kill())
     process.on('SIGINT', () => dicy.kill())
 
-    success = await dicy.run(...commands) || success
+    success = await dicy.run(commands) || success
 
     if (saveLog) {
-      const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
+      const { dir, name } = path.parse(filePath)
+      const logFilePath = path.join(dir, `${name}-log.yaml`)
       const contents = yaml.safeDump(messages, { skipInvalid: true })
       await fs.writeFile(logFilePath, contents)
     }
   }
+
+  await cache.destroy()
 
   process.exit(success ? 0 : 1)
 }

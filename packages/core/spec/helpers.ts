@@ -7,7 +7,7 @@ import * as temp from 'temp'
 
 import { Command, Message } from '@dicy/types'
 
-import DiCy from '../src/DiCy'
+import Builder from '../src/Builder'
 import File from '../src/File'
 import Rule from '../src/Rule'
 import { Phase } from '../src/types'
@@ -111,7 +111,7 @@ export async function initializeRule ({ RuleClass, command, phase, jobName, file
   options.loadUserOptions = false
   const fixturesPath = clone ? await cloneFixtures() : path.resolve(__dirname, 'fixtures')
   const realFilePath = path.resolve(fixturesPath, filePath)
-  const dicy = await DiCy.create(realFilePath, options)
+  const dicy = await Builder.create(realFilePath, options)
   const files: File[] = []
 
   for (const target of targets) {
