@@ -7,7 +7,6 @@ import * as path from 'path'
 
 import {
   Command,
-  LogEvent,
   Message,
   OptionDefinition,
   OptionsInterface,
@@ -352,7 +351,7 @@ export default class StateConsumer implements EventEmitter {
       (logCategory && message.category === logCategory))
 
     if (messages.length > 0) {
-      this.emit('log', { type: 'log', messages })
+      this.emit('log', messages)
     }
   }
 
@@ -393,13 +392,13 @@ export default class StateConsumer implements EventEmitter {
   }
 
   // EventEmmitter proxy
-  addListener (event: 'log', listener: (arg: LogEvent) => void): this
+  addListener (event: 'log', listener: (messages: Message[]) => void): this
   addListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.addListener(event, listener)
     return this
   }
 
-  emit (event: 'log', arg: LogEvent): boolean
+  emit (event: 'log', messages: Message[]): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return this.state.emit(event, ...args)
   }
@@ -420,25 +419,25 @@ export default class StateConsumer implements EventEmitter {
     return this.state.listeners(event)
   }
 
-  on (event: 'log', listener: (arg: LogEvent) => void): this
+  on (event: 'log', listener: (messages: Message[]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.on(event, listener)
     return this
   }
 
-  once (event: 'log', listener: (arg: LogEvent) => void): this
+  once (event: 'log', listener: (messages: Message[]) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.once(event, listener)
     return this
   }
 
-  prependListener (event: 'log', listener: (arg: LogEvent) => void): this
+  prependListener (event: 'log', listener: (messages: Message[]) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependListener(event, listener)
     return this
   }
 
-  prependOnceListener (event: 'log', listener: (arg: LogEvent) => void): this
+  prependOnceListener (event: 'log', listener: (messages: Message[]) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependOnceListener(event, listener)
     return this
@@ -449,7 +448,7 @@ export default class StateConsumer implements EventEmitter {
     return this
   }
 
-  removeListener (event: 'log', listener: (arg: LogEvent) => void): this
+  removeListener (event: 'log', listener: (messages: Message[]) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.removeListener(event, listener)
     return this

@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as yaml from 'js-yaml'
 import { EventEmitter } from 'events'
 
-import { Command, LogEvent, OptionDefinition } from './types'
+import { Command, Message, OptionDefinition } from './types'
 
 export async function getOptionDefinitions (): Promise<OptionDefinition[]> {
   const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
@@ -29,19 +29,19 @@ export interface BuilderInterface extends EventEmitter {
   setDirectoryOptions (options: object, merge?: boolean): Promise<void>
   setProjectOptions (options: object, merge?: boolean): Promise<void>
 
-  on (event: 'log', listener: (event: LogEvent) => void): this
+  on (event: 'log', listener: (messages: Message[]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this
 
-  once (event: 'log', listener: (event: LogEvent) => void): this
+  once (event: 'log', listener: (messages: Message[]) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this
 
-  prependListener (event: 'log', listener: (event: LogEvent) => void): this
+  prependListener (event: 'log', listener: (messages: Message[]) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this
 
-  prependOnceListener (event: 'log', listener: (event: LogEvent) => void): this
+  prependOnceListener (event: 'log', listener: (messages: Message[]) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this
 
-  removeListener (event: 'log', listener: (event: LogEvent) => void): this
+  removeListener (event: 'log', listener: (messages: Message[]) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this
 }
 
@@ -62,18 +62,18 @@ export interface BuilderCacheInterface extends EventEmitter {
   setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<void>
   setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<void>
 
-  on (event: 'log', listener: (filePath: string, event: LogEvent) => void): this
+  on (event: 'log', listener: (filePath: string, messages: Message[]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this
 
-  once (event: 'log', listener: (filePath: string, event: LogEvent) => void): this
+  once (event: 'log', listener: (filePath: string, messages: Message[]) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this
 
-  prependListener (event: 'log', listener: (filePath: string, event: LogEvent) => void): this
+  prependListener (event: 'log', listener: (filePath: string, messages: Message[]) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this
 
-  prependOnceListener (event: 'log', listener: (filePath: string, event: LogEvent) => void): this
+  prependOnceListener (event: 'log', listener: (filePath: string, messages: Message[]) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this
 
-  removeListener (event: 'log', listener: (filePath: string, event: LogEvent) => void): this
+  removeListener (event: 'log', listener: (filePath: string, messages: Message[]) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this
 }

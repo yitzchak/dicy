@@ -12,7 +12,6 @@ import {
   getOptionDefinitions,
   Command,
   DiCy,
-  LogEvent,
   Message,
   OptionDefinition,
   Reference
@@ -100,9 +99,9 @@ const handler = async (argv: any) => {
     const dicy = await cache.get(path.resolve(filePath))
     await dicy.setInstanceOptions(options)
     dicy
-      .on('log', (event: LogEvent) => {
-        messages = messages.concat(event.messages)
-        event.messages.forEach(log)
+      .on('log', (newMessages: Message[]) => {
+        messages = messages.concat(newMessages)
+        newMessages.forEach(log)
       })
 
     process.on('SIGTERM', () => dicy.kill())

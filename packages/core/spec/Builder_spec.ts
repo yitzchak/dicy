@@ -6,7 +6,7 @@ import * as childProcess from 'child_process'
 
 import Builder from '../src/Builder'
 import File from '../src/File'
-import { LogEvent, Message } from '@dicy/types'
+import { Message } from '@dicy/types'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
@@ -43,7 +43,7 @@ describe('Builder', () => {
         const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
         if (await File.canRead(logFilePath)) {
           expected = await File.readYaml(logFilePath)
-          dicy.on('log', (event: LogEvent) => { messages = messages.concat(event.messages) })
+          dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
         }
 
         // Run the builder

@@ -21,11 +21,6 @@ export interface Message {
   log?: Reference
 }
 
-export interface LogEvent {
-  type: 'log'
-  messages: Message[]
-}
-
 export type OptionType = 'string' | 'strings' | 'number' | 'boolean' | 'variable'
 
 export interface OptionDefinition {

@@ -1,16 +1,25 @@
 import { EventEmitter } from 'events'
 import * as cp from 'child_process'
 import * as rpc from 'vscode-jsonrpc'
-import { BuilderInterface, BuilderCacheInterface, Command, LogEvent } from '@dicy/types'
+import { BuilderInterface, BuilderCacheInterface, Command, Message } from '@dicy/types'
 
 class Builder extends EventEmitter implements BuilderInterface {
   cache: BuilderCacheInterface
   filePath: string
+  logListener: (filePath: string, messages: Message[]) => void
 
   constructor (cache: BuilderCacheInterface, filePath: string) {
     super()
     this.cache = cache
     this.filePath = filePath
+    this.logListener = (filePath: string, messages: Message[]): void => {
+      if (filePath === this.filePath) this.emit('log', messages)
+    }
+    this.cache.on('log', this.logListener)
+  }
+
+  destroy () {
+    this.cache.removeListener('log', this.logListener)
   }
 
   getTargetPaths (absolute?: boolean): Promise<string[]> {
@@ -50,7 +59,7 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   /** @internal */
   private server: cp.ChildProcess
   /** @internal */
-  private cachedBuilders: Map<string, BuilderInterface> = new Map<string, BuilderInterface>()
+  private cachedBuilders: Map<string, Builder> = new Map<string, Builder>()
 
   /** @internal */
   private clearRequest = new rpc.RequestType1<string, boolean, void, void>('clear')
@@ -65,7 +74,7 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   /** @internal */
   private killAllRequest = new rpc.RequestType1<string | undefined, void, void, void>('killAll')
   /** @internal */
-  private logNotification = new rpc.NotificationType2<string, LogEvent, void>('log')
+  private logNotification = new rpc.NotificationType2<string, Message[], void>('log')
   /** @internal */
   private runRequest = new rpc.RequestType2<string, Command[], boolean, void, void>('run')
   /** @internal */
@@ -101,8 +110,8 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
     const output = new rpc.IPCMessageWriter(this.server)
 
     this.connection = rpc.createMessageConnection(input, output)
-    this.connection.onNotification(this.logNotification, (filePath: string, event: LogEvent): void => {
-      this.emit('log', filePath, event)
+    this.connection.onNotification(this.logNotification, (filePath: string, messages: Message[]): void => {
+      this.emit('log', filePath, messages)
     })
 
     this.connection.listen()
@@ -121,7 +130,7 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   }
 
   async get (filePath: string): Promise<BuilderInterface> {
-    let builder: BuilderInterface | undefined = this.cachedBuilders.get(filePath)
+    let builder: Builder | undefined = this.cachedBuilders.get(filePath)
 
     if (!builder) {
       builder = new Builder(this, filePath)

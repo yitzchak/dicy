@@ -11,7 +11,7 @@ export default class Server {
   private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
   private killRequest = new rpc.RequestType2<string, string | undefined, void, void, void>('kill')
   private killAllRequest = new rpc.RequestType1<string | undefined, void, void, void>('killAll')
-  private logNotification = new rpc.NotificationType2<string, dicy.LogEvent, void>('log')
+  private logNotification = new rpc.NotificationType2<string, dicy.Message[], void>('log')
   private runRequest = new rpc.RequestType2<string, dicy.Command[], boolean, void, void>('run')
   private setDirectoryOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setDirectoryOptions')
   private setInstanceOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setInstanceOptions')
@@ -66,8 +66,8 @@ export default class Server {
     this.connection.onRequest(this.setProjectOptionsRequest,
       (filePath: string, options: object, merge?: boolean): Promise<void> => this.setProjectOptions(filePath, options, merge))
 
-    this.cache.on('log', (filePath: string, event: dicy.LogEvent): void => {
-      this.connection.sendNotification(this.logNotification, filePath, event)
+    this.cache.on('log', (filePath: string, messages: dicy.Message): void => {
+      this.connection.sendNotification(this.logNotification, filePath, messages)
     })
   }
 

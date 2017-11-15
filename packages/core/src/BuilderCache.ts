@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 
-import { BuilderCacheInterface, BuilderInterface, Command, LogEvent } from '@dicy/types'
+import { BuilderCacheInterface, BuilderInterface, Command, Message } from '@dicy/types'
 
 import Builder from './Builder'
 
@@ -13,7 +13,7 @@ export default class BuilderCache extends EventEmitter implements BuilderCacheIn
     if (!builder) {
       builder = await Builder.create(filePath)
       this.cachedBuilders.set(filePath, builder)
-      builder.on('log', (event: LogEvent) => this.emit('log', filePath, event))
+      builder.on('log', (messages: Message[]) => this.emit('log', filePath, messages))
     }
 
     return builder
