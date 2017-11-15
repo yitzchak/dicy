@@ -19,9 +19,17 @@ can build projects that utilize the following programs to process files.
 
 ## Installation
 
-DiCy can be used either as a library or via the command line. To install DiCy as
-a library use `npm install @dicy/core`. To install for command line access use
-`npm install -g @dicy/cli`.
+DiCy can be accessed via a library, via a JSON-RPC server or via the command
+line. The packages that implement these interfaces are listed below. In general
+to install a package use a command like `npm install @dicy/core`. Whereas to
+install for command line access use `npm install -g @dicy/cli`.
+
+| Package          | Description                                                   |
+|------------------|---------------------------------------------------------------|
+| [@dicy/core][]   | JavaScript/TypeScript library interface                       |
+| [@dicy/client][] | JavaScript/TypeScript library interface using JSON-RPC server |
+| [@dicy/cli][]    | Command line interface                                        |
+| [@dicy/server][] | JSON-RPC server interface                                     |
 
 ## Documentation
 
@@ -35,8 +43,7 @@ more detailed documentation please see the following pages.
     configuration.
 -   [Options][] — The options that can be passed to DiCy from the command line,
     the YAML option files, or TeX magic comments.
--   [Events][] — The events emitted during a build. Only applicable when using
-    the library interface to DiCy.
+-   [API][] — Usage details on the library interface and the JSON-RPC interface.
 
 ## Command Line Usage
 
@@ -54,6 +61,7 @@ where the following commands are available (`--help` will enumerate options):
 | clean           |   c   | Clean up after a previous build.                                    |
 | log             |   l   | Report messages from any logs.                                      |
 | graph           |   g   | Create a dependency graph from a previous build.                    |
+| scrub           |   s   | Clean all generated files from a previous build.                    |
 | build,clean     |   bc  | Build the inputs and then clean up.                                 |
 | build,log       |   bl  | Build the inputs and report messages from any logs.                 |
 | build,log,clean |  blc  | Build the inputs, report messages from any logs, and then clean up. |
@@ -63,21 +71,24 @@ via the library interface.
 
 ## Library Usage
 
-The primary class for usage is the `DiCy` class. For instance, to build
-`foo.tex` and report any log messages:
+The primary class in `@dicy/core` and `@dicy/client` is the `DiCy` class. For
+instance, to build `foo.tex` and report any log messages:
 
 ```javascript
+const dicy = new DiCy()
 
-const builder = await DiCy.create('foo.tex', { synctex: true })
+dicy.on('log', (filePath, messages) => {
+  for (const message of messages) {
+    const nameText = event.name ? `[${event.name}] ` : ''
+    const typeText = event.category ? `${event.category}: ` : ''
+    const text = `${event.severity} ${nameText}${typeText}${event.text.replace('\n', ' ')}`
 
-builder.on('log', event => {
-  const nameText = event.name ? `[${event.name}] ` : ''
-  const typeText = event.category ? `${event.category}: ` : ''
-  const text = `${event.severity} ${nameText}${typeText}${event.text.replace('\n', ' ')}`
-  console.log(text)
+    console.log(text)
+  }
 })
 
-await builder.run('load', 'build', 'log', 'save')
+await dicy.setInstanceOptions('foo.tex', { synctex: true })
+await dicy.run('foo.tex', ['load', 'build', 'log', 'save'])
 ```
 
 Any sequence of commands listed below may be used, but the first and last
@@ -90,7 +101,19 @@ commands should always be `load` and `save`, respectively.
 | graph   | Graph dependencies using GraphViz |
 | log     | Report log messages generated     |
 
+For more details regarding library usage please see the [API][] documentation.
+
+[@dicy/cli]: https://www.npmjs.com/package/@dicy/cli
+
+[@dicy/client]: https://www.npmjs.com/package/@dicy/client
+
+[@dicy/core]: https://www.npmjs.com/package/@dicy/core
+
+[@dicy/server]: https://www.npmjs.com/package/@dicy/server
+
 [agda]: http://wiki.portal.chalmers.se/agda/pmwiki.php
+
+[api]: https://yitzchak.github.io/dicy/api
 
 [arara]: https://ctan.org/pkg/arara
 
@@ -119,8 +142,6 @@ commands should always be `load` and `save`, respectively.
 [dvisvgm]: http://dvisvgm.bplaced.net/
 
 [epstopdf]: https://www.ctan.org/pkg/epstopdf
-
-[events]: https://yitzchak.github.io/dicy/events
 
 [knitr]: https://yihui.name/knitr/
 
