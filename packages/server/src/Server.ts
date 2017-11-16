@@ -1,22 +1,22 @@
-import * as dicy from '@dicy/core'
+import { BuilderCacheInterface, Command, DiCy, Message, Uri } from '@dicy/core'
 import * as rpc from 'vscode-jsonrpc'
 
 export default class Server {
-  private cache: dicy.BuilderCacheInterface = new dicy.DiCy()
+  private cache: BuilderCacheInterface = new DiCy()
   private connection: any
 
-  private clearRequest = new rpc.RequestType1<string, void, void, void>('clear')
+  private clearRequest = new rpc.RequestType1<Uri, void, void, void>('clear')
   private clearAllRequest = new rpc.RequestType0<void, void, void>('clear')
   private exitNotification = new rpc.NotificationType0<void>('exit')
-  private getTargetsRequest = new rpc.RequestType1<string, string[], void, void>('getTargets')
-  private killRequest = new rpc.RequestType2<string, string | undefined, void, void, void>('kill')
+  private getTargetsRequest = new rpc.RequestType1<Uri, string[], void, void>('getTargets')
+  private killRequest = new rpc.RequestType2<Uri, string | undefined, void, void, void>('kill')
   private killAllRequest = new rpc.RequestType1<string | undefined, void, void, void>('killAll')
-  private logNotification = new rpc.NotificationType2<string, dicy.Message[], void>('log')
-  private runRequest = new rpc.RequestType2<string, dicy.Command[], boolean, void, void>('run')
-  private setDirectoryOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setDirectoryOptions')
-  private setInstanceOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setInstanceOptions')
-  private setProjectOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setProjectOptions')
-  private setUserOptionsRequest = new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setUserOptions')
+  private logNotification = new rpc.NotificationType2<Uri, Message[], void>('log')
+  private runRequest = new rpc.RequestType2<Uri, Command[], boolean, void, void>('run')
+  private setDirectoryOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setDirectoryOptions')
+  private setInstanceOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setInstanceOptions')
+  private setProjectOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setProjectOptions')
+  private setUserOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setUserOptions')
 
   constructor (argv: any) {
     let transport: [rpc.MessageReader, rpc.MessageWriter]
@@ -34,7 +34,7 @@ export default class Server {
     this.connection = rpc.createMessageConnection(transport[0], transport[1])
 
     this.connection.onRequest(this.clearRequest,
-      (filePath: string): Promise<void> => this.cache.clear(filePath))
+      (file: Uri): Promise<void> => this.cache.clear(file))
 
     this.connection.onRequest(this.clearAllRequest,
       (): Promise<void> => this.cache.clearAll())
@@ -43,31 +43,31 @@ export default class Server {
       (): void => this.exit())
 
     this.connection.onRequest(this.getTargetsRequest,
-      (filePath: string, absolute?: boolean): Promise<string[]> => this.cache.getTargets(filePath))
+      (file: Uri, absolute?: boolean): Promise<string[]> => this.cache.getTargets(file))
 
     this.connection.onRequest(this.killRequest,
-      (filePath: string, message?: string): Promise<void> => this.cache.kill(filePath, message))
+      (file: Uri, message?: string): Promise<void> => this.cache.kill(file, message))
 
     this.connection.onRequest(this.killAllRequest,
       (message?: string): Promise<void> => this.cache.killAll(message))
 
     this.connection.onRequest(this.runRequest,
-      (filePath: string, commands: dicy.Command[]): Promise<boolean> => this.cache.run(filePath, commands))
+      (file: Uri, commands: Command[]): Promise<boolean> => this.cache.run(file, commands))
 
     this.connection.onRequest(this.setInstanceOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setInstanceOptions(filePath, options, merge))
+      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setInstanceOptions(file, options, merge))
 
     this.connection.onRequest(this.setUserOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setUserOptions(filePath, options, merge))
+      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setUserOptions(file, options, merge))
 
     this.connection.onRequest(this.setDirectoryOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setDirectoryOptions(filePath, options, merge))
+      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setDirectoryOptions(file, options, merge))
 
     this.connection.onRequest(this.setProjectOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setProjectOptions(filePath, options, merge))
+      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setProjectOptions(file, options, merge))
 
-    this.cache.on('log', (filePath: string, messages: dicy.Message): void => {
-      this.connection.sendNotification(this.logNotification, filePath, messages)
+    this.cache.on('log', (file: Uri, messages: Message): void => {
+      this.connection.sendNotification(this.logNotification, file, messages)
     })
   }
 

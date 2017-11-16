@@ -1,19 +1,20 @@
 import { EventEmitter } from 'events'
+const url2path = require('file-uri-to-path')
 
-import { BuilderCacheInterface, BuilderInterface, Command, Message } from '@dicy/types'
+import { BuilderCacheInterface, BuilderInterface, Command, Message, Uri } from '@dicy/types'
 
 import Builder from './Builder'
 
 export default class BuilderCache extends EventEmitter implements BuilderCacheInterface {
   private cachedBuilders: Map<string, BuilderInterface> = new Map<string, BuilderInterface>()
 
-  async get (filePath: string): Promise<BuilderInterface> {
-    let builder: BuilderInterface | undefined = this.cachedBuilders.get(filePath)
+  async get (file: Uri): Promise<BuilderInterface> {
+    let builder: BuilderInterface | undefined = this.cachedBuilders.get(file)
 
     if (!builder) {
-      builder = await Builder.create(filePath)
-      this.cachedBuilders.set(filePath, builder)
-      builder.on('log', (messages: Message[]) => this.emit('log', filePath, messages))
+      builder = await Builder.create(url2path(file))
+      this.cachedBuilders.set(file, builder)
+      builder.on('log', (messages: Message[]) => this.emit('log', file, messages))
     }
 
     return builder
@@ -24,37 +25,37 @@ export default class BuilderCache extends EventEmitter implements BuilderCacheIn
     await this.clearAll()
   }
 
-  async setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    const builder: BuilderInterface = await this.get(filePath)
+  async setInstanceOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+    const builder: BuilderInterface = await this.get(file)
     return builder.setInstanceOptions(options, merge)
   }
 
-  async setUserOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    const builder: BuilderInterface = await this.get(filePath)
+  async setUserOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+    const builder: BuilderInterface = await this.get(file)
     return builder.setUserOptions(options, merge)
   }
 
-  async setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    const builder: BuilderInterface = await this.get(filePath)
+  async setProjectOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+    const builder: BuilderInterface = await this.get(file)
     return builder.setProjectOptions(options, merge)
   }
 
-  async setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    const builder: BuilderInterface = await this.get(filePath)
+  async setDirectoryOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+    const builder: BuilderInterface = await this.get(file)
     return builder.setDirectoryOptions(options, merge)
   }
 
-  async getTargets (filePath: string): Promise<string[]> {
-    const builder: BuilderInterface = await this.get(filePath)
+  async getTargets (file: Uri): Promise<string[]> {
+    const builder: BuilderInterface = await this.get(file)
     return builder.getTargets()
   }
 
-  async clear (filePath: string): Promise<void> {
-    const builder: BuilderInterface | undefined = this.cachedBuilders.get(filePath)
+  async clear (file: Uri): Promise<void> {
+    const builder: BuilderInterface | undefined = this.cachedBuilders.get(file)
 
     if (builder) {
       builder.removeAllListeners()
-      this.cachedBuilders.delete(filePath)
+      this.cachedBuilders.delete(file)
     }
   }
 
@@ -65,8 +66,8 @@ export default class BuilderCache extends EventEmitter implements BuilderCacheIn
     this.cachedBuilders.clear()
   }
 
-  async kill (filePath: string): Promise<void> {
-    const builder: BuilderInterface = await this.get(filePath)
+  async kill (file: Uri): Promise<void> {
+    const builder: BuilderInterface = await this.get(file)
     await builder.kill()
   }
 
@@ -75,8 +76,8 @@ export default class BuilderCache extends EventEmitter implements BuilderCacheIn
     await Promise.all(killJobs)
   }
 
-  async run (filePath: string, commands: Command[]): Promise<boolean> {
-    const builder: BuilderInterface = await this.get(filePath)
+  async run (file: Uri, commands: Command[]): Promise<boolean> {
+    const builder: BuilderInterface = await this.get(file)
     return builder.run(commands)
   }
 

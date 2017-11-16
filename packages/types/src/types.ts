@@ -1,3 +1,5 @@
+export type Uri = string
+
 export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub'
 
 export interface LineRange {

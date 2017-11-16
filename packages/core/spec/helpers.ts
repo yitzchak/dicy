@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as temp from 'temp'
+import * as url from 'url'
 
 import { Command, Message } from '@dicy/types'
 
@@ -41,7 +42,7 @@ function constructMessage (found: Message[], missing: Message[]) {
 }
 
 function compareFilePaths (x: string, y: string): boolean {
-  return path.normalize(x) === path.normalize(y) || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
+  return path.basename(url.parse(x).pathname || '') === path.basename(url.parse(x).pathname || '')
 }
 
 function stringCompare (x: string, y: string): boolean {

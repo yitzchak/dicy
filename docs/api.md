@@ -12,22 +12,22 @@ extends [EventEmitter][].
 interface BuilderCacheInterface extends EventEmitter {
   destroy(): Promise<void>;
 
-  get(filePath: string): Promise<BuilderInterface>;
+  get(file: Uri): Promise<BuilderInterface>;
 
-  clear(filePath: string): Promise<void>;
+  clear(file: Uri): Promise<void>;
   clearAll(): Promise<void>;
 
-  getTargetPaths(filePath: string, absolute?: boolean): Promise<string[]>;
+  getTargetPaths(file: Uri, absolute?: boolean): Promise<string[]>;
 
-  kill(filePath: string, message?: string): Promise<void>;
+  kill(file: Uri, message?: string): Promise<void>;
   killAll(message?: string): Promise<void>;
 
-  run(filePath: string, commands: Command[]): Promise<boolean>;
+  run(file: Uri, commands: Command[]): Promise<boolean>;
 
-  setInstanceOptions(filePath: string, options: object, merge?: boolean): Promise<void>;
-  setUserOptions(filePath: string, options: object, merge?: boolean): Promise<void>;
-  setDirectoryOptions(filePath: string, options: object, merge?: boolean): Promise<void>;
-  setProjectOptions(filePath: string, options: object, merge?: boolean): Promise<void>;
+  setInstanceOptions(file: Uri, options: object, merge?: boolean): Promise<void>;
+  setUserOptions(file: Uri, options: object, merge?: boolean): Promise<void>;
+  setDirectoryOptions(file: Uri, options: object, merge?: boolean): Promise<void>;
+  setProjectOptions(file: Uri, options: object, merge?: boolean): Promise<void>;
 }
 ```
 
@@ -39,8 +39,8 @@ following.
 ```javascript
 const dicy = new DiCy()
 
-await dicy.setInstanceOptions('foo.tex', { synctex: true })
-await dicy.run('foo.tex', ['load', 'build', 'save'])
+await dicy.setInstanceOptions('file:///bar/foo.tex', { synctex: true })
+await dicy.run('file:///bar/foo.tex', ['load', 'build', 'save'])
 ```
 
 In order to capture log messages produced during the build or during the `log`
@@ -48,7 +48,7 @@ command one needs to listen to the `log` event where `messages` is an array
 of `Message`.
 
 ```javascript
-dicy.on('log', (filePath, messages) => {
+dicy.on('log', (file, messages) => {
   for (const message of messages) {
     const nameText = event.name ? `[${event.name}] ` : ''
     const typeText = event.category ? `${event.category}: ` : ''
@@ -58,7 +58,7 @@ dicy.on('log', (filePath, messages) => {
   }
 })
 
-await dicy.run('foo.tex', ['load', 'build', 'log', 'save'])
+await dicy.run('file:///bar/foo.tex', ['load', 'build', 'log', 'save'])
 ```
 
 To retrieve targets produced by a build `getTargetPaths` can be called with
@@ -95,7 +95,7 @@ root file path does not need to be passed to each method. For example, to build
 and log one would do the following.
 
 ```javascript
-const builder = dicy.get('foo.tex')
+const builder = dicy.get('file:///bar/foo.tex')
 
 builder.on('log', (messages) => {
   for (const message of messages) {
@@ -161,19 +161,19 @@ specifies the transport mechanism.
 
 ### RPC Requests and Notificatons
 
-| Name                         | Type                | Parameters                                               | Return             |
-|------------------------------|---------------------|----------------------------------------------------------|--------------------|
-| `clear`                      | Server Request      | `filePath: string`                                       | `Promise<void>`    |
-| `clearAll`                   | Server Request      | None                                                     | `Promise<void>`    |
-| `exit`                       | Server Notification | None                                                     | None               |
-| `kill`                       | Server Request      | `filePath: string`, `message?: string`                   | `Promise<void>`    |
-| `killAll`                    | Server Request      | `message?: string`                                       | `Promise<void>`    |
-| `log`                        | Client Notification | `filePath: string`, `messages: Message[]`                | None               |
-| `run`                        | Server Request      | `filePath: string`, `commands: Command[]`                | `Promise<boolean>` |
-| `setDirectoryOptionsRequest` | Server Request      | `filePath: string`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
-| `setInstanceOptionsRequest`  | Server Request      | `filePath: string`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
-| `setProjectOptionsRequest`   | Server Request      | `filePath: string`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
-| `setUserOptionsRequest`      | Server Request      | `filePath: string`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
+| Name                         | Type                | Parameters                                        | Return             |
+|------------------------------|---------------------|---------------------------------------------------|--------------------|
+| `clear`                      | Server Request      | `file: Uri`                                       | `Promise<void>`    |
+| `clearAll`                   | Server Request      | None                                              | `Promise<void>`    |
+| `exit`                       | Server Notification | None                                              | None               |
+| `kill`                       | Server Request      | `file: Uri`, `message?: string`                   | `Promise<void>`    |
+| `killAll`                    | Server Request      | `message?: string`                                | `Promise<void>`    |
+| `log`                        | Client Notification | `file: Uri`, `messages: Message[]`                | None               |
+| `run`                        | Server Request      | `file: Uri`, `commands: Command[]`                | `Promise<boolean>` |
+| `setDirectoryOptionsRequest` | Server Request      | `file: Uri`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
+| `setInstanceOptionsRequest`  | Server Request      | `file: Uri`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
+| `setProjectOptionsRequest`   | Server Request      | `file: Uri`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
+| `setUserOptionsRequest`      | Server Request      | `file: Uri`, `options: object`, `merge?: boolean` | `Promise<boolean>` |
 
 [common types]: #common-types
 
