@@ -31,6 +31,7 @@
     "@dicy/types": "^0.11.0",
     "command-join": "^2.0.0",
     "fast-glob": "^1.0.1",
+    "file-url": "^2.0.2",
     "fs-extra": "^4.0.2",
     "graphlib": "^2.1.1",
     "js-yaml": "^3.10.0",
@@ -43,6 +44,7 @@
     "yargs-parser": "^8.0.0"
   },
   "devDependencies": {
+    "@types/file-url": "^2.0.0",
     "@types/fs-extra": "^4.0.3",
     "@types/graphlib": "^2.1.4",
     "@types/jasmine": "^2.6.2",

@@ -19,7 +19,7 @@ export async function getOptionDefinitions (): Promise<OptionDefinition[]> {
 }
 
 export interface BuilderInterface extends EventEmitter {
-  getTargetPaths (absolute?: boolean): Promise<string[]>
+  getTargets (): Promise<string[]>
 
   kill (message?: string): Promise<void>
   run (commands: Command[]): Promise<boolean>
@@ -51,7 +51,7 @@ export interface BuilderCacheInterface extends EventEmitter {
   clearAll (): Promise<void>
   destroy (): Promise<void>
 
-  getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]>
+  getTargets (filePath: string): Promise<string[]>
 
   kill (filePath: string, message?: string): Promise<void>
   killAll (message?: string): Promise<void>

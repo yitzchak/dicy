@@ -22,8 +22,8 @@ class Builder extends EventEmitter implements BuilderInterface {
     this.cache.removeListener('log', this.logListener)
   }
 
-  getTargetPaths (absolute?: boolean): Promise<string[]> {
-    return this.cache.getTargetPaths(this.filePath, absolute)
+  getTargets (): Promise<string[]> {
+    return this.cache.getTargets(this.filePath)
   }
 
   kill (message?: string): Promise<void> {
@@ -68,7 +68,7 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   /** @internal */
   private exitNotification = new rpc.NotificationType0<void>('exit')
   /** @internal */
-  private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
+  private getTargetsRequest = new rpc.RequestType1<string, string[], void, void>('getTargets')
   /** @internal */
   private killRequest = new rpc.RequestType2<string, string | undefined, void, void, void>('kill')
   /** @internal */
@@ -140,9 +140,9 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
     return builder
   }
 
-  async getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]> {
+  async getTargets (filePath: string): Promise<string[]> {
     await this.bootstrap()
-    return this.connection.sendRequest(this.getTargetPathsRequest, filePath, absolute)
+    return this.connection.sendRequest(this.getTargetsRequest, filePath)
   }
 
   async clear (filePath: string): Promise<void> {

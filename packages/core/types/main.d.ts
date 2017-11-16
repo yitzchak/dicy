@@ -10,7 +10,7 @@ export class DiCy extends EventEmitter implements BuilderCacheInterface {
   clearAll (): Promise<void>
   destroy (): Promise<void>
 
-  getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]>
+  getTargets (filePath: string): Promise<string[]>
 
   kill (filePath: string, message?: string): Promise<void>
   killAll (message?: string): Promise<void>

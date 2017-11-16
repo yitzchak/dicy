@@ -1,5 +1,6 @@
 import { alg, Graph } from 'graphlib'
 import { EventEmitter } from 'events'
+const fileUrl = require('file-url')
 import * as path from 'path'
 
 import { Command, OptionDefinition, OptionsInterface } from '@dicy/types'
@@ -73,20 +74,11 @@ export default class State extends EventEmitter {
     }
   }
 
-  async getTargetPaths (absolute: boolean = false): Promise<string[]> {
+  async getTargets (): Promise<string[]> {
     const results: string[] = []
     for (const target of this.targets.values()) {
       const file: File | undefined = await this.getFile(target)
-      if (file) results.push(absolute ? file.realFilePath : target)
-    }
-    return results
-  }
-
-  async getTargetFiles (): Promise<File[]> {
-    const results: File[] = []
-    for (const target of this.targets.values()) {
-      const file: File | undefined = await this.getFile(target)
-      if (file) results.push(file)
+      if (file) results.push(fileUrl(file.realFilePath))
     }
     return results
   }

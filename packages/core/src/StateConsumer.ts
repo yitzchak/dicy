@@ -1,9 +1,10 @@
-import * as _ from 'lodash'
 import { EventEmitter } from 'events'
 import * as childProcess from 'child_process'
-import * as kill from 'tree-kill'
 import fastGlob from 'fast-glob'
+const fileUrl = require('file-url')
+import * as _ from 'lodash'
 import * as path from 'path'
+import * as kill from 'tree-kill'
 
 import {
   Command,
@@ -93,12 +94,8 @@ export default class StateConsumer implements EventEmitter {
     return Array.from(this.state.targets)
   }
 
-  getTargetPaths (absolute: boolean = false): Promise<string[]> {
-    return this.state.getTargetPaths(absolute)
-  }
-
-  getTargetFiles (): Promise<File[]> {
-    return this.state.getTargetFiles()
+  getTargets (): Promise<string[]> {
+    return this.state.getTargets()
   }
 
   get killToken (): KillToken | null {
@@ -344,11 +341,22 @@ export default class StateConsumer implements EventEmitter {
     const severity: Severity = this.options.severity || 'warning'
     const logCategory: string | undefined = this.options.logCategory
 
-    messages = messages.filter(message => severity === 'trace' ||
-      (severity === 'info' && message.severity !== 'trace') ||
-      (severity === 'warning' && (message.severity === 'warning' || message.severity === 'error')) ||
-      (severity === 'error' && message.severity === 'error') ||
-      (logCategory && message.category === logCategory))
+    messages = messages
+      .filter(message => severity === 'trace' ||
+        (severity === 'info' && message.severity !== 'trace') ||
+        (severity === 'warning' && (message.severity === 'warning' || message.severity === 'error')) ||
+        (severity === 'error' && message.severity === 'error') ||
+        (logCategory && message.category === logCategory))
+      .map(message => {
+        message = _.cloneDeep(message)
+        if (message.source) {
+          message.source.file = fileUrl(path.resolve(this.rootPath, message.source.file))
+        }
+        if (message.log) {
+          message.log.file = fileUrl(path.resolve(this.rootPath, message.log.file))
+        }
+        return message
+      })
 
     if (messages.length > 0) {
       this.emit('log', messages)

@@ -8,7 +8,7 @@ export default class Server {
   private clearRequest = new rpc.RequestType1<string, void, void, void>('clear')
   private clearAllRequest = new rpc.RequestType0<void, void, void>('clear')
   private exitNotification = new rpc.NotificationType0<void>('exit')
-  private getTargetPathsRequest = new rpc.RequestType2<string, boolean | undefined, string[], void, void>('getTargetPaths')
+  private getTargetsRequest = new rpc.RequestType1<string, string[], void, void>('getTargets')
   private killRequest = new rpc.RequestType2<string, string | undefined, void, void, void>('kill')
   private killAllRequest = new rpc.RequestType1<string | undefined, void, void, void>('killAll')
   private logNotification = new rpc.NotificationType2<string, dicy.Message[], void>('log')
@@ -42,8 +42,8 @@ export default class Server {
     this.connection.onNotification(this.exitNotification,
       (): void => this.exit())
 
-    this.connection.onRequest(this.getTargetPathsRequest,
-      (filePath: string, absolute?: boolean): Promise<string[]> => this.cache.getTargetPaths(filePath, absolute))
+    this.connection.onRequest(this.getTargetsRequest,
+      (filePath: string, absolute?: boolean): Promise<string[]> => this.cache.getTargets(filePath))
 
     this.connection.onRequest(this.killRequest,
       (filePath: string, message?: string): Promise<void> => this.cache.kill(filePath, message))

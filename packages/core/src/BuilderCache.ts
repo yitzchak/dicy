@@ -44,9 +44,9 @@ export default class BuilderCache extends EventEmitter implements BuilderCacheIn
     return builder.setDirectoryOptions(options, merge)
   }
 
-  async getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]> {
+  async getTargets (filePath: string): Promise<string[]> {
     const builder: BuilderInterface = await this.get(filePath)
-    return builder.getTargetPaths(absolute)
+    return builder.getTargets()
   }
 
   async clear (filePath: string): Promise<void> {
