@@ -34,37 +34,37 @@ export default class Server {
     this.connection = rpc.createMessageConnection(transport[0], transport[1])
 
     this.connection.onRequest(this.clearRequest,
-      (filePath: string): Promise<void> => this.clear(filePath))
+      (filePath: string): Promise<void> => this.cache.clear(filePath))
 
     this.connection.onRequest(this.clearAllRequest,
-      (): Promise<void> => this.clearAll())
+      (): Promise<void> => this.cache.clearAll())
 
     this.connection.onNotification(this.exitNotification,
       (): void => this.exit())
 
     this.connection.onRequest(this.getTargetPathsRequest,
-      (filePath: string, absolute?: boolean): Promise<string[]> => this.getTargetPaths(filePath, absolute))
+      (filePath: string, absolute?: boolean): Promise<string[]> => this.cache.getTargetPaths(filePath, absolute))
 
     this.connection.onRequest(this.killRequest,
-      (filePath: string, message?: string): Promise<void> => this.kill(filePath, message))
+      (filePath: string, message?: string): Promise<void> => this.cache.kill(filePath, message))
 
     this.connection.onRequest(this.killAllRequest,
-      (message?: string): Promise<void> => this.killAll(message))
+      (message?: string): Promise<void> => this.cache.killAll(message))
 
     this.connection.onRequest(this.runRequest,
-      (filePath: string, commands: dicy.Command[]): Promise<boolean> => this.run(filePath, commands))
+      (filePath: string, commands: dicy.Command[]): Promise<boolean> => this.cache.run(filePath, commands))
 
     this.connection.onRequest(this.setInstanceOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.setInstanceOptions(filePath, options, merge))
+      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setInstanceOptions(filePath, options, merge))
 
     this.connection.onRequest(this.setUserOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.setUserOptions(filePath, options, merge))
+      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setUserOptions(filePath, options, merge))
 
     this.connection.onRequest(this.setDirectoryOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.setDirectoryOptions(filePath, options, merge))
+      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setDirectoryOptions(filePath, options, merge))
 
     this.connection.onRequest(this.setProjectOptionsRequest,
-      (filePath: string, options: object, merge?: boolean): Promise<void> => this.setProjectOptions(filePath, options, merge))
+      (filePath: string, options: object, merge?: boolean): Promise<void> => this.cache.setProjectOptions(filePath, options, merge))
 
     this.cache.on('log', (filePath: string, messages: dicy.Message): void => {
       this.connection.sendNotification(this.logNotification, filePath, messages)
@@ -82,45 +82,5 @@ export default class Server {
   async destroy (): Promise<void> {
     await this.cache.destroy()
     this.exit()
-  }
-
-  setInstanceOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    return this.cache.setInstanceOptions(filePath, options, merge)
-  }
-
-  setUserOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    return this.cache.setUserOptions(filePath, options, merge)
-  }
-
-  setProjectOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    return this.cache.setProjectOptions(filePath, options, merge)
-  }
-
-  setDirectoryOptions (filePath: string, options: object, merge?: boolean): Promise<void> {
-    return this.cache.setDirectoryOptions(filePath, options, merge)
-  }
-
-  getTargetPaths (filePath: string, absolute?: boolean): Promise<string[]> {
-    return this.cache.getTargetPaths(filePath, absolute)
-  }
-
-  clear (filePath: string): Promise<void> {
-    return this.cache.clear(filePath)
-  }
-
-  clearAll (): Promise<void> {
-    return this.cache.clearAll()
-  }
-
-  kill (filePath: string, message?: string): Promise<void> {
-    return this.cache.kill(filePath, message)
-  }
-
-  killAll (message?: string): Promise<void> {
-    return this.cache.killAll(message)
-  }
-
-  run (filePath: string, commands: dicy.Command[]): Promise<boolean> {
-    return this.cache.run(filePath, commands)
   }
 }
