@@ -35,7 +35,7 @@
     "lint": "npm run lint-md && npm run lint-ts",
     "lint-ts": "echo Linting TypeScript... | chalk yellowBright bold && tslint --format stylish --project tsconfig.json",
     "lint-md": "echo Linting MarkDown... | chalk yellowBright bold && remark .",
-    "specs": "echo specs... | chalk yellowBright bold && lerna run test --stream --concurrency 1",
+    "specs": "echo Running specs... | chalk yellowBright bold && lerna run test --stream --concurrency 1",
     "test": "npm run lint && npm run specs",
     "update-dependencies": "lerna exec -- ts-node ../../scripts/update-dependencies.ts",
     "update-types": "ts-node scripts/update-types && npm run fix-ts"
