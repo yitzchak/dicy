@@ -6,7 +6,7 @@ export default class Server {
   private connection: any
 
   private clearRequest = new rpc.RequestType1<Uri, void, void, void>('clear')
-  private clearAllRequest = new rpc.RequestType0<void, void, void>('clear')
+  private clearAllRequest = new rpc.RequestType0<void, void, void>('clearAll')
   private exitNotification = new rpc.NotificationType0<void>('exit')
   private getTargetsRequest = new rpc.RequestType1<Uri, string[], void, void>('getTargets')
   private killRequest = new rpc.RequestType2<Uri, string | undefined, void, void, void>('kill')

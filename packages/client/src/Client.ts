@@ -64,7 +64,7 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   /** @internal */
   private clearRequest = new rpc.RequestType1<Uri, void, void, void>('clear')
   /** @internal */
-  private clearAllRequest = new rpc.RequestType0<void, void, void>('clear')
+  private clearAllRequest = new rpc.RequestType0<void, void, void>('clearAll')
   /** @internal */
   private getTargetsRequest = new rpc.RequestType1<Uri, string[], void, void>('getTargets')
   /** @internal */
