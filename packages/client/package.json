@@ -12,7 +12,7 @@
   "main": "lib/main.js",
   "types": "types/main.d.ts",
   "scripts": {
-    "test": "jasmine",
+    "test": "jasmine-ts",
     "compile": "rimraf lib && tsc",
     "prepublish": "npm run compile",
     "server": "dicy-server"
@@ -34,7 +34,10 @@
     "vscode-jsonrpc": "^3.5.0"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.6.2",
     "@types/node": "^8.0.47",
+    "jasmine-ts": "^0.2.1",
+    "jasmine": "^2.8.0",
     "rimraf": "^2.6.2",
     "typescript": "^2.5.3"
   }

@@ -96,7 +96,7 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
     if (this.autoStart && !this.server) await this.start()
   }
 
-  async start (): Promise<void> {
+  createTransport (): [rpc.MessageReader, rpc.MessageWriter] {
     const serverPath = require.resolve('@dicy/server')
 
     this.server = cp.fork(serverPath, ['--node-ipc'])
@@ -106,10 +106,13 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
       delete this.connection
     })
 
-    const input = new rpc.IPCMessageReader(this.server)
-    const output = new rpc.IPCMessageWriter(this.server)
+    return [new rpc.IPCMessageReader(this.server), new rpc.IPCMessageWriter(this.server)]
+  }
 
-    this.connection = rpc.createMessageConnection(input, output)
+  async start (): Promise<void> {
+    const transport: [rpc.MessageReader, rpc.MessageWriter] = this.createTransport()
+
+    this.connection = rpc.createMessageConnection(transport[0], transport[1])
     this.connection.onNotification(this.logNotification, (file: Uri, messages: Message[]): void => {
       this.emit('log', file, messages)
     })
