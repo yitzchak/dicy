@@ -1,8 +1,8 @@
-import { BuilderCacheInterface, Command, DiCy, Message, Uri } from '@dicy/core'
+import { BuilderCacheInterface, Command, Message, Uri } from '@dicy/core'
 import * as rpc from 'vscode-jsonrpc'
 
 export default class Server {
-  private cache: BuilderCacheInterface = new DiCy()
+  private cache: BuilderCacheInterface
   private connection: any
 
   private clearRequest = new rpc.RequestType1<Uri, void, void, void>('clear')
@@ -18,18 +18,8 @@ export default class Server {
   private setProjectOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setProjectOptions')
   private setUserOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setUserOptions')
 
-  constructor (argv: any) {
-    let transport: [rpc.MessageReader, rpc.MessageWriter]
-
-    if (argv.nodeIpc) {
-      transport = [new rpc.IPCMessageReader(process), new rpc.IPCMessageWriter(process)]
-    } else if (argv.port) {
-      transport = rpc.createServerSocketTransport(argv.port)
-    } else if (argv.pipe) {
-      transport = rpc.createServerPipeTransport(argv.pipe)
-    } else {
-      transport = [new rpc.StreamMessageReader(process.stdout), new rpc.StreamMessageWriter(process.stdin)]
-    }
+  constructor (transport: [rpc.MessageReader, rpc.MessageWriter], cache: BuilderCacheInterface) {
+    this.cache = cache
 
     this.connection = rpc.createMessageConnection(transport[0], transport[1])
 

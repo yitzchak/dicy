@@ -1,5 +1,8 @@
 #! /usr/bin/env node
+import { DiCy } from '@dicy/core'
+import * as rpc from 'vscode-jsonrpc'
 import * as yargs from 'yargs'
+
 import Server from './Server'
 
 const argv = yargs
@@ -33,9 +36,21 @@ const argv = yargs
   .help()
   .argv
 
-if (argv.stdio || argv.nodeIpc || argv.socket || argv.pipe) {
-  const server: Server = new Server(argv)
-  server.start()
+let transport: [rpc.MessageReader, rpc.MessageWriter] | undefined
+
+if (argv.stdio) {
+  transport = [new rpc.StreamMessageReader(process.stdout), new rpc.StreamMessageWriter(process.stdin)]
+} else if (argv.nodeIpc) {
+  transport = [new rpc.IPCMessageReader(process), new rpc.IPCMessageWriter(process)]
+} else if (argv.port) {
+  transport = rpc.createServerSocketTransport(argv.port)
+} else if (argv.pipe) {
+  transport = rpc.createServerPipeTransport(argv.pipe)
 } else {
   yargs.showHelp()
+}
+
+if (transport) {
+  const server: Server = new Server(transport, new DiCy())
+  server.start()
 }
