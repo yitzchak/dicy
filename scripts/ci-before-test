@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+shopt -s nocasematch
+
 echo Updating package dependencies...
 npm run update-dependencies
 
 echo Bootstrapping...
 if [[ "${APPVEYOR:-}" == true ]]; then
-  npm run bootstrap -- --ignore=@dicy/cli
+  npm run bootstrap -- --scope=@dicy/types
+  npm run bootstrap -- --scope=@dicy/core
+  npm run bootstrap -- --scope=@dicy/server
 fi
 
 npm run bootstrap

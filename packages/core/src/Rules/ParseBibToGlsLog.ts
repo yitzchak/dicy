@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command, Reference } from '@dicy/types'
 
-import { Action, Command, ParsedLog, ParserMatch, Reference } from '../types'
+import Rule from '../Rule'
+import { Action, ParsedLog, ParserMatch } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['BibToGlsLog'])]

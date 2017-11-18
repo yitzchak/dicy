@@ -1,6 +1,5 @@
 import File from '../File'
 import Rule from '../Rule'
-
 import { Action, CommandOptions } from '../types'
 
 export default class Asymptote extends Rule {

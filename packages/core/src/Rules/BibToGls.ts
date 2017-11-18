@@ -1,13 +1,9 @@
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-
-import {
-  Action,
-  Command,
-  CommandOptions,
-  Phase
-} from '../types'
+import { Action, CommandOptions, Phase } from '../types'
 
 export default class BibToGls extends Rule {
   static parameterTypes: Set<string>[] = [

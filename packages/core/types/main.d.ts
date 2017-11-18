@@ -1,66 +1,38 @@
+/// <reference types="node" />
 import { EventEmitter } from 'events';
+import { BuilderInterface, BuilderCacheInterface, Command, Message, Uri } from '@dicy/types';
 
-export declare type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub';
+export * from '@dicy/types';
 
-export interface LineRange {
-  start: number;
-  end: number;
-}
+export class DiCy extends EventEmitter implements BuilderCacheInterface {
+  get (file: Uri): Promise<BuilderInterface>
+  clear (file: Uri): Promise<void>
+  clearAll (): Promise<void>
+  destroy (): Promise<void>
 
-export interface Reference {
-  file: string;
-  range?: LineRange;
-}
+  getTargets (file: Uri): Promise<string[]>
 
-export declare type Severity = 'trace' | 'info' | 'warning' | 'error';
+  kill (file: Uri, message?: string): Promise<void>
+  killAll (message?: string): Promise<void>
+  run (file: Uri, commands: Command[]): Promise<boolean>
 
-export interface Message {
-  severity: Severity;
-  text: string;
-  name?: string;
-  category?: string;
-  source?: Reference;
-  log?: Reference;
-}
+  setInstanceOptions (file: Uri, options: object, merge?: boolean): Promise<void>
+  setUserOptions (file: Uri, options: object, merge?: boolean): Promise<void>
+  setDirectoryOptions (file: Uri, options: object, merge?: boolean): Promise<void>
+  setProjectOptions (file: Uri, options: object, merge?: boolean): Promise<void>
 
-export interface LogEvent {
-  type: 'log';
-  messages: Message[];
-}
+  on (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
+  on (event: string | symbol, listener: (...args: any[]) => void): this
 
-export interface Option {
-  name: string;
-  type: 'string' | 'strings' | 'number' | 'boolean' | 'variable';
-  defaultValue?: any;
-  description: string;
-  values?: any[];
-  aliases?: string[];
-  commands?: string[];
-  noInvalidate?: boolean;
-}
+  once (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
+  once (event: string | symbol, listener: (...args: any[]) => void): this
 
-export class DiCy extends EventEmitter {
-  static create(filePath: string, options?: object): Promise<DiCy>;
-  static getOptionDefinitions(): Promise<Option[]>;
-  getTargetPaths (absolute?: boolean): Promise<string[]>;
-  kill(message?: string): Promise<void>;
-  resolvePath (filePath: string): string;
-  run(...commands: Command[]): Promise<boolean>;
-  setInstanceOptions(options?: object): Promise<void>;
-  updateOptions(options?: object, user?: boolean): Promise<object>;
+  prependListener (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
+  prependListener (event: string | symbol, listener: (...args: any[]) => void): this
 
-  on (event: 'log', listener: (arg: LogEvent) => void): this;
-  on (event: string | symbol, listener: (...args: any[]) => void): this;
+  prependOnceListener (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
+  prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this
 
-  once (event: 'log', listener: (arg: LogEvent) => void): this;
-  once (event: string | symbol, listener: (...args: any[]) => void): this;
-
-  prependListener (event: 'log', listener: (arg: LogEvent) => void): this;
-  prependListener (event: string | symbol, listener: (...args: any[]) => void): this;
-
-  prependOnceListener (event: 'log', listener: (arg: LogEvent) => void): this;
-  prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this;
-
-  removeListener (event: 'log', listener: (arg: LogEvent) => void): this;
-  removeListener (event: string | symbol, listener: (...args: any[]) => void): this;
+  removeListener (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
+  removeListener (event: string | symbol, listener: (...args: any[]) => void): this
 }

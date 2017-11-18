@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command } from '@dicy/types'
 
-import { Command, Phase } from '../types'
+import Rule from '../Rule'
+import { Phase } from '../types'
 
 export default class FindLogFiles extends Rule {
   static commands: Set<Command> = new Set<Command>(['build', 'log'])

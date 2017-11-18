@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command } from '@dicy/types'
 
-import { Command, Phase } from '../types'
+import Rule from '../Rule'
+import { Phase } from '../types'
 
 export default class AssignJobNames extends Rule {
   static phases: Set<Phase> = new Set<Phase>(['finalize'])

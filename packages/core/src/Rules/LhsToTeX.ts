@@ -1,7 +1,9 @@
-import { CommandOptions, Command, Phase } from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { CommandOptions, Phase } from '../types'
 
 export default class LhsToTeX extends Rule {
   static parameterTypes: Set<string>[] = [new Set([

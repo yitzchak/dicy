@@ -4,9 +4,9 @@ import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 import * as childProcess from 'child_process'
 
-import DiCy from '../src/DiCy'
+import Builder from '../src/Builder'
 import File from '../src/File'
-import { LogEvent, Message } from '../src/types'
+import { Message } from '@dicy/types'
 import { cloneFixtures, customMatchers } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
@@ -17,8 +17,8 @@ function doCheck (command: string): Promise<boolean> {
   })
 }
 
-describe('DiCy', () => {
-  let dicy: DiCy
+describe('Builder', () => {
+  let dicy: Builder
   let fixturesPath: string
   const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
   let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw)$/i })
@@ -37,17 +37,17 @@ describe('DiCy', () => {
         const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
         // Initialize dicy and listen for messages
-        dicy = await DiCy.create(filePath)
+        dicy = await Builder.create(filePath)
 
         // Load the log archive
         const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
         if (await File.canRead(logFilePath)) {
           expected = await File.readYaml(logFilePath)
-          dicy.on('log', (event: LogEvent) => { messages = messages.concat(event.messages) })
+          dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
         }
 
         // Run the builder
-        expect(await dicy.run('load')).toBeTruthy()
+        expect(await dicy.run(['load'])).toBeTruthy()
 
         for (const command of dicy.options.check || []) {
           if (!await doCheck(command)) {
@@ -57,7 +57,7 @@ describe('DiCy', () => {
           }
         }
 
-        expect(await dicy.run('build', 'log', 'save')).toBeTruthy()
+        expect(await dicy.run(['build', 'log', 'save'])).toBeTruthy()
 
         expect(messages).toReceiveMessages(expected)
 

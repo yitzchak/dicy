@@ -1,7 +1,9 @@
-import { Command, Phase } from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { Phase } from '../types'
 
 export default class CheckForMissingBuildRule extends Rule {
   static parameterTypes: Set<string>[] = [new Set<string>(['*'])]

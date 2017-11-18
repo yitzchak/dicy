@@ -1,0 +1,43 @@
+{
+  "name": "@dicy/types",
+  "version": "0.11.0",
+  "description": "Shared types for DiCy.",
+  "keywords": [
+    "latex",
+    "knitr",
+    "sage",
+    "biblatex"
+  ],
+  "bugs": "https://github.com/yitzchak/dicy/issues",
+  "main": "lib/main.js",
+  "types": "types/main.d.ts",
+  "scripts": {
+    "test": "jasmine-ts",
+    "compile": "rimraf lib && tsc",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yitzchak/dicy.git"
+  },
+  "author": "Tarn Burton <twburton@gmail.com>",
+  "contributors": [],
+  "homepage": "https://yitzchak.github.io/dicy/",
+  "engines": {
+    "node": ">=6.9.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^4.0.2",
+    "js-yaml": "^3.10.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^4.0.3",
+    "@types/js-yaml": "^3.9.1",
+    "@types/node": "^8.0.47",
+    "jasmine-ts": "^0.2.1",
+    "jasmine": "^2.8.0",
+    "rimraf": "^2.6.2",
+    "typescript": "^2.5.3"
+  }
+}

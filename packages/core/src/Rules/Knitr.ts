@@ -1,5 +1,4 @@
 import Rule from '../Rule'
-
 import { CommandOptions } from '../types'
 
 function escapePath (filePath: string): string {

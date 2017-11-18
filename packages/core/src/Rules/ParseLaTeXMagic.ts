@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command, Reference } from '@dicy/types'
 
-import { Action, Command, Reference, ParserMatch } from '../types'
+import Rule from '../Rule'
+import { Action, ParserMatch } from '../types'
 
 const TRUE_PATTERN = /^(true|yes|enabled?)$/i
 const ITEM_SEPARATOR_PATTERN = /\s*,\s*/

@@ -1,10 +1,2 @@
-export {
-  Command,
-  LineRange,
-  LogEvent,
-  Message,
-  Option,
-  Reference,
-  Severity
-} from './types'
-export { default as DiCy } from './DiCy'
+export * from '@dicy/types'
+export { default as DiCy } from './BuilderCache'

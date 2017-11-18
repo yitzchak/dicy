@@ -1,8 +1,9 @@
 import * as path from 'path'
 
-import Rule from '../Rule'
+import { Command, Reference, Severity } from '@dicy/types'
 
-import { Action, Command, ParsedLog, ParserMatch, Reference, Severity } from '../types'
+import Rule from '../Rule'
+import { Action, ParsedLog, ParserMatch } from '../types'
 
 export default class ParsedXindyLog extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['XindyLog'])]

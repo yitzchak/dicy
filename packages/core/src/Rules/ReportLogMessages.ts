@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command } from '@dicy/types'
 
-import { Command, ParsedLog } from '../types'
+import Rule from '../Rule'
+import { ParsedLog } from '../types'
 
 export default class ReportLogMessages extends Rule {
   static parameterTypes: Set<string>[] = [new Set([

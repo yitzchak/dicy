@@ -1,9 +1,9 @@
 import * as _ from 'lodash'
 
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
-
-import { Command } from '../types'
 
 const COMMAND_PHASE_JOB_NAME_PATTERN = /\(([^;)]*);([^;)]*);([^;)]*);?/
 

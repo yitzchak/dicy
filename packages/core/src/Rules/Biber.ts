@@ -3,7 +3,6 @@ import * as path from 'path'
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
-
 import { Action, CommandOptions } from '../types'
 
 export default class Biber extends Rule {

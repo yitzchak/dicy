@@ -1,9 +1,11 @@
 import * as path from 'path'
 
-import { Command, Phase } from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { Phase } from '../types'
 
 export default class CopyTargetsToRoot extends Rule {
   static parameterTypes: Set<string>[] = [new Set<string>(['*'])]

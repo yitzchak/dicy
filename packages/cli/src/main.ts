@@ -9,11 +9,11 @@ import * as yargs from 'yargs'
 import chalk from 'chalk'
 
 import {
+  getOptionDefinitions,
   Command,
   DiCy,
-  LogEvent,
   Message,
-  Option,
+  OptionDefinition,
   Reference
 } from '@dicy/core'
 
@@ -33,7 +33,6 @@ const handler = async (argv: any) => {
   const commands = commandLists[argv._]
   const inputs: string[] = argv.inputs || []
   const saveLog: boolean = !!argv['save-log']
-  console.log(saveLog)
 
   function log (message: Message) {
     const ui = cliui()
@@ -92,27 +91,32 @@ const handler = async (argv: any) => {
   }
 
   let success = true
+  const cache = new DiCy()
 
   for (const filePath of inputs) {
     let messages: Message[] = []
-    const dicy = await DiCy.create(path.resolve(filePath), options)
+    const dicy = await cache.get(path.resolve(filePath))
+    await dicy.setInstanceOptions(options)
     dicy
-      .on('log', (event: LogEvent) => {
-        messages = messages.concat(event.messages)
-        event.messages.forEach(log)
+      .on('log', (newMessages: Message[]) => {
+        messages = messages.concat(newMessages)
+        newMessages.forEach(log)
       })
 
     process.on('SIGTERM', () => dicy.kill())
     process.on('SIGINT', () => dicy.kill())
 
-    success = await dicy.run(...commands) || success
+    success = await dicy.run(commands) || success
 
     if (saveLog) {
-      const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
+      const { dir, name } = path.parse(filePath)
+      const logFilePath = path.join(dir, `${name}-log.yaml`)
       const contents = yaml.safeDump(messages, { skipInvalid: true })
       await fs.writeFile(logFilePath, contents)
     }
   }
+
+  await cache.destroy()
 
   process.exit(success ? 0 : 1)
 }
@@ -123,7 +127,7 @@ yargs
   .demandCommand(1, 'You need to specify a command.')
   .help()
 
-DiCy.getOptionDefinitions().then((definitions: Option[]) => {
+getOptionDefinitions().then((definitions: OptionDefinition[]) => {
   function getOptions (commands: Command[]) {
     const options: { [name: string]: any } = {
       'save-log': {

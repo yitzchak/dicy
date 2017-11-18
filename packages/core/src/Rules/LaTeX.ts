@@ -1,8 +1,10 @@
-import { Action, Command, CommandOptions, Phase } from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { Action, CommandOptions, Phase } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const JAPANESE_LATEX_PATTERN = /^u?platex$/

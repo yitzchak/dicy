@@ -1,10 +1,12 @@
 import * as path from 'path'
 
-import { Action, Command, CommandOptions, ParsedLog, Phase } from '../types'
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
+import { Action, CommandOptions, ParsedLog, Phase } from '../types'
 
 export default class SplitIndex extends Rule {
   static parameterTypes: Set<string>[] = [

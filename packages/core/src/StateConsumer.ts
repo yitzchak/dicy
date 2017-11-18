@@ -1,26 +1,29 @@
-import * as _ from 'lodash'
 import { EventEmitter } from 'events'
 import * as childProcess from 'child_process'
-import * as kill from 'tree-kill'
 import fastGlob from 'fast-glob'
+const fileUrl = require('file-url')
+import * as _ from 'lodash'
 import * as path from 'path'
+import * as kill from 'tree-kill'
+
+import {
+  Command,
+  Message,
+  OptionDefinition,
+  OptionsInterface,
+  Severity
+} from '@dicy/types'
 
 import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  Command,
   FileCache,
   GlobOptions,
   KillToken,
-  LogEvent,
-  Message,
-  Option,
-  OptionsInterface,
   Phase,
   ProcessResults,
-  RuleCache,
-  Severity
+  RuleCache
 } from './types'
 
 const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
@@ -91,12 +94,8 @@ export default class StateConsumer implements EventEmitter {
     return Array.from(this.state.targets)
   }
 
-  getTargetPaths (absolute: boolean = false): Promise<string[]> {
-    return this.state.getTargetPaths(absolute)
-  }
-
-  getTargetFiles (): Promise<File[]> {
-    return this.state.getTargetFiles()
+  getTargets (): Promise<string[]> {
+    return this.state.getTargets()
   }
 
   get killToken (): KillToken | null {
@@ -154,12 +153,12 @@ export default class StateConsumer implements EventEmitter {
     }
   }
 
-  getOptionSchema (name: string): Option | undefined {
+  getOptionSchema (name: string): OptionDefinition | undefined {
     return this.state.optionSchema.get(name)
   }
 
   setOption (store: any, name: string, value: any) {
-    const schema: Option | undefined = this.state.optionSchema.get(name)
+    const schema: OptionDefinition | undefined = this.state.optionSchema.get(name)
     if (schema) {
       let invalidType: boolean = false
 
@@ -342,14 +341,25 @@ export default class StateConsumer implements EventEmitter {
     const severity: Severity = this.options.severity || 'warning'
     const logCategory: string | undefined = this.options.logCategory
 
-    messages = messages.filter(message => severity === 'trace' ||
-      (severity === 'info' && message.severity !== 'trace') ||
-      (severity === 'warning' && (message.severity === 'warning' || message.severity === 'error')) ||
-      (severity === 'error' && message.severity === 'error') ||
-      (logCategory && message.category === logCategory))
+    messages = messages
+      .filter(message => severity === 'trace' ||
+        (severity === 'info' && message.severity !== 'trace') ||
+        (severity === 'warning' && (message.severity === 'warning' || message.severity === 'error')) ||
+        (severity === 'error' && message.severity === 'error') ||
+        (logCategory && message.category === logCategory))
+      .map(message => {
+        message = _.cloneDeep(message)
+        if (message.source) {
+          message.source.file = fileUrl(path.resolve(this.rootPath, message.source.file))
+        }
+        if (message.log) {
+          message.log.file = fileUrl(path.resolve(this.rootPath, message.log.file))
+        }
+        return message
+      })
 
     if (messages.length > 0) {
-      this.emit('log', { type: 'log', messages })
+      this.emit('log', messages)
     }
   }
 
@@ -390,13 +400,13 @@ export default class StateConsumer implements EventEmitter {
   }
 
   // EventEmmitter proxy
-  addListener (event: 'log', listener: (arg: LogEvent) => void): this
+  addListener (event: 'log', listener: (messages: Message[]) => void): this
   addListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.addListener(event, listener)
     return this
   }
 
-  emit (event: 'log', arg: LogEvent): boolean
+  emit (event: 'log', messages: Message[]): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return this.state.emit(event, ...args)
   }
@@ -417,25 +427,25 @@ export default class StateConsumer implements EventEmitter {
     return this.state.listeners(event)
   }
 
-  on (event: 'log', listener: (arg: LogEvent) => void): this
+  on (event: 'log', listener: (messages: Message[]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.on(event, listener)
     return this
   }
 
-  once (event: 'log', listener: (arg: LogEvent) => void): this
+  once (event: 'log', listener: (messages: Message[]) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.once(event, listener)
     return this
   }
 
-  prependListener (event: 'log', listener: (arg: LogEvent) => void): this
+  prependListener (event: 'log', listener: (messages: Message[]) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependListener(event, listener)
     return this
   }
 
-  prependOnceListener (event: 'log', listener: (arg: LogEvent) => void): this
+  prependOnceListener (event: 'log', listener: (messages: Message[]) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependOnceListener(event, listener)
     return this
@@ -446,7 +456,7 @@ export default class StateConsumer implements EventEmitter {
     return this
   }
 
-  removeListener (event: 'log', listener: (arg: LogEvent) => void): this
+  removeListener (event: 'log', listener: (messages: Message[]) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.removeListener(event, listener)
     return this

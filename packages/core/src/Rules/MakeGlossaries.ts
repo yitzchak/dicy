@@ -1,7 +1,6 @@
 import * as path from 'path'
 
 import Rule from '../Rule'
-
 import { CommandOptions } from '../types'
 
 export default class MakeGlossaries extends Rule {

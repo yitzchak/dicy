@@ -1,5 +1,4 @@
 import Rule from '../Rule'
-
 import { Phase } from '../types'
 
 export default class LogProducedTargets extends Rule {
@@ -9,8 +8,8 @@ export default class LogProducedTargets extends Rule {
   static description: string = 'Reports produced targets.'
 
   async run () {
-    for (const target of await this.getTargetPaths()) {
-      this.info(`Produced \`${target}\``, 'target')
+    for (const target of await this.getTargets()) {
+      this.info(`Produced ${target}`, 'target')
     }
     return true
   }

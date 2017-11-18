@@ -1,6 +1,7 @@
-import Rule from '../Rule'
+import { Command, Message, Reference, Severity } from '@dicy/types'
 
-import { Action, Command, Message, ParsedLog, ParserMatch, Reference, Severity } from '../types'
+import Rule from '../Rule'
+import { Action, ParsedLog, ParserMatch } from '../types'
 
 export default class ParseBiberLog extends Rule {
   static parameterTypes: Set<string>[] = [new Set<string>(['BiberLog'])]

@@ -4,11 +4,14 @@ import * as _ from 'lodash'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as temp from 'temp'
+import * as url from 'url'
 
-import DiCy from '../src/DiCy'
+import { Command, Message } from '@dicy/types'
+
+import Builder from '../src/Builder'
 import File from '../src/File'
 import Rule from '../src/Rule'
-import { Command, Phase, Message } from '../src/types'
+import { Phase } from '../src/types'
 
 export async function cloneFixtures () {
   const tempPath = fs.realpathSync(temp.mkdirSync('dicy'))
@@ -39,7 +42,7 @@ function constructMessage (found: Message[], missing: Message[]) {
 }
 
 function compareFilePaths (x: string, y: string): boolean {
-  return path.normalize(x) === path.normalize(y) || ((path.isAbsolute(x) || path.isAbsolute(y)) && path.basename(x) === path.basename(y))
+  return path.basename(url.parse(x).pathname || '') === path.basename(url.parse(x).pathname || '')
 }
 
 function stringCompare (x: string, y: string): boolean {
@@ -109,7 +112,7 @@ export async function initializeRule ({ RuleClass, command, phase, jobName, file
   options.loadUserOptions = false
   const fixturesPath = clone ? await cloneFixtures() : path.resolve(__dirname, 'fixtures')
   const realFilePath = path.resolve(fixturesPath, filePath)
-  const dicy = await DiCy.create(realFilePath, options)
+  const dicy = await Builder.create(realFilePath, options)
   const files: File[] = []
 
   for (const target of targets) {
