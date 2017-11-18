@@ -5,20 +5,31 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][]
 
+### Added
+
+-   Standardized library API and documentation for `@dicy/core` and
+    `@dicy/client`.
+-   JSON-RPC server and client implementing library API. 
+
 ### Changed
+
 -   Use Node Boron LTS thereby removing need for Map/Set polyfill.
 -   Use TypeScript instead of Flow.
 -   All events are now sent to the log as regular log events, some with severity
     level of `trace` if they are not of interest to most users.
 -   Replaced `--save-events` with `--save-log` command line option since all
     events have been merged into log entry events.
--   Log events now can contain multiple log messages.
+-   Log events can now contain multiple log messages.
+-   Primary interface to DiCy libraries is now through `BuilderCacheInterace`
+    implementation instead of direct access to builder.
 
 ### Removed
+
 -   All non log events.
 -   `--console-event-output` command line option.
 
 ### Fixed
+
 -   Regression which prevented output directory from being created.
 -   Instance options set from the command line or passed to the library
     interface are now protected from cache cleaning.
