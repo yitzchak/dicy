@@ -1,4 +1,4 @@
-# DiCy
+# @dicy/server
 
 [![Build Status][travis svg]][travis]
 [![Windows Build Status][appveyor svg]][appveyor]
@@ -6,7 +6,19 @@
 [![devDependency Status][devdependency svg]][devdependency]
 [![Greenkeeper Status][greenkeeper svg]][greenkeeper]
 
-JSON-RPC Server for the JavaScript based LaTeX builder [DiCy][].
+This package is a JSON-RPC server interface to DiCy, a JavaScript/TypeScript
+based builder for LaTeX, knitr, Literate Agda, Literate Haskell, and Pweave that
+automatically builds dependencies. DiCy parses and filters output logs and error
+messages generated during build and can build projects that utilize the
+following programs to process files.
+
+More information, including installation and API documentation is available at
+the [DiCy][] website.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for
+details.
 
 [appveyor svg]: https://ci.appveyor.com/api/projects/status/s3unjr8c90bhcd99?svg=true
 

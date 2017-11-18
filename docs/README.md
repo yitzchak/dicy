@@ -1,9 +1,10 @@
 # DiCy
 
-A JavaScript based builder for [LaTeX][], [knitr][], [Literate Agda][],
-[Literate Haskell][], and [Pweave][] that automatically builds dependencies. It
-parses and filters output logs and error messages generated during build and
-can build projects that utilize the following programs to process files.
+A JavaScript/TypeScript based builder for [LaTeX][], [knitr][],
+[Literate Agda][], [Literate Haskell][], and [Pweave][] that automatically
+builds dependencies. It parses and filters output logs and error messages
+generated during build and can build projects that utilize the following
+programs to process files.
 
 -   Bibliographies — [Biber][], [BibTeX][], [BibTeX8][], BibTeXu,
     [pBibTeX][], [upBibTeX][]
