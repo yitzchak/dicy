@@ -1,6 +1,6 @@
 {
   "name": "@dicy/server",
-  "version": "0.11.0",
+  "version": "0.12.0-pre.0",
   "description": "JSON-RPC server for DiCy.",
   "keywords": [
     "latex",
@@ -30,7 +30,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@dicy/core": "^0.11.0",
+    "@dicy/core": "^0.12.0-pre.0",
     "vscode-jsonrpc": "^3.5.0",
     "yargs": "^10.0.3"
   },
@@ -38,8 +38,8 @@
     "@types/jasmine": "^2.6.2",
     "@types/node": "^8.0.47",
     "@types/yargs": "^8.0.2",
-    "jasmine-ts": "^0.2.1",
     "jasmine": "^2.8.0",
+    "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
     "typescript": "^2.5.3"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@dicy/core",
-  "version": "0.11.0",
+  "version": "0.12.0-pre.0",
   "description": "Library interface to DiCy, a builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.",
   "keywords": [
     "latex",
@@ -28,7 +28,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@dicy/types": "^0.11.0",
+    "@dicy/types": "^0.12.0-pre.0",
     "command-join": "^2.0.0",
     "fast-glob": "^1.0.1",
     "file-uri-to-path": "^1.0.0",
