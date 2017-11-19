@@ -3,13 +3,13 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased][]
+## [v0.12.0-0][] - 2017-11-18
 
 ### Added
 
 -   Standardized library API and documentation for `@dicy/core` and
     `@dicy/client`.
--   JSON-RPC server and client implementing library API. 
+-   JSON-RPC server and client implementing library API.
 
 ### Changed
 
@@ -221,7 +221,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
 
-[unreleased]: https://github.com/yitzchak/dicy/compare/v0.11.0...master
+[v0.12.0-0]: https://github.com/yitzchak/dicy/compare/v0.11.0...v0.12.0-0
 
 [v0.11.0]: https://github.com/yitzchak/dicy/compare/v0.10.1...v0.11.0
 
