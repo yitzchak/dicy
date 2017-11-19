@@ -221,7 +221,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
 
-[v0.12.0-pre.0]: https://github.com/yitzchak/dicy/compare/v0.11.0...v0.12.0-0
+[v0.12.0-pre.0]: https://github.com/yitzchak/dicy/compare/v0.11.0...v0.12.0-pre.0
 
 [v0.11.0]: https://github.com/yitzchak/dicy/compare/v0.10.1...v0.11.0
 
