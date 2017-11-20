@@ -12,6 +12,16 @@ automatically builds dependencies. DiCy parses and filters output logs and error
 messages generated during build and can build projects that utilize the
 following programs to process files.
 
+-   Bibliographies — Biber, BibTeX, BibTeX8, BibTeXu, pBibTeX, upBibTeX
+-   Graphics Creation — Asymptote, MetaPost
+-   Image/File Conversion — dvipdfm, dvipdfmx, dvips, dvisvgm, epstopdf, pdf2ps,
+    ps2pdf
+-   Indexing/Glossaries — bib2gls, makeglossaries, makeindex, mendex,
+    splitindex, texindy, upmendex
+-   LaTeX Engines — LaTeX, LuaLaTeX, pdfLaTeX, pLaTeX, upLaTeX, XeLaTeX
+-   Literate Programming/Reproducible Research — Agda, knitr, lhs2TeX,
+    patchSynctex, PythonTeX, Pweave, SageTeX
+
 More information, including installation and API documentation is available at
 the [DiCy][] website.
 
