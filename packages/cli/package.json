@@ -11,7 +11,7 @@
   "bugs": "https://github.com/yitzchak/dicy/issues",
   "main": "lib/main.js",
   "scripts": {
-    "test": "jasmine",
+    "test": "jasmine-ts",
     "compile": "rimraf lib && tsc",
     "prepublish": "npm run compile"
   },
@@ -44,6 +44,8 @@
     "@types/lodash": "^4.14.80",
     "@types/yargs": "^8.0.2",
     "fs-extra": "^4.0.2",
+    "jasmine": "^2.8.0",
+    "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
     "typescript": "^2.5.3"
   },
