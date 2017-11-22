@@ -36,9 +36,11 @@ export default class Program {
       .demandCommand(1, 'You need to specify a command.')
       .recommendCommands()
       .help()
+  }
 
-    process.on('SIGTERM', () => this.dicy.killAll())
-    process.on('SIGINT', () => this.dicy.killAll())
+  async destroy (): Promise<void> {
+    await this.dicy.killAll()
+    await this.dicy.destroy()
   }
 
   getOptions (commands: Command[]) {
