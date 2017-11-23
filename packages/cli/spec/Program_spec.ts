@@ -26,7 +26,7 @@ describe('Program', () => {
   it('correctly saves logs', async (done) => {
     spyOn(fs, 'writeFile')
 
-    program.addMessages('file:///foo/bar.tex', [])
+    program.saveMessages('file:///foo/bar.tex', [])
 
     await program.saveLogs()
 
