@@ -21,17 +21,27 @@ import {
 export default class Program {
   dicy = new DiCy()
   yargs = yargs(process.argv.slice(2))
-  columns: number = Math.min(Math.max(process.stdout.columns || 80, 80), 132)
+  totalWidth: number = Math.min(Math.max(process.stdout.columns || 80, 80), 132)
   optionNames: {[name: string]: string} = {}
   commandLists: any = {}
   optionDefinitions: OptionDefinition[] = []
   logs: Map<Uri, Message[]> = new Map<Uri, Message[]>()
+  columnWidths: number[]
+  styles: { [severity: string]: string } = {
+    'trace': 'green',
+    'info': 'blue',
+    'warning': 'yellow',
+    'error': 'red'
+  }
 
   constructor () {
+    const firstColumnWidth = 9
+    this.columnWidths = [firstColumnWidth, this.totalWidth - firstColumnWidth]
+
     this.dicy.on('log', (file: Uri, messages: Message[]) => this.log(file, messages))
 
     this.yargs
-      .wrap(this.columns)
+      .wrap(this.totalWidth)
       .usage('DiCy - A builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.')
       .demandCommand(1, 'You need to specify a command.')
       .recommendCommands()
@@ -43,7 +53,7 @@ export default class Program {
     await this.dicy.destroy()
   }
 
-  getOptions (commands: Command[]) {
+  getOptions (commands: Command[]): { [name: string]: any } {
     const options: { [name: string]: any } = {
       'save-log': {
         boolean: true,
@@ -52,19 +62,20 @@ export default class Program {
     }
 
     for (const definition of this.optionDefinitions) {
-      // Skip environment variables
-      if (definition.name.startsWith('$') || definition.name.includes('_')) continue
+      // Skip environment variables or options that are not applicable to this
+      // command
+      if (definition.name.startsWith('$') ||
+        (definition.commands && !definition.commands.some(command => commands.includes(command as Command)))) continue
 
-      if (definition.commands && !definition.commands.some(command => commands.includes(command as Command))) continue
-
-      const addOption = (name: string, option: any) => {
+      const addOption = (name: string, option: any): void => {
         this.optionNames[name] = definition.name
         if (definition.values) {
           option.choices = definition.values
         }
         options[name] = option
       }
-      const name = _.kebabCase(definition.name).replace('lhs-2-tex', 'lhs2tex')
+      // Make a kebab but don't skewer the numbers.
+      const name = _.kebabCase(definition.name).replace(/(?:^|-)([0-9]+)(?:$|-)/g, '$1')
       const negatedName = `no-${name}`
       const description = definition.description
       const alias = (definition.aliases || []).filter(alias => alias.length === 1)
@@ -120,7 +131,7 @@ export default class Program {
     return options
   }
 
-  createCommand (commands: Command[], description: string) {
+  createCommand (commands: Command[], description: string): void {
     const name = commands.join(',')
     const alias = commands.map(c => c.substr(0, 1)).join('')
 
@@ -144,7 +155,7 @@ export default class Program {
       })
   }
 
-  async start () {
+  async start (): Promise<void> {
     this.optionDefinitions = await getOptionDefinitions()
 
     this.createCommand(['build'], 'Build the inputs.')
@@ -160,24 +171,24 @@ export default class Program {
     this.yargs.argv
   }
 
-  log (file: Uri, messages: Message[]) {
+  addMessages (file: Uri, messages: Message[]): void {
     const current = this.logs.get(file) || []
     this.logs.set(file, current.concat(messages))
+  }
 
+  log (file: Uri, messages: Message[]): void {
+    this.addMessages(file, messages)
+    this.displayMessages(file, messages)
+  }
+
+  displayMessages (file: Uri, messages: Message[]): void {
     const ui = cliui()
-    const severityColumnWidth = 10
-
-    const printRow = (severity: string, text: string): void => {
-      ui.div({
-        text: severity || '',
-        width: severityColumnWidth
-      }, {
-        text,
-        width: this.columns - severityColumnWidth
-      })
+    const writeRow = (...texts: string[]): void => {
+      ui.div(...texts.map((text, index) => {
+        return { text, width: this.columnWidths[index] }
+      }))
     }
-
-    const printReference = (reference: Reference | undefined, label: string): void => {
+    const writeReference = (reference: Reference | undefined, label: string): void => {
       if (!reference) return
       const start = reference.range && reference.range.start
         ? ` @ ${reference.range.start}`
@@ -185,37 +196,21 @@ export default class Program {
       const end = reference.range && reference.range.end && reference.range.end !== reference.range.start
         ? `-${reference.range.end}`
         : ''
-      return printRow('', chalk.dim(`[${label}] ${reference.file}${start}${end}`))
+      return writeRow('', chalk.dim(`[${label}] ${reference.file}${start}${end}`))
     }
 
     for (const message of messages) {
-      let severity: string
-
-      switch (message.severity) {
-        case 'error':
-          severity = chalk.red('(ERROR)')
-          break
-        case 'warning':
-          severity = chalk.yellow('(WARNING)')
-          break
-        case 'trace':
-          severity = '(TRACE)'
-          break
-        default:
-          severity = chalk.blue('(INFO)')
-          break
-      }
-
+      const severity: string = chalk.keyword(this.styles[message.severity])(message.severity.toUpperCase())
       let text = message.text
 
       if (message.name || message.category) {
         text = `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ${message.text}`
       }
 
-      text.split('\n').forEach((line: string, index: number) => printRow(index === 0 ? severity : '', index === 0 ? line : `- ${line}`))
+      text.split('\n').forEach((line: string, index: number) => writeRow(index === 0 ? severity : '', index === 0 ? line : `- ${line}`))
 
-      printReference(message.source, 'Source')
-      printReference(message.log, 'Log')
+      writeReference(message.source, 'Source')
+      writeReference(message.log, 'Log')
     }
 
     console.log(ui.toString())
@@ -253,12 +248,12 @@ export default class Program {
     }
   }
 
-  async saveLogs () {
+  async saveLogs (): Promise<void> {
     for (const [file, messages] of this.logs.entries()) {
       const { dir, name } = path.parse(url2path(file))
       const logFilePath = path.join(dir, `${name}-log.yaml`)
       const contents = yaml.safeDump(messages, { skipInvalid: true })
-      return fs.writeFile(logFilePath, contents)
+      await fs.writeFile(logFilePath, contents)
     }
   }
 }
