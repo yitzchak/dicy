@@ -1,12 +1,13 @@
-import * as _ from 'lodash'
-import * as cliui from 'cliui'
-import * as fs from 'fs-extra'
-const fileUrl = require('file-url')
-import * as path from 'path'
-import * as yaml from 'js-yaml'
 import chalk from 'chalk'
 const url2path = require('file-uri-to-path')
+const fileUrl = require('file-url')
+import * as fs from 'fs-extra'
+import * as yaml from 'js-yaml'
+import * as _ from 'lodash'
+import * as path from 'path'
+const stringWidth = require('string-width')
 const yargs = require('yargs/yargs')
+const wrapAnsi = require('wrap-ansi')
 
 import {
   getOptionDefinitions,
@@ -18,6 +19,10 @@ import {
   Uri
 } from '@dicy/core'
 
+function padEnd (text: string, size: number): string {
+  return text + ' '.repeat(Math.max(size - stringWidth(text), 0))
+}
+
 export default class Program {
   dicy = new DiCy()
   yargs = yargs(process.argv.slice(2))
@@ -26,17 +31,22 @@ export default class Program {
   commandLists: any = {}
   optionDefinitions: OptionDefinition[] = []
   logs: Map<Uri, Message[]> = new Map<Uri, Message[]>()
-  columnWidths: number[]
-  styles: { [severity: string]: string } = {
-    'trace': 'green',
-    'info': 'blue',
-    'warning': 'yellow',
-    'error': 'red'
+  severityWidth: number
+  textWidth: number
+  severityLabels: { [severity: string]: string } = {
+    trace: chalk.green('TRACE'),
+    info: chalk.blue('INFO'),
+    warning: chalk.yellow('WARNING'),
+    error: chalk.red('ERROR'),
+    '': ''
   }
 
   constructor () {
-    const firstColumnWidth = 9
-    this.columnWidths = [firstColumnWidth, this.totalWidth - firstColumnWidth]
+    this.severityWidth = Object.values(this.severityLabels).reduce((width, label) => Math.max(width, stringWidth(label)), 0) + 2
+    for (const label in this.severityLabels) {
+      this.severityLabels[label] = padEnd(this.severityLabels[label], this.severityWidth)
+    }
+    this.textWidth = this.totalWidth - this.severityWidth
 
     this.dicy.on('log', (file: Uri, messages: Message[]) => this.log(file, messages))
 
@@ -171,49 +181,47 @@ export default class Program {
     this.yargs.argv
   }
 
-  addMessages (file: Uri, messages: Message[]): void {
+  saveMessages (file: Uri, messages: Message[]): void {
     const current = this.logs.get(file) || []
     this.logs.set(file, current.concat(messages))
   }
 
   log (file: Uri, messages: Message[]): void {
-    this.addMessages(file, messages)
-    this.displayMessages(file, messages)
+    this.saveMessages(file, messages)
+    this.printMessages(file, messages)
   }
 
-  displayMessages (file: Uri, messages: Message[]): void {
-    const ui = cliui()
-    const writeRow = (...texts: string[]): void => {
-      ui.div(...texts.map((text, index) => {
-        return { text, width: this.columnWidths[index] }
-      }))
-    }
-    const writeReference = (reference: Reference | undefined, label: string): void => {
-      if (!reference) return
-      const start = reference.range && reference.range.start
-        ? ` @ ${reference.range.start}`
-        : ''
-      const end = reference.range && reference.range.end && reference.range.end !== reference.range.start
-        ? `-${reference.range.end}`
-        : ''
-      return writeRow('', chalk.dim(`[${label}] ${reference.file}${start}${end}`))
+  referenceToString (reference: Reference | undefined, label: string): string {
+    if (!reference) return ''
+    const start = reference.range && reference.range.start
+      ? ` @ ${reference.range.start}`
+      : ''
+    const end = reference.range && reference.range.end && reference.range.end !== reference.range.start
+      ? `-${reference.range.end}`
+      : ''
+    return chalk.dim(`\n[${label}] ${reference.file}${start}${end}`)
+  }
+
+  printMessage (file: Uri, message: Message): void {
+    const source: string = this.referenceToString(message.source, 'Source')
+    const log: string = this.referenceToString(message.log, 'Log')
+    let text = message.text
+
+    if (message.name || message.category) {
+      text = `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ${message.text}`
     }
 
+    text = `${text}${source}${log}`
+
+    text = wrapAnsi(text, this.textWidth)
+
+    text.split('\n').forEach((line: string, index: number) => console.log(this.severityLabels[index === 0 ? message.severity : ''] + line))
+  }
+
+  printMessages (file: Uri, messages: Message[]): void {
     for (const message of messages) {
-      const severity: string = chalk.keyword(this.styles[message.severity])(message.severity.toUpperCase())
-      let text = message.text
-
-      if (message.name || message.category) {
-        text = `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ${message.text}`
-      }
-
-      text.split('\n').forEach((line: string, index: number) => writeRow(index === 0 ? severity : '', index === 0 ? line : `- ${line}`))
-
-      writeReference(message.source, 'Source')
-      writeReference(message.log, 'Log')
+      this.printMessage(file, message)
     }
-
-    console.log(ui.toString())
   }
 
   async handler (argv: any) {
