@@ -2,7 +2,7 @@
 
 import Program from './Program'
 
-const prog = new Program()
+const prog = new Program(process.argv.slice(2))
 
 process.on('SIGTERM', () => prog.destroy())
 process.on('SIGINT', () => prog.destroy())
