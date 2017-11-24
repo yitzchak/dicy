@@ -19,39 +19,65 @@ import {
   Uri
 } from '@dicy/core'
 
+// Function to right pad a string based on the string width reported by then
+// string-width module.
 function padEnd (text: string, size: number): string {
   return text + ' '.repeat(Math.max(size - stringWidth(text), 0))
 }
 
 export default class Program {
-  dicy = new DiCy()
-  yargs = yargs(process.argv.slice(2))
-  totalWidth: number = Math.min(Math.max(process.stdout.columns || 80, 80), 132)
-  optionNames: {[name: string]: string} = {}
+  // List commands associated with each alias.
   commandLists: any = {}
-  optionDefinitions: OptionDefinition[] = []
+  // The black box that makes it all happen.
+  dicy = new DiCy()
+  // All messages associated with each input in case `--save-logs` is set.
   logs: Map<Uri, Message[]> = new Map<Uri, Message[]>()
-  severityWidth: number
-  textWidth: number
+  // Option definitions used to construct yargs options and help messages.
+  optionDefinitions: OptionDefinition[] = []
+  // Actual option names used by DiCy indexed by command line form. For
+  // instance, `{ 'foo2bar-quux': 'foo2barQuux' }`
+  optionNames: {[name: string]: string} = {}
+  // Severity labels. Right padding will be added in the constructor.
   severityLabels: { [severity: string]: string } = {
     trace: chalk.green('TRACE'),
     info: chalk.blue('INFO'),
     warning: chalk.yellow('WARNING'),
-    error: chalk.red('ERROR'),
-    '': ''
+    error: chalk.red('ERROR')
   }
+  // A newline with the corrent padding to make the columns line up.
+  textNewLine: string
+  // Width of the text message column.
+  textWidth: number
+  // Shiver me timbers, there be a foul wind off the port bow! Batten down the
+  // hatches lest we sleep in Davy Jones' locker!
+  yargs: any
 
-  constructor () {
-    this.severityWidth = Object.values(this.severityLabels).reduce((width, label) => Math.max(width, stringWidth(label)), 0) + 2
+  constructor (args: string[] = []) {
+    // Calculate the width of the terminal and the width of the severity column.
+    const totalWidth: number = Math.min(Math.max(process.stdout.columns || 80, 80), 132)
+    const severityWidth = Object.values(this.severityLabels).reduce((width, label) => Math.max(width, stringWidth(label)), 0) + 2
+
+    // Pad the severity labels.
     for (const label in this.severityLabels) {
-      this.severityLabels[label] = padEnd(this.severityLabels[label], this.severityWidth)
+      this.severityLabels[label] = padEnd(this.severityLabels[label], severityWidth)
     }
-    this.textWidth = this.totalWidth - this.severityWidth
 
-    this.dicy.on('log', (file: Uri, messages: Message[]) => this.log(file, messages))
+    // Create a spacer for line breaks in the text column
+    this.textNewLine = '\n' + ' '.repeat(severityWidth)
 
+    // Calculate the width of the text column
+    this.textWidth = totalWidth - severityWidth
+
+    // Listen to the log event on DiCy.
+    this.dicy.on('log', (file: Uri, messages: Message[]) => {
+      this.saveMessages(file, messages)
+      this.printMessages(file, messages)
+    })
+
+    // Common initialization for yargs.
+    this.yargs = yargs(args)
     this.yargs
-      .wrap(this.totalWidth)
+      .wrap(totalWidth)
       .usage('DiCy - A builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.')
       .demandCommand(1, 'You need to specify a command.')
       .recommendCommands()
@@ -141,7 +167,14 @@ export default class Program {
     return options
   }
 
+  /**
+   * Create a command from a command list and a description.
+   * @param {Command[]} commands    List of commands. Does not include load or
+   *                                save commands.
+   * @param {string}    description The command description.
+   */
   createCommand (commands: Command[], description: string): void {
+    // Create a command name and alias
     const name = commands.join(',')
     const alias = commands.map(c => c.substr(0, 1)).join('')
 
@@ -161,34 +194,50 @@ export default class Program {
             .options(this.getOptions(commands))
             .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
         },
-        handler: (argv: any) => this.handler(argv)
+        handler: (argv: any) => this.commandHandler(argv)
       })
   }
 
+  /**
+   * Start the program. This loads the options definitions, creates the commands
+   * definitions, parses the command line, and runs the appropriate command.
+   * @return {Promise<void>}
+   */
   async start (): Promise<void> {
+    // Load the option definitions.
     this.optionDefinitions = await getOptionDefinitions()
 
-    this.createCommand(['build'], 'Build the inputs.')
-    this.createCommand(['clean'], 'Clean up after a previous build.')
-    this.createCommand(['scrub'], 'Clean up generated files after a previous build.')
-    this.createCommand(['log'], 'Report messages from any logs.')
-    this.createCommand(['graph'], 'Create a dependency graph from a previous build.')
-    this.createCommand(['build', 'clean'], 'Build the inputs and then clean up.')
-    this.createCommand(['build', 'log'], 'Build the inputs and report messages from any logs.')
-    this.createCommand(['build', 'log', 'clean'], 'Build the inputs, report messages from any logs, and then clean up.')
+    // Create the command definitions.
+    this.createCommand(['build'],
+      'Build the inputs.')
+    this.createCommand(['clean'],
+      'Clean up after a previous build.')
+    this.createCommand(['scrub'],
+      'Clean up generated files after a previous build.')
+    this.createCommand(['log'],
+      'Report messages from any logs.')
+    this.createCommand(['graph'],
+      'Create a dependency graph from a previous build.')
+    this.createCommand(['build', 'clean'],
+      'Build the inputs and then clean up.')
+    this.createCommand(['build', 'log'],
+      'Build the inputs and report messages from any logs.')
+    this.createCommand(['build', 'log', 'clean'],
+      'Build the inputs, report messages from any logs, and then clean up.')
 
+    // Parse the command line and run the command.
     /* tslint:disable:no-unused-expression */
     this.yargs.argv
   }
 
+  /**
+   * Saves the messages from a log event in case `--save-logs` is set.
+   * @param {Uri}       file     Primary build file.
+   * @param {Message[]} messages Array of new messages.
+   */
   saveMessages (file: Uri, messages: Message[]): void {
     const current = this.logs.get(file) || []
     this.logs.set(file, current.concat(messages))
-  }
-
-  log (file: Uri, messages: Message[]): void {
-    this.saveMessages(file, messages)
-    this.printMessages(file, messages)
   }
 
   referenceToString (reference: Reference | undefined, label: string): string {
@@ -202,29 +251,32 @@ export default class Program {
     return chalk.dim(`\n[${label}] ${reference.file}${start}${end}`)
   }
 
+  /**
+   * Print a message from a log event.
+   * @param {Uri}       file     Primary build file.
+   * @param {Message}   message  New message.
+   */
   printMessage (file: Uri, message: Message): void {
+    const origin: string = (message.name || message.category) ? `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ` : ''
     const source: string = this.referenceToString(message.source, 'Source')
     const log: string = this.referenceToString(message.log, 'Log')
-    let text = message.text
+    const text: string = wrapAnsi(origin + message.text + source + log, this.textWidth)
 
-    if (message.name || message.category) {
-      text = `[${message.name}${message.category ? '/' : ''}${message.category || ''}] ${message.text}`
-    }
-
-    text = `${text}${source}${log}`
-
-    text = wrapAnsi(text, this.textWidth)
-
-    text.split('\n').forEach((line: string, index: number) => console.log(this.severityLabels[index === 0 ? message.severity : ''] + line))
+    console.log(this.severityLabels[message.severity] + text.replace(/\n/g, this.textNewLine))
   }
 
+  /**
+   * Print the messages from a log event.
+   * @param {Uri}       file     Primary build file.
+   * @param {Message[]} messages Array of new messages.
+   */
   printMessages (file: Uri, messages: Message[]): void {
     for (const message of messages) {
       this.printMessage(file, message)
     }
   }
 
-  async handler (argv: any) {
+  async commandHandler (argv: { [name: string]: any }) {
     const saveLog: boolean = !!argv['save-log']
     const options: {[name: string]: any} = {}
     const commands = this.commandLists[argv._]
