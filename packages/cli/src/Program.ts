@@ -89,7 +89,7 @@ export default class Program {
     await this.dicy.destroy()
   }
 
-  getOptions (commands: Command[]): { [name: string]: any } {
+  getOptions (): { [name: string]: any } {
     const options: { [name: string]: any } = {
       'save-log': {
         boolean: true,
@@ -100,8 +100,7 @@ export default class Program {
     for (const definition of this.optionDefinitions) {
       // Skip environment variables or options that are not applicable to this
       // command
-      if (definition.name.startsWith('$') ||
-        (definition.commands && !definition.commands.some(command => commands.includes(command as Command)))) continue
+      if (definition.name.startsWith('$') || definition.commands === []) continue
 
       const addOption = (name: string, option: any): void => {
         this.optionNames[name] = definition.name
@@ -168,37 +167,6 @@ export default class Program {
   }
 
   /**
-   * Create a command from a command list and a description.
-   * @param {Command[]} commands    List of commands. Does not include load or
-   *                                save commands.
-   * @param {string}    description The command description.
-   */
-  createCommand (commands: Command[], description: string): void {
-    // Create a command name and alias
-    const name = commands.join(',')
-    const alias = commands.map(c => c.substr(0, 1)).join('')
-
-    commands.unshift('load')
-    commands.push('save')
-
-    this.commandLists[name] = commands
-    this.commandLists[alias] = commands
-
-    this.yargs
-      .command({
-        command: `${name} <inputs...>`,
-        aliases: [alias],
-        describe: description,
-        builder: (yargs: any) => {
-          return yargs
-            .options(this.getOptions(commands))
-            .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
-        },
-        handler: (argv: any) => this.commandHandler(argv)
-      })
-  }
-
-  /**
    * Start the program. This loads the options definitions, creates the commands
    * definitions, parses the command line, and runs the appropriate command.
    * @return {Promise<void>}
@@ -207,23 +175,41 @@ export default class Program {
     // Load the option definitions.
     this.optionDefinitions = await getOptionDefinitions()
 
-    // Create the command definitions.
-    this.createCommand(['build'],
-      'Build the inputs.')
-    this.createCommand(['clean'],
-      'Clean up after a previous build.')
-    this.createCommand(['scrub'],
-      'Clean up generated files after a previous build.')
-    this.createCommand(['log'],
-      'Report messages from any logs.')
-    this.createCommand(['graph'],
-      'Create a dependency graph from a previous build.')
-    this.createCommand(['build', 'clean'],
-      'Build the inputs and then clean up.')
-    this.createCommand(['build', 'log'],
-      'Build the inputs and report messages from any logs.')
-    this.createCommand(['build', 'log', 'clean'],
-      'Build the inputs, report messages from any logs, and then clean up.')
+    this.yargs
+      .command({
+        command: `$0 <commands> <inputs...>`,
+        describe: 'Run a series of commands on the supplied inputs.',
+        builder: (yargs: any) => {
+          return yargs
+            .positional('commands', {
+              type: 'string',
+              describe: 'A command or a list commands to run. Possible values ' +
+                'include "build", "clean", "graph", "log" or "scrub". Commands ' +
+                'may be abbreviated by using the first letter of command. A ' +
+                'sequence of commands may be composed by separating the commands ' +
+                'with commmands, i.e. "build,log,clean". Command abbreviations ' +
+                'may be combined without separating commands. For instance, "blc" ' +
+                'is equivalent to "build,log,clean".',
+              coerce: (arg: string): string[] => {
+                if (/^(build|log|clean|scrub|graph)$/.test(arg)) return ['load', arg, 'save']
+                const possibleCommands: string[] = ['build', 'clean', 'graph', 'log', 'scrub']
+                return ['load'].concat(arg.split(arg.includes(',') ? ',' : '')
+                  .map(command => {
+                    const actualCommand: string | undefined = possibleCommands.find(pc => pc.startsWith(command))
+                    if (!actualCommand) throw new TypeError(`Unknown command: ${command}`)
+                    return actualCommand
+                  }), ['save'])
+              }
+            })
+            .positional('inputs', {
+              type: 'string',
+              describe: 'Input files to run commands on.'
+            })
+            .options(this.getOptions())
+            .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
+        },
+        handler: (argv: any) => this.commandHandler(argv)
+      })
 
     // Parse the command line and run the command.
     /* tslint:disable:no-unused-expression */
@@ -279,7 +265,7 @@ export default class Program {
   async commandHandler (argv: { [name: string]: any }) {
     const saveLog: boolean = !!argv['save-log']
     const options: {[name: string]: any} = {}
-    const commands = this.commandLists[argv._]
+    const commands = argv.commands
     const files: Uri[] = (argv.inputs || []).map(fileUrl)
 
     this.initializeLogs(files)
