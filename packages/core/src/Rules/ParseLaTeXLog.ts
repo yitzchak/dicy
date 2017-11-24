@@ -103,26 +103,38 @@ export default class ParseLaTeXLog extends Rule {
       names: ['category', 'severity', 'text', 'line'],
       patterns: [/^(.+) (Warning|Info): +(.*?)(?: on input line (\d+)\.)?$/i],
       evaluate: (mode: string, reference: Reference, match: ParserMatch): string | void => {
-        const message: Message = {
-          severity: match.groups.severity.toLowerCase() as Severity,
-          name,
-          category: match.groups.category,
-          text: match.groups.text,
-          source: { file: sourcePaths[0] },
-          log: reference
-        }
+        const previousMessage: Message = parsedLog.messages[parsedLog.messages.length - 1]
+        const severity: Severity = match.groups.severity.toLowerCase() as Severity
 
-        // There is a line reference so add it to the message.
-        if (match.groups.line) {
-          const line: number = parseInt(match.groups.line, 10)
-
-          message.source = {
-            file: sourcePaths[0],
-            range: { start: line, end: line }
+        // Check for continued font messages.
+        if (match.groups.text.startsWith('... ') && previousMessage.category === match.groups.category && previousMessage.severity === severity) {
+          previousMessage.text = `${previousMessage.text} ${match.groups.text}`
+          // If the previous message has a log reference then extend it.
+          if (previousMessage.log && previousMessage.log.range && reference.range) {
+            previousMessage.log.range.end = reference.range.end
           }
-        }
+        } else {
+          const message: Message = {
+            severity,
+            name,
+            category: match.groups.category,
+            text: match.groups.text,
+            source: { file: sourcePaths[0] },
+            log: reference
+          }
 
-        parsedLog.messages.push(message)
+          // There is a line reference so add it to the message.
+          if (match.groups.line) {
+            const line: number = parseInt(match.groups.line, 10)
+
+            message.source = {
+              file: sourcePaths[0],
+              range: { start: line, end: line }
+            }
+          }
+
+          parsedLog.messages.push(message)
+        }
       }
     }, {
       // Continuation of message with possible file reference.
