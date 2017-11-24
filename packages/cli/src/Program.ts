@@ -10,14 +10,11 @@ const yargs = require('yargs/yargs')
 const wrapAnsi = require('wrap-ansi')
 
 import {
-  getOptionDefinitions,
-  Command,
-  DiCy,
-  Message,
-  OptionDefinition,
-  Reference,
-  Uri
+  getOptionDefinitions, Command, DiCy, Message, OptionDefinition, Reference, Uri
 } from '@dicy/core'
+
+const COMMANDS: Command[] = ['build', 'clean', 'graph', 'log', 'scrub']
+const ABBREVIATED_COMMANDS_PATTERN: RegExp = new RegExp(`^[${COMMANDS.map(command => command.substr(0, 1)).join('')}]+$`)
 
 // Function to right pad a string based on the string width reported by then
 // string-width module.
@@ -175,6 +172,8 @@ export default class Program {
     // Load the option definitions.
     this.optionDefinitions = await getOptionDefinitions()
 
+    // Setup the default command with a function to coerce and validate the
+    // command list.
     this.yargs
       .command({
         command: `$0 <commands> <inputs...>`,
@@ -191,14 +190,17 @@ export default class Program {
                 'may be combined without separating commands. For instance, "blc" ' +
                 'is equivalent to "build,log,clean".',
               coerce: (arg: string): string[] => {
-                if (/^(build|log|clean|scrub|graph)$/.test(arg)) return ['load', arg, 'save']
-                const possibleCommands: string[] = ['build', 'clean', 'graph', 'log', 'scrub']
-                return ['load'].concat(arg.split(arg.includes(',') ? ',' : '')
-                  .map(command => {
-                    const actualCommand: string | undefined = possibleCommands.find(pc => pc.startsWith(command))
-                    if (!actualCommand) throw new TypeError(`Unknown command: ${command}`)
-                    return actualCommand
-                  }), ['save'])
+                // If the command string is clearly a concatenation of
+                // abbreviated commands then split on character boundry,
+                // otherwise split on commas.
+                const abbreviatedCommands: string[] = arg.split(ABBREVIATED_COMMANDS_PATTERN.test(arg) ? '' : ',')
+
+                // Lookup each command in the list of allowed commands.
+                return abbreviatedCommands.map(abbreviatedCommand => {
+                  const command: string | undefined = COMMANDS.find(pc => pc.startsWith(abbreviatedCommand))
+                  if (!command) throw new TypeError(`Unknown command: ${abbreviatedCommand}`)
+                  return command
+                })
               }
             })
             .positional('inputs', {
@@ -226,6 +228,13 @@ export default class Program {
     this.logs.set(file, current.concat(messages))
   }
 
+  /**
+   * Create string representation of a reference and return an empty string if
+   * the reference is missing.
+   * @param  {Reference | undefined} reference The reference.
+   * @param  {string}                label     A label to describe the reference.
+   * @return {string}                          The string representing the reference.
+   */
   referenceToString (reference: Reference | undefined, label: string): string {
     if (!reference) return ''
     const start = reference.range && reference.range.start
@@ -262,10 +271,14 @@ export default class Program {
     }
   }
 
-  async commandHandler (argv: { [name: string]: any }) {
+  /**
+   * Processes a command with arguments supplied by the option parser.
+   * @param  {object} argv  The arguments
+   */
+  async commandHandler (argv: { [name: string]: any }): Promise<void> {
     const saveLog: boolean = !!argv['save-log']
     const options: {[name: string]: any} = {}
-    const commands = argv.commands
+    const commands: Command[] = ['load'].concat(argv.commands, ['save']) as Command[]
     const files: Uri[] = (argv.inputs || []).map(fileUrl)
 
     this.initializeLogs(files)
@@ -277,8 +290,10 @@ export default class Program {
       }
     }
 
+    // Set all the instance options at once.
     await Promise.all(files.map(file => this.dicy.setInstanceOptions(file, options)))
 
+    // Start the builds concurrently.
     const success: boolean = (await Promise.all(files.map(file => this.dicy.run(file, commands)))).every(x => x)
 
     if (saveLog) await this.saveLogs()
@@ -288,12 +303,19 @@ export default class Program {
     process.exit(success ? 0 : 1)
   }
 
-  initializeLogs (files: Uri[]) {
+  /**
+   * Reset all saved logs.
+   * @param  {Uri[]}  files The files that need logs.
+   */
+  initializeLogs (files: Uri[]): void {
     for (const file of files) {
       this.logs.set(file, [])
     }
   }
 
+  /**
+   * Save the logs by file.
+   */
   async saveLogs (): Promise<void> {
     for (const [file, messages] of this.logs.entries()) {
       const { dir, name } = path.parse(url2path(file))
