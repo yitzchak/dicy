@@ -18,6 +18,7 @@ export default class RunTests extends Rule {
   async run (): Promise<boolean> {
     const options = this.constructProcessOptions(this.rootPath, false, false, false)
     const commands: string[] = this.options.tests || []
+    let result: boolean = true
 
     for (const command of commands) {
       this.info(`Executing \`${command}\``, 'command')
@@ -26,10 +27,10 @@ export default class RunTests extends Rule {
         this.info(`Test of \`${command}\` succeeded.`, 'test')
       } catch (error) {
         this.error(`Test of \`${command}\` failed.`, 'test')
-        return false
+        result = false
       }
     }
 
-    return true
+    return result
   }
 }
