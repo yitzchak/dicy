@@ -1,6 +1,6 @@
 %!TeX jobNames = job-1, job-2
 %!TeX job-2:outputDirectory = output
-%!TeX check = agda -V
+%!TeX tests = agda -V
 \documentclass{article}
 
 \usepackage{agda}

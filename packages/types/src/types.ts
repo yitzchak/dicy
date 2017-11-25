@@ -1,6 +1,6 @@
 export type Uri = string
 
-export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub'
+export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub' | 'test'
 
 export interface LineRange {
   start: number
@@ -79,7 +79,6 @@ export interface OptionsInterface {
   $TEXINPUTS: string | string[]
   $TEXPICTS?: string | string[]
   bibtexEngine: BibtexEngine
-  check?: string[]
   cleanPatterns: string[]
   copyTargetsToRoot: boolean
   dviToPdfEngine: DviToPdfEngine
@@ -125,6 +124,7 @@ export interface OptionsInterface {
   severity: Severity
   shellEscape?: ShellEscape
   synctex: boolean
+  tests?: string[]
   validateCache: boolean
 }
 

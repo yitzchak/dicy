@@ -51,10 +51,6 @@ bibtexEngine:
     - bibtexu
     - pbibtex
     - upbibtex
-check:
-  commands: []
-  description: Commands to check.
-  type: strings
 cleanPatterns:
   commands:
     - clean
@@ -428,6 +424,9 @@ synctex:
   defaultValue: false
   description: Enable generation of SyncTeX annotations.
   type: boolean
+tests:
+  description: Commands to run tests on during the test command.
+  type: strings
 validateCache:
   commands:
     - load

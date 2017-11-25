@@ -2,20 +2,13 @@
 
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
-import * as childProcess from 'child_process'
 
 import Builder from '../src/Builder'
 import File from '../src/File'
 import { Message } from '@dicy/types'
-import { cloneFixtures, customMatchers } from './helpers'
+import { cloneFixtures, customMatchers, formatMessage } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
-
-function doCheck (command: string): Promise<boolean> {
-  return new Promise(resolve => {
-    childProcess.exec(command, error => resolve(!error))
-  })
-}
 
 describe('Builder', () => {
   let dicy: Builder
@@ -49,12 +42,11 @@ describe('Builder', () => {
         // Run the builder
         expect(await dicy.run(['load'])).toBeTruthy()
 
-        for (const command of dicy.options.check || []) {
-          if (!await doCheck(command)) {
-            spec.pend(`Skipped test since required program is not available (\`${command}\` was not successful).`)
-            done()
-            return
-          }
+        if (!await dicy.run(['test'])) {
+          const errorMessages: string = messages.filter(message => message.severity === 'error').map(formatMessage).join('\n')
+          spec.pend(`Skipped spec since test command failed).\n${errorMessages}`)
+          done()
+          return
         }
 
         expect(await dicy.run(['build', 'log', 'save'])).toBeTruthy()

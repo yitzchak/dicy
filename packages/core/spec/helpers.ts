@@ -20,7 +20,7 @@ export async function cloneFixtures () {
   return tempPath
 }
 
-function formatMessage (event: Message) {
+export function formatMessage (event: Message) {
   const parts = []
 
   if (event.name) parts.push(`[${event.name}]`)

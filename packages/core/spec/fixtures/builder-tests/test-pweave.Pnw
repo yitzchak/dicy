@@ -3,7 +3,7 @@
 %!TeX job-2:shellEscape = enabled
 % Pweave v0.30.0 does not support figure format.
 %%!TeX job-3:engine = latex
-%!TeX check = pweave --version, pygmentize -V
+%!TeX tests = pweave --version, pygmentize -V
 \documentclass{article}
 
 \usepackage{color}
