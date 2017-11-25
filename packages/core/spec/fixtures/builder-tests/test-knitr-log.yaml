@@ -2,51 +2,88 @@
   category: command
   name: RunTests(test;execute;)
   text: Executing `Rscript -e "library(knitr);library(patchSynctex)"`
-- severity: error
-  category: test
-  name: RunTests(test;execute;)
-  text: Test of `Rscript -e "library(knitr);library(patchSynctex)"` failed.
 - severity: info
   category: command
   name: Knitr(build;execute;job-1;test-knitr.Rnw)
   text: >-
     Executing `Rscript -e
     'library(knitr);knit('\''test-knitr.Rnw'\'','\''job-1.tex'\'')'`
-- severity: error
-  text: >-
-    Error: Command failed: `Rscript -e
-    'library(knitr);knit('\''test-knitr.Rnw'\'','\''job-1.tex'\'')'`
-  name: Knitr
 - severity: info
   category: command
   name: Knitr(build;execute;job-2;test-knitr.Rnw)
   text: >-
     Executing `Rscript -e
     'library(knitr);knit('\''test-knitr.Rnw'\'','\''job-2.tex'\'')'`
-- severity: error
-  text: >-
-    Error: Command failed: `Rscript -e
-    'library(knitr);knit('\''test-knitr.Rnw'\'','\''job-2.tex'\'')'`
-  name: Knitr
 - severity: info
   category: command
   name: Knitr(build;execute;job-3;test-knitr.Rnw)
   text: >-
     Executing `Rscript -e
     'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'','\''job-3.tex'\'')'`
-- severity: error
-  text: >-
-    Error: Command failed: `Rscript -e
-    'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'','\''job-3.tex'\'')'`
-  name: Knitr
 - severity: info
   category: command
   name: Knitr(build;execute;job-4;test-knitr.Rnw)
   text: >-
     Executing `Rscript -e
     'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'','\''job-4.tex'\'')'`
-- severity: error
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;job-1.tex)
   text: >-
-    Error: Command failed: `Rscript -e
-    'library(knitr);opts_knit$set(concordance=TRUE);knit('\''test-knitr.Rnw'\'','\''job-4.tex'\'')'`
-  name: Knitr
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 job-1.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;job-2.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 job-2.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;job-3.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 -synctex=1 job-3.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-4;job-4.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-4 -synctex=1 job-4.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-1;job-1.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-1 job-1.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-2;job-2.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-2 job-2.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-3;job-3.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -jobname=job-3 -synctex=1 job-3.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;job-4;job-4.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    -output-directory=output -jobname=job-4 -synctex=1 job-4.tex`
+- severity: info
+  category: command
+  name: PatchSyncTeX(build;finalize;job-3;job-3-concordance.tex;job-3.synctex.gz)
+  text: >-
+    Executing `Rscript -e
+    'library(patchSynctex);patchSynctex('\''job-3.tex'\'',syncfile='\''job-3'\'')'`
+- severity: info
+  category: command
+  name: >-
+    PatchSyncTeX(build;finalize;job-4;job-4-concordance.tex;output/job-4.synctex.gz)
+  text: >-
+    Executing `Rscript -e
+    'library(patchSynctex);patchSynctex('\''job-4.tex'\'',syncfile='\''output/job-4'\'')'`
