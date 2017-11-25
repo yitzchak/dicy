@@ -81,12 +81,73 @@ export default class Program {
       .help()
   }
 
+  /**
+   * Destroy everything!!
+   */
   async destroy (): Promise<void> {
-    await this.dicy.killAll()
     await this.dicy.destroy()
   }
 
-  getOptions (): { [name: string]: any } {
+  /**
+   * Get the command line options associated with a specific OptionDefinition.
+   * Multiple options will be returned for boolean options.
+   * @param  {OptionDefinition}          definition The definition of the option.
+   * @return {{ [name: string ]: any }}             The command line options.
+   */
+  getOptions (definition: OptionDefinition): { [name: string ]: any } {
+    const options: { [name: string ]: any } = {}
+    // Make a kebab but don't skewer the numbers.
+    const name: string = _.kebabCase(definition.name).replace(/(?:^|-)([0-9]+)(?:$|-)/g, '$1')
+    const negatedName: string = `no-${name}`
+    const description: string = definition.description
+    // Only include the aliases that are a single letter.
+    const alias: string[] = (definition.aliases || []).filter(alias => alias.length === 1)
+
+    switch (definition.type) {
+      case 'strings':
+        options[name] = { type: 'array', alias, description }
+        break
+      case 'number':
+        options[name] = { type: 'number', alias, description }
+        break
+      case 'boolean':
+        if (definition.defaultValue) {
+          // The default value is true so the negated option gets the aliases
+          // and the description while the non-negated option is hidden.
+          options[name] = { type: 'boolean', hidden: true }
+          options[negatedName] = {
+            type: 'boolean',
+            alias,
+            description: description.replace('Enable', 'Disable')
+          }
+        } else {
+          // The default value is false so the non-negated option gets the
+          // aliases and the description while the negated option is hidden.
+          options[negatedName] = { type: 'boolean', hidden: true }
+          options[name] = { type: 'boolean', alias, description }
+        }
+        break
+      case 'string':
+        options[name] = { type: 'string', alias, description }
+        break
+    }
+
+    // Make an index of the option names and add choices for enumerations.
+    for (const name in options) {
+      this.optionNames[name] = definition.name
+      if (definition.values) {
+        options[name].choices = definition.values
+      }
+    }
+
+    return options
+  }
+
+  /**
+   * Get all command line options.
+   * @return {{ [name: string ]: any }} The command line options.
+   */
+  getAllOptions (): { [name: string]: any } {
     const options: { [name: string]: any } = {
       'save-log': {
         boolean: true,
@@ -94,71 +155,12 @@ export default class Program {
       }
     }
 
-    for (const definition of this.optionDefinitions) {
-      // Skip environment variables or options that are not applicable to this
-      // command
-      if (definition.name.startsWith('$') || definition.commands === []) continue
-
-      const addOption = (name: string, option: any): void => {
-        this.optionNames[name] = definition.name
-        if (definition.values) {
-          option.choices = definition.values
-        }
-        options[name] = option
-      }
-      // Make a kebab but don't skewer the numbers.
-      const name = _.kebabCase(definition.name).replace(/(?:^|-)([0-9]+)(?:$|-)/g, '$1')
-      const negatedName = `no-${name}`
-      const description = definition.description
-      const alias = (definition.aliases || []).filter(alias => alias.length === 1)
-
-      switch (definition.type) {
-        case 'strings':
-          addOption(name, {
-            type: 'array',
-            alias,
-            description
-          })
-          break
-        case 'number':
-          addOption(name, {
-            type: 'number',
-            alias,
-            description
-          })
-          break
-        case 'boolean':
-          if (definition.defaultValue) {
-            addOption(name, {
-              type: 'boolean',
-              hidden: true
-            })
-            addOption(negatedName, {
-              type: 'boolean',
-              alias,
-              description: description.replace('Enable', 'Disable')
-            })
-          } else {
-            addOption(negatedName, {
-              type: 'boolean',
-              hidden: true
-            })
-            addOption(name, {
-              type: 'boolean',
-              alias,
-              description
-            })
-          }
-          break
-        case 'string':
-          addOption(name, {
-            type: 'string',
-            alias,
-            description
-          })
-          break
-      }
-    }
+    // Skip environment variables or options that are not applicable to this
+    // command
+    Object.assign(options,
+      ...this.optionDefinitions
+        .filter(definition => !definition.name.startsWith('$') && definition.commands !== [])
+        .map(definition => this.getOptions(definition)))
 
     return options
   }
@@ -206,7 +208,7 @@ export default class Program {
             type: 'string',
             describe: 'Input files to run commands on.'
           })
-          .options(this.getOptions())
+          .options(this.getAllOptions())
           .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
       }
     })
@@ -319,6 +321,10 @@ export default class Program {
     }
   }
 
+  /**
+   * Start the command line interface.
+   * @return {Promise<boolean>} The build status.
+   */
   async start (): Promise<boolean> {
     await this.initialize()
     return this.run(this.yargs.argv)
