@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Allow multiple commands to be run from command line interface.
+-   `test` command and `tests` option.
 
 ### Changed
 
