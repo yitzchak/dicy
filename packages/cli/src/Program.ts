@@ -155,11 +155,10 @@ export default class Program {
       }
     }
 
-    // Skip environment variables or options that are not applicable to this
-    // command
+    // Skip environment variables
     Object.assign(options,
       ...this.optionDefinitions
-        .filter(definition => !definition.name.startsWith('$') && definition.commands !== [])
+        .filter(definition => !definition.name.startsWith('$'))
         .map(definition => this.getOptions(definition)))
 
     return options

@@ -27,4 +27,8 @@ Save the cache. Performed automatically by the command line interface.
 
 ## scrub
 
-Clean up all generated files after a build
+Clean up all generated files after a build,
+
+## tests
+
+Run test programs listed in `tests` option.

@@ -40,8 +40,6 @@ $TEXPICTS:
   description: Picture search path
   type: variable
 bibtexEngine:
-  commands:
-    - build
   defaultValue: bibtex
   description: 'BibTeX engine, e.g. bibtex, pbibtex, upbibtex.'
   type: string
@@ -52,9 +50,6 @@ bibtexEngine:
     - pbibtex
     - upbibtex
 cleanPatterns:
-  commands:
-    - clean
-    - scrub
   defaultValue:
     - $OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)
     - /$OUTDIR/_minted-$JOB/*
@@ -63,14 +58,10 @@ cleanPatterns:
 copyTargetsToRoot:
   aliases:
     - moveResultToSourceDirectory
-  commands:
-    - build
   defaultValue: false
   description: Enable copying of output targets to project root path.
   type: boolean
 dviToPdfEngine:
-  commands:
-    - build
   defaultValue: xdvipdfmx
   description: Program to use for DVI to PDF conversion.
   type: string
@@ -83,14 +74,10 @@ engine:
     - e
     - customEngine
     - program
-  commands:
-    - build
   defaultValue: pdflatex
   description: 'LaTeX engine, e.g. latex, pdflatex or uplatex.'
   type: string
 epstopdfBoundingBox:
-  commands:
-    - build
   defaultValue: default
   description: The bounding box used in the original file.
   type: string
@@ -99,14 +86,10 @@ epstopdfBoundingBox:
     - exact
     - hires
 epstopdfOutputPath:
-  commands:
-    - build
   defaultValue: $DIR_0/$NAME_0.pdf
   description: Output path of epstopdf
   type: string
 epstopdfRestricted:
-  commands:
-    - build
   defaultValue: false
   description: Enable restricted mode when calling epstopdf.
   type: boolean
@@ -114,27 +97,19 @@ filePath:
   description: Override of the master file path.
   type: string
 indexAutomaticRanges:
-  commands:
-    - build
   defaultValue: true
   description: >-
     Enable automatic page range formation. By default, three or more successive
     pages are automatically abbreviated as a range (e.g. 1-3).
   type: boolean
 indexCompressBlanks:
-  commands:
-    - build
   defaultValue: false
   description: Enable compression of blanks in index labels.
   type: boolean
 indexDictionary:
-  commands:
-    - build
   description: Pronounciation dictionary for mendex.
   type: string
 indexEngine:
-  commands:
-    - build
   defaultValue: makeindex
   description: Indexing engine
   type: string
@@ -144,21 +119,15 @@ indexEngine:
     - texindy
     - upmendex
 indexForceKanji:
-  commands:
-    - build
   defaultValue: false
   description: >-
     Enable forcing output of Kanji characters evenif  non-existent in
     dictionaries. Used by mendex and upmendex only.
   type: boolean
 indexLogPath:
-  commands:
-    - build
   description: Log path of makeindex
   type: string
 indexOrdering:
-  commands:
-    - build
   defaultValue: word
   description: >-
     Ordering scheme where `letter` ordering ignores spaces between words and
@@ -168,13 +137,9 @@ indexOrdering:
     - word
     - letter
 indexOutputPath:
-  commands:
-    - build
   description: Output path of makeindex
   type: string
 indexSorting:
-  commands:
-    - build
   defaultValue: default
   description: Use alternate index sorting scheme. Used by makeindex only.
   type: string
@@ -184,21 +149,14 @@ indexSorting:
     - thai
     - locale
 indexStartPage:
-  commands:
-    - build
   description: The start page used (any/odd/even/number)
   type: string
 indexStyle:
-  commands:
-    - build
   description: The style to use for makeindex.
   type: string
 intermediatePostScript:
   aliases:
     - ps
-  commands:
-    - build
-    - graph
   defaultValue: false
   description: >-
     Enable generation of PostScript using dvips when the output format is pdf.
@@ -216,8 +174,6 @@ jobNames:
   description: A list of job names used for LaTeX.
   type: strings
 kanji:
-  commands:
-    - build
   description: 'Kanji encoding for pLaTeX, upLaTeX, pBibTeX, upBibTeX and mendex.'
   type: string
   values:
@@ -227,8 +183,6 @@ kanji:
     - uptex
     - utf8
 kanjiInternal:
-  commands:
-    - build
   description: 'Internal Kanji encoding for pLaTeX, upLaTeX, pBibTeX, upBibTeX and mendex.'
   type: string
   values:
@@ -237,22 +191,16 @@ kanjiInternal:
     - uptex
     - utf8
 knitrConcordance:
-  commands:
-    - build
   defaultValue: true
   description: >-
     Enable creation of knitr concordance file used to SyncTeX patching and
     source code mapping in log messages.
   type: boolean
 knitrOutputPath:
-  commands:
-    - build
   defaultValue: $JOB.tex
   description: Output path of knit.
   type: string
 lhs2texStyle:
-  commands:
-    - build
   defaultValue: poly
   description: The style to use for Haskell or Agda conversion.
   type: string
@@ -266,8 +214,6 @@ lhs2texStyle:
 literateAgdaEngine:
   aliases:
     - a
-  commands:
-    - build
   defaultValue: agda
   description: >-
     Program to preprocess literate Agda source with prior to processing by
@@ -280,8 +226,6 @@ literateAgdaEngine:
 literateHaskellEngine:
   aliases:
     - h
-  commands:
-    - build
   defaultValue: lhs2TeX
   description: >-
     Program to preprocess literate Haskell source with prior to processing by
@@ -293,15 +237,11 @@ literateHaskellEngine:
 loadCache:
   aliases:
     - L
-  commands:
-    - load
   defaultValue: true
   description: Enable loading of file cache generated by previous builds.
   noInvalidate: true
   type: boolean
 loadUserOptions:
-  commands:
-    - load
   defaultValue: true
   description: >-
     Enable loading of options from YAML configuration file found in the user's home
@@ -316,17 +256,11 @@ outputDirectory:
     - o
     - output
     - output_directory
-  commands:
-    - build
-    - graph
   description: The name of a directory for used for output files.
   type: string
 outputFormat:
   aliases:
     - f
-  commands:
-    - build
-    - graph
   defaultValue: pdf
   description: The output format of any targets.
   type: string
@@ -341,34 +275,24 @@ phaseCycles:
   noInvalidate: true
   type: number
 pweaveCacheDirectory:
-  commands:
-    - build
   defaultValue: pweave-cache-for-$JOB
   description: Directory used for pweave cache.
   type: string
 pweaveDocumentationMode:
-  commands:
-    - build
   defaultValue: false
   description: >-
     Enable documentation mode for Pweave. Chunk code and results will be loaded
     from cache and inline code will be hidden.
   type: boolean
 pweaveFigureDirectory:
-  commands:
-    - build
   defaultValue: pweave-figures-for-$JOB
   description: Directory used for figures.
   type: string
 pweaveKernel:
-  commands:
-    - build
   defaultValue: python3
   description: Jupyter kernel used to run code.
   type: string
 pweaveOutputFormat:
-  commands:
-    - build
   defaultValue: tex
   description: Format of code environments used by Pweave.
   type: string
@@ -378,16 +302,12 @@ pweaveOutputFormat:
     - texpweave
     - texpygments
 pweaveOutputPath:
-  commands:
-    - build
   defaultValue: $JOB.tex
   description: Output path of Pweave.
   type: string
 saveCache:
   aliases:
     - S
-  commands:
-    - save
   defaultValue: true
   description: Enable saving of file cache generated by current build.
   noInvalidate: true
@@ -408,8 +328,6 @@ severity:
 shellEscape:
   aliases:
     - enableShellEscape
-  commands:
-    - build
   description: Enable shell escape (write18).
   type: string
   values:
@@ -419,8 +337,6 @@ shellEscape:
 synctex:
   aliases:
     - enableSynctex
-  commands:
-    - build
   defaultValue: false
   description: Enable generation of SyncTeX annotations.
   type: boolean
@@ -428,8 +344,6 @@ tests:
   description: Commands to run tests on during the test command.
   type: strings
 validateCache:
-  commands:
-    - load
   defaultValue: true
   description: Enable validation of file cache generated by previous builds.
   noInvalidate: true

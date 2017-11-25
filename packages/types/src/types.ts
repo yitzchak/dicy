@@ -32,7 +32,6 @@ export interface OptionDefinition {
   description: string
   values?: any[]
   aliases?: string[]
-  commands?: string[]
   noInvalidate?: boolean
 }
 
