@@ -164,58 +164,52 @@ export default class Program {
   }
 
   /**
-   * Start the program. This loads the options definitions, creates the commands
-   * definitions, parses the command line, and runs the appropriate command.
+   * Initialize the program. This loads the options definitions and creates the
+   * command definition.
    * @return {Promise<void>}
    */
-  async start (): Promise<void> {
+  async initialize (): Promise<void> {
     // Load the option definitions.
     this.optionDefinitions = await getOptionDefinitions()
 
     // Setup the default command with a function to coerce and validate the
     // command list.
-    this.yargs
-      .command({
-        command: `$0 <commands> <inputs...>`,
-        describe: 'Run a series of commands on the supplied inputs.',
-        builder: (yargs: any) => {
-          return yargs
-            .positional('commands', {
-              type: 'string',
-              describe: 'A command or a list commands to run. Possible values ' +
-                'include "build", "clean", "graph", "log" or "scrub". Commands ' +
-                'may be abbreviated by using the first letter of command. A ' +
-                'sequence of commands may be composed by separating the commands ' +
-                'with commmands, i.e. "build,log,clean". Command abbreviations ' +
-                'may be combined without separating commands. For instance, "blc" ' +
-                'is equivalent to "build,log,clean".',
-              coerce: (arg: string): string[] => {
-                // If the command string is clearly a concatenation of
-                // abbreviated commands then split on character boundry,
-                // otherwise split on commas.
-                const abbreviatedCommands: string[] = arg.split(ABBREVIATED_COMMANDS_PATTERN.test(arg) ? '' : ',')
+    this.yargs.command({
+      command: `$0 <commands> <inputs...>`,
+      describe: 'Run a series of commands on the supplied inputs.',
+      builder: (yargs: any) => {
+        return yargs
+          .positional('commands', {
+            type: 'string',
+            describe: 'A command or a list commands to run. Possible values ' +
+              'include "build", "clean", "graph", "log" or "scrub". Commands ' +
+              'may be abbreviated by using the first letter of command. A ' +
+              'sequence of commands may be composed by separating the commands ' +
+              'with commmands, i.e. "build,log,clean". Command abbreviations ' +
+              'may be combined without separating commands. For instance, "blc" ' +
+              'is equivalent to "build,log,clean".',
+            coerce: (arg: string): string[] => {
+              // If the command string is clearly a concatenation of
+              // abbreviated commands then split on character boundry,
+              // otherwise split on commas.
+              const abbreviatedCommands: string[] = arg.split(ABBREVIATED_COMMANDS_PATTERN.test(arg) ? '' : ',')
 
-                // Lookup each command in the list of allowed commands.
-                return abbreviatedCommands.map(abbreviatedCommand => {
-                  const command: string | undefined = COMMANDS.find(pc => pc.startsWith(abbreviatedCommand))
-                  if (!command) throw new TypeError(`Unknown command: ${abbreviatedCommand}`)
-                  return command
-                })
-              }
-            })
-            .positional('inputs', {
-              type: 'string',
-              describe: 'Input files to run commands on.'
-            })
-            .options(this.getOptions())
-            .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
-        },
-        handler: (argv: any) => this.commandHandler(argv)
-      })
-
-    // Parse the command line and run the command.
-    /* tslint:disable:no-unused-expression */
-    this.yargs.argv
+              // Lookup each command in the list of allowed commands.
+              return abbreviatedCommands.map(abbreviatedCommand => {
+                const command: string | undefined = COMMANDS.find(pc => pc.startsWith(abbreviatedCommand))
+                if (!command) throw new TypeError(`Unknown command: ${abbreviatedCommand}`)
+                return command
+              })
+            }
+          })
+          .positional('inputs', {
+            type: 'string',
+            describe: 'Input files to run commands on.'
+          })
+          .options(this.getOptions())
+          .epilogue('All boolean options can be negated by adding or removing the `no-` prefix.')
+      }
+    })
   }
 
   /**
@@ -275,7 +269,7 @@ export default class Program {
    * Processes a command with arguments supplied by the option parser.
    * @param  {object} argv  The arguments
    */
-  async commandHandler (argv: { [name: string]: any }): Promise<void> {
+  async run (argv: { [name: string]: any }): Promise<boolean> {
     const saveLog: boolean = !!argv['save-log']
     const options: {[name: string]: any} = {}
     const commands: Command[] = ['load'].concat(argv.commands, ['save']) as Command[]
@@ -300,7 +294,7 @@ export default class Program {
 
     await this.dicy.destroy()
 
-    process.exit(success ? 0 : 1)
+    return success
   }
 
   /**
@@ -323,5 +317,10 @@ export default class Program {
       const contents = yaml.safeDump(messages, { skipInvalid: true })
       await fs.writeFile(logFilePath, contents)
     }
+  }
+
+  async start (): Promise<boolean> {
+    await this.initialize()
+    return this.run(this.yargs.argv)
   }
 }
