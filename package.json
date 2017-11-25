@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "chalk": "^2.3.0",
-    "cliui": "^3.2.0",
     "command-join": "^2.0.0",
     "fast-glob": "^1.0.1",
     "file-uri-to-path": "^1.0.0",
@@ -53,10 +52,12 @@
     "micromatch": "^3.1.4",
     "readdir-enhanced": "^2.0.0",
     "semver": "^5.4.1",
+    "string-width": "^2.1.1",
     "temp": "^0.8.3",
     "tree-kill": "^1.2.0",
     "tslint": "^5.8.0",
     "vscode-jsonrpc": "^3.5.0",
+    "wrap-ansi": "^3.0.1",
     "yargs": "^10.0.3",
     "yargs-parser": "^8.0.0"
   },
@@ -70,6 +71,7 @@
     "@types/node": "^8.0.47",
     "@types/semver": "^5.4.0",
     "@types/temp": "^0.8.31",
+    "@types/wrap-ansi": "^2.0.14",
     "@types/yargs": "^8.0.2",
     "chalk-cli": "^4.0.0",
     "fs-extra": "^4.0.2",

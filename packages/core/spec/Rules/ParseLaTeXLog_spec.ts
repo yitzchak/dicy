@@ -59,7 +59,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for OML/cmm/m/it',
+      text: 'Checking defaults for OML/cmm/m/it ... okay',
       source: {
         file: sourceName,
         range: {
@@ -71,25 +71,6 @@ describe('ParseLaTeXLog', () => {
         file: logName,
         range: {
           start: 179,
-          end: 179
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: '... okay',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 180,
           end: 180
         }
       }
@@ -97,7 +78,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for T1/cmr/m/n',
+      text: 'Checking defaults for T1/cmr/m/n ... okay',
       source: {
         file: sourceName,
         range: {
@@ -109,25 +90,6 @@ describe('ParseLaTeXLog', () => {
         file: logName,
         range: {
           start: 181,
-          end: 181
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: '... okay',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 182,
           end: 182
         }
       }
@@ -135,7 +97,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for OT1/cmr/m/n',
+      text: 'Checking defaults for OT1/cmr/m/n ... okay',
       source: {
         file: sourceName,
         range: {
@@ -147,25 +109,6 @@ describe('ParseLaTeXLog', () => {
         file: logName,
         range: {
           start: 183,
-          end: 183
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: '... okay',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 184,
           end: 184
         }
       }
@@ -173,7 +116,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for OMS/cmsy/m/n',
+      text: 'Checking defaults for OMS/cmsy/m/n ... okay',
       source: {
         file: sourceName,
         range: {
@@ -185,25 +128,6 @@ describe('ParseLaTeXLog', () => {
         file: logName,
         range: {
           start: 185,
-          end: 185
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: '... okay',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 186,
           end: 186
         }
       }
@@ -211,7 +135,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for OMX/cmex/m/n',
+      text: 'Checking defaults for OMX/cmex/m/n ... okay',
       source: {
         file: sourceName,
         range: {
@@ -223,25 +147,6 @@ describe('ParseLaTeXLog', () => {
         file: logName,
         range: {
           start: 187,
-          end: 187
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: '... okay',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 188,
           end: 188
         }
       }
@@ -249,7 +154,7 @@ describe('ParseLaTeXLog', () => {
       severity: 'info',
       name: 'pdfTeX',
       category: 'LaTeX Font',
-      text: 'Checking defaults for U/cmr/m/n',
+      text: 'Checking defaults for U/cmr/m/n ... okay',
       source: {
         file: sourceName,
         range: {
@@ -261,25 +166,6 @@ describe('ParseLaTeXLog', () => {
         file: logName,
         range: {
           start: 189,
-          end: 189
-        }
-      }
-    }, {
-      severity: 'info',
-      name: 'pdfTeX',
-      category: 'LaTeX Font',
-      text: '... okay',
-      source: {
-        file: sourceName,
-        range: {
-          start: 5,
-          end: 5
-        }
-      },
-      log: {
-        file: logName,
-        range: {
-          start: 190,
           end: 190
         }
       }
