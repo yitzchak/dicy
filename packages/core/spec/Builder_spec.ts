@@ -5,7 +5,7 @@ import * as readdir from 'readdir-enhanced'
 
 import Builder from '../src/Builder'
 import File from '../src/File'
-import { Message } from '@dicy/types'
+import { Command, Message } from '@dicy/types'
 import { cloneFixtures, customMatchers, formatMessage } from './helpers'
 
 const ASYNC_TIMEOUT = 50000
@@ -49,7 +49,13 @@ describe('Builder', () => {
           return
         }
 
-        expect(await dicy.run(['build', 'log', 'save'])).toBeTruthy()
+        let result: boolean = true
+
+        for (const command of ['build', 'log', 'save']) {
+          result = await dicy.run([command as Command]) && result
+        }
+
+        expect(result).toBeTruthy()
 
         expect(messages).toReceiveMessages(expected)
 
