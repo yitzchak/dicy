@@ -17,7 +17,7 @@ interface BuilderCacheInterface extends EventEmitter {
   clear(file: Uri): Promise<void>;
   clearAll(): Promise<void>;
 
-  getTargetPaths(file: Uri, absolute?: boolean): Promise<string[]>;
+  getTargetPaths(file: Uri): Promise<string[]>;
 
   kill(file: Uri, message?: string): Promise<void>;
   killAll(message?: string): Promise<void>;
@@ -61,14 +61,13 @@ dicy.on('log', (file, messages) => {
 await dicy.run('file:///bar/foo.tex', ['load', 'build', 'log', 'save'])
 ```
 
-To retrieve targets produced by a build `getTargetPaths` can be called with
-`absolute` parameter controlling whether returned paths are in relative or
-absolute format. Please note that `synctex.gz` files are also returned in
-addition to PDF, DVI or PostScript files.
+To retrieve targets produced by a build `getTargetPaths` can be called.
+Please note that `synctex.gz` files are also returned in addition to PDF,
+DVI or PostScript files.
 
 A build can be interupted by calling `kill` or all builds can be stopped by
 calling `killAll`. The `DiCy` class caches builders based on main file path.
-The cache can be cleared on file specific basis with `clear` or the complete
+This cache can be cleared on file specific basis with `clear` or the complete
 cache can be cleared with `clearAll`. Once building is done the instance should
 be released with `destroy`.
 
@@ -77,7 +76,7 @@ builder will implement the following interface.
 
 ```typescript
 interface BuilderInterface extends EventEmitter {
-  getTargetPaths(absolute?: boolean): Promise<string[]>;
+  getTargetPaths(): Promise<string[]>;
 
   kill(message?: string): Promise<void>;
 
