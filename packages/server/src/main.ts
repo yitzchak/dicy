@@ -1,4 +1,5 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
+
 import { DiCy } from '@dicy/core'
 import * as rpc from 'vscode-jsonrpc'
 import * as yargs from 'yargs'
