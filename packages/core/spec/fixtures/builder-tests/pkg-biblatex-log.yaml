@@ -1,5 +1,13 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `bibtex -version`
+- severity: info
+  category: command
+  name: RunTests(test;execute;)
+  text: Executing `biber -version`
+- severity: info
+  category: command
   name: LaTeX(build;execute;bibtex-1;pkg-biblatex.tex)
   text: >-
     Executing `pdflatex -file-line-error -interaction=batchmode -recorder

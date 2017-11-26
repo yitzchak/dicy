@@ -1,5 +1,9 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `makeglossaries --help`
+- severity: info
+  category: command
   name: LaTeX(build;execute;job-1;pkg-glossaries.tex)
   text: >-
     Executing `pdflatex -file-line-error -interaction=batchmode -recorder

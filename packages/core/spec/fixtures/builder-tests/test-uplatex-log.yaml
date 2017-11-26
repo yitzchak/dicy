@@ -1,5 +1,9 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `uplatex -help`
+- severity: info
+  category: command
   name: LaTeX(build;execute;;test-uplatex.tex)
   text: >-
     Executing `uplatex -file-line-error -interaction=batchmode -recorder

@@ -1,5 +1,9 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `mpost -version`
+- severity: info
+  category: command
   name: LaTeX(build;execute;;pkg-feynmp.tex)
   text: >-
     Executing `pdflatex -file-line-error -interaction=batchmode -recorder

@@ -1,5 +1,9 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `agda -V`
+- severity: info
+  category: command
   name: Agda(build;execute;job-1;test-agda.lagda)
   text: Executing `agda --latex --latex-dir=. test-agda.lagda`
 - severity: info

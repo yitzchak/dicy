@@ -42,6 +42,6 @@ cd ../builder-tests
 
 for file in {*.tex,*.lhs,*.lagda,*.Rnw,*.Pnw}; do
   echo "Creating log for $file"
-  node ../../../../cli/lib/main.js bl --save-log "$file" &>/dev/null
+  node ../../../../cli/lib/main.js tbl --save-log "$file" &>/dev/null
   node ../../../../cli/lib/main.js s "$file" &>/dev/null
 done

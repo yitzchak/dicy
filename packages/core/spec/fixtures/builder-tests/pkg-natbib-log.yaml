@@ -1,5 +1,9 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `bibtex -version`
+- severity: info
+  category: command
   name: LaTeX(build;execute;job-1;pkg-natbib.tex)
   text: >-
     Executing `pdflatex -file-line-error -interaction=batchmode -recorder

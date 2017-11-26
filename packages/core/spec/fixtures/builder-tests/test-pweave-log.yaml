@@ -1,5 +1,13 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `pweave --version`
+- severity: info
+  category: command
+  name: RunTests(test;execute;)
+  text: Executing `pygmentize -V`
+- severity: info
+  category: command
   name: Pweave(build;execute;job-1;test-pweave.Pnw)
   text: >-
     Executing `pweave --format=tex --output=job-1.tex

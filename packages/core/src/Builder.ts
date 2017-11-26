@@ -10,7 +10,7 @@ import File from './File'
 import Rule from './Rule'
 import { Action, Phase, RuleInfo } from './types'
 
-const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub)$/
+const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|save|scrub|test)$/
 
 export default class Builder extends StateConsumer implements BuilderInterface {
   private consumers: Map<string | null, StateConsumer> = new Map<string | null, StateConsumer>()

@@ -1,5 +1,13 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `splitindex --version`
+- severity: info
+  category: command
+  name: RunTests(test;execute;)
+  text: Executing `texindy -V`
+- severity: info
+  category: command
   name: LaTeX(build;execute;job-1;pkg-imakeidx.tex)
   text: >-
     Executing `pdflatex -file-line-error -interaction=batchmode -recorder
@@ -130,14 +138,14 @@
     job-5-persons.idx`
 - severity: info
   category: command
-  name: MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog)
-  text: Executing `makeindex -t job-6-job-6.ilg -o job-6-job-6.ind job-6-job-6.idx`
-- severity: info
-  category: command
   name: MakeIndex(build;execute;job-6;job-6-persons.idx;job-6.log-ParsedLaTeXLog)
   text: >-
     Executing `makeindex -t job-6-persons.ilg -o job-6-persons.ind
     job-6-persons.idx`
+- severity: info
+  category: command
+  name: MakeIndex(build;execute;job-6;job-6-job-6.idx;job-6.log-ParsedLaTeXLog)
+  text: Executing `makeindex -t job-6-job-6.ilg -o job-6-job-6.ind job-6-job-6.idx`
 - severity: info
   category: command
   name: MakeIndex(build;execute;job-11;job-11-persons.idx;job-11.log-ParsedLaTeXLog)

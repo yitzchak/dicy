@@ -13,7 +13,7 @@ import {
   getOptionDefinitions, Command, DiCy, Message, OptionDefinition, Reference, Uri
 } from '@dicy/core'
 
-const COMMANDS: Command[] = ['build', 'clean', 'graph', 'log', 'scrub']
+const COMMANDS: Command[] = ['build', 'clean', 'graph', 'log', 'scrub', 'test']
 const ABBREVIATED_COMMANDS_PATTERN: RegExp = new RegExp(`^[${COMMANDS.map(command => command.substr(0, 1)).join('')}]+$`)
 
 // Function to right pad a string based on the string width reported by then
@@ -155,11 +155,10 @@ export default class Program {
       }
     }
 
-    // Skip environment variables or options that are not applicable to this
-    // command
+    // Skip environment variables
     Object.assign(options,
       ...this.optionDefinitions
-        .filter(definition => !definition.name.startsWith('$') && definition.commands !== [])
+        .filter(definition => !definition.name.startsWith('$'))
         .map(definition => this.getOptions(definition)))
 
     return options
@@ -184,7 +183,7 @@ export default class Program {
           .positional('commands', {
             type: 'string',
             describe: 'A command or a list commands to run. Possible values ' +
-              'include "build", "clean", "graph", "log" or "scrub". Commands ' +
+              'include "build", "clean", "graph", "log", "scrub" or "test". Commands ' +
               'may be abbreviated by using the first letter of command. A ' +
               'sequence of commands may be composed by separating the commands ' +
               'with commmands, i.e. "build,log,clean". Command abbreviations ' +

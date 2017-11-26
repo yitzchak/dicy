@@ -6,7 +6,7 @@
 %!TeX job-4:outputDirectory = output
 %!TeX job-4:synctex = yes
 %!TeX cleanPatterns = /figure
-%!TeX check = Rscript -e "library(knitr);library(patchSynctex)"
+%!TeX tests = Rscript -e "library(knitr);library(patchSynctex)"
 \documentclass{article}
 
 \usepackage{parskip}

@@ -1,5 +1,9 @@
 - severity: info
   category: command
+  name: RunTests(test;execute;)
+  text: Executing `Rscript -e "library(knitr);library(patchSynctex)"`
+- severity: info
+  category: command
   name: Knitr(build;execute;job-1;test-knitr.Rnw)
   text: >-
     Executing `Rscript -e
