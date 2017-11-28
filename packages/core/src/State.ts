@@ -11,8 +11,7 @@ import {
   FileCache,
   KillToken,
   OptionInterfaceMap,
-  Phase,
-  RuleCache
+  Phase
 } from './types'
 
 function getLabel (x: File | Rule): string {
