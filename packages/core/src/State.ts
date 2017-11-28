@@ -125,29 +125,35 @@ export default class State extends EventEmitter {
   async addCachedRule (cache: RuleCache): Promise<void> {
     const options: OptionsInterface = this.getJobOptions(cache.jobName)
     const id: string = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, cache.parameters)
-    if (this.rules.has(id)) return
+    let rule: Rule | undefined = this.rules.get(id)
 
-    const RuleClass = this.ruleClasses.find(ruleClass => ruleClass.name === cache.name)
-    if (RuleClass) {
+    if (!rule) {
+      const RuleClass: typeof Rule | undefined = this.ruleClasses.find(ruleClass => ruleClass.name === cache.name)
+      if (!RuleClass) {
+        return
+      }
+
+      this.emit('log', [{ severity: 'warning', text: JSON.stringify(cache) }])
       const parameters: File[] = []
       for (const filePath of cache.parameters) {
         const parameter: File | undefined = await this.getFile(filePath)
         if (!parameter) break
         parameters.push(parameter)
       }
-      const rule: Rule = new RuleClass(this, cache.command, cache.phase, options, parameters)
+      rule = new RuleClass(this, cache.command, cache.phase, options, parameters)
       this.addNode(rule.id)
       await rule.initialize()
       this.rules.set(rule.id, rule)
-      await rule.getInputs(cache.inputs)
-      const outputs: File[] = await rule.getOutputs(cache.outputs)
-      if (RuleClass.alwaysEvaluate || outputs.length !== cache.outputs.length) {
-        // At least one of the outputs is missing or the rule should always run.
-        rule.addActions()
-      }
-      for (const input of rule.inputs) {
-        await rule.addFileActions(input)
-      }
+    }
+
+    await rule.getInputs(cache.inputs)
+    const outputs: File[] = await rule.getOutputs(cache.outputs)
+    if ((rule.constructor as typeof Rule).alwaysEvaluate || outputs.length !== cache.outputs.length) {
+      // At least one of the outputs is missing or the rule should always run.
+      rule.addActions()
+    }
+    for (const input of rule.inputs) {
+      await rule.addFileActions(input)
     }
   }
 
