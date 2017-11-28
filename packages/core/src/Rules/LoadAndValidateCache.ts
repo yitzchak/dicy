@@ -51,6 +51,10 @@ export default class LoadAndValidateCache extends Rule {
         await this.deleteFile(file, jobName, false)
       }
     }
+
+    for (const rule of Array.from(this.rules)) {
+      this.removeRule(rule)
+    }
   }
 
   async loadCache () {
