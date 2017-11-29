@@ -551,8 +551,40 @@ export default class StateConsumer implements EventEmitter {
     return this.state.getRuleId(name, command, phase, jobName, parameters)
   }
 
-  addCachedRule (cache: RuleCache): Promise<void> {
-    return this.state.addCachedRule(cache)
+  async addCachedRule (cache: RuleCache): Promise<void> {
+    const id: string = this.getRuleId(cache.name, cache.command, cache.phase, cache.jobName, cache.parameters)
+    let rule: Rule | undefined = this.state.getRule(cache.name, cache.command, cache.phase, cache.jobName, cache.parameters)
+
+    if (!rule) {
+      const RuleClass: typeof Rule | undefined = this.ruleClasses.find(ruleClass => ruleClass.name === cache.name)
+      if (!RuleClass) {
+        this.error(`Unable to create rule ${id} since there is no rule type named ${cache.name} available.`)
+        return
+      }
+
+      const options: OptionsInterface = this.getJobOptions(cache.jobName)
+      const parameters: File[] = await this.getFiles(cache.parameters)
+
+      if (parameters.length !== cache.parameters.length) {
+        this.warning(`Unable to create rule ${id} since not all parameters could be found.`)
+        return
+      }
+
+      rule = new RuleClass(this.state, cache.command, cache.phase, options, parameters)
+      await rule.initialize()
+
+      await this.addRule(rule)
+    }
+
+    await rule.getInputs(cache.inputs)
+    const outputs: File[] = await rule.getOutputs(cache.outputs)
+    if ((rule.constructor as typeof Rule).alwaysEvaluate || outputs.length !== cache.outputs.length) {
+      // At least one of the outputs is missing or the rule should always run.
+      rule.addActions()
+    }
+    for (const input of rule.inputs) {
+      await rule.addFileActions(input)
+    }
   }
 
   async addCachedFile (filePath: string, fileCache: FileCache): Promise<void> {

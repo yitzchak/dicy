@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import * as path from 'path'
 
@@ -17,7 +18,7 @@ describe('FindLogFiles', () => {
     it('finds all log files when output directory is not set.', async (done) => {
       const { rule } = await initialize()
 
-      expect(await rule.run()).toBe(true)
+      expect(await rule.run()).toBeTrue()
 
       const filePaths = Array.from(rule.files).map(file => file.filePath)
 
@@ -35,7 +36,7 @@ describe('FindLogFiles', () => {
         }
       })
 
-      expect(await rule.run()).toBe(true)
+      expect(await rule.run()).toBeTrue()
 
       const filePaths = Array.from(rule.files).map(file => file.filePath)
 

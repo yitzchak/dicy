@@ -1,5 +1,7 @@
 /// <reference path="../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../node_modules/@types/jasmine-expect/index.d.ts" />
 
+import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 
@@ -13,8 +15,6 @@ const ASYNC_TIMEOUT = 50000
 describe('Builder', () => {
   let dicy: Builder
   let fixturesPath: string
-  const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
-  let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw)$/i })
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()
@@ -23,6 +23,9 @@ describe('Builder', () => {
   })
 
   describe('can successfully build', () => {
+    const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
+    let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw)$/i })
+
     for (const name of tests) {
       const spec: any = it(name, async (done) => {
         let expected: Message[] = []
@@ -40,7 +43,7 @@ describe('Builder', () => {
         }
 
         // Run the builder
-        expect(await dicy.run(['load'])).toBeTruthy()
+        expect(await dicy.run(['load'])).toBeTrue()
 
         if (!await dicy.run(['test'])) {
           const errorMessages: string = messages.filter(message => message.severity === 'error').map(formatMessage).join('\n')
@@ -49,12 +52,28 @@ describe('Builder', () => {
           return
         }
 
-        expect(await dicy.run(['build', 'log', 'save'])).toBeTruthy()
+        expect(await dicy.run(['build', 'log', 'save'])).toBeTrue()
 
         expect(messages).toReceiveMessages(expected)
 
         done()
       }, ASYNC_TIMEOUT)
     }
+  })
+
+  describe('Caching functionality', () => {
+    it('Correctly loads and validates cache if outputs have been removed with copy targets enabled.', async (done) => {
+      const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
+      const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
+      let messages: Message[] = []
+      dicy = await Builder.create(filePath)
+      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
+
+      expect(await dicy.run(['load', 'build'])).toBeTrue()
+      expect(messages).toReceiveMessages([])
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+
+      done()
+    })
   })
 })

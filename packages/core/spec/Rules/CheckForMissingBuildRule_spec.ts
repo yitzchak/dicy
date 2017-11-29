@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import CheckForMissingBuildRule from '../../src/Rules/CheckForMissingBuildRule'
 import Rule from '../../src/Rule'
@@ -22,7 +23,7 @@ describe('CheckForMissingBuildRule', () => {
         }]
       })
 
-      expect(await CheckForMissingBuildRule.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await CheckForMissingBuildRule.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -34,7 +35,7 @@ describe('CheckForMissingBuildRule', () => {
         }]
       })
 
-      expect(await CheckForMissingBuildRule.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await CheckForMissingBuildRule.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -49,7 +50,7 @@ describe('CheckForMissingBuildRule', () => {
 
         await dicy.addRule(otherRule)
 
-        expect(await rule.run()).toBe(true)
+        expect(await rule.run()).toBeTrue()
         expect(rule.log).not.toHaveBeenCalled()
       } else {
         fail('Unable to retrieve test file.')
@@ -61,7 +62,7 @@ describe('CheckForMissingBuildRule', () => {
     it('run fails and logs an error messages when build rules are not present.', async (done) => {
       const { rule } = await initialize()
 
-      expect(await rule.run()).toBe(false)
+      expect(await rule.run()).toBeFalse()
       expect(rule.log).toHaveBeenCalledWith({
         severity: 'error',
         name: 'CheckForMissingBuildRule(build;finalize;;LaTeX_article.tex)',
@@ -81,7 +82,7 @@ describe('CheckForMissingBuildRule', () => {
 
         await dicy.addRule(otherRule)
 
-        expect(await rule.run()).toBe(true)
+        expect(await rule.run()).toBeTrue()
         expect(rule.log).not.toHaveBeenCalled()
       } else {
         fail('Unable to retrieve test file.')
@@ -95,7 +96,7 @@ describe('CheckForMissingBuildRule', () => {
         options: { jobName: 'foo' }
       })
 
-      expect(await rule.run()).toBe(false)
+      expect(await rule.run()).toBeFalse()
       expect(rule.log).toHaveBeenCalledWith({
         severity: 'error',
         name: 'CheckForMissingBuildRule(build;finalize;foo;LaTeX_article.tex)',

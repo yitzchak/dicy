@@ -3,6 +3,14 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.12.1][] - 2017-11-29
+
+### Fixed
+
+-   Cache validation no longer fails if output directory or other outputs have
+    be deleted since cache was written. This fixes an issue copying targets to
+    root after the output directory has been manually deleted by the user.
+
 ## [v0.12.0][] - 2017-11-25
 
 ### Added
@@ -236,6 +244,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     `sage`.
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
+
+[v0.12.1]: https://github.com/yitzchak/dicy/compare/v0.12.0...v0.12.1
 
 [v0.12.0]: https://github.com/yitzchak/dicy/compare/v0.12.0-pre.0...v0.12.0
 

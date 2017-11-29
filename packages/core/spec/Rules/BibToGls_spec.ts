@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import BibToGls from '../../src/Rules/BibToGls'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -39,7 +40,7 @@ describe('BibToGls', () => {
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual([])
+        expect(actions).toBeEmptyArray()
       }
 
       done()

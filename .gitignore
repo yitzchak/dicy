@@ -3,4 +3,3 @@ lib
 output
 npm-debug.log
 lerna-debug.log
-*-cache.yaml

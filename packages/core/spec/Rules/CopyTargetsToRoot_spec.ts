@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import * as path from 'path'
 
@@ -24,7 +25,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -37,7 +38,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -50,7 +51,7 @@ describe('CopyTargetsToRoot', () => {
       })
 
       rule.addTarget(filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -60,7 +61,7 @@ describe('CopyTargetsToRoot', () => {
         options: { copyTargetsToRoot: true }
       })
 
-      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -69,7 +70,7 @@ describe('CopyTargetsToRoot', () => {
       const { rule } = await initialize()
 
       rule.addTarget(rule.firstParameter.filePath)
-      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await CopyTargetsToRoot.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -97,7 +98,7 @@ describe('CopyTargetsToRoot', () => {
 
       spyOn(rule.firstParameter, 'copy')
 
-      expect(await rule.run()).toBe(true)
+      expect(await rule.run()).toBeTrue()
       expect(rule.firstParameter.copy).toHaveBeenCalledWith(destination)
 
       done()

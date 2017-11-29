@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import * as path from 'path'
 
@@ -49,7 +50,7 @@ describe('SaveCache', () => {
     it('verifies that run action is removed if all outputs are virtual', async (done) => {
       await saveCache.preEvaluate()
 
-      expect(saveCache.actions.has('run')).toBeFalsy()
+      expect(saveCache.actions.has('run')).toBeFalse()
 
       done()
     })
@@ -58,7 +59,7 @@ describe('SaveCache', () => {
       await otherRule.getOutput('PortableDocumentFormat.pdf')
       await saveCache.preEvaluate()
 
-      expect(saveCache.actions.has('run')).toBeTruthy()
+      expect(saveCache.actions.has('run')).toBeTrue()
 
       done()
     })
@@ -112,7 +113,7 @@ describe('SaveCache', () => {
 
       await otherRule.getInput('LaTeX_article.tex')
 
-      expect(await saveCache.run()).toBe(true)
+      expect(await saveCache.run()).toBeTrue()
 
       expect(File.writeYaml).toHaveBeenCalledWith(cachePath, expectedCache)
 

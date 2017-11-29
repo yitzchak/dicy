@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import PsToPdf from '../../src/Rules/PsToPdf'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -19,7 +20,7 @@ describe('PsToPdf', () => {
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await PsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await PsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -29,7 +30,7 @@ describe('PsToPdf', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(await PsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await PsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })

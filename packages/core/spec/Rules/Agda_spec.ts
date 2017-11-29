@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import Agda from '../../src/Rules/Agda'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -17,7 +18,7 @@ describe('Agda', () => {
     it('returns true if literateAgdaEngine is \'agda\'', async (done) => {
       const { rule } = await initialize()
 
-      expect(await Agda.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await Agda.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -27,7 +28,7 @@ describe('Agda', () => {
         options: { literateAgdaEngine: 'lhs2TeX' }
       })
 
-      expect(await Agda.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await Agda.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })

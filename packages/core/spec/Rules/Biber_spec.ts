@@ -68,7 +68,7 @@ describe('Biber', () => {
           }]
         }
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual([])
+        expect(actions).toBeEmptyArray()
       }
 
       done()
