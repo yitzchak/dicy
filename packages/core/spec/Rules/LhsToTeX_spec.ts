@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import LhsToTeX from '../../src/Rules/LhsToTeX'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -17,7 +18,7 @@ describe('LhsToTeX', () => {
     it('returns true if file type is \'LiterateHaskell\'', async (done) => {
       const { rule } = await initialize()
 
-      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -28,7 +29,7 @@ describe('LhsToTeX', () => {
         options: { literateAgdaEngine: 'lhs2TeX' }
       })
 
-      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -38,7 +39,7 @@ describe('LhsToTeX', () => {
         parameters: [{ filePath: 'LiterateAgda.lagda' }]
       })
 
-      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await LhsToTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })

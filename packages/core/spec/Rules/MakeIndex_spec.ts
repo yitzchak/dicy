@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import MakeIndex from '../../src/Rules/MakeIndex'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -31,7 +32,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await MakeIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -54,7 +55,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await MakeIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -78,7 +79,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(await MakeIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await MakeIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -139,7 +140,7 @@ describe('MakeIndex', () => {
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual([])
+        expect(actions).toBeEmptyArray()
       }
 
       done()
@@ -152,7 +153,7 @@ describe('MakeIndex', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(true)
+      expect(rule.actions.has('run')).toBeTrue()
 
       done()
     })
@@ -178,7 +179,7 @@ describe('MakeIndex', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(false)
+      expect(rule.actions.has('run')).toBeFalse()
 
       done()
     })
@@ -204,7 +205,7 @@ describe('MakeIndex', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(true)
+      expect(rule.actions.has('run')).toBeTrue()
 
       done()
     })
@@ -230,7 +231,7 @@ describe('MakeIndex', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(true)
+      expect(rule.actions.has('run')).toBeTrue()
 
       done()
     })
@@ -265,8 +266,8 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(rule.options.indexAutomaticRanges).toBe(false)
-      expect(rule.options.indexCompressBlanks).toBe(true)
+      expect(rule.options.indexAutomaticRanges).toBeFalse()
+      expect(rule.options.indexCompressBlanks).toBeTrue()
       expect(rule.options.indexLogPath).toBe('foo.ilg')
       expect(rule.options.indexOutputPath).toBe('foo.ind')
       expect(rule.options.indexOrdering).toBe('letter')
@@ -344,7 +345,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      expect(rule.options.indexCompressBlanks).toBe(false)
+      expect(rule.options.indexCompressBlanks).toBeFalse()
 
       done()
     })
@@ -375,7 +376,7 @@ describe('MakeIndex', () => {
 
       expect(rule.options.indexDictionary).toBe('foo')
       expect(rule.options.indexEngine).toBe('mendex')
-      expect(rule.options.indexForceKanji).toBe(true)
+      expect(rule.options.indexForceKanji).toBeTrue()
       expect(rule.options.kanji).toBe('utf8')
       expect(rule.options.kanjiInternal).toBe('euc')
 

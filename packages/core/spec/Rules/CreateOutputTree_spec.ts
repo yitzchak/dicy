@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import * as fs from 'fs-extra'
 import * as path from 'path'
@@ -16,7 +17,7 @@ describe('CreateOutputTree', () => {
     it('returns false if outputDirectory is not set.', async (done) => {
       const { rule } = await initialize()
 
-      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBe(false)
+      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBeFalse()
 
       done()
     })
@@ -26,7 +27,7 @@ describe('CreateOutputTree', () => {
         options: { outputDirectory: '.' }
       })
 
-      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBe(false)
+      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBeFalse()
 
       done()
     })
@@ -36,7 +37,7 @@ describe('CreateOutputTree', () => {
         options: { outputDirectory: 'foo' }
       })
 
-      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBe(true)
+      expect(await CreateOutputTree.isApplicable(rule, 'build', 'initialize')).toBeTrue()
 
       done()
     })
@@ -71,7 +72,7 @@ describe('CreateOutputTree', () => {
       ].map(dir => [path.normalize(path.resolve(rule.rootPath, dir))])
       await createTree(rule)
 
-      expect(await rule.run()).toBeTruthy()
+      expect(await rule.run()).toBeTrue()
       expect(ensureDirSpy.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
@@ -96,7 +97,7 @@ describe('CreateOutputTree', () => {
       ].map(dir => [path.normalize(path.resolve(rule.rootPath, dir))])
       await createTree(rule)
 
-      expect(await rule.run()).toBeTruthy()
+      expect(await rule.run()).toBeTrue()
       expect(ensureDirSpy.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()
@@ -123,7 +124,7 @@ describe('CreateOutputTree', () => {
       ].map(dir => [path.normalize(path.resolve(rule.rootPath, dir))])
       await createTree(rule)
 
-      expect(await rule.run()).toBeTruthy()
+      expect(await rule.run()).toBeTrue()
       expect(ensureDirSpy.calls.allArgs()).toEqual(jasmine.arrayWithExactContents(expectedDirectories))
 
       done()

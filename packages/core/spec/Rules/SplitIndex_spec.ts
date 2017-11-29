@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import SplitIndex from '../../src/Rules/SplitIndex'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -19,7 +20,7 @@ describe('SplitIndex', () => {
     it('returns false if there are no splitindex notices in the log.', async (done) => {
       const { rule } = await initialize()
 
-      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -42,7 +43,7 @@ describe('SplitIndex', () => {
         }]
       })
 
-      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -66,7 +67,7 @@ describe('SplitIndex', () => {
         }]
       })
 
-      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await SplitIndex.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -103,7 +104,7 @@ describe('SplitIndex', () => {
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual([])
+        expect(actions).toBeEmptyArray()
       }
 
       done()

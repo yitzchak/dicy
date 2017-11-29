@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import ReportLogMessages from '../../src/Rules/ReportLogMessages'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -33,7 +34,7 @@ describe('ReportLogMessages', () => {
         }]
       })
 
-      expect(await rule.run()).toBe(true)
+      expect(await rule.run()).toBeTrue()
       expect(rule.log).toHaveBeenCalledWith({
         severity: 'info',
         text: 'foo'
@@ -48,7 +49,7 @@ describe('ReportLogMessages', () => {
     it('does not log any messages when there are none in the parsed log file.', async (done) => {
       const { rule } = await initialize()
 
-      expect(await rule.run()).toBe(true)
+      expect(await rule.run()).toBeTrue()
       expect(rule.log).not.toHaveBeenCalled()
 
       done()

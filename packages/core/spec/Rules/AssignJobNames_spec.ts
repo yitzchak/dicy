@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import AssignJobNames from '../../src/Rules/AssignJobNames'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -14,9 +15,9 @@ describe('AssignJobNames', () => {
       const source = await rule.getFile(rule.options.filePath)
 
       if (source) {
-        expect(await rule.run()).toBe(true)
+        expect(await rule.run()).toBeTrue()
 
-        expect(Array.from(source.jobNames.values())).toEqual([])
+        expect(Array.from(source.jobNames.values())).toBeEmptyArray()
       } else {
         fail('Unable to retrieve test file.')
       }
@@ -29,7 +30,7 @@ describe('AssignJobNames', () => {
       const source = await rule.getFile(rule.options.filePath)
 
       if (source) {
-        expect(await rule.run()).toBe(true)
+        expect(await rule.run()).toBeTrue()
 
         expect(Array.from(source.jobNames.values())).toEqual(['foo'])
       } else {

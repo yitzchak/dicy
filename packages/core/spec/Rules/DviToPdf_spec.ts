@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import DviToPdf from '../../src/Rules/DviToPdf'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -19,7 +20,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'pdf' }
       })
 
-      expect(await DviToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await DviToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -29,7 +30,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(await DviToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await DviToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -39,7 +40,7 @@ describe('DviToPdf', () => {
         options: { outputFormat: 'pdf', intermediatePostScript: true }
       })
 
-      expect(await DviToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await DviToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })

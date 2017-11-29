@@ -3,6 +3,9 @@
   "spec_files": [
     "**/*_spec.ts"
   ],
+  "helpers": [
+    "../node_modules/jasmine-expect/index.js"
+  ],
   "stopSpecOnExpectationFailure": false,
   "random": false
 }

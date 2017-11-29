@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import BibTeX from '../../src/Rules/BibTeX'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -39,7 +40,7 @@ describe('BibTeX', () => {
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual([])
+        expect(actions).toBeEmptyArray()
       }
 
       done()
@@ -87,7 +88,7 @@ describe('BibTeX', () => {
           }]
         }
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual([])
+        expect(actions).toBeEmptyArray()
       }
 
       done()

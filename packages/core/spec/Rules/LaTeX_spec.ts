@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import LaTeX from '../../src/Rules/LaTeX'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -18,7 +19,7 @@ describe('LaTeX', () => {
         }]
       })
 
-      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -30,7 +31,7 @@ describe('LaTeX', () => {
         }]
       })
 
-      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -43,7 +44,7 @@ describe('LaTeX', () => {
       })
       const parameters = await rule.getFiles(['LaTeX_standalone.tex'])
 
-      expect(await LaTeX.isApplicable(rule, 'build', 'execute', parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule, 'build', 'execute', parameters)).toBeFalse()
 
       done()
     })
@@ -56,7 +57,7 @@ describe('LaTeX', () => {
         options: { literateAgdaEngine: 'none' }
       })
 
-      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -69,7 +70,7 @@ describe('LaTeX', () => {
         options: { literateAgdaEngine: 'agda' }
       })
 
-      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -82,7 +83,7 @@ describe('LaTeX', () => {
         options: { literateHaskellEngine: 'none' }
       })
 
-      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -95,7 +96,7 @@ describe('LaTeX', () => {
         options: { literateHaskellEngine: 'lhs2TeX' }
       })
 
-      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await LaTeX.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })

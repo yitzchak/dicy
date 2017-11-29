@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
+/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
 
 import EpsToPdf from '../../src/Rules/EpsToPdf'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -21,7 +22,7 @@ describe('EpsToPdf', () => {
         filePath: 'file-types/EncapsulatedPostScript.eps'
       })
 
-      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -29,7 +30,7 @@ describe('EpsToPdf', () => {
     it('returns false if EPS file is not the main source file.', async (done) => {
       const { rule } = await initialize()
 
-      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -53,7 +54,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(true)
+      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeTrue()
 
       done()
     })
@@ -77,7 +78,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBe(false)
+      expect(await EpsToPdf.isApplicable(rule, 'build', 'execute', rule.parameters)).toBeFalse()
 
       done()
     })
@@ -102,7 +103,7 @@ describe('EpsToPdf', () => {
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual([])
+        expect(actions).toBeEmptyArray()
       }
 
       done()
@@ -115,7 +116,7 @@ describe('EpsToPdf', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(true)
+      expect(rule.actions.has('run')).toBeTrue()
 
       done()
     })
@@ -141,7 +142,7 @@ describe('EpsToPdf', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(false)
+      expect(rule.actions.has('run')).toBeFalse()
 
       done()
     })
@@ -167,7 +168,7 @@ describe('EpsToPdf', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(true)
+      expect(rule.actions.has('run')).toBeTrue()
 
       done()
     })
@@ -193,7 +194,7 @@ describe('EpsToPdf', () => {
 
       rule.addActions()
       await rule.preEvaluate()
-      expect(rule.actions.has('run')).toBe(true)
+      expect(rule.actions.has('run')).toBeTrue()
 
       done()
     })
@@ -225,7 +226,7 @@ describe('EpsToPdf', () => {
 
       expect(rule.options.epstopdfBoundingBox).toBe('hires')
       expect(rule.options.epstopdfOutputPath).toBe('foo.pdf')
-      expect(rule.options.epstopdfRestricted).toBe(true)
+      expect(rule.options.epstopdfRestricted).toBeTrue()
 
       done()
     })
