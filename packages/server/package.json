@@ -1,6 +1,6 @@
 {
   "name": "@dicy/server",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "JSON-RPC server for DiCy.",
   "keywords": [
     "latex",
@@ -30,7 +30,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@dicy/core": "^0.12.0",
+    "@dicy/core": "^0.12.1",
     "vscode-jsonrpc": "^3.5.0",
     "yargs": "^10.0.3"
   },
