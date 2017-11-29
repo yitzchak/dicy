@@ -1,0 +1,377 @@
+version: 0.10.0
+filePath: copy-targets.tex
+options:
+  $BIBINPUTS:
+    - $ROOTDIR
+    - $ROOTDIR/$OUTDIR
+    - ''
+  $TEXINPUTS:
+    - $ROOTDIR
+    - $ROOTDIR/$OUTDIR
+    - ''
+  bibtexEngine: bibtex
+  cleanPatterns:
+    - $OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)
+    - /$OUTDIR/_minted-$JOB/*
+  dviToPdfEngine: xdvipdfmx
+  engine: pdflatex
+  epstopdfBoundingBox: default
+  epstopdfOutputPath: $DIR_0/$NAME_0.pdf
+  indexAutomaticRanges: true
+  indexEngine: makeindex
+  indexOrdering: word
+  indexSorting: default
+  knitrConcordance: true
+  knitrOutputPath: $JOB.tex
+  lhs2texStyle: poly
+  literateAgdaEngine: agda
+  literateHaskellEngine: lhs2TeX
+  loadCache: true
+  loadUserOptions: false
+  outputFormat: pdf
+  phaseCycles: 20
+  pweaveCacheDirectory: pweave-cache-for-$JOB
+  pweaveFigureDirectory: pweave-figures-for-$JOB
+  pweaveKernel: python3
+  pweaveOutputFormat: tex
+  pweaveOutputPath: $JOB.tex
+  saveCache: true
+  severity: error
+  validateCache: true
+  $SOURCE_DATE_EPOCH: 1499001396
+  logCategory: command
+  outputDirectory: output
+  copyTargetsToRoot: true
+files:
+  dicy-instance.yaml-ParsedYAML:
+    timeStamp: 2017-11-29T17:09:53.497Z
+    jobNames: []
+    value: {}
+    type: ParsedYAML
+  dicy.yaml-ParsedYAML:
+    timeStamp: 2017-11-29T17:09:06.205Z
+    jobNames: []
+    value:
+      $SOURCE_DATE_EPOCH: 1499001396
+      loadUserOptions: false
+      logCategory: command
+    type: ParsedYAML
+  copy-targets.yaml-ParsedYAML:
+    jobNames: []
+    type: ParsedYAML
+  copy-targets.tex-ParsedLaTeXMagic:
+    timeStamp: 2017-11-29T17:09:06.209Z
+    jobNames: []
+    value:
+      outputDirectory: output
+      copyTargetsToRoot: true
+      severity: error
+    type: ParsedLaTeXMagic
+  copy-targets.tex:
+    timeStamp: 2017-11-29T17:08:12.317Z
+    jobNames: []
+    hash: h2B7/rQyX4QZg/HQOeR4rWYCTzgU2LI6hAgUc94jBCY=
+    type: LaTeX
+    subType: article
+  dicy.yaml:
+    timeStamp: 2017-11-29T17:02:09.733Z
+    jobNames: []
+    hash: HsAHlhCBwuzBqGipGDCdLl2asYF6ttQU+2M0pLHyTsM=
+    type: YAML
+  x.y-Nil:
+    jobNames: []
+    type: Nil
+  output/copy-targets.fls-ParsedFileListing:
+    timeStamp: 2017-11-29T17:09:06.498Z
+    jobNames: []
+    value:
+      messages: []
+      inputs:
+        - copy-targets.tex
+        - output/copy-targets.aux
+      outputs:
+        - output/copy-targets.aux
+        - output/copy-targets.log
+        - output/copy-targets.pdf
+      calls: []
+    type: ParsedFileListing
+  output/copy-targets.log-ParsedLaTeXLog:
+    timeStamp: 2017-11-29T17:09:06.710Z
+    jobNames: []
+    value:
+      messages:
+        - severity: info
+          name: pdfTeX
+          category: LaTeX Font
+          text: Checking defaults for OML/cmm/m/it ... okay
+          source:
+            file: copy-targets.tex
+            range:
+              start: 5
+              end: 5
+          log:
+            file: output/copy-targets.log
+            range:
+              start: 31
+              end: 32
+        - severity: info
+          name: pdfTeX
+          category: LaTeX Font
+          text: Checking defaults for T1/cmr/m/n ... okay
+          source:
+            file: copy-targets.tex
+            range:
+              start: 5
+              end: 5
+          log:
+            file: output/copy-targets.log
+            range:
+              start: 33
+              end: 34
+        - severity: info
+          name: pdfTeX
+          category: LaTeX Font
+          text: Checking defaults for OT1/cmr/m/n ... okay
+          source:
+            file: copy-targets.tex
+            range:
+              start: 5
+              end: 5
+          log:
+            file: output/copy-targets.log
+            range:
+              start: 35
+              end: 36
+        - severity: info
+          name: pdfTeX
+          category: LaTeX Font
+          text: Checking defaults for OMS/cmsy/m/n ... okay
+          source:
+            file: copy-targets.tex
+            range:
+              start: 5
+              end: 5
+          log:
+            file: output/copy-targets.log
+            range:
+              start: 37
+              end: 38
+        - severity: info
+          name: pdfTeX
+          category: LaTeX Font
+          text: Checking defaults for OMX/cmex/m/n ... okay
+          source:
+            file: copy-targets.tex
+            range:
+              start: 5
+              end: 5
+          log:
+            file: output/copy-targets.log
+            range:
+              start: 39
+              end: 40
+        - severity: info
+          name: pdfTeX
+          category: LaTeX Font
+          text: Checking defaults for U/cmr/m/n ... okay
+          source:
+            file: copy-targets.tex
+            range:
+              start: 5
+              end: 5
+          log:
+            file: output/copy-targets.log
+            range:
+              start: 41
+              end: 42
+      inputs: []
+      outputs:
+        - output/copy-targets.pdf
+      calls: []
+    type: ParsedLaTeXLog
+  output/copy-targets.aux:
+    timeStamp: 2017-11-29T17:09:06.690Z
+    jobNames: []
+    hash: M0WgdaIvs7vARWeh5WYO0CQNU/WIH0WKIjTc1Cp40zU=
+    type: LaTeXAuxilary
+  output/copy-targets.fls:
+    timeStamp: 2017-11-29T17:09:06.690Z
+    jobNames: []
+    hash: adYwNo0E0iWpWuCSDzTkHadsaJDOOGrS4gUTdF/uKO8=
+    type: FileListing
+  output/copy-targets.log:
+    timeStamp: 2017-11-29T17:09:06.697Z
+    jobNames: []
+    hash: yK5KKv6/Fy9Oz7rCuWjTIMu3GSrXasnBGsPEALKYrpY=
+    type: LaTeXLog
+    subType: pdfTeX
+  output/copy-targets.aux-ParsedLaTeXAuxilary:
+    timeStamp: 2017-11-29T17:09:06.496Z
+    jobNames: []
+    value:
+      commands:
+        - relax
+    type: ParsedLaTeXAuxilary
+  output/copy-targets.pdf:
+    timeStamp: 2017-11-29T17:09:06.697Z
+    jobNames: []
+    hash: BGX+buRw+z8qr0djyUxsoP+bHid11Dr+bfUZKof2eBA=
+    type: PortableDocumentFormat
+  copy-targets.pdf:
+    timeStamp: 2017-11-29T17:09:53.867Z
+    jobNames: []
+    hash: BGX+buRw+z8qr0djyUxsoP+bHid11Dr+bfUZKof2eBA=
+    type: PortableDocumentFormat
+rules:
+  - name: ApplyOptions
+    command: load
+    phase: initialize
+    parameters: []
+    inputs:
+      - dicy-instance.yaml-ParsedYAML
+    outputs: []
+  - name: LoadAndValidateCache
+    command: load
+    phase: initialize
+    parameters: []
+    inputs: []
+    outputs: []
+  - name: ApplyOptions
+    command: load
+    phase: execute
+    parameters: []
+    inputs:
+      - dicy.yaml-ParsedYAML
+      - copy-targets.yaml-ParsedYAML
+      - copy-targets.tex-ParsedLaTeXMagic
+      - dicy-instance.yaml-ParsedYAML
+    outputs: []
+  - name: ParseOptionsFile
+    command: load
+    phase: execute
+    parameters: []
+    inputs:
+      - dicy.yaml
+    outputs:
+      - dicy.yaml-ParsedYAML
+  - name: ParseLaTeXMagic
+    command: load
+    phase: execute
+    parameters:
+      - copy-targets.tex
+    inputs:
+      - copy-targets.tex
+    outputs:
+      - copy-targets.tex-ParsedLaTeXMagic
+  - name: AssignJobNames
+    command: load
+    phase: finalize
+    parameters: []
+    inputs: []
+    outputs: []
+  - name: CreateOutputTree
+    command: build
+    phase: initialize
+    parameters: []
+    inputs: []
+    outputs: []
+  - name: FindLogFiles
+    command: build
+    phase: initialize
+    parameters: []
+    inputs: []
+    outputs: []
+  - name: LaTeX
+    command: build
+    phase: execute
+    parameters:
+      - copy-targets.tex
+    inputs:
+      - copy-targets.tex
+      - output/copy-targets.fls-ParsedFileListing
+      - output/copy-targets.log-ParsedLaTeXLog
+      - output/copy-targets.aux
+    outputs:
+      - output/copy-targets.aux
+      - output/copy-targets.fls
+      - output/copy-targets.log
+      - output/copy-targets.pdf
+  - name: ParseLaTeXAuxilary
+    command: build
+    phase: execute
+    parameters:
+      - output/copy-targets.aux
+    inputs:
+      - output/copy-targets.aux
+    outputs:
+      - output/copy-targets.aux-ParsedLaTeXAuxilary
+  - name: ParseFileListing
+    command: build
+    phase: execute
+    parameters:
+      - output/copy-targets.fls
+    inputs:
+      - output/copy-targets.fls
+    outputs:
+      - output/copy-targets.fls-ParsedFileListing
+  - name: ParseLaTeXLog
+    command: build
+    phase: execute
+    parameters:
+      - output/copy-targets.log
+    inputs:
+      - output/copy-targets.log
+    outputs:
+      - output/copy-targets.log-ParsedLaTeXLog
+  - name: CopyTargetsToRoot
+    command: build
+    phase: execute
+    parameters:
+      - output/copy-targets.pdf
+    inputs:
+      - output/copy-targets.pdf
+    outputs:
+      - copy-targets.pdf
+  - name: LogProducedTargets
+    command: build
+    phase: finalize
+    parameters: []
+    inputs: []
+    outputs: []
+  - name: CheckForMissingBuildRule
+    command: build
+    phase: finalize
+    parameters:
+      - copy-targets.tex
+    inputs:
+      - copy-targets.tex
+    outputs: []
+  - name: SaveCache
+    command: save
+    phase: execute
+    parameters: []
+    inputs: []
+    outputs: []
+  - name: FindLogFiles
+    command: log
+    phase: initialize
+    parameters: []
+    inputs: []
+    outputs: []
+  - name: ReportLogMessages
+    command: log
+    phase: execute
+    parameters:
+      - output/copy-targets.log-ParsedLaTeXLog
+    inputs:
+      - output/copy-targets.log-ParsedLaTeXLog
+    outputs: []
+  - name: ParseLaTeXLog
+    command: log
+    phase: execute
+    parameters:
+      - output/copy-targets.log
+    inputs:
+      - output/copy-targets.log
+    outputs:
+      - output/copy-targets.log-ParsedLaTeXLog

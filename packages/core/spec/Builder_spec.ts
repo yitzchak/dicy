@@ -13,8 +13,6 @@ const ASYNC_TIMEOUT = 50000
 describe('Builder', () => {
   let dicy: Builder
   let fixturesPath: string
-  const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
-  let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw)$/i })
 
   beforeEach(async (done) => {
     fixturesPath = await cloneFixtures()
@@ -23,6 +21,9 @@ describe('Builder', () => {
   })
 
   describe('can successfully build', () => {
+    const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
+    let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw)$/i })
+
     for (const name of tests) {
       const spec: any = it(name, async (done) => {
         let expected: Message[] = []
@@ -56,5 +57,19 @@ describe('Builder', () => {
         done()
       }, ASYNC_TIMEOUT)
     }
+  })
+
+  describe('Caching functionality', () => {
+    it('Correctly loads and validates cache if outputs have been removed with copy targets enabled.', async (done) => {
+      const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
+      let messages: Message[] = []
+      dicy = await Builder.create(filePath)
+      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
+
+      expect(await dicy.run(['load', 'build'])).toBeTruthy()
+      expect(messages).toReceiveMessages([])
+
+      done()
+    })
   })
 })
