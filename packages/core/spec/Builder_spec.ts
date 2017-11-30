@@ -1,6 +1,7 @@
 /// <reference path="../node_modules/@types/jasmine/index.d.ts" />
 /// <reference path="../node_modules/@types/jasmine-expect/index.d.ts" />
 
+const fileUrl = require('file-url')
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
@@ -65,6 +66,7 @@ describe('Builder', () => {
     it('Correctly loads and validates cache if outputs have been removed with copy targets enabled.', async (done) => {
       const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
       const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
+      const outputUrl: string = fileUrl(outputPath)
       let messages: Message[] = []
       dicy = await Builder.create(filePath)
       dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
@@ -72,6 +74,7 @@ describe('Builder', () => {
       expect(await dicy.run(['load', 'build'])).toBeTrue()
       expect(messages).toReceiveMessages([])
       expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await dicy.getTargets()).toEqual([outputUrl])
 
       done()
     })
@@ -80,6 +83,7 @@ describe('Builder', () => {
       const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
       const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
       const outputDirectory: string = path.join(fixturesPath, 'cache-tests', 'output')
+      const outputUrl: string = fileUrl(outputPath)
       let messages: Message[] = []
       dicy = await Builder.create(filePath)
       dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
@@ -87,6 +91,7 @@ describe('Builder', () => {
       expect(await dicy.run(['load', 'build', 'save'])).toBeTrue()
       expect(messages).toReceiveMessages([])
       expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await dicy.getTargets()).toEqual([outputUrl])
 
       messages = []
       await fs.remove(outputPath)
@@ -95,6 +100,31 @@ describe('Builder', () => {
       expect(await dicy.run(['load', 'build'])).toBeTrue()
       expect(messages).toReceiveMessages([])
       expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await dicy.getTargets()).toEqual([outputUrl])
+
+      done()
+    })
+
+    it('Correctly produces targets if a new builder is created.', async (done) => {
+      const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
+      const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
+      const outputUrl: string = fileUrl(outputPath)
+      let messages: Message[] = []
+
+      dicy = await Builder.create(filePath)
+      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
+      expect(await dicy.run(['load', 'build', 'save'])).toBeTrue()
+      expect(messages).toReceiveMessages([])
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await dicy.getTargets()).toEqual([outputUrl])
+
+      messages = []
+      dicy = await Builder.create(filePath)
+      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
+      expect(await dicy.run(['load'])).toBeTrue()
+      expect(messages).toReceiveMessages([])
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await dicy.getTargets()).toEqual([outputUrl])
 
       done()
     })
