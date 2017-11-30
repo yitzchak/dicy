@@ -188,7 +188,12 @@ describe('LaTeX', () => {
           '$OUTDIR/$JOB.fls',
           '$OUTDIR/$JOB.log',
           '$OUTDIR/$JOB.synctex.gz'
-        ]
+        ],
+        targets: [{
+          filePath: '$OUTDIR/$JOB$OUTEXT'
+        }, {
+          filePath: '$OUTDIR/$JOB.synctex.gz'
+        }]
       })
 
       done()

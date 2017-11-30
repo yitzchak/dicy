@@ -89,6 +89,11 @@ export interface ParsedLog {
   calls: ShellCall[]
 }
 
+export interface Target {
+  filePath: string
+  parent?: string
+}
+
 export interface CommandOptions {
   args: string[]
   cd: string
@@ -99,6 +104,7 @@ export interface CommandOptions {
   globbedOutputs?: string[]
   stdout?: boolean | string
   stderr?: boolean | string
+  targets?: Target[]
 }
 
 export interface ProcessResults {

@@ -14,11 +14,6 @@ export default class DviToSvg extends Rule {
     return consumer.options.outputFormat === 'svg'
   }
 
-  async initialize () {
-    // Zap the previous target since we are building a svg
-    await this.replaceResolvedTarget('$FILEPATH_0', '$DIR_0/$NAME_0.svg')
-  }
-
   constructCommand (): CommandOptions {
     return {
       args: [
@@ -29,7 +24,11 @@ export default class DviToSvg extends Rule {
       ],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.svg']
+      outputs: ['$DIR_0/$NAME_0.svg'],
+      targets: [{
+        parent: '$FILEPATH_0',
+        filePath: '$DIR_0/$NAME_0.svg'
+      }]
     }
   }
 }

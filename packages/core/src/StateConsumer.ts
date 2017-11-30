@@ -31,7 +31,6 @@ const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
 export default class StateConsumer implements EventEmitter {
   readonly state: State
   readonly options: OptionsInterface
-  readonly jobName: string | undefined
   readonly env: { [name: string]: string }
 
   private readonly localOptions: { [name: string]: any } = {}
@@ -65,33 +64,24 @@ export default class StateConsumer implements EventEmitter {
     }
   }
 
-  addTarget (filePath: string) {
-    this.state.targets.add(filePath)
+  addTarget (filePath: string, parent?: string): void {
+    this.state.addTarget(filePath, parent)
+  }
+
+  isFinalTarget (filePath: string): boolean {
+    return this.state.isFinalTarget(filePath)
+  }
+
+  addResolvedTarget (filePath: string, parent?: string): void {
+    this.state.addTarget(this.resolvePath(filePath), parent ? this.resolvePath(parent) : undefined)
   }
 
   removeTarget (filePath: string) {
-    this.state.targets.delete(filePath)
-  }
-
-  addResolvedTarget (filePath: string) {
-    this.state.targets.add(this.resolvePath(filePath))
-  }
-
-  async replaceResolvedTarget (oldFilePath: string, newFilePath: string) {
-    const resolvedOldFilePath: string = this.resolvePath(oldFilePath)
-    if (this.state.targets.has(resolvedOldFilePath)) {
-      this.addResolvedTarget(newFilePath)
-    }
-  }
-
-  addResolvedTargets (filePaths: string[]) {
-    for (const filePath of filePaths) {
-      this.addResolvedTarget(filePath)
-    }
+    this.state.removeTarget(filePath)
   }
 
   get targets (): string[] {
-    return Array.from(this.state.targets)
+    return this.state.targets
   }
 
   getTargets (): Promise<string[]> {
@@ -222,13 +212,13 @@ export default class StateConsumer implements EventEmitter {
     return this.state.rules.values()
   }
 
-  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
+  async deleteFile (file: File, jobName?: string | null, unlink: boolean = true): Promise<void> {
     if (file.readOnly) return
 
     const invalidRules: Rule[] = []
 
     for (const rule of this.rules) {
-      if (rule.jobName === jobName) {
+      if (rule.options.jobName || null === jobName) {
         if (await rule.removeFileFromRule(file)) {
           // This file is one of the parameters of the rule so we need to remove
           // the rule.

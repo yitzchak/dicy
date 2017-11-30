@@ -34,11 +34,11 @@ export default class State extends EventEmitter {
   cacheTimeStamp: Date
   processes: Set<number> = new Set<number>()
   env: {[name: string]: string}
-  targets: Set<string> = new Set<string>()
   killToken: KillToken | null
 
   private graph: Graph = new Graph()
   private graphProperties: GraphProperties = {}
+  private targetGraph: Graph = new Graph()
   private optionProxies: Map<string | null, OptionsInterface> = new Map<string | null, OptionsInterface>()
 
   constructor (filePath: string, schema: OptionDefinition[] = []) {
@@ -73,9 +73,26 @@ export default class State extends EventEmitter {
     }
   }
 
+  addTarget (filePath: string, parent?: string): void {
+    if (parent) {
+      this.targetGraph.setEdge(parent, filePath)
+    } else {
+      this.targetGraph.setNode(filePath)
+    }
+  }
+
+  get targets (): string[] {
+    return this.targetGraph.sinks()
+  }
+
+  isFinalTarget (filePath: string): boolean {
+    const outEdges = this.targetGraph.outEdges(filePath)
+    return typeof outEdges !== 'undefined' && outEdges.length === 0
+  }
+
   async getTargets (): Promise<string[]> {
     const results: string[] = []
-    for (const target of this.targets.values()) {
+    for (const target of this.targets) {
       const file: File | undefined = await this.getFile(target)
       if (file) results.push(fileUrl(file.realFilePath))
     }
@@ -83,7 +100,7 @@ export default class State extends EventEmitter {
   }
 
   removeTarget (filePath: string) {
-    this.targets.delete(filePath)
+    this.targetGraph.removeNode(filePath)
   }
 
   normalizePath (filePath: string): string {

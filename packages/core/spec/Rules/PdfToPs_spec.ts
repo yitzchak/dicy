@@ -48,7 +48,11 @@ describe('PdfToPs', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$DIR_0/$NAME_0.ps']
+        outputs: ['$DIR_0/$NAME_0.ps'],
+        targets: [{
+          parent: '$FILEPATH_0',
+          filePath: '$DIR_0/$NAME_0.ps'
+        }]
       })
 
       done()

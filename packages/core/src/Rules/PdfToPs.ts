@@ -14,11 +14,6 @@ export default class PdfToPs extends Rule {
     return consumer.options.outputFormat === 'ps'
   }
 
-  async initialize () {
-    // Zap the previous target since we are building a pdf
-    await this.replaceResolvedTarget('$FILEPATH_0', '$DIR_0/$NAME_0.ps')
-  }
-
   constructCommand (): CommandOptions {
     return {
       args: [
@@ -28,7 +23,11 @@ export default class PdfToPs extends Rule {
       ],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.ps']
+      outputs: ['$DIR_0/$NAME_0.ps'],
+      targets: [{
+        parent: '$FILEPATH_0',
+        filePath: '$DIR_0/$NAME_0.ps'
+      }]
     }
   }
 }

@@ -59,9 +59,7 @@ export default class EpsToPdf extends Rule {
   }
 
   async initialize () {
-    if (this.secondParameter.type === 'Nil') {
-      this.addResolvedTarget('$DIR_0/$NAME_0.pdf')
-    } else {
+    if (this.secondParameter.type !== 'Nil') {
       const call = EpsToPdf.findCall(this.parameters[1].value, this.parameters[0].filePath)
 
       if (call) {
@@ -131,7 +129,11 @@ export default class EpsToPdf extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: [outputPath]
+      outputs: [outputPath],
+      targets: [{
+        parent: '$FILEPATH_0',
+        filePath: outputPath
+      }]
     }
   }
 }

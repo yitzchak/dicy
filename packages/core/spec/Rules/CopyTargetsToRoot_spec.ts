@@ -12,9 +12,8 @@ async function initialize ({
   parameters = [{
     filePath: 'file-types/PortableDocumentFormat.pdf'
   }],
-  targets = ['file-types/PortableDocumentFormat.pdf'],
   ...rest }: RuleDefinition = {}) {
-  return initializeRule({ RuleClass, filePath, parameters, targets, ...rest })
+  return initializeRule({ RuleClass, filePath, parameters, ...rest })
 }
 
 describe('CopyTargetsToRoot', () => {
@@ -76,19 +75,6 @@ describe('CopyTargetsToRoot', () => {
     })
   })
 
-  describe('initialize', () => {
-    it('replaces input target with destination path', async (done) => {
-      const { rule } = await initialize({
-        options: { copyTargetsToRoot: true }
-      })
-
-      expect(rule.state.targets).not.toContain(rule.firstParameter.filePath)
-      expect(rule.state.targets).toContain('PortableDocumentFormat.pdf')
-
-      done()
-    })
-  })
-
   describe('run', () => {
     it('copies target to root path.', async (done) => {
       const { rule } = await initialize({
@@ -100,6 +86,7 @@ describe('CopyTargetsToRoot', () => {
 
       expect(await rule.run()).toBeTrue()
       expect(rule.firstParameter.copy).toHaveBeenCalledWith(destination)
+      expect(rule.state.targets).toEqual(['PortableDocumentFormat.pdf'])
 
       done()
     })

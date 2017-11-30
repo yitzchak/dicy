@@ -13,14 +13,8 @@ export default class CopyTargetsToRoot extends Rule {
   static alwaysEvaluate: boolean = true
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return !!consumer.options.copyTargetsToRoot &&
-      parameters.every(file => !file.virtual && consumer.targets.includes(file.filePath) && path.dirname(file.filePath) !== '.')
-  }
-
-  async initialize () {
-    // Remove the old target and replace with the new one.
-    this.removeTarget(this.firstParameter.filePath)
-    this.addResolvedTarget('$BASE_0')
+    return consumer.options.copyTargetsToRoot &&
+      parameters.every(file => !file.virtual && consumer.isFinalTarget(file.filePath) && path.dirname(file.filePath) !== '.')
   }
 
   async run () {
@@ -28,6 +22,9 @@ export default class CopyTargetsToRoot extends Rule {
     const filePath = this.resolvePath('$ROOTDIR/$BASE_0')
     await this.firstParameter.copy(filePath)
     await this.getOutput(filePath)
+
+    this.addResolvedTarget('$BASE_0', '$FILEPATH_0')
+
     return true
   }
 }

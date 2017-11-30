@@ -16,11 +16,6 @@ export default class DviToPs extends Rule {
       (consumer.options.outputFormat === 'pdf' && !!consumer.options.intermediatePostScript)
   }
 
-  async initialize () {
-    // Zap the previous target since we are building a ps
-    await this.replaceResolvedTarget('$FILEPATH_0', '$DIR_0/$NAME_0.ps')
-  }
-
   constructCommand (): CommandOptions {
     return {
       args: [
@@ -31,7 +26,11 @@ export default class DviToPs extends Rule {
       ],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.ps']
+      outputs: ['$DIR_0/$NAME_0.ps'],
+      targets: [{
+        parent: '$FILEPATH_0',
+        filePath: '$DIR_0/$NAME_0.ps'
+      }]
     }
   }
 }

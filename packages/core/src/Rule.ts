@@ -301,6 +301,12 @@ export default class Rule extends StateConsumer {
         if (output) output.value = result.stderr
       }
 
+      if (commandOptions.targets) {
+        for (const target of commandOptions.targets) {
+          this.addResolvedTarget(target.filePath, target.parent)
+        }
+      }
+
       return result
     } catch (error) {
       this.log({ severity: commandOptions.severity, text: error.toString(), name: this.constructor.name })

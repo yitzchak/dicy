@@ -31,10 +31,6 @@ export default class LaTeX extends Rule {
       '$OUTDIR/$JOB.fls-ParsedFileListing',
       '$OUTDIR/$JOB.log-ParsedLaTeXLog'
     ])
-    this.addResolvedTargets([
-      '$OUTDIR/$JOB$OUTEXT',
-      '$OUTDIR/$JOB.synctex.gz'
-    ])
   }
 
   async getFileActions (file: File): Promise<Action[]> {
@@ -123,7 +119,12 @@ export default class LaTeX extends Rule {
         '$OUTDIR/$JOB.fls',
         '$OUTDIR/$JOB.log',
         '$OUTDIR/$JOB.synctex.gz'
-      ]
+      ],
+      targets: [{
+        filePath: '$OUTDIR/$JOB$OUTEXT'
+      }, {
+        filePath: '$OUTDIR/$JOB.synctex.gz'
+      }]
     }
   }
 }
