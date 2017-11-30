@@ -75,5 +75,28 @@ describe('Builder', () => {
 
       done()
     })
+
+    it('Correctly rebuilds if outputs have been removed with copy targets enabled.', async (done) => {
+      const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
+      const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
+      const outputDirectory: string = path.join(fixturesPath, 'cache-tests', 'output')
+      let messages: Message[] = []
+      dicy = await Builder.create(filePath)
+      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
+
+      expect(await dicy.run(['load', 'build', 'save'])).toBeTrue()
+      expect(messages).toReceiveMessages([])
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+
+      messages = []
+      await fs.remove(outputPath)
+      await fs.remove(outputDirectory)
+
+      expect(await dicy.run(['load', 'build'])).toBeTrue()
+      expect(messages).toReceiveMessages([])
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+
+      done()
+    })
   })
 })
