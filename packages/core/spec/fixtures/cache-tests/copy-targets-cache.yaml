@@ -1,4 +1,4 @@
-version: 0.10.0
+version: 0.13.0
 filePath: copy-targets.tex
 options:
   $BIBINPUTS:
@@ -228,7 +228,8 @@ rules:
     phase: initialize
     parameters: []
     inputs:
-      - dicy-instance.yaml-ParsedYAML
+      - file: dicy-instance.yaml-ParsedYAML
+        type: default
     outputs: []
   - name: LoadAndValidateCache
     command: load
@@ -241,28 +242,36 @@ rules:
     phase: execute
     parameters: []
     inputs:
-      - dicy.yaml-ParsedYAML
-      - copy-targets.yaml-ParsedYAML
-      - copy-targets.tex-ParsedLaTeXMagic
-      - dicy-instance.yaml-ParsedYAML
+      - file: dicy.yaml-ParsedYAML
+        type: default
+      - file: copy-targets.yaml-ParsedYAML
+        type: default
+      - file: copy-targets.tex-ParsedLaTeXMagic
+        type: default
+      - file: dicy-instance.yaml-ParsedYAML
+        type: default
     outputs: []
   - name: ParseOptionsFile
     command: load
     phase: execute
     parameters: []
     inputs:
-      - dicy.yaml
+      - file: dicy.yaml
+        type: default
     outputs:
-      - dicy.yaml-ParsedYAML
+      - file: dicy.yaml-ParsedYAML
+        type: default
   - name: ParseLaTeXMagic
     command: load
     phase: execute
     parameters:
       - copy-targets.tex
     inputs:
-      - copy-targets.tex
+      - file: copy-targets.tex
+        type: default
     outputs:
-      - copy-targets.tex-ParsedLaTeXMagic
+      - file: copy-targets.tex-ParsedLaTeXMagic
+        type: default
   - name: AssignJobNames
     command: load
     phase: finalize
@@ -287,51 +296,67 @@ rules:
     parameters:
       - copy-targets.tex
     inputs:
-      - copy-targets.tex
-      - output/copy-targets.fls-ParsedFileListing
-      - output/copy-targets.log-ParsedLaTeXLog
-      - output/copy-targets.aux
+      - file: copy-targets.tex
+        type: default
+      - file: output/copy-targets.fls-ParsedFileListing
+        type: default
+      - file: output/copy-targets.log-ParsedLaTeXLog
+        type: default
+      - file: output/copy-targets.aux
+        type: default
     outputs:
-      - output/copy-targets.aux
-      - output/copy-targets.fls
-      - output/copy-targets.log
-      - output/copy-targets.pdf
+      - file: output/copy-targets.aux
+        type: default
+      - file: output/copy-targets.fls
+        type: default
+      - file: output/copy-targets.log
+        type: default
+      - file: output/copy-targets.pdf
+        type: target
   - name: ParseLaTeXAuxilary
     command: build
     phase: execute
     parameters:
       - output/copy-targets.aux
     inputs:
-      - output/copy-targets.aux
+      - file: output/copy-targets.aux
+        type: default
     outputs:
-      - output/copy-targets.aux-ParsedLaTeXAuxilary
+      - file: output/copy-targets.aux-ParsedLaTeXAuxilary
+        type: default
   - name: ParseFileListing
     command: build
     phase: execute
     parameters:
       - output/copy-targets.fls
     inputs:
-      - output/copy-targets.fls
+      - file: output/copy-targets.fls
+        type: default
     outputs:
-      - output/copy-targets.fls-ParsedFileListing
+      - file: output/copy-targets.fls-ParsedFileListing
+        type: default
   - name: ParseLaTeXLog
     command: build
     phase: execute
     parameters:
       - output/copy-targets.log
     inputs:
-      - output/copy-targets.log
+      - file: output/copy-targets.log
+        type: default
     outputs:
-      - output/copy-targets.log-ParsedLaTeXLog
+      - file: output/copy-targets.log-ParsedLaTeXLog
+        type: default
   - name: CopyTargetsToRoot
     command: build
     phase: execute
     parameters:
       - output/copy-targets.pdf
     inputs:
-      - output/copy-targets.pdf
+      - file: output/copy-targets.pdf
+        type: target
     outputs:
-      - copy-targets.pdf
+      - file: copy-targets.pdf
+        type: target
   - name: LogProducedTargets
     command: build
     phase: finalize
@@ -344,7 +369,8 @@ rules:
     parameters:
       - copy-targets.tex
     inputs:
-      - copy-targets.tex
+      - file: copy-targets.tex
+        type: default
     outputs: []
   - name: SaveCache
     command: save
@@ -364,7 +390,8 @@ rules:
     parameters:
       - output/copy-targets.log-ParsedLaTeXLog
     inputs:
-      - output/copy-targets.log-ParsedLaTeXLog
+      - file: output/copy-targets.log-ParsedLaTeXLog
+        type: default
     outputs: []
   - name: ParseLaTeXLog
     command: log
@@ -372,6 +399,8 @@ rules:
     parameters:
       - output/copy-targets.log
     inputs:
-      - output/copy-targets.log
+      - file: output/copy-targets.log
+        type: default
     outputs:
-      - output/copy-targets.log-ParsedLaTeXLog
+      - file: output/copy-targets.log-ParsedLaTeXLog
+        type: default

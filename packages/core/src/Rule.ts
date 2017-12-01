@@ -9,7 +9,7 @@ import StateConsumer from './StateConsumer'
 import {
   Action,
   CommandOptions,
-  InputOutputType,
+  DependencyType,
   ParsedLog,
   Phase,
   ProcessResults
@@ -337,10 +337,10 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  async getOutput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
+  async getOutput (filePath: string, type?: DependencyType): Promise<File | undefined> {
     let file: File | undefined = await this.getFile(filePath)
 
-    if (file && !this.hasOutput(this, file)) {
+    if (file && !this.hasOutput(this, file, type)) {
       this.addOutput(this, file, type)
       this.trace(`Output added: \`${file.filePath}\``, 'output')
     }
@@ -348,7 +348,7 @@ export default class Rule extends StateConsumer {
     return file
   }
 
-  async getOutputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
+  async getOutputs (filePaths: string[], type?: DependencyType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -367,10 +367,10 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  async getInput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
+  async getInput (filePath: string, type?: DependencyType): Promise<File | undefined> {
     let file: File | undefined = await this.getFile(filePath)
 
-    if (file && !this.hasInput(this, file)) {
+    if (file && !this.hasInput(this, file, type)) {
       this.addInput(this, file, type)
       this.trace(`Input added: \`${file.filePath}\``, 'input')
     }
@@ -378,7 +378,7 @@ export default class Rule extends StateConsumer {
     return file
   }
 
-  async getInputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
+  async getInputs (filePaths: string[], type?: DependencyType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -396,12 +396,12 @@ export default class Rule extends StateConsumer {
     return this.parameters.includes(file)
   }
 
-  async getResolvedInput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
+  async getResolvedInput (filePath: string, type?: DependencyType): Promise<File | undefined> {
     const expanded = this.resolvePath(filePath)
     return this.getInput(expanded, type)
   }
 
-  async getResolvedInputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
+  async getResolvedInputs (filePaths: string[], type?: DependencyType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -412,12 +412,12 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getResolvedOutput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
+  async getResolvedOutput (filePath: string, type?: DependencyType): Promise<File | undefined> {
     const expanded = this.resolvePath(filePath)
     return this.getOutput(expanded, type)
   }
 
-  async getResolvedOutputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
+  async getResolvedOutputs (filePaths: string[], type?: DependencyType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
@@ -428,7 +428,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getGlobbedInputs (pattern: string, type?: InputOutputType): Promise<File[]> {
+  async getGlobbedInputs (pattern: string, type?: DependencyType): Promise<File[]> {
     const files = []
     for (const filePath of await this.globPath(pattern)) {
       const file = await this.getInput(filePath, type)
@@ -437,7 +437,7 @@ export default class Rule extends StateConsumer {
     return files
   }
 
-  async getGlobbedOutputs (pattern: string, type?: InputOutputType): Promise<File[]> {
+  async getGlobbedOutputs (pattern: string, type?: DependencyType): Promise<File[]> {
     const files = []
     for (const filePath of await this.globPath(pattern)) {
       const file = await this.getOutput(filePath, type)

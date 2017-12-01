@@ -20,7 +20,7 @@ import Rule from './Rule'
 import {
   FileCache,
   GlobOptions,
-  InputOutputType,
+  DependencyType,
   KillToken,
   Phase,
   ProcessResults,
@@ -82,7 +82,7 @@ export default class StateConsumer implements EventEmitter {
   }
 
   getTargets (): Promise<string[]> {
-    return Promise.resolve(this.targets.map(file => fileUrl(file.filePath)))
+    return Promise.resolve(this.targets.map(file => fileUrl(path.resolve(this.rootPath, file.filePath))))
   }
 
   get killToken (): KillToken | null {
@@ -354,23 +354,23 @@ export default class StateConsumer implements EventEmitter {
     return this.state.components
   }
 
-  hasInput (rule: Rule, file: File, type?: InputOutputType): boolean {
+  hasInput (rule: Rule, file: File, type?: DependencyType): boolean {
     return type
       ? this.state.edge(file.filePath, rule.id) === type
       : this.state.hasEdge(file.filePath, rule.id)
   }
 
-  hasOutput (rule: Rule, file: File, type?: InputOutputType): boolean {
+  hasOutput (rule: Rule, file: File, type?: DependencyType): boolean {
     return type
       ? this.state.edge(rule.id, file.filePath) === type
       : this.state.hasEdge(rule.id, file.filePath)
   }
 
-  addInput (rule: Rule, file: File, type?: InputOutputType): void {
+  addInput (rule: Rule, file: File, type?: DependencyType): void {
     this.state.addEdge(file.filePath, rule.id, type)
   }
 
-  addOutput (rule: Rule, file: File, type?: InputOutputType): void {
+  addOutput (rule: Rule, file: File, type?: DependencyType): void {
     this.state.addEdge(rule.id, file.filePath, type)
   }
 
@@ -567,9 +567,15 @@ export default class StateConsumer implements EventEmitter {
       await this.addRule(rule)
     }
 
-    await rule.getInputs(cache.inputs)
-    const outputs: File[] = await rule.getOutputs(cache.outputs)
-    if ((rule.constructor as typeof Rule).alwaysEvaluate || outputs.length !== cache.outputs.length) {
+    for (const input of cache.inputs) {
+      await rule.getInput(input.file, input.type)
+    }
+
+    for (const output of cache.outputs) {
+      await rule.getOutput(output.file, output.type)
+    }
+
+    if ((rule.constructor as typeof Rule).alwaysEvaluate || rule.outputs.length !== cache.outputs.length) {
       // At least one of the outputs is missing or the rule should always run.
       rule.addActions()
     }

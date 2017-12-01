@@ -37,7 +37,12 @@ export interface FileCache {
   jobNames?: string[]
 }
 
-export type InputOutputType = 'default' | 'target'
+export type DependencyType = 'default' | 'target'
+
+export interface FileDependency {
+  file: string,
+  type?: DependencyType
+}
 
 export interface RuleCache {
   name: string
@@ -45,8 +50,8 @@ export interface RuleCache {
   phase: Phase
   jobName?: string
   parameters: string[]
-  inputs: string[]
-  outputs: string[]
+  inputs: FileDependency[]
+  outputs: FileDependency[]
 }
 
 export interface Cache {
@@ -57,7 +62,7 @@ export interface Cache {
   rules: RuleCache[]
 }
 
-export const CACHE_VERSION = '0.10.0'
+export const CACHE_VERSION = '0.13.0'
 
 export interface ParserMatch {
   _: string
@@ -89,11 +94,6 @@ export interface ParsedLog {
   outputs: string[]
   messages: Message[]
   calls: ShellCall[]
-}
-
-export interface FileDependency {
-  file: string,
-  type?: InputOutputType
 }
 
 export interface CommandOptions {

@@ -7,7 +7,7 @@ import { Command, OptionDefinition, OptionsInterface } from '@dicy/types'
 import File from './File'
 import Rule from './Rule'
 import {
-  FileCache, InputOutputType, KillToken, OptionInterfaceMap, Phase
+  FileCache, DependencyType, KillToken, OptionInterfaceMap, Phase
 } from './types'
 
 function getLabel (x: File | Rule): string {
@@ -127,12 +127,12 @@ export default class State extends EventEmitter {
     this.graphProperties = {}
   }
 
-  hasInEdge (x: string, type?: InputOutputType): boolean {
+  hasInEdge (x: string, type?: DependencyType): boolean {
     const edges = this.graph.inEdges(x)
     return !!edges && edges.some(edge => !type || this.graph.edge(edge) === type)
   }
 
-  hasOutEdge (x: string, type?: InputOutputType): boolean {
+  hasOutEdge (x: string, type?: DependencyType): boolean {
     const edges = this.graph.outEdges(x)
     return !!edges && edges.some(edge => !type || this.graph.edge(edge) === type)
   }
@@ -141,11 +141,11 @@ export default class State extends EventEmitter {
     return this.graph.hasEdge(x, y)
   }
 
-  edge (x: string, y: string): InputOutputType {
+  edge (x: string, y: string): DependencyType {
     return this.graph.edge(x,y)
   }
 
-  addEdge (x: string, y: string, type?: InputOutputType): void {
+  addEdge (x: string, y: string, type: DependencyType = 'default'): void {
     this.graph.setEdge(x, y, type)
     this.graphProperties = {}
   }
