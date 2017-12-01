@@ -14,7 +14,6 @@ import { cloneFixtures, customMatchers, formatMessage } from './helpers'
 const ASYNC_TIMEOUT = 50000
 
 describe('Builder', () => {
-  let dicy: Builder
   let fixturesPath: string
 
   beforeEach(async (done) => {
@@ -24,6 +23,7 @@ describe('Builder', () => {
   })
 
   describe('can successfully build', () => {
+    let dicy: Builder
     const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
     let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw)$/i })
 
@@ -62,69 +62,115 @@ describe('Builder', () => {
     }
   })
 
-  describe('Caching functionality', () => {
-    it('Correctly loads and validates cache if outputs have been removed with copy targets enabled.', async (done) => {
-      const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
-      const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
-      const outputUrl: string = fileUrl(outputPath)
-      let messages: Message[] = []
-      dicy = await Builder.create(filePath)
-      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
+  describe('caching facility', () => {
+    let filePath: string
+    let intermediateOutputPath: string
+    let outputDirectory: string
+    let outputPath: string
+    let outputUrl: string
+    let primaryMessages: Message[]
+    let primaryBuilder: Builder
+    let secondaryMessages: Message[]
+    let secondaryBuilder: Builder
 
-      expect(await dicy.run(['load', 'build'])).toBeTrue()
-      expect(messages).toReceiveMessages([])
-      expect(await fs.pathExists(outputPath)).toBeTrue()
-      expect(await dicy.getTargets()).toEqual([outputUrl])
+    beforeEach(async (done) => {
+      filePath = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
+      intermediateOutputPath = path.join(fixturesPath, 'cache-tests', 'output', 'copy-targets.pdf')
+      outputDirectory = path.join(fixturesPath, 'cache-tests', 'output')
+      outputPath = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
+      outputUrl = fileUrl(outputPath)
+
+      primaryMessages = []
+      primaryBuilder = await Builder.create(filePath)
+      primaryBuilder.on('log', (newMessages: Message[]) => { primaryMessages = primaryMessages.concat(newMessages) })
+
+      secondaryMessages = []
+      secondaryBuilder = await Builder.create(filePath)
+      secondaryBuilder.on('log', (newMessages: Message[]) => { secondaryMessages = secondaryMessages.concat(newMessages) })
 
       done()
     })
 
-    it('Correctly rebuilds if outputs have been removed with copy targets enabled.', async (done) => {
-      const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
-      const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
-      const outputDirectory: string = path.join(fixturesPath, 'cache-tests', 'output')
-      const outputUrl: string = fileUrl(outputPath)
-      let messages: Message[] = []
-      dicy = await Builder.create(filePath)
-      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
-
-      expect(await dicy.run(['load', 'build', 'save'])).toBeTrue()
-      expect(messages).toReceiveMessages([])
+    it('loads and validates cache if outputs have been removed with copy targets enabled.', async (done) => {
+      expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
-      expect(await dicy.getTargets()).toEqual([outputUrl])
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
 
-      messages = []
+      done()
+    })
+
+    it('rebuilds if all outputs have been removed with copy targets enabled.', async (done) => {
+      expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
+
+      primaryMessages = []
       await fs.remove(outputPath)
       await fs.remove(outputDirectory)
 
-      expect(await dicy.run(['load', 'build'])).toBeTrue()
-      expect(messages).toReceiveMessages([])
+      expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
-      expect(await dicy.getTargets()).toEqual([outputUrl])
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
 
       done()
     })
 
-    it('Correctly produces targets if a new builder is created.', async (done) => {
-      const filePath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.tex')
-      const outputPath: string = path.join(fixturesPath, 'cache-tests', 'copy-targets.pdf')
-      const outputUrl: string = fileUrl(outputPath)
-      let messages: Message[] = []
-
-      dicy = await Builder.create(filePath)
-      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
-      expect(await dicy.run(['load', 'build', 'save'])).toBeTrue()
-      expect(messages).toReceiveMessages([])
+    it('rebuilds if target has been removed with copy targets enabled.', async (done) => {
+      expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
-      expect(await dicy.getTargets()).toEqual([outputUrl])
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
 
-      messages = []
-      dicy = await Builder.create(filePath)
-      dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
-      expect(await dicy.run(['load'])).toBeTrue()
-      expect(messages).toReceiveMessages([])
+      primaryMessages = []
+      await fs.remove(outputPath)
+
+      expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
-      expect(await dicy.getTargets()).toEqual([outputUrl])
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
+
+      done()
+    })
+
+    it('rebuilds if output directory has been removed with copy targets enabled.', async (done) => {
+      expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
+
+      primaryMessages = []
+      await fs.remove(outputDirectory)
+
+      expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
+
+      done()
+    })
+
+    it('produces targets if a new builder is created.', async (done) => {
+      expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      expect(primaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
+
+      expect(await secondaryBuilder.run(['load'])).toBeTrue()
+      expect(secondaryMessages).toReceiveMessages([])
+      expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
+      expect(await fs.pathExists(outputPath)).toBeTrue()
+      expect(await secondaryBuilder.getTargets()).toEqual([outputUrl])
 
       done()
     })
