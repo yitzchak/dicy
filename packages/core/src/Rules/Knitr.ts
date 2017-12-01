@@ -28,7 +28,7 @@ export default class Knitr extends Rule {
       args: ['Rscript', '-e', lines.join(';')],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs
+      outputs: outputs.map(file => ({ file }))
     }
   }
 }

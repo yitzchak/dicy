@@ -26,11 +26,8 @@ export default class DviToPs extends Rule {
       ],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.ps'],
-      targets: [{
-        parent: '$FILEPATH_0',
-        filePath: '$DIR_0/$NAME_0.ps'
-      }]
+      inputs: [{ file: '$FILEPATH_0', type: 'target' }],
+      outputs: [{ file: '$DIR_0/$NAME_0.ps', type: 'target' }]
     }
   }
 }

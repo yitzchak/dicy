@@ -24,10 +24,10 @@ export default class MakeGlossaries extends Rule {
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: [
-        '$DIR_0/$NAME_0.acr',
-        '$DIR_0/$NAME_0.alg',
-        '$DIR_0/$NAME_0.gls',
-        '$DIR_0/$NAME_0.glg'
+        { file: '$DIR_0/$NAME_0.acr' },
+        { file: '$DIR_0/$NAME_0.alg' },
+        { file: '$DIR_0/$NAME_0.gls' },
+        { file: '$DIR_0/$NAME_0.glg' }
       ]
     }
   }

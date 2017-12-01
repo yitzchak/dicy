@@ -67,8 +67,8 @@ describe('BibToGls', () => {
         args: ['bib2gls', '-t', '{{$NAME_0.gelg}}', '{{$NAME_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
-        inputs: ['$DIR_0/$NAME_0.gelg-ParsedBibToGlsLog'],
-        outputs: ['$DIR_0/$NAME_0.gelg']
+        inputs: [{ file: '$DIR_0/$NAME_0.gelg-ParsedBibToGlsLog' }],
+        outputs: [{ file: '$DIR_0/$NAME_0.gelg' }]
       })
 
       done()

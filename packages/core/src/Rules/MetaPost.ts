@@ -23,8 +23,11 @@ export default class MetaPost extends Rule {
       ],
       cd: '$ROOTDIR_0',
       severity: 'error',
-      inputs: ['$DIR_0/$NAME_0.fls-ParsedFileListing'],
-      outputs: ['$DIR_0/$NAME_0.fls', '$DIR_0/$NAME_0.log']
+      inputs: [{ file: '$DIR_0/$NAME_0.fls-ParsedFileListing' }],
+      outputs: [
+        { file: '$DIR_0/$NAME_0.fls' },
+        { file: '$DIR_0/$NAME_0.log' }
+      ]
     }
   }
 }

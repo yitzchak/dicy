@@ -20,7 +20,7 @@ export default class GraphViz extends Rule {
       ],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.$OUTEXT']
+      outputs: [{ file: '$DIR_0/$NAME_0.$OUTEXT' }]
     }
   }
 }

@@ -49,11 +49,8 @@ describe('DviToSvg', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$DIR_0/$NAME_0.svg'],
-        targets: [{
-          parent: '$FILEPATH_0',
-          filePath: '$DIR_0/$NAME_0.svg'
-        }]
+        inputs: [{ file: '$FILEPATH_0', type: 'target' }],
+        outputs: [{ file: '$DIR_0/$NAME_0.svg', type: 'target' }]
       })
 
       done()

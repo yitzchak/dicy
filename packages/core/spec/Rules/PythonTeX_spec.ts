@@ -21,7 +21,7 @@ describe('PythonTeX', () => {
         args: ['pythontex', '{{$NAME_0}}'],
         cd: '$ROOTDIR_0',
         severity: 'error',
-        globbedOutputs: ['$DIR_0/pythontex-files-$NAME_0/*']
+        globbedOutputs: [{ file: '$DIR_0/pythontex-files-$NAME_0/*' }]
       })
 
       done()

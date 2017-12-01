@@ -471,8 +471,8 @@ describe('MakeIndex', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        inputs: ['$DIR_0/$NAME_0.ilg-ParsedMakeIndexLog'],
-        outputs: ['$DIR_0/$NAME_0.ind', '$DIR_0/$NAME_0.ilg']
+        inputs: [{ file: '$DIR_0/$NAME_0.ilg-ParsedMakeIndexLog' }],
+        outputs: [{ file: '$DIR_0/$NAME_0.ind' }, { file: '$DIR_0/$NAME_0.ilg' }]
       })
 
       done()
@@ -500,8 +500,8 @@ describe('MakeIndex', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        inputs: ['$DIR_0/$NAME_0.nlg-ParsedMakeIndexLog'],
-        outputs: ['$DIR_0/$NAME_0.nls', '$DIR_0/$NAME_0.nlg']
+        inputs: [{ file: '$DIR_0/$NAME_0.nlg-ParsedMakeIndexLog' }],
+        outputs: [{ file: '$DIR_0/$NAME_0.nls' }, { file: '$DIR_0/$NAME_0.nlg' }]
       })
 
       done()
@@ -529,8 +529,8 @@ describe('MakeIndex', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        inputs: ['$DIR_0/$NAME_0.brlg-ParsedMakeIndexLog'],
-        outputs: ['$DIR_0/$NAME_0.bnd', '$DIR_0/$NAME_0.brlg']
+        inputs: [{ file: '$DIR_0/$NAME_0.brlg-ParsedMakeIndexLog' }],
+        outputs: [{ file: '$DIR_0/$NAME_0.bnd' }, { file: '$DIR_0/$NAME_0.brlg' }]
       })
 
       done()

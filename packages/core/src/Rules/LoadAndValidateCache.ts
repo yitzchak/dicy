@@ -105,7 +105,6 @@ export default class LoadAndValidateCache extends Rule {
     for (const jobName of this.options.jobNames) {
       for (const file of files) {
         await this.deleteFile(file, jobName, false)
-        this.removeTarget(file.filePath)
       }
     }
 

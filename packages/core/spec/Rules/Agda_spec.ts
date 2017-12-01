@@ -42,7 +42,11 @@ describe('Agda', () => {
         args: ['agda', '--latex', '--latex-dir=.', '{{$BASE_0}}'],
         cd: '$ROOTDIR/$DIR_0',
         severity: 'error',
-        outputs: ['$DIR_0/$NAME_0.tex', '$DIR_0/$NAME_0.agdai', '$DIR_0/agda.sty']
+        outputs: [
+          { file: '$DIR_0/$NAME_0.tex' },
+          { file: '$DIR_0/$NAME_0.agdai' },
+          { file: '$DIR_0/agda.sty' }
+        ]
       })
 
       done()

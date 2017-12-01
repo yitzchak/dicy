@@ -9,6 +9,7 @@ import StateConsumer from './StateConsumer'
 import {
   Action,
   CommandOptions,
+  InputOutputType,
   ParsedLog,
   Phase,
   ProcessResults
@@ -279,16 +280,28 @@ export default class Rule extends StateConsumer {
 
       const result = await this.executeChildProcess(command, options)
 
-      if (commandOptions.inputs) await this.getResolvedInputs(commandOptions.inputs)
+      if (commandOptions.inputs) {
+        for (const dependency of commandOptions.inputs) {
+          await this.getResolvedInput(dependency.file, dependency.type)
+        }
+      }
 
-      if (commandOptions.outputs) await this.getResolvedOutputs(commandOptions.outputs)
+      if (commandOptions.outputs) {
+        for (const dependency of commandOptions.outputs) {
+          await this.getResolvedOutput(dependency.file, dependency.type)
+        }
+      }
 
       if (commandOptions.globbedInputs) {
-        await Promise.all(commandOptions.globbedInputs.map(pattern => this.getGlobbedInputs(pattern)))
+        for (const dependency of commandOptions.globbedInputs) {
+          await this.getGlobbedInputs(dependency.file, dependency.type)
+        }
       }
 
       if (commandOptions.globbedOutputs) {
-        await Promise.all(commandOptions.globbedOutputs.map(pattern => this.getGlobbedOutputs(pattern)))
+        for (const dependency of commandOptions.globbedOutputs) {
+          await this.getGlobbedOutputs(dependency.file, dependency.type)
+        }
       }
 
       if (typeof commandOptions.stdout === 'string') {
@@ -299,12 +312,6 @@ export default class Rule extends StateConsumer {
       if (typeof commandOptions.stderr === 'string') {
         const output = await this.getResolvedOutput(commandOptions.stderr)
         if (output) output.value = result.stderr
-      }
-
-      if (commandOptions.targets) {
-        for (const target of commandOptions.targets) {
-          this.addResolvedTarget(target.filePath, target.parent)
-        }
       }
 
       return result
@@ -330,22 +337,22 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  async getOutput (filePath: string): Promise<File | undefined> {
+  async getOutput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
     let file: File | undefined = await this.getFile(filePath)
 
     if (file && !this.hasOutput(this, file)) {
-      this.addOutput(this, file)
+      this.addOutput(this, file, type)
       this.trace(`Output added: \`${file.filePath}\``, 'output')
     }
 
     return file
   }
 
-  async getOutputs (filePaths: string[]): Promise<File[]> {
+  async getOutputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getOutput(filePath)
+      const file = await this.getOutput(filePath, type)
       if (file) files.push(file)
     }
 
@@ -360,22 +367,22 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  async getInput (filePath: string): Promise<File | undefined> {
+  async getInput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
     let file: File | undefined = await this.getFile(filePath)
 
     if (file && !this.hasInput(this, file)) {
-      this.addInput(this, file)
+      this.addInput(this, file, type)
       this.trace(`Input added: \`${file.filePath}\``, 'input')
     }
 
     return file
   }
 
-  async getInputs (filePaths: string[]): Promise<File[]> {
+  async getInputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getInput(filePath)
+      const file = await this.getInput(filePath, type)
       if (file) files.push(file)
     }
 
@@ -389,51 +396,51 @@ export default class Rule extends StateConsumer {
     return this.parameters.includes(file)
   }
 
-  async getResolvedInput (filePath: string): Promise<File | undefined> {
+  async getResolvedInput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
     const expanded = this.resolvePath(filePath)
-    return this.getInput(expanded)
+    return this.getInput(expanded, type)
   }
 
-  async getResolvedInputs (filePaths: string[]): Promise<File[]> {
+  async getResolvedInputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getResolvedInput(filePath)
+      const file = await this.getResolvedInput(filePath, type)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getResolvedOutput (filePath: string): Promise<File | undefined> {
+  async getResolvedOutput (filePath: string, type?: InputOutputType): Promise<File | undefined> {
     const expanded = this.resolvePath(filePath)
-    return this.getOutput(expanded)
+    return this.getOutput(expanded, type)
   }
 
-  async getResolvedOutputs (filePaths: string[]): Promise<File[]> {
+  async getResolvedOutputs (filePaths: string[], type?: InputOutputType): Promise<File[]> {
     const files = []
 
     for (const filePath of filePaths) {
-      const file = await this.getResolvedOutput(filePath)
+      const file = await this.getResolvedOutput(filePath, type)
       if (file) files.push(file)
     }
 
     return files
   }
 
-  async getGlobbedInputs (pattern: string): Promise<File[]> {
+  async getGlobbedInputs (pattern: string, type?: InputOutputType): Promise<File[]> {
     const files = []
     for (const filePath of await this.globPath(pattern)) {
-      const file = await this.getInput(filePath)
+      const file = await this.getInput(filePath, type)
       if (file) files.push(file)
     }
     return files
   }
 
-  async getGlobbedOutputs (pattern: string): Promise<File[]> {
+  async getGlobbedOutputs (pattern: string, type?: InputOutputType): Promise<File[]> {
     const files = []
     for (const filePath of await this.globPath(pattern)) {
-      const file = await this.getOutput(filePath)
+      const file = await this.getOutput(filePath, type)
       if (file) files.push(file)
     }
     return files

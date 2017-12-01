@@ -327,8 +327,8 @@ export default class MakeIndex extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      inputs: [`${logPath}-${parsedLogName}`],
-      outputs: [outputPath, logPath]
+      inputs: [{ file: `${logPath}-${parsedLogName}` }],
+      outputs: [{ file: outputPath }, { file: logPath }]
     }
 
     if (mendex || upmendex) {

@@ -22,7 +22,7 @@ describe('Knitr', () => {
         args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$JOB.tex', '$JOB-concordance.tex']
+        outputs: [{ file: '$JOB.tex' }, { file: '$JOB-concordance.tex' }]
       })
 
       done()
@@ -37,7 +37,7 @@ describe('Knitr', () => {
         args: ['Rscript', '-e', 'library(knitr);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$JOB.tex']
+        outputs: [{ file: '$JOB.tex' }]
       })
 
       done()
@@ -52,7 +52,7 @@ describe('Knitr', () => {
         args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'foo.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['foo.tex', 'foo-concordance.tex']
+        outputs: [{ file: 'foo.tex' }, { file: 'foo-concordance.tex' }]
       })
 
       done()

@@ -20,13 +20,11 @@ export default class Asymptote extends Rule {
       args: ['asy', '-vv', '{{$BASE_0}}'],
       cd: '$ROOTDIR_0',
       severity: 'error',
-      inputs: [
-        '$DIR_0/$NAME_0.log-ParsedAsymptoteStdOut'
-      ],
+      inputs: [{ file: '$DIR_0/$NAME_0.log-ParsedAsymptoteStdOut' }],
       outputs: [
-        '$DIR_0/${NAME_0}_0.pdf',
-        '$DIR_0/${NAME_0}_0.eps',
-        '$DIR_0/$NAME_0.pre'
+        { file: '$DIR_0/${NAME_0}_0.pdf' },
+        { file: '$DIR_0/${NAME_0}_0.eps' },
+        { file: '$DIR_0/$NAME_0.pre' }
       ],
       stdout: '$DIR_0/$NAME_0.log-AsymptoteStdOut',
       stderr: '$DIR_0/$NAME_0.log-AsymptoteStdErr'

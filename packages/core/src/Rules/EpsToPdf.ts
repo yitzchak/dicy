@@ -129,11 +129,8 @@ export default class EpsToPdf extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: [outputPath],
-      targets: [{
-        parent: '$FILEPATH_0',
-        filePath: outputPath
-      }]
+      inputs: [{ file: '$FILEPATH_0', type: 'target' }],
+      outputs: [{ file: outputPath, type: 'target' }]
     }
   }
 }

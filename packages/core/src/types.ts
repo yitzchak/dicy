@@ -37,6 +37,8 @@ export interface FileCache {
   jobNames?: string[]
 }
 
+export type InputOutputType = 'default' | 'target'
+
 export interface RuleCache {
   name: string
   command: Command
@@ -89,22 +91,21 @@ export interface ParsedLog {
   calls: ShellCall[]
 }
 
-export interface Target {
-  filePath: string
-  parent?: string
+export interface FileDependency {
+  file: string,
+  type?: InputOutputType
 }
 
 export interface CommandOptions {
   args: string[]
   cd: string
   severity: Severity
-  inputs?: string[]
-  outputs?: string[]
-  globbedInputs?: string[]
-  globbedOutputs?: string[]
+  inputs?: FileDependency[]
+  outputs?: FileDependency[]
+  globbedInputs?: FileDependency[]
+  globbedOutputs?: FileDependency[]
   stdout?: boolean | string
   stderr?: boolean | string
-  targets?: Target[]
 }
 
 export interface ProcessResults {

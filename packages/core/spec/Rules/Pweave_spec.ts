@@ -32,7 +32,7 @@ describe('Pweave', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$JOB.tex']
+        outputs: [{ file: '$JOB.tex' }]
       })
 
       done()
@@ -56,7 +56,7 @@ describe('Pweave', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['foo.tex']
+        outputs: [{ file: 'foo.tex' }]
       })
 
       done()

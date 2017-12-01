@@ -20,6 +20,7 @@ import Rule from './Rule'
 import {
   FileCache,
   GlobOptions,
+  InputOutputType,
   KillToken,
   Phase,
   ProcessResults,
@@ -64,28 +65,24 @@ export default class StateConsumer implements EventEmitter {
     }
   }
 
-  addTarget (filePath: string, parent?: string): void {
-    this.state.addTarget(filePath, parent)
+  isInputTarget (file: File): boolean {
+    return this.state.hasOutEdge(file.filePath, 'target')
   }
 
-  isFinalTarget (filePath: string): boolean {
-    return this.state.isFinalTarget(filePath)
+  isOutputTarget (file: File): boolean {
+    return this.state.hasInEdge(file.filePath, 'target')
   }
 
-  addResolvedTarget (filePath: string, parent?: string): void {
-    this.state.addTarget(this.resolvePath(filePath), parent ? this.resolvePath(parent) : undefined)
+  isTerminalTarget (file: File): boolean {
+    return this.isOutputTarget(file) && !this.isInputTarget(file)
   }
 
-  removeTarget (filePath: string) {
-    this.state.removeTarget(filePath)
-  }
-
-  get targets (): string[] {
-    return this.state.targets
+  get targets (): File[] {
+    return Array.from(this.files).filter(file => this.isTerminalTarget(file))
   }
 
   getTargets (): Promise<string[]> {
-    return this.state.getTargets()
+    return Promise.resolve(this.targets.map(file => fileUrl(file.filePath)))
   }
 
   get killToken (): KillToken | null {
@@ -357,20 +354,24 @@ export default class StateConsumer implements EventEmitter {
     return this.state.components
   }
 
-  hasInput (rule: Rule, file: File): boolean {
-    return this.state.hasEdge(file.filePath, rule.id)
+  hasInput (rule: Rule, file: File, type?: InputOutputType): boolean {
+    return type
+      ? this.state.edge(file.filePath, rule.id) === type
+      : this.state.hasEdge(file.filePath, rule.id)
   }
 
-  hasOutput (rule: Rule, file: File): boolean {
-    return this.state.hasEdge(rule.id, file.filePath)
+  hasOutput (rule: Rule, file: File, type?: InputOutputType): boolean {
+    return type
+      ? this.state.edge(rule.id, file.filePath) === type
+      : this.state.hasEdge(rule.id, file.filePath)
   }
 
-  addInput (rule: Rule, file: File): void {
-    this.state.addEdge(file.filePath, rule.id)
+  addInput (rule: Rule, file: File, type?: InputOutputType): void {
+    this.state.addEdge(file.filePath, rule.id, type)
   }
 
-  addOutput (rule: Rule, file: File): void {
-    this.state.addEdge(rule.id, file.filePath)
+  addOutput (rule: Rule, file: File, type?: InputOutputType): void {
+    this.state.addEdge(rule.id, file.filePath, type)
   }
 
   removeInput (rule: Rule, file: File): void {
