@@ -2,7 +2,9 @@ import * as _ from 'lodash'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 
-import { getOptionDefinitions, Command, BuilderInterface } from '@dicy/types'
+import {
+  getOptionDefinitions, Command, BuilderInterface, OptionsSource
+} from '@dicy/types'
 
 import State from './State'
 import StateConsumer from './StateConsumer'
@@ -247,19 +249,19 @@ export default class Builder extends StateConsumer implements BuilderInterface {
     }
   }
 
-  async setInstanceOptions (options: object, merge: boolean = false): Promise<void> {
+  async setInstanceOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
     return this.setOptions(await this.getFile('dicy-instance.yaml-ParsedYAML'), options, merge)
   }
 
-  setUserOptions (options: object, merge: boolean = false): Promise<void> {
+  setUserOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
     return this.setOptions('$HOME/.dicy.yaml', options, merge)
   }
 
-  setDirectoryOptions (options: object, merge: boolean = false): Promise<void> {
+  setDirectoryOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
     return this.setOptions('$ROOTDIR/.dicy.yaml', options, merge)
   }
 
-  setProjectOptions (options: object, merge: boolean = false): Promise<void> {
+  setProjectOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
     return this.setOptions('$ROOTDIR/$NAME.yaml', options, merge)
   }
 

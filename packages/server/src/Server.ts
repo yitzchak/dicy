@@ -1,4 +1,6 @@
-import { BuilderCacheInterface, Command, Message, Uri } from '@dicy/core'
+import {
+  BuilderCacheInterface, Command, Message, OptionsSource, Uri
+} from '@dicy/core'
 import * as rpc from 'vscode-jsonrpc'
 
 export default class Server {
@@ -13,10 +15,10 @@ export default class Server {
   private killAllRequest = new rpc.RequestType1<string | undefined, void, void, void>('killAll')
   private logNotification = new rpc.NotificationType2<Uri, Message[], void>('log')
   private runRequest = new rpc.RequestType2<Uri, Command[], boolean, void, void>('run')
-  private setDirectoryOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setDirectoryOptions')
-  private setInstanceOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setInstanceOptions')
-  private setProjectOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setProjectOptions')
-  private setUserOptionsRequest = new rpc.RequestType3<Uri, object, boolean | undefined, void, void, void>('setUserOptions')
+  private setDirectoryOptionsRequest = new rpc.RequestType3<Uri, OptionsSource, boolean | undefined, void, void, void>('setDirectoryOptions')
+  private setInstanceOptionsRequest = new rpc.RequestType3<Uri, OptionsSource, boolean | undefined, void, void, void>('setInstanceOptions')
+  private setProjectOptionsRequest = new rpc.RequestType3<Uri, OptionsSource, boolean | undefined, void, void, void>('setProjectOptions')
+  private setUserOptionsRequest = new rpc.RequestType3<Uri, OptionsSource, boolean | undefined, void, void, void>('setUserOptions')
 
   constructor (transport: [rpc.MessageReader, rpc.MessageWriter], cache: BuilderCacheInterface) {
     this.cache = cache
@@ -45,16 +47,16 @@ export default class Server {
       (file: Uri, commands: Command[]): Promise<boolean> => this.cache.run(file, commands))
 
     this.connection.onRequest(this.setInstanceOptionsRequest,
-      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setInstanceOptions(file, options, merge))
+      (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> => this.cache.setInstanceOptions(file, options, merge))
 
     this.connection.onRequest(this.setUserOptionsRequest,
-      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setUserOptions(file, options, merge))
+      (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> => this.cache.setUserOptions(file, options, merge))
 
     this.connection.onRequest(this.setDirectoryOptionsRequest,
-      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setDirectoryOptions(file, options, merge))
+      (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> => this.cache.setDirectoryOptions(file, options, merge))
 
     this.connection.onRequest(this.setProjectOptionsRequest,
-      (file: Uri, options: object, merge?: boolean): Promise<void> => this.cache.setProjectOptions(file, options, merge))
+      (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> => this.cache.setProjectOptions(file, options, merge))
 
     this.cache.on('log', (file: Uri, messages: Message): void => {
       this.connection.sendNotification(this.logNotification, file, messages)

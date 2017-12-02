@@ -1,4 +1,6 @@
-import { BuilderCacheInterface, Command, Uri, Message } from '@dicy/core'
+import {
+  BuilderCacheInterface, Command, Uri, Message, OptionsSource
+} from '@dicy/core'
 import { PassThrough } from 'stream'
 import * as rpc from 'vscode-jsonrpc'
 
@@ -105,9 +107,9 @@ describe('Server', () => {
   })
 
   it('calls setInstanceOptions when request is sent', async (done) => {
-    const options: object = { foo: 'bar' }
+    const options: OptionsSource = { foo: 'bar' }
 
-    await client.sendRequest(new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setInstanceOptions'), file, options, true)
+    await client.sendRequest(new rpc.RequestType3<string, OptionsSource, boolean | undefined, void, void, void>('setInstanceOptions'), file, options, true)
 
     expect(cache.setInstanceOptions).toHaveBeenCalledWith(file, options, true)
 
@@ -115,9 +117,9 @@ describe('Server', () => {
   })
 
   it('calls setDirectoryOptions when request is sent', async (done) => {
-    const options: object = { foo: 'bar' }
+    const options: OptionsSource = { foo: 'bar' }
 
-    await client.sendRequest(new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setDirectoryOptions'), file, options, true)
+    await client.sendRequest(new rpc.RequestType3<string, OptionsSource, boolean | undefined, void, void, void>('setDirectoryOptions'), file, options, true)
 
     expect(cache.setDirectoryOptions).toHaveBeenCalledWith(file, options, true)
 
@@ -125,9 +127,9 @@ describe('Server', () => {
   })
 
   it('calls setProjectOptions when request is sent', async (done) => {
-    const options: object = { foo: 'bar' }
+    const options: OptionsSource = { foo: 'bar' }
 
-    await client.sendRequest(new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setProjectOptions'), file, options, true)
+    await client.sendRequest(new rpc.RequestType3<string, OptionsSource, boolean | undefined, void, void, void>('setProjectOptions'), file, options, true)
 
     expect(cache.setProjectOptions).toHaveBeenCalledWith(file, options, true)
 
@@ -135,9 +137,9 @@ describe('Server', () => {
   })
 
   it('calls setUserOptions when request is sent', async (done) => {
-    const options: object = { foo: 'bar' }
+    const options: OptionsSource = { foo: 'bar' }
 
-    await client.sendRequest(new rpc.RequestType3<string, object, boolean | undefined, void, void, void>('setUserOptions'), file, options, true)
+    await client.sendRequest(new rpc.RequestType3<string, OptionsSource, boolean | undefined, void, void, void>('setUserOptions'), file, options, true)
 
     expect(cache.setUserOptions).toHaveBeenCalledWith(file, options, true)
 

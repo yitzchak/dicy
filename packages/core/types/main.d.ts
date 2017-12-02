@@ -1,6 +1,8 @@
 /// <reference types="node" />
 import { EventEmitter } from 'events';
-import { BuilderInterface, BuilderCacheInterface, Command, Message, Uri } from '@dicy/types';
+import {
+  BuilderInterface, BuilderCacheInterface, Command, Message, OptionsSource, Uri
+} from '@dicy/types';
 
 export * from '@dicy/types';
 
@@ -16,10 +18,10 @@ export class DiCy extends EventEmitter implements BuilderCacheInterface {
   killAll (message?: string): Promise<void>
   run (file: Uri, commands: Command[]): Promise<boolean>
 
-  setInstanceOptions (file: Uri, options: object, merge?: boolean): Promise<void>
-  setUserOptions (file: Uri, options: object, merge?: boolean): Promise<void>
-  setDirectoryOptions (file: Uri, options: object, merge?: boolean): Promise<void>
-  setProjectOptions (file: Uri, options: object, merge?: boolean): Promise<void>
+  setInstanceOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
+  setUserOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
+  setDirectoryOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
+  setProjectOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
 
   on (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this

@@ -69,7 +69,7 @@ describe('SaveCache', () => {
     it('verifies that cache is saved with correct values.', async (done) => {
       const cachePath = path.resolve(__dirname, '..', 'fixtures', 'file-types', 'LaTeX_article-cache.yaml')
       const expectedCache = jasmine.objectContaining({
-        version: '0.13.0',
+        version: '0.12.2',
         filePath: 'LaTeX_article.tex',
         options: jasmine.objectContaining({ engine: 'foo' }),
         files: {

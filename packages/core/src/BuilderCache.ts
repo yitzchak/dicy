@@ -1,7 +1,9 @@
 import { EventEmitter } from 'events'
 const url2path = require('file-uri-to-path')
 
-import { BuilderCacheInterface, BuilderInterface, Command, Message, Uri } from '@dicy/types'
+import {
+  BuilderCacheInterface, BuilderInterface, Command, Message, OptionsSource, Uri
+} from '@dicy/types'
 
 import Builder from './Builder'
 
@@ -25,22 +27,22 @@ export default class BuilderCache extends EventEmitter implements BuilderCacheIn
     await this.clearAll()
   }
 
-  async setInstanceOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+  async setInstanceOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> {
     const builder: BuilderInterface = await this.get(file)
     return builder.setInstanceOptions(options, merge)
   }
 
-  async setUserOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+  async setUserOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> {
     const builder: BuilderInterface = await this.get(file)
     return builder.setUserOptions(options, merge)
   }
 
-  async setProjectOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+  async setProjectOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> {
     const builder: BuilderInterface = await this.get(file)
     return builder.setProjectOptions(options, merge)
   }
 
-  async setDirectoryOptions (file: Uri, options: object, merge?: boolean): Promise<void> {
+  async setDirectoryOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void> {
     const builder: BuilderInterface = await this.get(file)
     return builder.setDirectoryOptions(options, merge)
   }
