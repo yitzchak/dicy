@@ -62,7 +62,7 @@ export interface Cache {
   rules: RuleCache[]
 }
 
-export const CACHE_VERSION = '0.13.0'
+export const CACHE_VERSION = '0.12.2'
 
 export interface ParserMatch {
   _: string
