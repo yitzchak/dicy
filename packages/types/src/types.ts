@@ -98,8 +98,8 @@ export interface OptionsInterface {
   indexStartPage?: string
   indexStyle?: string
   intermediatePostScript: boolean
-  jobName?: string
-  jobNames: string[]
+  jobName: string | null
+  jobNames: (string | null)[]
   kanji?: Kanji
   kanjiInternal?: KanjiInternal
   knitrConcordance: boolean
@@ -125,6 +125,72 @@ export interface OptionsInterface {
   synctex: boolean
   tests?: string[]
   validateCache: boolean
+}
+
+export interface JobOptions {
+  [name: string]: any
+  $BIBINPUTS?: string | string[]
+  $BLTXMLINPUTS?: string | string[]
+  $BSTINPUTS?: string | string[]
+  $CLUAINPUTS?: string | string[]
+  $LUAINPUTS?: string | string[]
+  $MFINPUTS?: string | string[]
+  $MPINPUTS?: string | string[]
+  $PATH?: string | string[]
+  $TEXINPUTS?: string | string[]
+  $TEXPICTS?: string | string[]
+  bibtexEngine?: BibtexEngine
+  cleanPatterns?: string[]
+  copyTargetsToRoot?: boolean
+  dviToPdfEngine?: DviToPdfEngine
+  engine?: string
+  epstopdfBoundingBox?: EpstopdfBoundingBox
+  epstopdfOutputPath?: string
+  epstopdfRestricted?: boolean
+  filePath?: string
+  indexAutomaticRanges?: boolean
+  indexCompressBlanks?: boolean
+  indexDictionary?: string
+  indexEngine?: IndexEngine
+  indexForceKanji?: boolean
+  indexLogPath?: string
+  indexOrdering?: IndexOrdering
+  indexOutputPath?: string
+  indexSorting?: IndexSorting
+  indexStartPage?: string
+  indexStyle?: string
+  intermediatePostScript?: boolean
+  kanji?: Kanji
+  kanjiInternal?: KanjiInternal
+  knitrConcordance?: boolean
+  knitrOutputPath?: string
+  lhs2texStyle?: Lhs2texStyle
+  literateAgdaEngine?: LiterateAgdaEngine
+  literateHaskellEngine?: LiterateHaskellEngine
+  loadCache?: boolean
+  loadUserOptions?: boolean
+  logCategory?: string
+  outputDirectory?: string
+  outputFormat?: OutputFormat
+  phaseCycles?: number
+  pweaveCacheDirectory?: string
+  pweaveDocumentationMode?: boolean
+  pweaveFigureDirectory?: string
+  pweaveKernel?: string
+  pweaveOutputFormat?: PweaveOutputFormat
+  pweaveOutputPath?: string
+  saveCache?: boolean
+  severity?: Severity
+  shellEscape?: ShellEscape
+  synctex?: boolean
+  tests?: string[]
+  validateCache?: boolean
+}
+
+export interface OptionsSource extends JobOptions {
+  jobName?: string
+  jobNames?: string[]
+  jobs?: { [ jobName: string]: JobOptions }
 }
 
 export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',

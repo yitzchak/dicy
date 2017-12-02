@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as yaml from 'js-yaml'
 import { EventEmitter } from 'events'
 
-import { Command, Message, OptionDefinition, Uri } from './types'
+import { Command, Message, OptionDefinition, OptionsSource, Uri } from './types'
 
 export async function getOptionDefinitions (): Promise<OptionDefinition[]> {
   const filePath = path.resolve(__dirname, '..', 'resources', 'option-schema.yaml')
@@ -24,10 +24,10 @@ export interface BuilderInterface extends EventEmitter {
   kill (message?: string): Promise<void>
   run (commands: Command[]): Promise<boolean>
 
-  setInstanceOptions (options: object, merge?: boolean): Promise<void>
-  setUserOptions (options: object, merge?: boolean): Promise<void>
-  setDirectoryOptions (options: object, merge?: boolean): Promise<void>
-  setProjectOptions (options: object, merge?: boolean): Promise<void>
+  setInstanceOptions (options: OptionsSource, merge?: boolean): Promise<void>
+  setUserOptions (options: OptionsSource, merge?: boolean): Promise<void>
+  setDirectoryOptions (options: OptionsSource, merge?: boolean): Promise<void>
+  setProjectOptions (options: OptionsSource, merge?: boolean): Promise<void>
 
   on (event: 'log', listener: (messages: Message[]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this
@@ -57,10 +57,10 @@ export interface BuilderCacheInterface extends EventEmitter {
   killAll (message?: string): Promise<void>
   run (file: Uri, commands: Command[]): Promise<boolean>
 
-  setInstanceOptions (file: Uri, options: object, merge?: boolean): Promise<void>
-  setUserOptions (file: Uri, options: object, merge?: boolean): Promise<void>
-  setDirectoryOptions (file: Uri, options: object, merge?: boolean): Promise<void>
-  setProjectOptions (file: Uri, options: object, merge?: boolean): Promise<void>
+  setInstanceOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
+  setUserOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
+  setDirectoryOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
+  setProjectOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
 
   on (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this
