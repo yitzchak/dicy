@@ -66,8 +66,12 @@ export default class SaveCache extends Rule {
         command: rule.command,
         phase: rule.phase,
         parameters: rule.parameters.map(file => file.filePath),
-        inputs: rule.inputs.map(file => file.filePath),
-        outputs: rule.outputs.map(file => file.filePath)
+        inputs: rule.inputs.map(file => {
+          return { file: file.filePath, type: this.state.edge(file.filePath, rule.id) }
+        }),
+        outputs: rule.outputs.map(file => {
+          return { file: file.filePath, type: this.state.edge(rule.id, file.filePath) }
+        })
       }
 
       if (rule.options.jobName) {

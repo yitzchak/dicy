@@ -108,6 +108,10 @@ export default class LoadAndValidateCache extends Rule {
       }
     }
 
+    for (const file of this.files) {
+      file.restoreUpdateFlag()
+    }
+
     for (const rule of this.rules) {
       for (const input of rule.inputs) {
         await rule.addFileActions(input)

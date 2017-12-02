@@ -51,7 +51,7 @@ export default class LhsToTeX extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.tex']
+      outputs: [{ file: '$DIR_0/$NAME_0.tex' }]
     }
   }
 }

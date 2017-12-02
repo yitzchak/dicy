@@ -53,7 +53,7 @@ describe('LhsToTeX', () => {
         args: ['lhs2TeX', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$DIR_0/$NAME_0.tex']
+        outputs: [{ file: '$DIR_0/$NAME_0.tex' }]
       })
 
       done()
@@ -69,7 +69,7 @@ describe('LhsToTeX', () => {
         args: ['lhs2TeX', '--agda', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
-        outputs: ['$DIR_0/$NAME_0.tex']
+        outputs: [{ file: '$DIR_0/$NAME_0.tex' }]
       })
 
       done()

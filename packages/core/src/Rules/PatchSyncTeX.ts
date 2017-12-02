@@ -32,7 +32,7 @@ export default class PatchSyncTeX extends Rule {
       args: ['Rscript', '-e', lines.join(';')],
       cd: '$ROOTDIR',
       severity: 'warning',
-      outputs: ['$DIR_1/BASE_1']
+      outputs: [{ file: '$DIR_1/BASE_1' }]
     }
   }
 }

@@ -1,6 +1,5 @@
 import { alg, Graph } from 'graphlib'
 import { EventEmitter } from 'events'
-const fileUrl = require('file-url')
 import * as path from 'path'
 
 import { Command, OptionDefinition, OptionsInterface } from '@dicy/types'
@@ -8,10 +7,7 @@ import { Command, OptionDefinition, OptionsInterface } from '@dicy/types'
 import File from './File'
 import Rule from './Rule'
 import {
-  FileCache,
-  KillToken,
-  OptionInterfaceMap,
-  Phase
+  FileCache, DependencyType, KillToken, OptionInterfaceMap, Phase
 } from './types'
 
 function getLabel (x: File | Rule): string {
@@ -34,7 +30,6 @@ export default class State extends EventEmitter {
   cacheTimeStamp: Date
   processes: Set<number> = new Set<number>()
   env: {[name: string]: string}
-  targets: Set<string> = new Set<string>()
   killToken: KillToken | null
 
   private graph: Graph = new Graph()
@@ -43,10 +38,14 @@ export default class State extends EventEmitter {
 
   constructor (filePath: string, schema: OptionDefinition[] = []) {
     super()
+
     const resolveFilePath: string = path.resolve(filePath)
     const { dir, base, name, ext } = path.parse(resolveFilePath)
     this.filePath = base
     this.rootPath = dir,
+
+    this.graph.setDefaultEdgeLabel('default')
+
     this.defaultOptions = {} as OptionsInterface
     for (const option of schema) {
       this.optionSchema.set(option.name, option)
@@ -71,19 +70,6 @@ export default class State extends EventEmitter {
         PATH: process.env.Path
       })
     }
-  }
-
-  async getTargets (): Promise<string[]> {
-    const results: string[] = []
-    for (const target of this.targets.values()) {
-      const file: File | undefined = await this.getFile(target)
-      if (file) results.push(fileUrl(file.realFilePath))
-    }
-    return results
-  }
-
-  removeTarget (filePath: string) {
-    this.targets.delete(filePath)
   }
 
   normalizePath (filePath: string): string {
@@ -141,12 +127,26 @@ export default class State extends EventEmitter {
     this.graphProperties = {}
   }
 
+  hasInEdge (x: string, type?: DependencyType): boolean {
+    const edges = this.graph.inEdges(x)
+    return !!edges && edges.some(edge => !type || this.graph.edge(edge) === type)
+  }
+
+  hasOutEdge (x: string, type?: DependencyType): boolean {
+    const edges = this.graph.outEdges(x)
+    return !!edges && edges.some(edge => !type || this.graph.edge(edge) === type)
+  }
+
   hasEdge (x: string, y: string): boolean {
     return this.graph.hasEdge(x, y)
   }
 
-  addEdge (x: string, y: string): void {
-    this.graph.setEdge(x, y)
+  edge (x: string, y: string): DependencyType {
+    return this.graph.edge(x,y)
+  }
+
+  addEdge (x: string, y: string, type: DependencyType = 'default'): void {
+    this.graph.setEdge(x, y, type)
     this.graphProperties = {}
   }
 

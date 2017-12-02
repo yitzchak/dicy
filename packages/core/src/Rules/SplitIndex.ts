@@ -68,7 +68,9 @@ export default class SplitIndex extends Rule {
       args: ['splitindex', '-v', '-v', '-m', '', '{{$FILEPATH_0}}'],
       cd: '$ROOTDIR',
       severity: 'error',
-      inputs: ['$DIR_0/$NAME_0.log-ParsedSplitIndexStdOut'],
+      inputs: [{
+        file: '$DIR_0/$NAME_0.log-ParsedSplitIndexStdOut'
+      }],
       stdout: '$DIR_0/$NAME_0.log-SplitIndexStdOut',
       stderr: '$DIR_0/$NAME_0.log-SplitIndexStdErr'
     }

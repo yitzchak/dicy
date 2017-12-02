@@ -20,6 +20,7 @@ import Rule from './Rule'
 import {
   FileCache,
   GlobOptions,
+  DependencyType,
   KillToken,
   Phase,
   ProcessResults,
@@ -31,7 +32,6 @@ const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
 export default class StateConsumer implements EventEmitter {
   readonly state: State
   readonly options: OptionsInterface
-  readonly jobName: string | undefined
   readonly env: { [name: string]: string }
 
   private readonly localOptions: { [name: string]: any } = {}
@@ -65,37 +65,24 @@ export default class StateConsumer implements EventEmitter {
     }
   }
 
-  addTarget (filePath: string) {
-    this.state.targets.add(filePath)
+  isInputTarget (file: File): boolean {
+    return this.state.hasOutEdge(file.filePath, 'target')
   }
 
-  removeTarget (filePath: string) {
-    this.state.targets.delete(filePath)
+  isOutputTarget (file: File): boolean {
+    return this.state.hasInEdge(file.filePath, 'target')
   }
 
-  addResolvedTarget (filePath: string) {
-    this.state.targets.add(this.resolvePath(filePath))
+  isTerminalTarget (file: File): boolean {
+    return this.isOutputTarget(file) && !this.isInputTarget(file)
   }
 
-  async replaceResolvedTarget (oldFilePath: string, newFilePath: string) {
-    const resolvedOldFilePath: string = this.resolvePath(oldFilePath)
-    if (this.state.targets.has(resolvedOldFilePath)) {
-      this.addResolvedTarget(newFilePath)
-    }
-  }
-
-  addResolvedTargets (filePaths: string[]) {
-    for (const filePath of filePaths) {
-      this.addResolvedTarget(filePath)
-    }
-  }
-
-  get targets (): string[] {
-    return Array.from(this.state.targets)
+  get targets (): File[] {
+    return Array.from(this.files).filter(file => this.isTerminalTarget(file))
   }
 
   getTargets (): Promise<string[]> {
-    return this.state.getTargets()
+    return Promise.resolve(this.targets.map(file => fileUrl(path.resolve(this.rootPath, file.filePath))))
   }
 
   get killToken (): KillToken | null {
@@ -222,13 +209,13 @@ export default class StateConsumer implements EventEmitter {
     return this.state.rules.values()
   }
 
-  async deleteFile (file: File, jobName: string | undefined, unlink: boolean = true): Promise<void> {
+  async deleteFile (file: File, jobName?: string | null, unlink: boolean = true): Promise<void> {
     if (file.readOnly) return
 
     const invalidRules: Rule[] = []
 
     for (const rule of this.rules) {
-      if (rule.jobName === jobName) {
+      if (rule.options.jobName || null === jobName) {
         if (await rule.removeFileFromRule(file)) {
           // This file is one of the parameters of the rule so we need to remove
           // the rule.
@@ -367,20 +354,24 @@ export default class StateConsumer implements EventEmitter {
     return this.state.components
   }
 
-  hasInput (rule: Rule, file: File): boolean {
-    return this.state.hasEdge(file.filePath, rule.id)
+  hasInput (rule: Rule, file: File, type?: DependencyType): boolean {
+    return type
+      ? this.state.edge(file.filePath, rule.id) === type
+      : this.state.hasEdge(file.filePath, rule.id)
   }
 
-  hasOutput (rule: Rule, file: File): boolean {
-    return this.state.hasEdge(rule.id, file.filePath)
+  hasOutput (rule: Rule, file: File, type?: DependencyType): boolean {
+    return type
+      ? this.state.edge(rule.id, file.filePath) === type
+      : this.state.hasEdge(rule.id, file.filePath)
   }
 
-  addInput (rule: Rule, file: File): void {
-    this.state.addEdge(file.filePath, rule.id)
+  addInput (rule: Rule, file: File, type?: DependencyType): void {
+    this.state.addEdge(file.filePath, rule.id, type)
   }
 
-  addOutput (rule: Rule, file: File): void {
-    this.state.addEdge(rule.id, file.filePath)
+  addOutput (rule: Rule, file: File, type?: DependencyType): void {
+    this.state.addEdge(rule.id, file.filePath, type)
   }
 
   removeInput (rule: Rule, file: File): void {
@@ -576,9 +567,15 @@ export default class StateConsumer implements EventEmitter {
       await this.addRule(rule)
     }
 
-    await rule.getInputs(cache.inputs)
-    const outputs: File[] = await rule.getOutputs(cache.outputs)
-    if ((rule.constructor as typeof Rule).alwaysEvaluate || outputs.length !== cache.outputs.length) {
+    for (const input of cache.inputs) {
+      await rule.getInput(input.file, input.type)
+    }
+
+    for (const output of cache.outputs) {
+      await rule.getOutput(output.file, output.type)
+    }
+
+    if ((rule.constructor as typeof Rule).alwaysEvaluate || rule.outputs.length !== cache.outputs.length) {
       // At least one of the outputs is missing or the rule should always run.
       rule.addActions()
     }

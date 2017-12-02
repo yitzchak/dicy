@@ -42,7 +42,7 @@ export default class Pweave extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: [outputPath]
+      outputs: [{ file: outputPath }]
     }
   }
 }

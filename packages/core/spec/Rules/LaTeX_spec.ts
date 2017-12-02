@@ -182,12 +182,13 @@ describe('LaTeX', () => {
         ],
         cd: '$ROOTDIR',
         severity: 'error',
-        inputs: ['$OUTDIR/$JOB.aux'],
+        inputs: [{ file: '$OUTDIR/$JOB.aux' }],
         outputs: [
-          '$OUTDIR/$JOB.aux',
-          '$OUTDIR/$JOB.fls',
-          '$OUTDIR/$JOB.log',
-          '$OUTDIR/$JOB.synctex.gz'
+          { file: '$OUTDIR/$JOB.aux' },
+          { file: '$OUTDIR/$JOB.fls' },
+          { file: '$OUTDIR/$JOB.log' },
+          { file: '$OUTDIR/$JOB.synctex.gz', type: 'target' },
+          { file: '$OUTDIR/$JOB$OUTEXT', type: 'target' }
         ]
       })
 

@@ -22,12 +22,12 @@ describe('Sage', () => {
         cd: '$ROOTDIR_0',
         severity: 'error',
         outputs: [
-          '$DIR_0/$NAME_0.sout',
-          '$DIR_0/$NAME_0.sage.cmd',
-          '$DIR_0/$NAME_0.scmd',
-          '$FILEPATH_0.py'
+          { file: '$DIR_0/$NAME_0.sout' },
+          { file: '$DIR_0/$NAME_0.sage.cmd' },
+          { file: '$DIR_0/$NAME_0.scmd' },
+          { file: '$FILEPATH_0.py' }
         ],
-        globbedOutputs: ['$DIR_0/sage-plots-for-$JOB.tex/*']
+        globbedInputs: [{ file: '$DIR_0/sage-plots-for-$JOB.tex/*' }]
       })
 
       done()

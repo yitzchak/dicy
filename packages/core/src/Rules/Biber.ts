@@ -37,7 +37,7 @@ export default class Biber extends Rule {
       args: ['biber', '{{$FILEPATH_0}}'],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.bbl', '$DIR_0/$NAME_0.blg']
+      outputs: [{ file: '$DIR_0/$NAME_0.bbl' }, { file: '$DIR_0/$NAME_0.blg' }]
     }
   }
 }

@@ -40,8 +40,8 @@ export default class BibToGls extends Rule {
       args,
       cd: '$ROOTDIR',
       severity: 'error',
-      inputs: ['$DIR_0/$NAME_0.gelg-ParsedBibToGlsLog'],
-      outputs: ['$DIR_0/$NAME_0.gelg']
+      inputs: [{ file: '$DIR_0/$NAME_0.gelg-ParsedBibToGlsLog' }],
+      outputs: [{ file: '$DIR_0/$NAME_0.gelg' }]
     }
   }
 }

@@ -19,7 +19,7 @@ describe('PatchSyncTeX', () => {
         args: ['Rscript', '-e', 'library(patchSynctex);patchSynctex(\'KnitrConcordance.tex\',syncfile=\'SyncTeX\')'],
         cd: '$ROOTDIR',
         severity: 'warning',
-        outputs: ['$DIR_1/BASE_1']
+        outputs: [{ file: '$DIR_1/BASE_1' }]
       })
 
       done()

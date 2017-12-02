@@ -15,11 +15,6 @@ export default class DviToPdf extends Rule {
     return consumer.options.outputFormat === 'pdf' && !consumer.options.intermediatePostScript
   }
 
-  async initialize () {
-    // Zap the previous target since we are building a pdf
-    await this.replaceResolvedTarget('$FILEPATH_0', '$DIR_0/$NAME_0.pdf')
-  }
-
   constructCommand (): CommandOptions {
     return {
       args: [
@@ -30,7 +25,8 @@ export default class DviToPdf extends Rule {
       ],
       cd: '$ROOTDIR',
       severity: 'error',
-      outputs: ['$DIR_0/$NAME_0.pdf']
+      inputs: [{ file: '$FILEPATH_0', type: 'target' }],
+      outputs: [{ file: '$DIR_0/$NAME_0.pdf', type: 'target' }]
     }
   }
 }
