@@ -73,7 +73,7 @@
     "@types/semver": "^5.4.0",
     "@types/temp": "^0.8.31",
     "@types/wrap-ansi": "^2.0.14",
-    "@types/yargs": "^8.0.2",
+    "@types/yargs": "^10.0.0",
     "chalk-cli": "^4.0.0",
     "fs-extra": "^4.0.2",
     "jasmine": "^2.8.0",
