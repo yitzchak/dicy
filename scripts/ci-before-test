@@ -2,9 +2,6 @@
 
 shopt -s nocasematch
 
-echo Updating package dependencies...
-npm run update-dependencies
-
 echo Bootstrapping...
 if [[ "${APPVEYOR:-}" == true ]]; then
   npm run bootstrap -- --scope=@dicy/types
