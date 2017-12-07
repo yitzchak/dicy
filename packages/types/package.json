@@ -28,16 +28,16 @@
   },
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^4.0.2",
+    "fs-extra": "^4.0.3",
     "js-yaml": "^3.10.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^4.0.3",
-    "@types/js-yaml": "^3.9.1",
-    "@types/node": "^8.0.47",
+    "@types/js-yaml": "^3.10.1",
+    "@types/node": "^8.0.56",
     "jasmine": "^2.8.0",
     "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
-    "typescript": "^2.5.3"
+    "typescript": "^2.6.2"
   }
 }

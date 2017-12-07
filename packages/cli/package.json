@@ -42,15 +42,15 @@
     "yargs": "^10.0.3"
   },
   "devDependencies": {
-    "@types/js-yaml": "^3.9.1",
-    "@types/lodash": "^4.14.80",
+    "@types/js-yaml": "^3.10.1",
+    "@types/lodash": "^4.14.88",
     "@types/wrap-ansi": "^2.0.14",
-    "@types/yargs": "^8.0.2",
-    "fs-extra": "^4.0.2",
+    "@types/yargs": "^8.0.3",
+    "fs-extra": "^4.0.3",
     "jasmine": "^2.8.0",
     "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
-    "typescript": "^2.5.3"
+    "typescript": "^2.6.2"
   },
   "yargs": {
     "dot-notation": false,

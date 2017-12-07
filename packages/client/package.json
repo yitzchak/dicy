@@ -35,10 +35,10 @@
   },
   "devDependencies": {
     "@types/jasmine": "^2.6.2",
-    "@types/node": "^8.0.47",
+    "@types/node": "^8.0.56",
     "jasmine": "^2.8.0",
     "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
-    "typescript": "^2.5.3"
+    "typescript": "^2.6.2"
   }
 }
