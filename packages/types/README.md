@@ -4,7 +4,6 @@
 [![Windows Build Status][appveyor svg]][appveyor]
 [![Dependency Status][dependency svg]][dependency]
 [![devDependency Status][devdependency svg]][devdependency]
-[![Greenkeeper Status][greenkeeper svg]][greenkeeper]
 
 This package contains common type definitions and is used internally by DiCy, a
 JavaScript/TypeScript based builder for LaTeX, knitr, Literate Agda, Literate
@@ -43,10 +42,6 @@ details.
 [devdependency]: https://david-dm.org/yitzchak/dicy?type=dev&path=packages%2Ftypes
 
 [dicy]: https://yitzchak.github.io/dicy/
-
-[greenkeeper svg]: https://badges.greenkeeper.io/yitzchak/dicy.svg
-
-[greenkeeper]: https://greenkeeper.io/
 
 [travis svg]: https://travis-ci.org/yitzchak/dicy.svg?branch=master
 

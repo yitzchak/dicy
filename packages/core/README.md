@@ -4,7 +4,6 @@
 [![Windows Build Status][appveyor svg]][appveyor]
 [![Dependency Status][dependency svg]][dependency]
 [![devDependency Status][devdependency svg]][devdependency]
-[![Greenkeeper Status][greenkeeper svg]][greenkeeper]
 
 This package is a library interface to DiCy, a JavaScript/TypeScript based
 builder for LaTeX, knitr, Literate Agda, Literate Haskell, and Pweave that
@@ -43,10 +42,6 @@ details.
 [dicy]: https://yitzchak.github.io/dicy/
 
 [devdependency]: https://david-dm.org/yitzchak/dicy?type=dev&path=packages%2Fcore
-
-[greenkeeper svg]: https://badges.greenkeeper.io/yitzchak/dicy.svg
-
-[greenkeeper]: https://greenkeeper.io/
 
 [travis svg]: https://travis-ci.org/yitzchak/dicy.svg?branch=master
 
