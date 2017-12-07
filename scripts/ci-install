@@ -21,7 +21,8 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   ./basic-miktex-x64 --unattended --shared
 
   echo Installing TeX packages...
-  mpm --admin --update-db --update --mkmaps --update-fndb
+  mpm --admin --update-db
+  mpm --admin --update
   mpm --install-some=scripts\\miktex-packages
   pdflatex -version
   initexmf --admin --set-config-value=[MPM]AutoInstall=0
