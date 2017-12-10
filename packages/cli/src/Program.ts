@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+const chalk = require('chalk')
 const url2path = require('file-uri-to-path')
 const fileUrl = require('file-url')
 import * as fs from 'fs-extra'
