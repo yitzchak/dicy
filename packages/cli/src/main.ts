@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import Program from './Program'
 
 const prog = new Program(process.argv.slice(2))
