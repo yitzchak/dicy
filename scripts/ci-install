@@ -82,3 +82,5 @@ if ! Rscript -e "library(knitr);library(patchSynctex)" &> /dev/null; then
 else
   echo Using cached R libraries
 fi
+
+pweave --output=foo.tex packages/core/spec/fixtures/builder-tests/test-pweave.Pnw
