@@ -3,6 +3,12 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.12.3][] - 2017-12-10
+
+### Fixed
+
+-   Add missing dependencies for @dicy/cli.
+
 ## [v0.12.2][] - 2017-12-02
 
 ### Changed
@@ -251,6 +257,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     `sage`.
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
+
+[v0.12.3]: https://github.com/yitzchak/dicy/compare/v0.12.1...v0.12.3
 
 [v0.12.2]: https://github.com/yitzchak/dicy/compare/v0.12.1...v0.12.2
 
