@@ -36,6 +36,7 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   brew update
 
   echo Installing GCC
+  rm /usr/local/include/c++
   brew install gcc
 
   echo Installing Python 3...
