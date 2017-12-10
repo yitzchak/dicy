@@ -24,12 +24,6 @@
     '-jobname=job 4' 'test-name with spaces.tex'`
 - severity: info
   category: command
-  name: LaTeX(build;execute;job 5;test-name with spaces.tex)
-  text: >-
-    Executing `lualatex -file-line-error -interaction=batchmode -recorder
-    '-jobname=job 5' 'test-name with spaces.tex'`
-- severity: info
-  category: command
   name: DviToPdf(build;execute;job 3;job 3.dvi)
   text: Executing `xdvipdfmx -o 'job 3.pdf' 'job 3.dvi'`
 - severity: info
@@ -56,9 +50,3 @@
   text: >-
     Executing `pdflatex -file-line-error -interaction=batchmode -recorder
     -output-directory=output '-jobname=job 2' 'test-name with spaces.tex'`
-- severity: info
-  category: command
-  name: LaTeX(build;execute;job 5;test-name with spaces.tex)
-  text: >-
-    Executing `lualatex -file-line-error -interaction=batchmode -recorder
-    '-jobname=job 5' 'test-name with spaces.tex'`
