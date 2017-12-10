@@ -29,9 +29,14 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   npm install
 elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH
+  export CC=gcc-7
+  export CXX=g++-7
 
   echo Updating homebrew...
   brew update
+
+  echo Installing GCC
+  brew install gcc
 
   echo Installing Python 3...
   brew install python3
