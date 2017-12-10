@@ -84,3 +84,5 @@ else
 fi
 
 pweave --output=foo.tex packages/core/spec/fixtures/builder-tests/test-pweave.Pnw
+pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-1 foo.tex
+pdflatex -file-line-error -interaction=batchmode -recorder -jobname=job-2 -shell-escape foo.tex
