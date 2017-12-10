@@ -50,7 +50,6 @@ describe('Builder', () => {
           if (!await dicy.run(['test'])) {
             const errorMessages: string = messages.filter(message => message.severity === 'error').map(formatMessage).join('\n')
             spec.pend(`Skipped spec since test command failed.\n${errorMessages}`.trim())
-            done()
             return
           }
 
