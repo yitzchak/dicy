@@ -52,7 +52,7 @@
     "@types/jasmine-expect": "^3.6.1",
     "@types/js-yaml": "^3.10.1",
     "@types/lodash": "^4.14.88",
-    "@types/node": "^8.0.56",
+    "@types/node": "^8.0.57",
     "@types/semver": "^5.4.0",
     "@types/temp": "^0.8.31",
     "jasmine": "^2.8.0",

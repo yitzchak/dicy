@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/fs-extra": "^4.0.3",
     "@types/js-yaml": "^3.10.1",
-    "@types/node": "^8.0.56",
+    "@types/node": "^8.0.57",
     "jasmine": "^2.8.0",
     "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
