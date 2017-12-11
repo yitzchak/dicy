@@ -22,7 +22,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
 
   echo Installing TeX packages...
   initexmf --admin --set-config-value=[MPM]AutoInstall=0
-  mpm --admin --update-db --update --install-some=scripts\\miktex-packages
+  mpm --admin --verbose --update-db --update --install-some=scripts\\miktex-packages
   pdflatex -version
 
   echo Installing package dependencies...
