@@ -29,35 +29,38 @@ describe('Builder', () => {
 
     for (const name of tests) {
       const spec: any = it(name, async (done) => {
-        let expected: Message[] = []
-        let messages: Message[] = []
-        const filePath = path.resolve(fixturesPath, 'builder-tests', name)
+        try {
+          let expected: Message[] = []
+          let messages: Message[] = []
+          const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
-        // Initialize dicy and listen for messages
-        dicy = await Builder.create(filePath)
+          // Initialize dicy and listen for messages
+          dicy = await Builder.create(filePath)
 
-        // Load the log archive
-        const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
-        if (await File.canRead(logFilePath)) {
-          expected = await File.readYaml(logFilePath)
-          dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
-        }
+          // Load the log archive
+          const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
+          if (await File.canRead(logFilePath)) {
+            expected = await File.readYaml(logFilePath)
+            dicy.on('log', (newMessages: Message[]) => { messages = messages.concat(newMessages) })
+          }
 
-        // Run the builder
-        expect(await dicy.run(['load'])).toBeTrue()
+          // Run the builder
+          expect(await dicy.run(['load'])).toBeTrue()
 
-        if (!await dicy.run(['test'])) {
-          const errorMessages: string = messages.filter(message => message.severity === 'error').map(formatMessage).join('\n')
-          spec.pend(`Skipped spec since test command failed.\n${errorMessages}`.trim())
+          if (!await dicy.run(['test'])) {
+            const errorMessages: string = messages.filter(message => message.severity === 'error').map(formatMessage).join('\n')
+            spec.pend(`Skipped spec since test command failed.\n${errorMessages}`.trim())
+            return
+          }
+
+          expect(await dicy.run(['build', 'log', 'save'])).toBeTrue()
+
+          expect(messages).toReceiveMessages(expected)
+        } catch (err) {
+          fail(err)
+        } finally {
           done()
-          return
         }
-
-        expect(await dicy.run(['build', 'log', 'save'])).toBeTrue()
-
-        expect(messages).toReceiveMessages(expected)
-
-        done()
       }, ASYNC_TIMEOUT)
     }
   })
