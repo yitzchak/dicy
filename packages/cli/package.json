@@ -32,10 +32,10 @@
   "dependencies": {
     "@dicy/core": "^0.12.3",
     "chalk": "^2.3.0",
-    "cliui": "^3.2.0",
+    "cliui": "^4.0.0",
     "file-uri-to-path": "^1.0.0",
     "file-url": "^2.0.2",
-    "fs-extra": "^4.0.3",
+    "fs-extra": "^5.0.0",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "string-width": "^2.1.1",
@@ -43,8 +43,9 @@
     "yargs": "^10.0.3"
   },
   "devDependencies": {
+    "@types/fs-extra": "^5.0.0",
     "@types/js-yaml": "^3.10.1",
-    "@types/lodash": "^4.14.88",
+    "@types/lodash": "^4.14.91",
     "@types/node": "^8.0.57",
     "@types/wrap-ansi": "^2.0.14",
     "@types/yargs": "^8.0.3",
