@@ -28,6 +28,7 @@ export type OptionType = 'string' | 'strings' | 'number' | 'boolean' | 'variable
 export interface OptionDefinition {
   name: string,
   type: OptionType
+  title?: string
   defaultValue?: any
   description: string
   values?: any[]

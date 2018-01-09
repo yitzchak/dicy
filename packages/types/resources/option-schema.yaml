@@ -40,6 +40,7 @@ $TEXPICTS:
   description: Picture search path
   type: variable
 bibtexEngine:
+  title: BibTeX Engine
   defaultValue: bibtex
   description: 'BibTeX engine, e.g. bibtex, pbibtex, upbibtex.'
   type: string
@@ -62,6 +63,7 @@ copyTargetsToRoot:
   description: Enable copying of output targets to project root path.
   type: boolean
 dviToPdfEngine:
+  title: DVI to PDF Engine
   defaultValue: xdvipdfmx
   description: Program to use for DVI to PDF conversion.
   type: string
@@ -85,6 +87,7 @@ engine:
   description: 'LaTeX engine, e.g. latex, pdflatex or uplatex.'
   type: string
 epstopdfBoundingBox:
+  title: epstopdf Bounding Box
   defaultValue: default
   description: The bounding box used in the original file.
   type: string
@@ -93,10 +96,12 @@ epstopdfBoundingBox:
     - exact
     - hires
 epstopdfOutputPath:
+  title: epstopdf Output Path
   defaultValue: $DIR_0/$NAME_0.pdf
   description: Output path of epstopdf
   type: string
 epstopdfRestricted:
+  title: epstopdf Restricted
   defaultValue: false
   description: Enable restricted mode when calling epstopdf.
   type: boolean
@@ -162,6 +167,7 @@ indexStyle:
   description: The style to use for makeindex.
   type: string
 intermediatePostScript:
+  title: Intermediate PostScript
   aliases:
     - ps
   defaultValue: false
@@ -198,16 +204,19 @@ kanjiInternal:
     - uptex
     - utf8
 knitrConcordance:
+  title: knitr Concordance
   defaultValue: true
   description: >-
     Enable creation of knitr concordance file used to SyncTeX patching and
     source code mapping in log messages.
   type: boolean
 knitrOutputPath:
+  title: knitr Output Path
   defaultValue: $JOB.tex
   description: Output path of knit.
   type: string
 lhs2texStyle:
+  title: lhs2tex Style
   defaultValue: poly
   description: The style to use for Haskell or Agda conversion.
   type: string
@@ -342,6 +351,7 @@ shellEscape:
     - restricted
     - enabled
 synctex:
+  title: SyncTeX
   aliases:
     - enableSynctex
   defaultValue: false
