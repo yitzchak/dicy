@@ -75,6 +75,13 @@ engine:
     - customEngine
     - program
   defaultValue: pdflatex
+  values:
+    - latex
+    - lualatex
+    - pdflatex
+    - platex
+    - uplatex
+    - xelatex
   description: 'LaTeX engine, e.g. latex, pdflatex or uplatex.'
   type: string
 epstopdfBoundingBox:
