@@ -24,6 +24,7 @@ $MPINPUTS:
   description: MetaPont source search path
   type: variable
 $PATH:
+  title: PATH
   aliases:
     - texPath
     - $Path
@@ -51,12 +52,14 @@ bibtexEngine:
     - pbibtex
     - upbibtex
 cleanPatterns:
+  title: Clean Patterns
   defaultValue:
     - $OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)
     - /$OUTDIR/_minted-$JOB/*
   description: Patterns to use when executing a clean command.
   type: strings
 copyTargetsToRoot:
+  title: Copy Targets To Root
   aliases:
     - moveResultToSourceDirectory
   defaultValue: false
@@ -72,6 +75,7 @@ dviToPdfEngine:
     - xdvipdfmx
     - dvipdfmx
 engine:
+  title: Engine
   aliases:
     - e
     - customEngine
@@ -122,6 +126,7 @@ indexDictionary:
   description: Pronounciation dictionary for mendex.
   type: string
 indexEngine:
+  title: Index Engine
   defaultValue: makeindex
   description: Indexing engine
   type: string
@@ -228,6 +233,7 @@ lhs2texStyle:
     - typewriter
     - verbatim
 literateAgdaEngine:
+  title: Literate Agda Engine
   aliases:
     - a
   defaultValue: agda
@@ -240,6 +246,7 @@ literateAgdaEngine:
     - lhs2TeX
     - none
 literateHaskellEngine:
+  title: Literate Haskell Engine
   aliases:
     - h
   defaultValue: lhs2TeX
@@ -268,6 +275,7 @@ logCategory:
   type: string
   noInvalidate: true
 outputDirectory:
+  title: Output Directory
   aliases:
     - o
     - output
@@ -275,6 +283,7 @@ outputDirectory:
   description: The name of a directory for used for output files.
   type: string
 outputFormat:
+  title: Output Format
   aliases:
     - f
   defaultValue: pdf
@@ -329,6 +338,7 @@ saveCache:
   noInvalidate: true
   type: boolean
 severity:
+  title: Severity
   aliases:
     - s
     - loggingLevel
@@ -342,6 +352,7 @@ severity:
     - warning
     - error
 shellEscape:
+  title: Shell Escape
   aliases:
     - enableShellEscape
   description: Enable shell escape (write18).
