@@ -21,14 +21,14 @@ $MFINPUTS:
   description: Metafont source search path
   type: variable
 $MPINPUTS:
-  description: MetaPont source search path
+  description: MetaPost source search path
   type: variable
 $PATH:
   title: PATH
   aliases:
     - texPath
     - $Path
-  description: search path for executables
+  description: Search path for TeX executables
   type: variable
 $TEXINPUTS:
   defaultValue:
@@ -43,7 +43,9 @@ $TEXPICTS:
 bibtexEngine:
   title: BibTeX Engine
   defaultValue: bibtex
-  description: 'BibTeX engine, e.g. bibtex, pbibtex, upbibtex.'
+  description:
+    The program to use when processing BibTeX files and the backend is set to
+    `bibtex`.
   type: string
   values:
     - bibtex
@@ -56,19 +58,25 @@ cleanPatterns:
   defaultValue:
     - $OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)
     - /$OUTDIR/_minted-$JOB/*
-  description: Patterns to use when executing a clean command.
+  description:
+    A list of file glob patterns to use when executing a clean or a scrub
+    command.
   type: strings
 copyTargetsToRoot:
   title: Copy Targets To Root
   aliases:
     - moveResultToSourceDirectory
   defaultValue: false
-  description: Enable copying of output targets to project root path.
+  description:
+    Enable the copying of targets to the directory that contains the source
+    file. This will only be done if the output directory is not set to `.`. The
+    original file will be preserved so that the dependency graph will not be
+    broken.
   type: boolean
 dviToPdfEngine:
   title: DVI to PDF Engine
   defaultValue: xdvipdfmx
-  description: Program to use for DVI to PDF conversion.
+  description: The program to use for DVI to PDF conversion.
   type: string
   values:
     - dvipdfm
@@ -88,7 +96,7 @@ engine:
     - platex
     - uplatex
     - xelatex
-  description: 'LaTeX engine, e.g. latex, pdflatex or uplatex.'
+  description: The program to use for processing LaTeX files.
   type: string
 epstopdfBoundingBox:
   title: epstopdf Bounding Box
@@ -128,7 +136,11 @@ indexDictionary:
 indexEngine:
   title: Index Engine
   defaultValue: makeindex
-  description: Indexing engine
+  description:
+    The program to use for index generation. If using a package like `imakeidx`
+    which calls and configures the index generation using shell escape or
+    notifies the user of the correct index call via LaTeX messages then the
+    correct engine and options will deduced from those messages.
   type: string
   values:
     - makeindex
@@ -138,7 +150,7 @@ indexEngine:
 indexForceKanji:
   defaultValue: false
   description: >-
-    Enable forcing output of Kanji characters evenif  non-existent in
+    Enable forcing output of Kanji characters even if non-existent in
     dictionaries. Used by mendex and upmendex only.
   type: boolean
 indexLogPath:
@@ -238,8 +250,8 @@ literateAgdaEngine:
     - a
   defaultValue: agda
   description: >-
-    Program to preprocess literate Agda source with prior to processing by
-    LaTeX.
+    The program to use for preprocessing literate Agda source files prior to
+    processing by the LaTeX engine.
   type: string
   values:
     - agda
@@ -251,8 +263,8 @@ literateHaskellEngine:
     - h
   defaultValue: lhs2TeX
   description: >-
-    Program to preprocess literate Haskell source with prior to processing by
-    LaTeX.
+    The program to use for preprocessing literate Haskell source files prior to
+    processing by the LaTeX engine.
   type: string
   values:
     - lhs2TeX
