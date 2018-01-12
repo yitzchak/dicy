@@ -42,7 +42,6 @@
   "devDependencies": {
     "@types/fs-extra": "^5.0.0",
     "@types/jasmine": "^2.8.2",
-    "@types/jasmine-expect": "^3.6.1",
     "@types/js-yaml": "^3.10.1",
     "@types/lodash": "^4.14.91",
     "@types/node": "^8.5.2",

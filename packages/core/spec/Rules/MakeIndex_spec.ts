@@ -1,5 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
-/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
+/// <reference path="../../node_modules/jasmine-expect/jasmine-matchers.d.ts" />
 
 import MakeIndex from '../../src/Rules/MakeIndex'
 import { initializeRule, RuleDefinition } from '../helpers'
