@@ -3,6 +3,12 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased][]
+
+### changed
+
+-   LaTeX `engine` setting is now an enumeration versus a free form text value.
+
 ## [v0.12.3][] - 2017-12-10
 
 ### Fixed
@@ -258,7 +264,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
 
-[v0.12.3]: https://github.com/yitzchak/dicy/compare/v0.12.1...v0.12.3
+[unreleased]: https://github.com/yitzchak/dicy/compare/v0.12.3...master
+
+[v0.12.3]: https://github.com/yitzchak/dicy/compare/v0.12.2...v0.12.3
 
 [v0.12.2]: https://github.com/yitzchak/dicy/compare/v0.12.1...v0.12.2
 
@@ -286,7 +294,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 [v0.5.0]: https://github.com/yitzchak/dicy/compare/v0.4.1...v0.5.0
 
-[v0.4.1]: https://github.com/yitzchak/dicy/compare/v0.4.0...v0.4.1
+[v0.4.1]: https://github.com/yitzchak/dicy/compare/v0.4.0...v0.4.1d
 
 [v0.4.0]: https://github.com/yitzchak/dicy/compare/v0.3.2...v0.4.0
 
