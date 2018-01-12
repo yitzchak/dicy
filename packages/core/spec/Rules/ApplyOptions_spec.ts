@@ -22,17 +22,17 @@ describe('ApplyOptions', () => {
 
       if (yaml && magic) {
         yaml.value = {
-          engine: 'foo',
+          engine: 'lualatex',
           indexStyle: 'baz.ist'
         }
         magic.value = {
-          engine: 'bar',
+          engine: 'xelatex',
           outputDirectory: 'gronk'
         }
 
         await applyOptions.doAssignOptions()
 
-        expect(rule.state.options.engine).toBe('bar')
+        expect(rule.state.options.engine).toBe('xelatex')
         expect(rule.state.options.indexStyle).toBe('baz.ist')
         expect(rule.state.options.outputDirectory).toBe('gronk')
       }
@@ -86,7 +86,7 @@ describe('ApplyOptions', () => {
     })
 
     it('verifies that setting an option without `noInvalidate` removes appropriate rules.', () => {
-      applyOptions.checkForConfigurationChange({ engine: 'foo' })
+      applyOptions.checkForConfigurationChange({ engine: 'lualatex' })
 
       expect(Array.from(applyOptions.state.rules.keys())).toEqual([
         loadRule.id

@@ -22,7 +22,7 @@ describe('SaveCache', () => {
 
   beforeEach(async (done) => {
     const { dicy, rule } = await initialize({
-      options: { engine: 'foo' }
+      options: { engine: 'xelatex' }
     })
     const options = rule.state.getJobOptions()
 
@@ -71,11 +71,11 @@ describe('SaveCache', () => {
       const expectedCache = jasmine.objectContaining({
         version: '0.12.2',
         filePath: 'LaTeX_article.tex',
-        options: jasmine.objectContaining({ engine: 'foo' }),
+        options: jasmine.objectContaining({ engine: 'xelatex' }),
         files: {
           'dicy-instance.yaml-ParsedYAML': jasmine.objectContaining({
             timeStamp: jasmine.anything(),
-            value: { engine: 'foo', loadUserOptions: false },
+            value: { engine: 'xelatex', loadUserOptions: false },
             jobNames: [],
             type: 'ParsedYAML'
           }),

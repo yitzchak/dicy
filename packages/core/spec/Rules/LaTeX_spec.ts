@@ -200,10 +200,10 @@ describe('LaTeX', () => {
         parameters: [{
           filePath: 'LaTeX_article.tex'
         }],
-        options: { engine: 'foo' }
+        options: { engine: 'xelatex' }
       })
 
-      expect(rule.constructCommand().args[0]).toEqual('foo')
+      expect(rule.constructCommand().args[0]).toEqual('xelatex')
 
       done()
     })
