@@ -21,13 +21,14 @@ $MFINPUTS:
   description: Metafont source search path
   type: variable
 $MPINPUTS:
-  description: MetaPont source search path
+  description: MetaPost source search path
   type: variable
 $PATH:
+  title: PATH
   aliases:
     - texPath
     - $Path
-  description: search path for executables
+  description: Search path for TeX executables
   type: variable
 $TEXINPUTS:
   defaultValue:
@@ -40,8 +41,11 @@ $TEXPICTS:
   description: Picture search path
   type: variable
 bibtexEngine:
+  title: BibTeX Engine
   defaultValue: bibtex
-  description: 'BibTeX engine, e.g. bibtex, pbibtex, upbibtex.'
+  description:
+    The program to use when processing BibTeX files and the backend is set to
+    `bibtex`.
   type: string
   values:
     - bibtex
@@ -50,34 +54,52 @@ bibtexEngine:
     - pbibtex
     - upbibtex
 cleanPatterns:
+  title: Clean Patterns
   defaultValue:
     - $OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)
     - /$OUTDIR/_minted-$JOB/*
-  description: Patterns to use when executing a clean command.
+  description:
+    A list of file glob patterns to use when executing a clean or a scrub
+    command.
   type: strings
 copyTargetsToRoot:
+  title: Copy Targets To Root
   aliases:
     - moveResultToSourceDirectory
   defaultValue: false
-  description: Enable copying of output targets to project root path.
+  description:
+    Enable the copying of targets to the directory that contains the source
+    file. This will only be done if the output directory is not set to `.`. The
+    original file will be preserved so that the dependency graph will not be
+    broken.
   type: boolean
 dviToPdfEngine:
+  title: DVI to PDF Engine
   defaultValue: xdvipdfmx
-  description: Program to use for DVI to PDF conversion.
+  description: The program to use for DVI to PDF conversion.
   type: string
   values:
     - dvipdfm
     - xdvipdfmx
     - dvipdfmx
 engine:
+  title: Engine
   aliases:
     - e
     - customEngine
     - program
   defaultValue: pdflatex
-  description: 'LaTeX engine, e.g. latex, pdflatex or uplatex.'
+  values:
+    - latex
+    - lualatex
+    - pdflatex
+    - platex
+    - uplatex
+    - xelatex
+  description: The program to use for processing LaTeX files.
   type: string
 epstopdfBoundingBox:
+  title: epstopdf Bounding Box
   defaultValue: default
   description: The bounding box used in the original file.
   type: string
@@ -86,10 +108,12 @@ epstopdfBoundingBox:
     - exact
     - hires
 epstopdfOutputPath:
+  title: epstopdf Output Path
   defaultValue: $DIR_0/$NAME_0.pdf
   description: Output path of epstopdf
   type: string
 epstopdfRestricted:
+  title: epstopdf Restricted
   defaultValue: false
   description: Enable restricted mode when calling epstopdf.
   type: boolean
@@ -110,8 +134,13 @@ indexDictionary:
   description: Pronounciation dictionary for mendex.
   type: string
 indexEngine:
+  title: Index Engine
   defaultValue: makeindex
-  description: Indexing engine
+  description:
+    The program to use for index generation. If using a package like `imakeidx`
+    which calls and configures the index generation using shell escape or
+    notifies the user of the correct index call via LaTeX messages then the
+    correct engine and options will deduced from those messages.
   type: string
   values:
     - makeindex
@@ -121,7 +150,7 @@ indexEngine:
 indexForceKanji:
   defaultValue: false
   description: >-
-    Enable forcing output of Kanji characters evenif  non-existent in
+    Enable forcing output of Kanji characters even if non-existent in
     dictionaries. Used by mendex and upmendex only.
   type: boolean
 indexLogPath:
@@ -155,6 +184,7 @@ indexStyle:
   description: The style to use for makeindex.
   type: string
 intermediatePostScript:
+  title: Intermediate PostScript
   aliases:
     - ps
   defaultValue: false
@@ -191,16 +221,19 @@ kanjiInternal:
     - uptex
     - utf8
 knitrConcordance:
+  title: knitr Concordance
   defaultValue: true
   description: >-
     Enable creation of knitr concordance file used to SyncTeX patching and
     source code mapping in log messages.
   type: boolean
 knitrOutputPath:
+  title: knitr Output Path
   defaultValue: $JOB.tex
   description: Output path of knit.
   type: string
 lhs2texStyle:
+  title: lhs2tex Style
   defaultValue: poly
   description: The style to use for Haskell or Agda conversion.
   type: string
@@ -212,24 +245,26 @@ lhs2texStyle:
     - typewriter
     - verbatim
 literateAgdaEngine:
+  title: Literate Agda Engine
   aliases:
     - a
   defaultValue: agda
   description: >-
-    Program to preprocess literate Agda source with prior to processing by
-    LaTeX.
+    The program to use for preprocessing literate Agda source files prior to
+    processing by the LaTeX engine.
   type: string
   values:
     - agda
     - lhs2TeX
     - none
 literateHaskellEngine:
+  title: Literate Haskell Engine
   aliases:
     - h
   defaultValue: lhs2TeX
   description: >-
-    Program to preprocess literate Haskell source with prior to processing by
-    LaTeX.
+    The program to use for preprocessing literate Haskell source files prior to
+    processing by the LaTeX engine.
   type: string
   values:
     - lhs2TeX
@@ -252,6 +287,7 @@ logCategory:
   type: string
   noInvalidate: true
 outputDirectory:
+  title: Output Directory
   aliases:
     - o
     - output
@@ -259,6 +295,7 @@ outputDirectory:
   description: The name of a directory for used for output files.
   type: string
 outputFormat:
+  title: Output Format
   aliases:
     - f
   defaultValue: pdf
@@ -313,6 +350,7 @@ saveCache:
   noInvalidate: true
   type: boolean
 severity:
+  title: Severity
   aliases:
     - s
     - loggingLevel
@@ -326,6 +364,7 @@ severity:
     - warning
     - error
 shellEscape:
+  title: Shell Escape
   aliases:
     - enableShellEscape
   description: Enable shell escape (write18).
@@ -335,6 +374,7 @@ shellEscape:
     - restricted
     - enabled
 synctex:
+  title: SyncTeX
   aliases:
     - enableSynctex
   defaultValue: false

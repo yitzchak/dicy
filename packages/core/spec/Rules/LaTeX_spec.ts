@@ -1,5 +1,5 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
-/// <reference path="../../node_modules/@types/jasmine-expect/index.d.ts" />
+/// <reference path="../../node_modules/jasmine-expect/jasmine-matchers.d.ts" />
 
 import LaTeX from '../../src/Rules/LaTeX'
 import { initializeRule, RuleDefinition } from '../helpers'
@@ -200,10 +200,10 @@ describe('LaTeX', () => {
         parameters: [{
           filePath: 'LaTeX_article.tex'
         }],
-        options: { engine: 'foo' }
+        options: { engine: 'xelatex' }
       })
 
-      expect(rule.constructCommand().args[0]).toEqual('foo')
+      expect(rule.constructCommand().args[0]).toEqual('xelatex')
 
       done()
     })

@@ -17,8 +17,8 @@ The program to use when processing BibTeX files and the backend is set to
     `/$OUTDIR/_minted-$JOB/*`
 -   **Command Line Interface:** `--clean-patterns <cleanPatterns>`
 
-A list of file glob patterns to use when executing a [clean][] command. Each
-glob pattern uses following syntax:
+A list of file glob patterns to use when executing a [clean][] or a [scrub][]
+command. Each glob pattern uses following syntax:
 
 -   Typical glob patterns, like `**/*`, `foo/bar/*.pdf`.
 -   Brace Expansion, like `foo/bar-{1..5}.tex` or `one/{two,three}/four.Rnw`.
@@ -59,10 +59,9 @@ auxiliary files created by LaTeX to be removed during [clean][].
 -   **Default Value:** `false`
 -   **Command Line Interface:** `--copy-targets-to-root`
 
-If [copyTargetsToRoot][] is `true` and [outputDirectory][] is not `.` for the
-current job then the rule [CopyTargetsToRoot][] will copy each generated output
-file to the directory that contains the source file. The original file will be
-preserved so that the dependency tree will not be broken.
+Enable the copying of targets to the directory that contains the source file.
+This will only be done if the output directory is not set to `.`. The original
+file will be preserved so that the dependency graph will not be broken.
 
 ## dviToPdfEngine
 
@@ -94,7 +93,7 @@ converted using the DviToPdf rule. Whereas if the [engine][] is set to
 -   **Values:** `default`, `exact`, `hires`
 -   **Command Line Interface:** `--epstopdf-bounding-box <epstopdfBoundingBox>`
 
-Where epstopdf should its bounding box from.
+Where epstopdf should get its bounding box from.
 
 ## epstopdfOutputPath
 
@@ -152,10 +151,10 @@ Pronounciation dictionary for mendex.
 -   **Values:** `makeindex`, `mendex`, `texindy`, `upmendex`
 -   **Command Line Interface:** `--index-engine <indexEngine>`
 
-Program used to index generation. If using a package like `imakeidx` which calls
-and configures the index generation using shell escape or notifies the user of
-the correct index call via LaTeX messages then DiCy will deduce the correct call
-including engine and options.
+Program used for index generation. If using a package like `imakeidx` which
+calls and configures the index generation using shell escape or notifies the
+user of the correct index call via LaTeX messages then the correct engine and
+options will deduced from those messages.
 
 ## indexForceKanji
 
@@ -163,8 +162,8 @@ including engine and options.
 -   **Default Value:** `false`
 -   **Command Line Interface:** `--index-force-kanji`
 
-Force to output Kanji characters even non-existent in dictionaries. Used by
-mendex and upmended only.
+Enable forcing output of Kanji characters even if non-existent in dictionaries.
+Used by mendex and upmendex only.
 
 ## indexLogPath
 
@@ -514,12 +513,10 @@ $PATH:
 
 [cleanpatterns]: #cleanpatterns
 
-[copytargetstoroot]: #copytargetstoroot
-
 [engine]: #engine
 
 [job specific source files]: configuration#job-specific-source-files
 
-[outputdirectory]: #outputdirectory
-
 [outputformat]: #outputformat
+
+[scrub]: commands#scrub

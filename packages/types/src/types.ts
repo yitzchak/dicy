@@ -28,6 +28,7 @@ export type OptionType = 'string' | 'strings' | 'number' | 'boolean' | 'variable
 export interface OptionDefinition {
   name: string,
   type: OptionType
+  title?: string
   defaultValue?: any
   description: string
   values?: any[]
@@ -40,6 +41,8 @@ export interface OptionDefinition {
 export type BibtexEngine = 'bibtex' | 'bibtex8' | 'bibtexu' | 'pbibtex' | 'upbibtex'
 
 export type DviToPdfEngine = 'dvipdfm' | 'xdvipdfmx' | 'dvipdfmx'
+
+export type Engine = 'latex' | 'lualatex' | 'pdflatex' | 'platex' | 'uplatex' | 'xelatex'
 
 export type EpstopdfBoundingBox = 'default' | 'exact' | 'hires'
 
@@ -81,7 +84,7 @@ export interface OptionsInterface {
   cleanPatterns: string[]
   copyTargetsToRoot: boolean
   dviToPdfEngine: DviToPdfEngine
-  engine: string
+  engine: Engine
   epstopdfBoundingBox: EpstopdfBoundingBox
   epstopdfOutputPath: string
   epstopdfRestricted: boolean
@@ -143,7 +146,7 @@ export interface JobOptions {
   cleanPatterns?: string[]
   copyTargetsToRoot?: boolean
   dviToPdfEngine?: DviToPdfEngine
-  engine?: string
+  engine?: Engine
   epstopdfBoundingBox?: EpstopdfBoundingBox
   epstopdfOutputPath?: string
   epstopdfRestricted?: boolean
