@@ -1,6 +1,6 @@
 export type Uri = string
 
-export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'save' | 'scrub' | 'test'
+export type Command = 'build' | 'clean' | 'graph' | 'load' | 'log' | 'open' | 'save' | 'scrub' | 'test'
 
 export interface LineRange {
   start: number

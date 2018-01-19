@@ -1,0 +1,28 @@
+import { Command } from '@dicy/types'
+
+import File from '../File'
+import Rule from '../Rule'
+import StateConsumer from '../StateConsumer'
+import { CommandOptions, Phase } from '../types'
+
+export default class XdgOpen extends Rule {
+  static commands: Set<Command> = new Set<Command>(['open'])
+  static parameterTypes: Set<string>[] = [new Set(['*'])]
+  static alwaysEvaluate: boolean = true
+  static description: string = 'Open targets using xdg-open.'
+
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return parameters.every(file => !file.virtual && consumer.isOutputTarget(file))
+  }
+
+  constructCommand (): CommandOptions {
+    return {
+      args: [
+        'xdg-open',
+        '{{$FILEPATH_0}}'
+      ],
+      cd: '$ROOTDIR',
+      severity: 'warning'
+    }
+  }
+}
