@@ -113,6 +113,7 @@ export interface OptionsInterface {
   loadCache: boolean
   loadUserOptions: boolean
   logCategory?: string
+  openInBackground: boolean
   outputDirectory?: string
   outputFormat: OutputFormat
   phaseCycles: number
@@ -125,6 +126,8 @@ export interface OptionsInterface {
   saveCache: boolean
   severity: Severity
   shellEscape?: ShellEscape
+  sourceLine: number
+  sourcePath?: string
   synctex: boolean
   tests?: string[]
   validateCache: boolean
@@ -173,6 +176,7 @@ export interface JobOptions {
   loadCache?: boolean
   loadUserOptions?: boolean
   logCategory?: string
+  openInBackground?: boolean
   outputDirectory?: string
   outputFormat?: OutputFormat
   phaseCycles?: number
@@ -185,6 +189,8 @@ export interface JobOptions {
   saveCache?: boolean
   severity?: Severity
   shellEscape?: ShellEscape
+  sourceLine?: number
+  sourcePath?: string
   synctex?: boolean
   tests?: string[]
   validateCache?: boolean
@@ -205,14 +211,19 @@ export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
   bibtexEngine: 'bibtex',
   cleanPatterns: [ '$OUTDIR/$JOB!($OUTEXT|.synctex.gz|.tex)',
     '/$OUTDIR/_minted-$JOB/*' ],
+  copyTargetsToRoot: false,
   dviToPdfEngine: 'xdvipdfmx',
   engine: 'pdflatex',
   epstopdfBoundingBox: 'default',
   epstopdfOutputPath: '$DIR_0/$NAME_0.pdf',
+  epstopdfRestricted: false,
   indexAutomaticRanges: true,
+  indexCompressBlanks: false,
   indexEngine: 'makeindex',
+  indexForceKanji: false,
   indexOrdering: 'word',
   indexSorting: 'default',
+  intermediatePostScript: false,
   knitrConcordance: true,
   knitrOutputPath: '$JOB.tex',
   lhs2texStyle: 'poly',
@@ -220,15 +231,19 @@ export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
   literateHaskellEngine: 'lhs2TeX',
   loadCache: true,
   loadUserOptions: true,
+  openInBackground: false,
   outputFormat: 'pdf',
   phaseCycles: 20,
   pweaveCacheDirectory: 'pweave-cache-for-$JOB',
+  pweaveDocumentationMode: false,
   pweaveFigureDirectory: 'pweave-figures-for-$JOB',
   pweaveKernel: 'python3',
   pweaveOutputFormat: 'tex',
   pweaveOutputPath: '$JOB.tex',
   saveCache: true,
   severity: 'warning',
+  sourceLine: 0,
+  synctex: false,
   validateCache: true }
 
 // END_AUTO

@@ -39,16 +39,17 @@ interface EvinceWindow extends EventEmitter {
   on (signal: 'DocumentLoaded', callback: (uri: string) => void): this
 }
 
-interface FreedDesktopApplication {
+interface FreeDesktopApplication {
   Activate (platformData: { [ name: string ]: any }, callback?: (error: any) => void): void
   ActivateAction (actionName: string, parameter: string[], platformData: { [ name: string ]: any }, callback?: (error: any) => void): void
   Open (uris: string[], platformData: { [ name: string ]: any }, callback?: (error: any) => void): void
 }
 
-function syncSource (uri: string, point: [number, number]) {
-  const filePath = decodeURI(url.parse(uri).pathname || '')
-  // atom.focus()
-  // atom.workspace.open(filePath).then(editor => (editor as TextEditor).setCursorBufferPosition(point))
+interface WindowInstance {
+  evinceWindow: EvinceWindow
+  onClosed: () => void,
+  onSyncSource: (uri: string, point: [number, number]) => void,
+  fdApplication?: FreeDesktopApplication
 }
 
 export default class Evince extends Rule {
@@ -73,9 +74,7 @@ export default class Evince extends Rule {
   static bus: any
   static daemon: EvinceDaemon
 
-  evinceWindow: EvinceWindow
-  onClosed: () => void
-  fdApplication?: FreedDesktopApplication
+  windowInstance?: WindowInstance
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     if (process.platform !== 'linux' || parameters.every(file => file.virtual || !consumer.isOutputTarget(file))) {
@@ -87,8 +86,11 @@ export default class Evince extends Rule {
     }
 
     try {
-      const dbus = require('dbus-native')
-      this.bus = dbus.sessionBus()
+      if (!this.bus) {
+        const dbus = require('dbus-native')
+        this.bus = dbus.sessionBus()
+      }
+
       this.daemon = await this.getInterface(this.dbusNames.daemonService, this.dbusNames.daemonObject, this.dbusNames.daemonInterface)
     } catch (e) {
       return false
@@ -127,52 +129,7 @@ export default class Evince extends Rule {
     })
   }
 
-  async initialize () {
-    const statics: typeof Evince = this.constructor as typeof Evince
-    const filePath: string = this.firstParameter.realFilePath
-
-    // First find the internal document name
-    const documentName = await statics.findDocument(filePath)
-
-    // Get the application interface and get the window list of the application
-    const evinceApplication: EvinceApplication = await statics.getInterface(documentName, statics.dbusNames.applicationObject, statics.dbusNames.applicationInterface)
-    const windowNames: string[] = await this.getWindowList(evinceApplication)
-
-    // Get the window interface of the of the first (only) window
-    this.onClosed = () => this.dispose.bind(this)
-    this.evinceWindow = await statics.getInterface(documentName, windowNames[0], statics.dbusNames.windowInterface)
-
-    if (statics.dbusNames.fdApplicationObject && statics.dbusNames.fdApplicationInterface) {
-      // Get the GTK/FreeDesktop application interface so we can activate the window
-      this.fdApplication = await statics.getInterface(documentName, statics.dbusNames.fdApplicationObject, statics.dbusNames.fdApplicationInterface)
-    }
-
-    this.evinceWindow.on('SyncSource', syncSource)
-    this.evinceWindow.on('Closed', this.onClosed)
-
-    // This seems to help with future syncs
-    // await this.syncView(this.evinceWindow, sourcePath, [0, 0], 0)
-  }
-
-  dispose (): void {
-    if (this.evinceWindow) {
-      this.evinceWindow.removeListener('SyncSource', syncSource)
-      this.evinceWindow.removeListener('Closed', this.onClosed)
-    }
-  }
-
-  async run (): Promise<boolean> {
-    if (!this.options.openInBackground && this.fdApplication) {
-      this.fdApplication.Activate({})
-    }
-
-    // SyncView seems to want to activate the window sometimes
-    await this.syncView(this.options.sourcePath, [this.options.sourceLine, 0], 0)
-
-    return true
-  }
-
-  getWindowList (evinceApplication: EvinceApplication): Promise<string[]> {
+  static getWindowList (evinceApplication: EvinceApplication): Promise<string[]> {
     return new Promise((resolve, reject) => {
       evinceApplication.GetWindowList((error, windowNames) => {
         if (error) {
@@ -184,15 +141,85 @@ export default class Evince extends Rule {
     })
   }
 
+  static async getWindow (filePath: string): Promise<[EvinceWindow, FreeDesktopApplication | undefined]> {
+    // First find the internal document name
+    const documentName = await this.findDocument(filePath)
+
+    // Get the application interface and get the window list of the application
+    const evinceApplication: EvinceApplication = await this.getInterface(documentName, this.dbusNames.applicationObject, this.dbusNames.applicationInterface)
+    const windowNames: string[] = await this.getWindowList(evinceApplication)
+
+    const evinceWindow: EvinceWindow = await this.getInterface(documentName, windowNames[0], this.dbusNames.windowInterface)
+    let fdApplication: FreeDesktopApplication | undefined
+
+    if (this.dbusNames.fdApplicationObject && this.dbusNames.fdApplicationInterface) {
+      // Get the GTK/FreeDesktop application interface so we can activate the window
+      fdApplication = await this.getInterface(documentName, this.dbusNames.fdApplicationObject, this.dbusNames.fdApplicationInterface)
+    }
+
+    return [evinceWindow, fdApplication]
+  }
+
+  async initializeWindowInstance (): Promise<void> {
+    if (this.windowInstance) return
+
+    const [evinceWindow, fdApplication] = await (this.constructor as typeof Evince).getWindow(this.firstParameter.realFilePath)
+
+    this.windowInstance = {
+      evinceWindow,
+      fdApplication,
+      onClosed: this.onClosed.bind(this),
+      onSyncSource: this.onSyncSource.bind(this)
+    }
+
+    this.windowInstance.evinceWindow.on('SyncSource', this.windowInstance.onSyncSource)
+    this.windowInstance.evinceWindow.on('Closed', this.windowInstance.onClosed)
+  }
+
+  onClosed (): void {
+    if (this.windowInstance) {
+      this.windowInstance.evinceWindow.removeListener('SyncSource', this.windowInstance.onSyncSource)
+      this.windowInstance.evinceWindow.removeListener('Closed', this.windowInstance.onClosed)
+      delete this.windowInstance
+    }
+  }
+
+  onSyncSource (source: string, point: [number, number]): void {
+    this.sync(source, point[0])
+  }
+
+  async run (): Promise<boolean> {
+    await this.initializeWindowInstance()
+
+    if (!this.windowInstance) {
+      return false
+    }
+
+    if (!this.options.openInBackground && this.windowInstance.fdApplication) {
+      this.windowInstance.fdApplication.Activate({})
+    }
+
+    if (this.options.sourcePath) {
+      // SyncView seems to want to activate the window sometimes
+      await this.syncView(this.options.sourcePath, [this.options.sourceLine, 0], 0)
+    }
+
+    return true
+  }
+
   syncView (source: string, point: [number, number], timestamp: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.evinceWindow.SyncView(source, point, timestamp, (error) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve()
-        }
-      })
+      if (this.windowInstance) {
+        this.windowInstance.evinceWindow.SyncView(source, point, timestamp, (error) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve()
+          }
+        })
+      } else {
+        reject()
+      }
     })
   }
 }

@@ -17,6 +17,7 @@ export default class BuilderCache extends EventEmitter implements BuilderCacheIn
       builder = await Builder.create(url2path(file))
       this.cachedBuilders.set(file, builder)
       builder.on('log', (messages: Message[]) => this.emit('log', file, messages))
+      builder.on('sync', (source: string, line: number) => this.emit('sync', file, source, line))
     }
 
     return builder

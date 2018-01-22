@@ -286,6 +286,12 @@ logCategory:
   description: Specific log category to display.
   type: string
   noInvalidate: true
+openInBackground:
+  title: Open in Background
+  description: Open targets in background to avoid the changing the window
+    focus.
+  type: boolean
+  defaultValue: false
 outputDirectory:
   title: Output Directory
   aliases:
@@ -373,6 +379,19 @@ shellEscape:
     - disabled
     - restricted
     - enabled
+sourceLine:
+  defaultValue: 0
+  title: Source Line
+  description:
+    The row of the source file to use for sync when opening output
+    targets.
+  type: number
+sourcePath:
+  title: Source Path
+  description:
+    The file path of the source file to use for sync when opening output
+    targets.
+  type: string
 synctex:
   title: SyncTeX
   aliases:

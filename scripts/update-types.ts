@@ -8,7 +8,7 @@ import { getOptionDefinitions, OptionDefinition } from '../packages/types/src/ma
 function createProperty (option: OptionDefinition, allOptional: boolean = false): string {
   let property: string = option.name
 
-  if (allOptional || (option.type !== 'boolean' && !option.defaultValue && !/^(filePath|jobNames?)$/.test(option.name))) {
+  if (allOptional || (option.type !== 'boolean' && option.defaultValue === undefined && !/^(filePath|jobNames?)$/.test(option.name))) {
     property += '?'
   }
 
@@ -49,7 +49,7 @@ async function main () {
   const jobProperties: string[] = ['[name: string]: any'].concat(options.filter(option => !option.name.startsWith('jobName')).map(option => createProperty(option, true)))
 
   for (const option of options) {
-    if (option.defaultValue) defaultOptions[option.name] = option.defaultValue
+    if (option.defaultValue !== undefined) defaultOptions[option.name] = option.defaultValue
   }
 
   await fs.writeFile(filePath, previous.replace(/\/\/ START_AUTO[^]*?\/\/ END_AUTO/mg,
