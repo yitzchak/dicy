@@ -293,6 +293,15 @@ opener:
   type: strings
   defaultValue:
     - evince
+    - okular
+    - skim
+    - atril
+    - qpdfview
+    - sumatra
+    - x-reader
+    - zathura
+    - preview
+    - shell-open
     - xdg-open
 openInBackground:
   title: Open in Background
