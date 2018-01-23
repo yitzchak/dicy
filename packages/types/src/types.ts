@@ -113,6 +113,7 @@ export interface OptionsInterface {
   loadCache: boolean
   loadUserOptions: boolean
   logCategory?: string
+  opener: string[]
   openInBackground: boolean
   outputDirectory?: string
   outputFormat: OutputFormat
@@ -176,6 +177,7 @@ export interface JobOptions {
   loadCache?: boolean
   loadUserOptions?: boolean
   logCategory?: string
+  opener?: string[]
   openInBackground?: boolean
   outputDirectory?: string
   outputFormat?: OutputFormat
@@ -231,6 +233,8 @@ export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
   literateHaskellEngine: 'lhs2TeX',
   loadCache: true,
   loadUserOptions: true,
+  opener: [ 'evince',
+    'xdg-open' ],
   openInBackground: false,
   outputFormat: 'pdf',
   phaseCycles: 20,

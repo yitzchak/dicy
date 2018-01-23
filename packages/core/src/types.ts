@@ -16,6 +16,8 @@ export type Phase = 'initialize' | 'execute' | 'finalize'
 
 export type Action = 'parse' | 'run' | 'updateDependencies'
 
+export type Group = 'opener'
+
 export interface RuleInfo {
   name: string
   description: string

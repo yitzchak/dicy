@@ -1,11 +1,12 @@
 import { Command } from '@dicy/types'
 import { EventEmitter } from 'events'
 import * as url from 'url'
+import * as path from 'path'
 
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Phase } from '../types'
+import { Group, Phase } from '../types'
 
 export interface DBusNames {
   applicationObject: string,
@@ -77,7 +78,12 @@ export default class Evince extends Rule {
   windowInstance?: WindowInstance
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    if (process.platform !== 'linux' || parameters.every(file => file.virtual || !consumer.isOutputTarget(file))) {
+    return await this.initializeDaemon() &&
+      parameters.every(file => !file.virtual && consumer.isOutputTarget(file))
+  }
+
+  static async initializeDaemon (): Promise<boolean> {
+    if (process.platform !== 'linux') {
       return false
     }
 
@@ -160,8 +166,14 @@ export default class Evince extends Rule {
     return [evinceWindow, fdApplication]
   }
 
+  get group (): Group | undefined {
+    return 'opener'
+  }
+
   async initializeWindowInstance (): Promise<void> {
     if (this.windowInstance) return
+
+    await (this.constructor as typeof Evince).initializeDaemon()
 
     const [evinceWindow, fdApplication] = await (this.constructor as typeof Evince).getWindow(this.firstParameter.realFilePath)
 
@@ -174,6 +186,8 @@ export default class Evince extends Rule {
 
     this.windowInstance.evinceWindow.on('SyncSource', this.windowInstance.onSyncSource)
     this.windowInstance.evinceWindow.on('Closed', this.windowInstance.onClosed)
+
+    await this.syncView('foo.tex', [0, 0], 0)
   }
 
   onClosed (): void {
@@ -210,7 +224,8 @@ export default class Evince extends Rule {
   syncView (source: string, point: [number, number], timestamp: number): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.windowInstance) {
-        this.windowInstance.evinceWindow.SyncView(source, point, timestamp, (error) => {
+        const sourcePath = path.resolve(this.rootPath, source)
+        this.windowInstance.evinceWindow.SyncView(sourcePath, point, timestamp, (error) => {
           if (error) {
             reject(error)
           } else {

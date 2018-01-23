@@ -286,6 +286,14 @@ logCategory:
   description: Specific log category to display.
   type: string
   noInvalidate: true
+opener:
+  description:
+    List of preferred openers sorted from high priority to low priority.
+  title: Opener
+  type: strings
+  defaultValue:
+    - evince
+    - xdg-open
 openInBackground:
   title: Open in Background
   description: Open targets in background to avoid the changing the window

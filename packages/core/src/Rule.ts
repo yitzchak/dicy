@@ -7,11 +7,7 @@ import State from './State'
 import File from './File'
 import StateConsumer from './StateConsumer'
 import {
-  Action,
-  CommandOptions,
-  DependencyType,
-  ParsedLog,
-  Phase,
+  Action, CommandOptions, DependencyType, Group, ParsedLog, Phase,
   ProcessResults
 } from './types'
 
@@ -111,6 +107,10 @@ export default class Rule extends StateConsumer {
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return true
+  }
+
+  get group (): Group | undefined {
+    return undefined
   }
 
   error (text: string, category?: string, name?: string) {

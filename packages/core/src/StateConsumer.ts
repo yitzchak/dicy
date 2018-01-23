@@ -395,12 +395,14 @@ export default class StateConsumer implements EventEmitter {
 
   // EventEmmitter proxy
   addListener (event: 'log', listener: (messages: Message[]) => void): this
+  addListener (event: 'sync', listener: (source: string, line: number) => void): this
   addListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.addListener(event, listener)
     return this
   }
 
   emit (event: 'log', messages: Message[]): boolean
+  emit (event: 'sync', source: string, line: number): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return this.state.emit(event, ...args)
   }
