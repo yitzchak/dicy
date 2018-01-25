@@ -3,6 +3,7 @@ import { EventEmitter } from 'events'
 import * as url from 'url'
 import * as path from 'path'
 
+import DBus from '../DBus'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
@@ -22,28 +23,28 @@ export interface DBusNames {
   fdApplicationInterface?: string
 }
 
-interface EvinceDaemon {
-  RegisterDocument (uri: string, callback: (error: any, owner: string) => void): void
-  UnregisterDocument (uri: string, callback: (error: any) => void): void
-  FindDocument (uri: string, spawn: boolean, callback: (error: any, owner: string) => void): void
+interface EvinceDaemon extends EventEmitter {
+  RegisterDocument (uri: string): Promise<string>
+  UnregisterDocument (uri: string): Promise<void>
+  FindDocument (uri: string, spawn: boolean): Promise<string>
 }
 
-interface EvinceApplication {
-  Reload (args: { [ name: string ]: any }, timestamp: number, callback: (error: any) => void): void
-  GetWindowList (callback: (error: any, windows: string[]) => void): void
+interface EvinceApplication extends EventEmitter {
+  Reload (args: { [ name: string ]: any }, timestamp: number): Promise<void>
+  GetWindowList (): Promise<string[]>
 }
 
 interface EvinceWindow extends EventEmitter {
-  SyncView (sourceFile: string, sourcePoint: [number, number], timestamp: number, callback: (error: any) => void): void
+  SyncView (sourceFile: string, sourcePoint: [number, number], timestamp: number): Promise<void>
   on (signal: 'SyncSource', callback: (sourceFile: string, sourcePoint: [number, number], timestamp: number) => void): this
   on (signal: 'Closed', callback: () => void): this
   on (signal: 'DocumentLoaded', callback: (uri: string) => void): this
 }
 
-interface FreeDesktopApplication {
-  Activate (platformData: { [ name: string ]: any }, callback?: (error: any) => void): void
-  ActivateAction (actionName: string, parameter: string[], platformData: { [ name: string ]: any }, callback?: (error: any) => void): void
-  Open (uris: string[], platformData: { [ name: string ]: any }, callback?: (error: any) => void): void
+interface FreeDesktopApplication extends EventEmitter {
+  Activate (platformData: { [ name: string ]: any }): Promise<void>
+  ActivateAction (actionName: string, parameter: string[], platformData: { [ name: string ]: any }): Promise<void>
+  Open (uris: string[], platformData: { [ name: string ]: any }): Promise<void>
 }
 
 interface WindowInstance {
@@ -72,7 +73,7 @@ export default class Evince extends Rule {
     fdApplicationObject: '/org/gtk/Application/anonymous',
     fdApplicationInterface: 'org.freedesktop.Application'
   }
-  static bus: any
+  static bus: DBus = new DBus()
   static daemon: EvinceDaemon
 
   windowInstance?: WindowInstance
@@ -83,68 +84,27 @@ export default class Evince extends Rule {
   }
 
   static async initializeDaemon (): Promise<boolean> {
-    if (process.platform !== 'linux') {
-      return false
-    }
-
     if (this.daemon) {
       return true
     }
 
-    try {
-      if (!this.bus) {
-        const dbus = require('dbus-native')
-        this.bus = dbus.sessionBus()
-      }
-
-      this.daemon = await this.getInterface(this.dbusNames.daemonService, this.dbusNames.daemonObject, this.dbusNames.daemonInterface)
-    } catch (e) {
+    if (!this.bus.connected) {
       return false
     }
+
+    this.daemon = await this.bus.getInterface(this.dbusNames.daemonService, this.dbusNames.daemonObject, this.dbusNames.daemonInterface)
 
     return !!this.daemon
   }
 
-  static getInterface (serviceName: string, objectPath: string, interfaceName: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.bus.getInterface(serviceName, objectPath, interfaceName, (error: any, interfaceInstance: any) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(interfaceInstance)
-        }
-      })
-    })
-  }
-
   static findDocument (filePath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const uri: string = url.format({
-        protocol: 'file:',
-        slashes: true,
-        pathname: encodeURI(filePath)
-      })
-
-      this.daemon.FindDocument(uri, true, (error, documentName) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(documentName)
-        }
-      })
+    const uri: string = url.format({
+      protocol: 'file:',
+      slashes: true,
+      pathname: encodeURI(filePath)
     })
-  }
 
-  static getWindowList (evinceApplication: EvinceApplication): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      evinceApplication.GetWindowList((error, windowNames) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(windowNames)
-        }
-      })
-    })
+    return this.daemon.FindDocument(uri, true)
   }
 
   static async getWindow (filePath: string): Promise<[EvinceWindow, FreeDesktopApplication | undefined]> {
@@ -152,15 +112,15 @@ export default class Evince extends Rule {
     const documentName = await this.findDocument(filePath)
 
     // Get the application interface and get the window list of the application
-    const evinceApplication: EvinceApplication = await this.getInterface(documentName, this.dbusNames.applicationObject, this.dbusNames.applicationInterface)
-    const windowNames: string[] = await this.getWindowList(evinceApplication)
+    const evinceApplication: EvinceApplication = await this.bus.getInterface(documentName, this.dbusNames.applicationObject, this.dbusNames.applicationInterface)
+    const windowNames: string[] = await evinceApplication.GetWindowList()
 
-    const evinceWindow: EvinceWindow = await this.getInterface(documentName, windowNames[0], this.dbusNames.windowInterface)
+    const evinceWindow: EvinceWindow = await this.bus.getInterface(documentName, windowNames[0], this.dbusNames.windowInterface)
     let fdApplication: FreeDesktopApplication | undefined
 
     if (this.dbusNames.fdApplicationObject && this.dbusNames.fdApplicationInterface) {
       // Get the GTK/FreeDesktop application interface so we can activate the window
-      fdApplication = await this.getInterface(documentName, this.dbusNames.fdApplicationObject, this.dbusNames.fdApplicationInterface)
+      fdApplication = await this.bus.getInterface(documentName, this.dbusNames.fdApplicationObject, this.dbusNames.fdApplicationInterface)
     }
 
     return [evinceWindow, fdApplication]
@@ -210,7 +170,7 @@ export default class Evince extends Rule {
     }
 
     if (!this.options.openInBackground && this.windowInstance.fdApplication) {
-      this.windowInstance.fdApplication.Activate({})
+      await this.windowInstance.fdApplication.Activate({})
     }
 
     if (this.options.sourcePath) {
@@ -221,20 +181,10 @@ export default class Evince extends Rule {
     return true
   }
 
-  syncView (source: string, point: [number, number], timestamp: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.windowInstance) {
-        const sourcePath = path.resolve(this.rootPath, source)
-        this.windowInstance.evinceWindow.SyncView(sourcePath, point, timestamp, (error) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve()
-          }
-        })
-      } else {
-        reject()
-      }
-    })
+  async syncView (source: string, point: [number, number], timestamp: number): Promise<void> {
+    if (this.windowInstance) {
+      const sourcePath = path.resolve(this.rootPath, source)
+      await this.windowInstance.evinceWindow.SyncView(sourcePath, point, timestamp)
+    }
   }
 }
