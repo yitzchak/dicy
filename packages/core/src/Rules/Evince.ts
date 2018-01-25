@@ -88,11 +88,11 @@ export default class Evince extends Rule {
       return true
     }
 
-    if (!this.bus.connected) {
-      return false
-    }
-
-    this.daemon = await this.bus.getInterface(this.dbusNames.daemonService, this.dbusNames.daemonObject, this.dbusNames.daemonInterface)
+    try {
+      if (this.bus.connected) {
+        this.daemon = await this.bus.getInterface(this.dbusNames.daemonService, this.dbusNames.daemonObject, this.dbusNames.daemonInterface)
+      }
+    } catch (error) {}
 
     return !!this.daemon
   }
