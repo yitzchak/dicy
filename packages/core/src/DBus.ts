@@ -8,8 +8,14 @@ function promisify (target: Function): any {
 
 const SIGNAL_PATTERN = /^on|addListener|removeListener$/
 
+export interface DBusSignalEmitter {
+  on (name: string, callback: (...args: any[]) => void): void
+  addListener (name: string, callback: (...args: any[]) => void): void
+  removeListener (name: string, callback: (...args: any[]) => void): void
+}
+
 export default class DBus {
-  private bus: any
+  bus: any
 
   constructor () {
     try {
@@ -31,12 +37,28 @@ export default class DBus {
           reject(error)
         } else {
           const asyncInterface: any = {}
+          const descriptors = Object.getOwnPropertyDescriptors(interfaceInstance)
 
-          for (const name in interfaceInstance) {
-            const target = interfaceInstance[name].bind(interfaceInstance)
-            asyncInterface[name] = SIGNAL_PATTERN.test(name)
-              ? target
-              : promisify(target)
+          for (const name in descriptors) {
+            const descriptor = descriptors[name]
+            if (descriptor.enumerable) {
+              if (descriptor.value) {
+                if (typeof descriptor.value === 'function') {
+                  const target = descriptor.value.bind(interfaceInstance)
+                  descriptor.value = SIGNAL_PATTERN.test(name)
+                    ? target
+                    : promisify(target)
+                }
+                Object.defineProperty(asyncInterface, name, descriptor)
+              } else {
+                if (descriptor.get) {
+                  asyncInterface[`get_${name}`] = promisify(descriptor.get.bind(interfaceInstance))
+                }
+                if (descriptor.set) {
+                  asyncInterface[`set_${name}`] = descriptor.set.bind(interfaceInstance)
+                }
+              }
+            }
           }
 
           resolve(asyncInterface)
