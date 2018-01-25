@@ -12,10 +12,12 @@ export default class DBus {
   private bus: any
 
   constructor () {
-    const dbus: any = require('dbus-native')
-    if (dbus) {
-      this.bus = dbus.sessionBus()
-    }
+    try {
+      const dbus: any = require('dbus-native')
+      if (dbus) {
+        this.bus = dbus.sessionBus()
+      }
+    } catch (error) {}
   }
 
   get connected (): boolean {
