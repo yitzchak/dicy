@@ -21,7 +21,11 @@ export default class Qpdfview extends Rule {
     }
 
     try {
-      await consumer.executeChildProcess('zathura --help', {})
+      await consumer.executeProcess({
+        args: ['qpdfview', '--help'],
+        cd: '$ROOTDIR',
+        severity: 'info'
+      })
     } catch (error) {
       return false
     }

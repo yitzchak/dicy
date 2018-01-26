@@ -87,6 +87,7 @@ export default class Evince extends Rule {
       return true
     }
 
+    /* tslint:disable:no-empty */
     try {
       if (this.bus.connected) {
         this.daemon = await this.bus.getInterface(this.dbusNames.daemonService, this.dbusNames.daemonObject, this.dbusNames.daemonInterface)

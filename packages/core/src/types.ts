@@ -98,16 +98,19 @@ export interface ParsedLog {
   calls: ShellCall[]
 }
 
-export interface CommandOptions {
+export interface ProcessOptions {
   args: string[]
   cd: string
   severity: Severity
+  stdout?: boolean | string
+  stderr?: boolean | string
+}
+
+export interface CommandOptions extends ProcessOptions {
   inputs?: FileDependency[]
   outputs?: FileDependency[]
   globbedInputs?: FileDependency[]
   globbedOutputs?: FileDependency[]
-  stdout?: boolean | string
-  stderr?: boolean | string
 }
 
 export interface ProcessResults {

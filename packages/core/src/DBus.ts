@@ -18,6 +18,7 @@ export default class DBus {
   bus: any
 
   constructor () {
+    /* tslint:disable:no-empty */
     try {
       const dbus: any = require('dbus-native')
       if (dbus) {

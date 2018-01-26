@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import * as childProcess from 'child_process'
+const commandJoin = require('command-join')
 import * as fastGlob from 'fast-glob'
 const fileUrl = require('file-url')
 import * as _ from 'lodash'
@@ -18,13 +19,8 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  FileCache,
-  GlobOptions,
-  DependencyType,
-  KillToken,
-  Phase,
-  ProcessResults,
-  RuleCache
+  FileCache, GlobOptions, DependencyType, KillToken, Phase, ProcessOptions,
+  ProcessResults, RuleCache
 } from './types'
 
 const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
@@ -482,6 +478,41 @@ export default class StateConsumer implements EventEmitter {
     this.state.processes.clear()
   }
 
+  constructProcessOptions (cd: string, stdin: boolean, stdout: boolean, stderr: boolean): object {
+    const processOptions = {
+      cwd: this.resolvePath(cd),
+      env: Object.assign({}, process.env),
+      shell: true,
+      stdio: [
+        stdin ? 'pipe' : 'ignore',
+        stdout ? 'pipe' : 'ignore',
+        stderr ? 'pipe' : 'ignore'
+      ]
+    }
+
+    for (const name in this.options) {
+      if (!name.startsWith('$')) continue
+      const value = this.options[name]
+      const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
+      if (Array.isArray(value)) {
+        const emptyPath = (name === '$PATH') ? process.env[envName] || '' : ''
+        const paths: string[] = value.map(filePath => filePath ? this.resolvePath(filePath.toString()) : emptyPath)
+
+        if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
+          paths[paths.length - 1] = processOptions.env[envName] || ''
+        }
+
+        processOptions.env[envName] = paths.join(path.delimiter)
+      } else if (typeof value === 'string') {
+        processOptions.env[envName] = this.expandVariables(value)
+      } else {
+        processOptions.env[envName] = value.toString()
+      }
+    }
+
+    return processOptions
+  }
+
   /**
    * Execute a child process
    * @param  {string}                  command The command line. Should be quoted.
@@ -526,6 +557,34 @@ export default class StateConsumer implements EventEmitter {
         child.stderr.on('data', (data: string) => { stderr = `${stderr || ''}${data}` })
       }
     })
+  }
+
+  resolveAllPaths (value: string): string {
+    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
+  }
+
+  async executeProcess (processOptions: ProcessOptions): Promise<ProcessResults> {
+    try {
+      // We only capture stdout and stderr if explicitly instructed to. This is
+      // possibly to conserve some memory, but mostly it is a work around for a
+      // bug in CLISP <https://sourceforge.net/p/clisp/bugs/378/> which makes it
+      // impossible to run xindy without pseudo terminal support.
+      const options = this.constructProcessOptions(processOptions.cd,
+        false, !!processOptions.stdout, !!processOptions.stderr)
+      // Use ampersand as a filler for empty arguments. This is to work around
+      // a bug in command-join.
+      const command = commandJoin(processOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
+        .replace(/(['"])\^?&(['"])/g, '$1$2')
+
+      this.info(`Executing \`${command}\``, 'command')
+
+      const result = await this.executeChildProcess(command, options)
+
+      return result
+    } catch (error) {
+      this.log({ severity: processOptions.severity, text: error.toString(), name: this.constructor.name })
+      throw error
+    }
   }
 
   isOutputOf (file: File, ruleId: string): boolean {

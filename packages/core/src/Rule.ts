@@ -1,5 +1,4 @@
 import * as path from 'path'
-const commandJoin = require('command-join')
 
 import { Command, OptionsInterface } from '@dicy/types'
 
@@ -259,66 +258,44 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  resolveAllPaths (value: string): string {
-    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
-  }
-
   async executeCommand (commandOptions: CommandOptions): Promise<ProcessResults> {
-    try {
-      // We only capture stdout and stderr if explicitly instructed to. This is
-      // possibly to conserve some memory, but mostly it is a work around for a
-      // bug in CLISP <https://sourceforge.net/p/clisp/bugs/378/> which makes it
-      // impossible to run xindy without pseudo terminal support.
-      const options = this.constructProcessOptions(commandOptions.cd,
-        false, !!commandOptions.stdout, !!commandOptions.stderr)
-      // Use ampersand as a filler for empty arguments. This is to work around
-      // a bug in command-join.
-      const command = commandJoin(commandOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
-        .replace(/(['"])\^?&(['"])/g, '$1$2')
+    const result = await this.executeProcess(commandOptions)
 
-      this.info(`Executing \`${command}\``, 'command')
-
-      const result = await this.executeChildProcess(command, options)
-
-      if (commandOptions.inputs) {
-        for (const dependency of commandOptions.inputs) {
-          await this.getResolvedInput(dependency.file, dependency.type)
-        }
+    if (commandOptions.inputs) {
+      for (const dependency of commandOptions.inputs) {
+        await this.getResolvedInput(dependency.file, dependency.type)
       }
-
-      if (commandOptions.outputs) {
-        for (const dependency of commandOptions.outputs) {
-          await this.getResolvedOutput(dependency.file, dependency.type)
-        }
-      }
-
-      if (commandOptions.globbedInputs) {
-        for (const dependency of commandOptions.globbedInputs) {
-          await this.getGlobbedInputs(dependency.file, dependency.type)
-        }
-      }
-
-      if (commandOptions.globbedOutputs) {
-        for (const dependency of commandOptions.globbedOutputs) {
-          await this.getGlobbedOutputs(dependency.file, dependency.type)
-        }
-      }
-
-      if (typeof commandOptions.stdout === 'string') {
-        const output = await this.getResolvedOutput(commandOptions.stdout)
-        if (output) output.value = result.stdout
-      }
-
-      if (typeof commandOptions.stderr === 'string') {
-        const output = await this.getResolvedOutput(commandOptions.stderr)
-        if (output) output.value = result.stderr
-      }
-
-      return result
-    } catch (error) {
-      this.log({ severity: commandOptions.severity, text: error.toString(), name: this.constructor.name })
-      throw error
     }
+
+    if (commandOptions.outputs) {
+      for (const dependency of commandOptions.outputs) {
+        await this.getResolvedOutput(dependency.file, dependency.type)
+      }
+    }
+
+    if (commandOptions.globbedInputs) {
+      for (const dependency of commandOptions.globbedInputs) {
+        await this.getGlobbedInputs(dependency.file, dependency.type)
+      }
+    }
+
+    if (commandOptions.globbedOutputs) {
+      for (const dependency of commandOptions.globbedOutputs) {
+        await this.getGlobbedOutputs(dependency.file, dependency.type)
+      }
+    }
+
+    if (typeof commandOptions.stdout === 'string') {
+      const output = await this.getResolvedOutput(commandOptions.stdout)
+      if (output) output.value = result.stdout
+    }
+
+    if (typeof commandOptions.stderr === 'string') {
+      const output = await this.getResolvedOutput(commandOptions.stderr)
+      if (output) output.value = result.stderr
+    }
+
+    return result
   }
 
   async run (): Promise<boolean> {
@@ -444,41 +421,6 @@ export default class Rule extends StateConsumer {
       if (file) files.push(file)
     }
     return files
-  }
-
-  constructProcessOptions (cd: string, stdin: boolean, stdout: boolean, stderr: boolean): object {
-    const processOptions = {
-      cwd: this.resolvePath(cd),
-      env: Object.assign({}, process.env),
-      shell: true,
-      stdio: [
-        stdin ? 'pipe' : 'ignore',
-        stdout ? 'pipe' : 'ignore',
-        stderr ? 'pipe' : 'ignore'
-      ]
-    }
-
-    for (const name in this.options) {
-      if (!name.startsWith('$')) continue
-      const value = this.options[name]
-      const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
-      if (Array.isArray(value)) {
-        const emptyPath = (name === '$PATH') ? process.env[envName] || '' : ''
-        const paths: string[] = value.map(filePath => filePath ? this.resolvePath(filePath.toString()) : emptyPath)
-
-        if (processOptions.env[envName] && paths.length > 0 && paths[paths.length - 1] === '') {
-          paths[paths.length - 1] = processOptions.env[envName] || ''
-        }
-
-        processOptions.env[envName] = paths.join(path.delimiter)
-      } else if (typeof value === 'string') {
-        processOptions.env[envName] = this.expandVariables(value)
-      } else {
-        processOptions.env[envName] = value.toString()
-      }
-    }
-
-    return processOptions
   }
 
   constructCommand (): CommandOptions {
