@@ -403,12 +403,14 @@ sourceLine:
     The row of the source file to use for sync when opening output
     targets.
   type: number
+  noInvalidate: true
 sourcePath:
   title: Source Path
   description:
     The file path of the source file to use for sync when opening output
     targets.
   type: string
+  noInvalidate: true
 synctex:
   title: SyncTeX
   aliases:
