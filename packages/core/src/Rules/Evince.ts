@@ -1,9 +1,8 @@
 import { Command } from '@dicy/types'
-import { EventEmitter } from 'events'
 import * as url from 'url'
 import * as path from 'path'
 
-import DBus from '../DBus'
+import { default as DBus, DBusSignalEmitter } from '../DBus'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
@@ -23,25 +22,25 @@ export interface DBusNames {
   fdApplicationInterface?: string
 }
 
-interface EvinceDaemon extends EventEmitter {
+interface EvinceDaemon extends DBusSignalEmitter {
   RegisterDocument (uri: string): Promise<string>
   UnregisterDocument (uri: string): Promise<void>
   FindDocument (uri: string, spawn: boolean): Promise<string>
 }
 
-interface EvinceApplication extends EventEmitter {
+interface EvinceApplication extends DBusSignalEmitter {
   Reload (args: { [ name: string ]: any }, timestamp: number): Promise<void>
   GetWindowList (): Promise<string[]>
 }
 
-interface EvinceWindow extends EventEmitter {
+interface EvinceWindow extends DBusSignalEmitter {
   SyncView (sourceFile: string, sourcePoint: [number, number], timestamp: number): Promise<void>
-  on (signal: 'SyncSource', callback: (sourceFile: string, sourcePoint: [number, number], timestamp: number) => void): this
-  on (signal: 'Closed', callback: () => void): this
-  on (signal: 'DocumentLoaded', callback: (uri: string) => void): this
+  on (signal: 'SyncSource', callback: (sourceFile: string, sourcePoint: [number, number], timestamp: number) => void): void
+  on (signal: 'Closed', callback: () => void): void
+  on (signal: 'DocumentLoaded', callback: (uri: string) => void): void
 }
 
-interface FreeDesktopApplication extends EventEmitter {
+interface FreeDesktopApplication extends DBusSignalEmitter {
   Activate (platformData: { [ name: string ]: any }): Promise<void>
   ActivateAction (actionName: string, parameter: string[], platformData: { [ name: string ]: any }): Promise<void>
   Open (uris: string[], platformData: { [ name: string ]: any }): Promise<void>
@@ -97,19 +96,14 @@ export default class Evince extends Rule {
     return !!this.daemon
   }
 
-  static findDocument (filePath: string): Promise<string> {
+  static async getWindow (filePath: string): Promise<[EvinceWindow, FreeDesktopApplication | undefined]> {
+    // First find the internal document name
     const uri: string = url.format({
       protocol: 'file:',
       slashes: true,
       pathname: encodeURI(filePath)
     })
-
-    return this.daemon.FindDocument(uri, true)
-  }
-
-  static async getWindow (filePath: string): Promise<[EvinceWindow, FreeDesktopApplication | undefined]> {
-    // First find the internal document name
-    const documentName = await this.findDocument(filePath)
+    const documentName = await this.daemon.FindDocument(uri, true)
 
     // Get the application interface and get the window list of the application
     const evinceApplication: EvinceApplication = await this.bus.getInterface(documentName, this.dbusNames.applicationObject, this.dbusNames.applicationInterface)
@@ -147,7 +141,7 @@ export default class Evince extends Rule {
     this.windowInstance.evinceWindow.on('SyncSource', this.windowInstance.onSyncSource)
     this.windowInstance.evinceWindow.on('Closed', this.windowInstance.onClosed)
 
-    await this.syncView('foo.tex', [0, 0], 0)
+    await this.windowInstance.evinceWindow.SyncView('foo.tex', [0, 0], 0)
   }
 
   onClosed (): void {
@@ -175,16 +169,10 @@ export default class Evince extends Rule {
 
     if (this.options.sourcePath) {
       // SyncView seems to want to activate the window sometimes
-      await this.syncView(this.options.sourcePath, [this.options.sourceLine, 0], 0)
+      const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
+      await this.windowInstance.evinceWindow.SyncView(sourcePath, [this.options.sourceLine, 0], 0)
     }
 
     return true
-  }
-
-  async syncView (source: string, point: [number, number], timestamp: number): Promise<void> {
-    if (this.windowInstance) {
-      const sourcePath = path.resolve(this.rootPath, source)
-      await this.windowInstance.evinceWindow.SyncView(sourcePath, point, timestamp)
-    }
   }
 }
