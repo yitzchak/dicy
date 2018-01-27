@@ -31,6 +31,18 @@ export default class DBus {
     return !!this.bus
   }
 
+  listNames (): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      this.bus.listNames((error: any, names: string[]) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(names)
+        }
+      })
+    })
+  }
+
   getInterface (serviceName: string, objectPath: string, interfaceName: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.bus.getInterface(serviceName, objectPath, interfaceName, (error: any, interfaceInstance: any) => {
@@ -53,7 +65,7 @@ export default class DBus {
                 Object.defineProperty(asyncInterface, name, descriptor)
               } else {
                 if (descriptor.get) {
-                  asyncInterface[`get_${name}`] = promisify(descriptor.get.bind(interfaceInstance))
+                  asyncInterface[`get_${name}`] = promisify(descriptor.get())
                 }
                 if (descriptor.set) {
                   asyncInterface[`set_${name}`] = descriptor.set.bind(interfaceInstance)
