@@ -7,9 +7,9 @@ import StateConsumer from '../StateConsumer'
 import { CommandOptions, Group, Phase } from '../types'
 import { default as DBus, DBusSignalEmitter } from '../DBus'
 
-// const DBUS_NAME: string = 'org.pwmt.zathura.PID-29301'
-// const DBUS_PATH: string = 'org/pwmt/zathura'
-// const DBUS_INTERFACE: string = 'org.pwmt.zathura'
+const DBUS_NAME: string = 'org.pwmt.zathura.PID-'
+const DBUS_PATH: string = '/org/pwmt/zathura'
+const DBUS_INTERFACE: string = 'org.pwmt.zathura'
 
 interface ZathuraRectangle {
   x1: number,
@@ -38,6 +38,10 @@ interface ZathuraInstance extends DBusSignalEmitter {
   get_pagenumber (): Promise<number>
 
   on (signal: 'Edit', callback: (input: string, line: number, column: number) => void): void
+}
+
+function getZathuraFileName (instance: ZathuraInstance): Promise<string | undefined> {
+  return instance.get_filename().then(value => value, error => undefined)
 }
 
 export default class Zathura extends Rule {
@@ -75,18 +79,65 @@ export default class Zathura extends Rule {
   }
 
   async run (): Promise<boolean> {
-    this.spawnProcess(this.constructCommand())
+    const filePath = this.firstParameter.realFilePath
+
+    if (!this.instance || await getZathuraFileName(this.instance) !== filePath) {
+      await this.findInstance(true)
+
+      if (!this.instance) {
+        const child = this.spawnProcess(this.constructCommand())
+        await this.findInstance(false)
+      }
+    }
+
+    if (this.instance && this.options.sourcePath) {
+      const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
+      await this.instance.SynctexView(sourcePath, this.options.sourceLine, 0)
+    }
 
     return true
+  }
+
+  async findInstance (reuseInstance: boolean): Promise<void> {
+    const filePath = this.firstParameter.realFilePath
+    let emptyInstance: ZathuraInstance | undefined
+
+    delete this.instance
+
+    for (const name of await this.bus.listNames()) {
+      if (name.startsWith(DBUS_NAME)) {
+        const currentInstance = await this.bus.getInterface(name, DBUS_PATH, DBUS_INTERFACE)
+        const filename = await getZathuraFileName(currentInstance)
+        if (filename === filePath) {
+          this.instance = currentInstance
+          break
+        } else if (filename === undefined && !emptyInstance) {
+          emptyInstance = currentInstance
+        }
+      }
+    }
+
+    if (!this.instance && reuseInstance && emptyInstance) {
+      this.instance = emptyInstance
+      await this.instance.OpenDocument(filePath, '', 0)
+    }
+
+    if (this.instance) {
+      this.instance.on('Edit', this.onEdit.bind(this))
+    }
+  }
+
+  onEdit (input: string, line: number, column: number): void {
+    this.sync(input, line)
   }
 
   constructCommand (): CommandOptions {
     const args = ['zathura']
 
-    if (this.options.sourcePath) {
-      const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
-      args.push(`--synctex-forward="${this.options.sourceLine}:1:${sourcePath}"`)
-    }
+    // if (this.options.sourcePath) {
+    //   const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
+    //   args.push(`--synctex-forward="${this.options.sourceLine}:1:${sourcePath}"`)
+    // }
 
     args.push('{{$FILEPATH_0}}')
 
