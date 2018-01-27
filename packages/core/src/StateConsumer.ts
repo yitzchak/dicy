@@ -19,8 +19,8 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  FileCache, GlobOptions, DependencyType, KillToken, Phase, ProcessOptions,
-  ProcessResults, RuleCache
+  FileCache, GlobOptions, DependencyType, KillToken,
+  Phase, ProcessOptions, ProcessResults, RuleCache
 } from './types'
 
 const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
@@ -513,18 +513,44 @@ export default class StateConsumer implements EventEmitter {
     return processOptions
   }
 
-  /**
-   * Execute a child process
-   * @param  {string}                  command The command line. Should be quoted.
-   * @param  {object}                  options Options passed to spawn.
-   * @return {Promise<ProcessResults>}         Result of process including output.
-   */
-  executeChildProcess (command: string, options: object): Promise<ProcessResults> {
+  spawnProcess (processOptions: ProcessOptions): childProcess.ChildProcess {
+    // We only capture stdout and stderr if explicitly instructed to. This is
+    // possibly to conserve some memory, but mostly it is a work around for a
+    // bug in CLISP <https://sourceforge.net/p/clisp/bugs/378/> which makes it
+    // impossible to run xindy without pseudo terminal support.
+    const options = this.constructProcessOptions(processOptions.cd,
+      false, !!processOptions.stdout, !!processOptions.stderr)
+    // Use ampersand as a filler for empty arguments. This is to work around
+    // a bug in command-join.
+    const command = typeof processOptions.args === 'string'
+      ? processOptions.args
+      : commandJoin(processOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
+        .replace(/(['"])\^?&(['"])/g, '$1$2')
+
+    this.info(`Executing \`${command}\``, 'command')
+
+    const child = childProcess.spawn(command, options)
+    const handleExit = (): void => {
+      if (child.pid) this.state.processes.delete(child.pid)
+    }
+
+    if (child.pid) this.state.processes.add(child.pid)
+    child.on('error', handleExit)
+    child.on('close', handleExit)
+
+    return child
+  }
+
+  resolveAllPaths (value: string): string {
+    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
+  }
+
+  executeProcess (processOptions: ProcessOptions): Promise<ProcessResults> {
     return new Promise((resolve, reject) => {
       let stdout: string
       let stderr: string
       let exited: boolean = false
-      const child = childProcess.spawn(command, options)
+      const child = this.spawnProcess(processOptions)
       const handleExit = (error: any): void => {
         if (exited) return
         exited = true
@@ -537,14 +563,16 @@ export default class StateConsumer implements EventEmitter {
         }
       }
 
-      if (child.pid) this.state.processes.add(child.pid)
       child.on('error', handleExit)
       child.on('close', (code: any, signal: any) => {
         let error: any
         if (code !== 0 || signal !== null) {
-          error = new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim()) as any
+          error = new Error(`Command failed: \`${processOptions.args[0]}\`\n${stderr || ''}`.trim()) as any
           error.code = code
           error.signal = signal
+          if (processOptions.severity) {
+            this.log({ severity: processOptions.severity, text: error.toString(), name: this.constructor.name })
+          }
         }
         handleExit(error)
       })
@@ -557,34 +585,6 @@ export default class StateConsumer implements EventEmitter {
         child.stderr.on('data', (data: string) => { stderr = `${stderr || ''}${data}` })
       }
     })
-  }
-
-  resolveAllPaths (value: string): string {
-    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
-  }
-
-  async executeProcess (processOptions: ProcessOptions): Promise<ProcessResults> {
-    try {
-      // We only capture stdout and stderr if explicitly instructed to. This is
-      // possibly to conserve some memory, but mostly it is a work around for a
-      // bug in CLISP <https://sourceforge.net/p/clisp/bugs/378/> which makes it
-      // impossible to run xindy without pseudo terminal support.
-      const options = this.constructProcessOptions(processOptions.cd,
-        false, !!processOptions.stdout, !!processOptions.stderr)
-      // Use ampersand as a filler for empty arguments. This is to work around
-      // a bug in command-join.
-      const command = commandJoin(processOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
-        .replace(/(['"])\^?&(['"])/g, '$1$2')
-
-      this.info(`Executing \`${command}\``, 'command')
-
-      const result = await this.executeChildProcess(command, options)
-
-      return result
-    } catch (error) {
-      this.log({ severity: processOptions.severity, text: error.toString(), name: this.constructor.name })
-      throw error
-    }
   }
 
   isOutputOf (file: File, ruleId: string): boolean {

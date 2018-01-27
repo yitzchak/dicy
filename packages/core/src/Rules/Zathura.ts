@@ -75,7 +75,7 @@ export default class Zathura extends Rule {
   }
 
   async run (): Promise<boolean> {
-    this.executeCommand(this.constructCommand())
+    this.spawnProcess(this.constructCommand())
 
     return true
   }

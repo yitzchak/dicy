@@ -16,14 +16,15 @@ export default class RunTests extends Rule {
   }
 
   async run (): Promise<boolean> {
-    const options = this.constructProcessOptions(this.rootPath, false, false, false)
     const commands: string[] = this.options.tests || []
     let result: boolean = true
 
     for (const command of commands) {
-      this.info(`Executing \`${command}\``, 'command')
       try {
-        await this.executeChildProcess(command, options)
+        await this.executeProcess({
+          args: command,
+          cd: '$ROOTDIR'
+        })
         this.info(`Test of \`${command}\` succeeded.`, 'test')
       } catch (error) {
         this.error(`Test of \`${command}\` failed.`, 'test')

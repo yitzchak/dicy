@@ -99,9 +99,9 @@ export interface ParsedLog {
 }
 
 export interface ProcessOptions {
-  args: string[]
+  args: string[] | string
   cd: string
-  severity: Severity
+  severity?: Severity
   stdout?: boolean | string
   stderr?: boolean | string
 }
