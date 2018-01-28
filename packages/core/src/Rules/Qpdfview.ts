@@ -21,7 +21,7 @@ export default class Qpdfview extends Rule {
     }
 
     try {
-      await consumer.executeProcess({
+      await consumer.executeCommand({
         args: ['qpdfview', '--help'],
         cd: '$ROOTDIR',
         severity: 'info'
@@ -48,7 +48,8 @@ export default class Qpdfview extends Rule {
         `{{$FILEPATH_0}}${sourceHash}`
       ],
       cd: '$ROOTDIR',
-      severity: 'warning'
+      severity: 'warning',
+      spawn: true
     }
   }
 }

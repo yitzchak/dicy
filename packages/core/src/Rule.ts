@@ -1,4 +1,5 @@
 import * as path from 'path'
+import * as childProcess from 'child_process'
 
 import { Command, OptionsInterface } from '@dicy/types'
 
@@ -258,8 +259,8 @@ export default class Rule extends StateConsumer {
     return true
   }
 
-  async executeCommand (commandOptions: CommandOptions): Promise<ProcessResults> {
-    const result = await this.executeProcess(commandOptions)
+  async executeCommand (commandOptions: CommandOptions): Promise<childProcess.ChildProcess | ProcessResults> {
+    const result = await super.executeCommand(commandOptions)
 
     if (commandOptions.inputs) {
       for (const dependency of commandOptions.inputs) {
@@ -284,6 +285,8 @@ export default class Rule extends StateConsumer {
         await this.getGlobbedOutputs(dependency.file, dependency.type)
       }
     }
+
+    if ((result as childProcess.ChildProcess).pid) return result
 
     if (typeof commandOptions.stdout === 'string') {
       const output = await this.getResolvedOutput(commandOptions.stdout)

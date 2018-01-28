@@ -41,7 +41,7 @@ interface ZathuraInstance extends DBusSignalEmitter {
 }
 
 function getZathuraFileName (instance: ZathuraInstance): Promise<string | undefined> {
-  return instance.get_filename().then(value => value, error => undefined)
+  return instance.get_filename().then(value => value, () => undefined)
 }
 
 export default class Zathura extends Rule {
@@ -50,6 +50,7 @@ export default class Zathura extends Rule {
     'PortableDocumentFormat', 'PostScript'
   ])]
   // static alwaysEvaluate: boolean = true
+
   static description: string = 'Open targets using zathura.'
 
   bus: DBus = new DBus()
@@ -62,7 +63,7 @@ export default class Zathura extends Rule {
     }
 
     try {
-      await consumer.executeProcess({
+      await consumer.executeCommand({
         args: ['zathura', '--version'],
         cd: '$ROOTDIR',
         severity: 'info'
@@ -79,7 +80,7 @@ export default class Zathura extends Rule {
   }
 
   async run (): Promise<boolean> {
-    this.spawnProcess(this.constructCommand())
+    if (!await super.run()) return false
 
     const filePath = this.firstParameter.realFilePath
 
@@ -102,35 +103,6 @@ export default class Zathura extends Rule {
     return !!this.instance
   }
 
-  async findInstance (reuseInstance: boolean): Promise<void> {
-    const filePath = this.firstParameter.realFilePath
-    let emptyInstance: ZathuraInstance | undefined
-
-    delete this.instance
-
-    for (const name of await this.bus.listNames()) {
-      if (name.startsWith(DBUS_NAME)) {
-        const currentInstance = await this.bus.getInterface(name, DBUS_PATH, DBUS_INTERFACE)
-        const filename = await getZathuraFileName(currentInstance)
-        if (filename === filePath) {
-          this.instance = currentInstance
-          break
-        } else if (filename === undefined && !emptyInstance) {
-          emptyInstance = currentInstance
-        }
-      }
-    }
-
-    if (!this.instance && reuseInstance && emptyInstance) {
-      this.instance = emptyInstance
-      await this.instance.OpenDocument(filePath, '', 0)
-    }
-
-    if (this.instance) {
-      this.instance.on('Edit', this.onEdit.bind(this))
-    }
-  }
-
   onEdit (input: string, line: number, column: number): void {
     this.sync(input, line)
   }
@@ -148,7 +120,8 @@ export default class Zathura extends Rule {
     return {
       args,
       cd: '$ROOTDIR',
-      severity: 'warning'
+      severity: 'warning',
+      spawn: true
     }
   }
 }

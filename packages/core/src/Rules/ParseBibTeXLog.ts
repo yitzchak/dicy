@@ -1,7 +1,7 @@
 import { Command, Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, ProcessResults } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['BibTeXLog'])]
@@ -106,7 +106,7 @@ export default class ParseBibTeXLog extends Rule {
         cd: '$ROOTDIR',
         severity: 'warning',
         stdout: true
-      })
+      }) as ProcessResults
 
       parsedLog.inputs = stdout
         ? stdout.split('\n').filter((file: string) => file).map(file => this.normalizePath(file))

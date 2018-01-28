@@ -21,7 +21,7 @@ export default class RunTests extends Rule {
 
     for (const command of commands) {
       try {
-        await this.executeProcess({
+        await this.executeCommand({
           args: command,
           cd: '$ROOTDIR'
         })

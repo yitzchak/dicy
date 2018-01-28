@@ -19,8 +19,8 @@ import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  FileCache, GlobOptions, DependencyType, KillToken,
-  Phase, ProcessOptions, ProcessResults, RuleCache
+  CommandOptions, FileCache, GlobOptions, DependencyType, KillToken,
+  Phase, ProcessResults, RuleCache
 } from './types'
 
 const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
@@ -513,44 +513,38 @@ export default class StateConsumer implements EventEmitter {
     return processOptions
   }
 
-  spawnProcess (processOptions: ProcessOptions): childProcess.ChildProcess {
-    // We only capture stdout and stderr if explicitly instructed to. This is
-    // possibly to conserve some memory, but mostly it is a work around for a
-    // bug in CLISP <https://sourceforge.net/p/clisp/bugs/378/> which makes it
-    // impossible to run xindy without pseudo terminal support.
-    const options = this.constructProcessOptions(processOptions.cd,
-      false, !!processOptions.stdout, !!processOptions.stderr)
-    // Use ampersand as a filler for empty arguments. This is to work around
-    // a bug in command-join.
-    const command = typeof processOptions.args === 'string'
-      ? processOptions.args
-      : commandJoin(processOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
-        .replace(/(['"])\^?&(['"])/g, '$1$2')
-
-    this.info(`Executing \`${command}\``, 'command')
-
-    const child = childProcess.spawn(command, options)
-    const handleExit = (): void => {
-      if (child.pid) this.state.processes.delete(child.pid)
-    }
-
-    if (child.pid) this.state.processes.add(child.pid)
-    child.on('error', handleExit)
-    child.on('close', handleExit)
-
-    return child
-  }
-
-  resolveAllPaths (value: string): string {
-    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
-  }
-
-  executeProcess (processOptions: ProcessOptions): Promise<ProcessResults> {
+  executeCommand (commandOptions: CommandOptions): Promise<childProcess.ChildProcess | ProcessResults> {
     return new Promise((resolve, reject) => {
+      // We only capture stdout and stderr if explicitly instructed to. This is
+      // possibly to conserve some memory, but mostly it is a work around for a
+      // bug in CLISP <https://sourceforge.net/p/clisp/bugs/378/> which makes it
+      // impossible to run xindy without pseudo terminal support.
+      const options = this.constructProcessOptions(commandOptions.cd,
+        false, !!commandOptions.stdout, !!commandOptions.stderr)
+      // Use ampersand as a filler for empty arguments. This is to work around
+      // a bug in command-join.
+      const command = typeof commandOptions.args === 'string'
+        ? commandOptions.args
+        : commandJoin(commandOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
+          .replace(/(['"])\^?&(['"])/g, '$1$2')
+
+      this.info(`Executing \`${command}\``, 'command')
+
+      const child = childProcess.spawn(command, options)
+      const cleanup = (): void => {
+        if (child.pid) this.state.processes.delete(child.pid)
+      }
+
+      if (child.pid) this.state.processes.add(child.pid)
+      child.on('error', cleanup)
+      child.on('close', cleanup)
+
+      if (commandOptions.spawn) return resolve(child)
+
       let stdout: string
       let stderr: string
       let exited: boolean = false
-      const child = this.spawnProcess(processOptions)
+
       const handleExit = (error: any): void => {
         if (exited) return
         exited = true
@@ -567,11 +561,11 @@ export default class StateConsumer implements EventEmitter {
       child.on('close', (code: any, signal: any) => {
         let error: any
         if (code !== 0 || signal !== null) {
-          error = new Error(`Command failed: \`${processOptions.args[0]}\`\n${stderr || ''}`.trim()) as any
+          error = new Error(`Command failed: \`${commandOptions.args[0]}\`\n${stderr || ''}`.trim()) as any
           error.code = code
           error.signal = signal
-          if (processOptions.severity) {
-            this.log({ severity: processOptions.severity, text: error.toString(), name: this.constructor.name })
+          if (commandOptions.severity) {
+            this.log({ severity: commandOptions.severity, text: error.toString(), name: this.constructor.name })
           }
         }
         handleExit(error)
@@ -585,6 +579,10 @@ export default class StateConsumer implements EventEmitter {
         child.stderr.on('data', (data: string) => { stderr = `${stderr || ''}${data}` })
       }
     })
+  }
+
+  resolveAllPaths (value: string): string {
+    return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
   }
 
   isOutputOf (file: File, ruleId: string): boolean {
