@@ -64,7 +64,7 @@ export default class Zathura extends Rule {
 
     try {
       await consumer.executeCommand({
-        args: ['zathura', '--version'],
+        command: ['zathura', '--version'],
         cd: '$ROOTDIR',
         severity: 'info'
       })
@@ -108,17 +108,17 @@ export default class Zathura extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const args = ['zathura']
+    const command = ['zathura']
 
     if (this.options.sourcePath) {
       const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
-      args.push(`--synctex-forward="${this.options.sourceLine}:1:${sourcePath}"`)
+      command.push(`--synctex-forward="${this.options.sourceLine}:1:${sourcePath}"`)
     }
 
-    args.push('{{$FILEPATH_0}}')
+    command.push('{{$FILEPATH_0}}')
 
     return {
-      args,
+      command,
       cd: '$ROOTDIR',
       severity: 'warning',
       spawn: true

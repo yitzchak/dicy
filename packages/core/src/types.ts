@@ -99,7 +99,7 @@ export interface ParsedLog {
 }
 
 export interface CommandOptions {
-  args: string[] | string
+  command: string[] | string
   cd: string
   spawn?: boolean
   severity?: Severity

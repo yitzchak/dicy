@@ -18,7 +18,7 @@ export default class DviToPs extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: [
+      command: [
         'dvips',
         '-o',
         '{{$DIR_0/$NAME_0.ps}}',

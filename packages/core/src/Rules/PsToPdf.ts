@@ -16,7 +16,7 @@ export default class PsToPdf extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: [
+      command: [
         'ps2pdf',
         '{{$FILEPATH_0}}',
         '{{$DIR_0/$NAME_0.pdf}}'

@@ -13,14 +13,14 @@ export default class MakeGlossaries extends Rule {
 
   constructCommand (): CommandOptions {
     const { dir, name } = path.parse(this.firstParameter.filePath)
-    const args = ['makeglossaries']
+    const command = ['makeglossaries']
 
     // Only push the -d option if needed.
-    if (dir) args.push('-d', dir)
-    args.push(name)
+    if (dir) command.push('-d', dir)
+    command.push(name)
 
     return {
-      args,
+      command,
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: [

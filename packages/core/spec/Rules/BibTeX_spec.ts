@@ -100,7 +100,7 @@ describe('BibTeX', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['bibtex', '{{$BASE_0}}'],
+        command: ['bibtex', '{{$BASE_0}}'],
         cd: '$ROOTDIR/$DIR_0',
         severity: 'error',
         outputs: [{ file: '$DIR_0/$NAME_0.bbl' }, { file: '$DIR_0/$NAME_0.blg' }]
@@ -114,7 +114,7 @@ describe('BibTeX', () => {
         options: { bibtexEngine: 'upbibtex' }
       })
 
-      expect(rule.constructCommand().args[0]).toEqual('upbibtex')
+      expect(rule.constructCommand().command[0]).toEqual('upbibtex')
 
       done()
     })
@@ -124,7 +124,7 @@ describe('BibTeX', () => {
         options: { bibtexEngine: 'upbibtex', kanji: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).toContain('-kanji=uptex')
+      expect(rule.constructCommand().command).toContain('-kanji=uptex')
 
       done()
     })
@@ -134,7 +134,7 @@ describe('BibTeX', () => {
         options: { kanji: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).not.toContain('-kanji=uptex')
+      expect(rule.constructCommand().command).not.toContain('-kanji=uptex')
 
       done()
     })
@@ -144,7 +144,7 @@ describe('BibTeX', () => {
         options: { bibtexEngine: 'upbibtex', kanjiInternal: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).toContain('-kanji-internal=uptex')
+      expect(rule.constructCommand().command).toContain('-kanji-internal=uptex')
 
       done()
     })
@@ -154,7 +154,7 @@ describe('BibTeX', () => {
         options: { kanjiInternal: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).not.toContain('-kanji-internal=uptex')
+      expect(rule.constructCommand().command).not.toContain('-kanji-internal=uptex')
 
       done()
     })

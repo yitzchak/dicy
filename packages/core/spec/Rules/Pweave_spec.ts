@@ -24,7 +24,7 @@ describe('Pweave', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'pweave',
           '--format=tex',
           '--output={{$JOB.tex}}',
@@ -48,7 +48,7 @@ describe('Pweave', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'pweave',
           '--format=tex',
           '--output={{foo.tex}}',
@@ -63,52 +63,52 @@ describe('Pweave', () => {
     })
   })
 
-  it('adds --cache-directory to args when pweaveCacheDirectory is set.', async (done) => {
+  it('adds --cache-directory to command when pweaveCacheDirectory is set.', async (done) => {
     const { rule } = await initialize({
       options: { pweaveCacheDirectory: 'foo' }
     })
 
-    expect(rule.constructCommand().args).toContain('--cache-directory={{foo}}')
+    expect(rule.constructCommand().command).toContain('--cache-directory={{foo}}')
 
     done()
   })
 
-  it('adds --documentation-mode to args when pweaveDocumentationMode is set.', async (done) => {
+  it('adds --documentation-mode to command when pweaveDocumentationMode is set.', async (done) => {
     const { rule } = await initialize({
       options: { pweaveDocumentationMode: true }
     })
 
-    expect(rule.constructCommand().args).toContain('--documentation-mode')
+    expect(rule.constructCommand().command).toContain('--documentation-mode')
 
     done()
   })
 
-  it('adds --figure-directory to args when pweaveFigureDirectory is set.', async (done) => {
+  it('adds --figure-directory to command when pweaveFigureDirectory is set.', async (done) => {
     const { rule } = await initialize({
       options: { pweaveFigureDirectory: 'foo' }
     })
 
-    expect(rule.constructCommand().args).toContain('--figure-directory={{foo}}')
+    expect(rule.constructCommand().command).toContain('--figure-directory={{foo}}')
 
     done()
   })
 
-  it('adds --kernel to args when pweaveKernel is set.', async (done) => {
+  it('adds --kernel to command when pweaveKernel is set.', async (done) => {
     const { rule } = await initialize({
       options: { pweaveKernel: 'foo' }
     })
 
-    expect(rule.constructCommand().args).toContain('--kernel=foo')
+    expect(rule.constructCommand().command).toContain('--kernel=foo')
 
     done()
   })
 
-  it('adds --format to args when pweaveOutputFormat is set.', async (done) => {
+  it('adds --format to command when pweaveOutputFormat is set.', async (done) => {
     const { rule } = await initialize({
       options: { pweaveOutputFormat: 'texminted' }
     })
 
-    expect(rule.constructCommand().args).toContain('--format=texminted')
+    expect(rule.constructCommand().command).toContain('--format=texminted')
 
     done()
   })

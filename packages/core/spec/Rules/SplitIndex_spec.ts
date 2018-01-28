@@ -116,7 +116,7 @@ describe('SplitIndex', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['splitindex', '-v', '-v', '-m', '', '{{$FILEPATH_0}}'],
+        command: ['splitindex', '-v', '-v', '-m', '', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
         inputs: [{

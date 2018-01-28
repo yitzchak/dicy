@@ -39,7 +39,7 @@ describe('Agda', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['agda', '--latex', '--latex-dir=.', '{{$BASE_0}}'],
+        command: ['agda', '--latex', '--latex-dir=.', '{{$BASE_0}}'],
         cd: '$ROOTDIR/$DIR_0',
         severity: 'error',
         outputs: [

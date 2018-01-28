@@ -29,7 +29,7 @@ export default class PatchSyncTeX extends Rule {
     // Set the severity to warning since patching the SyncTeX file is just a
     // nicety.
     return {
-      args: ['Rscript', '-e', lines.join(';')],
+      command: ['Rscript', '-e', lines.join(';')],
       cd: '$ROOTDIR',
       severity: 'warning',
       outputs: [{ file: '$DIR_1/BASE_1' }]

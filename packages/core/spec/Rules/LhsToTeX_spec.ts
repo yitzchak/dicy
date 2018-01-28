@@ -50,7 +50,7 @@ describe('LhsToTeX', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['lhs2TeX', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
+        command: ['lhs2TeX', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: [{ file: '$DIR_0/$NAME_0.tex' }]
@@ -66,7 +66,7 @@ describe('LhsToTeX', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: ['lhs2TeX', '--agda', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
+        command: ['lhs2TeX', '--agda', '-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: [{ file: '$DIR_0/$NAME_0.tex' }]
@@ -80,7 +80,7 @@ describe('LhsToTeX', () => {
         options: { lhs2texStyle: 'math' }
       })
 
-      expect(rule.constructCommand().args).toContain('--math')
+      expect(rule.constructCommand().command).toContain('--math')
 
       done()
     })
@@ -90,7 +90,7 @@ describe('LhsToTeX', () => {
         options: { lhs2texStyle: 'newCode' }
       })
 
-      expect(rule.constructCommand().args).toContain('--newcode')
+      expect(rule.constructCommand().command).toContain('--newcode')
 
       done()
     })
@@ -100,7 +100,7 @@ describe('LhsToTeX', () => {
         options: { lhs2texStyle: 'code' }
       })
 
-      expect(rule.constructCommand().args).toContain('--code')
+      expect(rule.constructCommand().command).toContain('--code')
 
       done()
     })
@@ -110,7 +110,7 @@ describe('LhsToTeX', () => {
         options: { lhs2texStyle: 'typewriter' }
       })
 
-      expect(rule.constructCommand().args).toContain('--tt')
+      expect(rule.constructCommand().command).toContain('--tt')
 
       done()
     })
@@ -120,7 +120,7 @@ describe('LhsToTeX', () => {
         options: { lhs2texStyle: 'verbatim' }
       })
 
-      expect(rule.constructCommand().args).toContain('--verb')
+      expect(rule.constructCommand().command).toContain('--verb')
 
       done()
     })

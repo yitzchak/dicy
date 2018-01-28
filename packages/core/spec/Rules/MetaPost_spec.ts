@@ -44,7 +44,7 @@ describe('MetaPost', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'mpost',
           '-file-line-error',
           '-interaction=batchmode',

@@ -204,7 +204,7 @@ export default class MakeIndex extends Rule {
       this.info(`Ignoring \`${name}\` setting of \`${this.options[name].toString()}\` since index engine \`${this.options.engine}\` does not support that option or setting.`)
     }
 
-    const args = [
+    const command = [
       this.options.indexEngine,
       '-t', `{{${logPath}}}`,
       '-o', `{{${outputPath}}}`
@@ -214,7 +214,7 @@ export default class MakeIndex extends Rule {
       if (texindy) {
         infoIgnoreSetting('indexStyle')
       } else {
-        args.push('-s', this.options.indexStyle)
+        command.push('-s', this.options.indexStyle)
       }
     }
 
@@ -223,13 +223,13 @@ export default class MakeIndex extends Rule {
       if (texindy) {
         infoIgnoreSetting('indexCompressBlanks')
       } else {
-        args.push('-c')
+        command.push('-c')
       }
     }
 
     // Ignore spaces in grouping.
     if (this.options.indexOrdering === 'letter') {
-      args.push('-l')
+      command.push('-l')
     }
 
     if (this.options.indexSorting !== 'default') {
@@ -239,17 +239,17 @@ export default class MakeIndex extends Rule {
       if (makeindex) {
         switch (this.options.indexSorting) {
           case 'german':
-            args.push('-g')
+            command.push('-g')
             break
           case 'thai':
-            args.push('-T')
+            command.push('-T')
             break
           case 'locale':
-            args.push('-L')
+            command.push('-L')
             break
         }
       } else if (texindy && this.options.indexSorting === 'german') {
-        args.push('-g')
+        command.push('-g')
       } else {
         infoIgnoreSetting('indexSorting')
       }
@@ -260,13 +260,13 @@ export default class MakeIndex extends Rule {
       if (texindy) {
         infoIgnoreSetting('indexStartPage')
       } else {
-        args.push('-p', this.options.indexStartPage)
+        command.push('-p', this.options.indexStartPage)
       }
     }
 
     // Prevent automatic range construction.
     if (!this.options.indexAutomaticRanges) {
-      args.push('-r')
+      command.push('-r')
     }
 
     if (this.options.kanji) {
@@ -275,16 +275,16 @@ export default class MakeIndex extends Rule {
         // kanjiInternal setting, but we at least try here.
         switch (this.options.kanji) {
           case 'euc':
-            args.push('-E')
+            command.push('-E')
             break
           case 'jis':
-            args.push('-J')
+            command.push('-J')
             break
           case 'sjis':
-            args.push('-S')
+            command.push('-S')
             break
           case 'utf8':
-            args.push('-U')
+            command.push('-U')
             break
           default:
             infoIgnoreSetting('kanji')
@@ -297,7 +297,7 @@ export default class MakeIndex extends Rule {
 
     if (this.options.kanjiInternal) {
       if (mendex && (this.options.kanjiInternal === 'euc' || this.options.kanjiInternal === 'utf8')) {
-        args.push('-I', this.options.kanjiInternal)
+        command.push('-I', this.options.kanjiInternal)
       } else {
         infoIgnoreSetting('kanjiInternal')
       }
@@ -306,7 +306,7 @@ export default class MakeIndex extends Rule {
     if (this.options.indexForceKanji) {
       // Both mendex and upmendex allow forcing kanji.
       if (mendex || upmendex) {
-        args.push('-f')
+        command.push('-f')
       } else {
         infoIgnoreSetting('indexForceKanji')
       }
@@ -315,16 +315,16 @@ export default class MakeIndex extends Rule {
     if (this.options.indexDictionary) {
       // Both mendex and upmendex have a sorting based on pronounciation.
       if (mendex || upmendex) {
-        args.push('-d', `{{${this.options.indexDictionary}}}`)
+        command.push('-d', `{{${this.options.indexDictionary}}}`)
       } else {
         infoIgnoreSetting('indexDictionary')
       }
     }
 
-    args.push('{{$FILEPATH_0}}')
+    command.push('{{$FILEPATH_0}}')
 
     const commandOptions: CommandOptions = {
-      args,
+      command,
       cd: '$ROOTDIR',
       severity: 'error',
       inputs: [{ file: `${logPath}-${parsedLogName}` }],

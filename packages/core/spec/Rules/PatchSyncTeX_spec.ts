@@ -16,7 +16,7 @@ describe('PatchSyncTeX', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: ['Rscript', '-e', 'library(patchSynctex);patchSynctex(\'KnitrConcordance.tex\',syncfile=\'SyncTeX\')'],
+        command: ['Rscript', '-e', 'library(patchSynctex);patchSynctex(\'KnitrConcordance.tex\',syncfile=\'SyncTeX\')'],
         cd: '$ROOTDIR',
         severity: 'warning',
         outputs: [{ file: '$DIR_1/BASE_1' }]

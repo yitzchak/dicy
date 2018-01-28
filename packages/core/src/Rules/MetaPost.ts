@@ -14,7 +14,7 @@ export default class MetaPost extends Rule {
   constructCommand (): CommandOptions {
     // Force the same error options as LaTeX and capture the file listing.
     return {
-      args: [
+      command: [
         'mpost',
         '-file-line-error',
         '-interaction=batchmode',

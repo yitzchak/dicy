@@ -25,7 +25,7 @@ export default class XdgOpen extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: [
+      command: [
         'xdg-open',
         '{{$FILEPATH_0}}'
       ],

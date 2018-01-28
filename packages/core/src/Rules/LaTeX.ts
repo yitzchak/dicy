@@ -51,7 +51,7 @@ export default class LaTeX extends Rule {
   constructCommand (): CommandOptions {
     const engine = this.options.engine
     // Add engine and common options
-    const args = [
+    const command = [
       engine,
       '-file-line-error',
       '-interaction=batchmode',
@@ -59,26 +59,26 @@ export default class LaTeX extends Rule {
     ]
 
     if (this.options.outputDirectory) {
-      args.push(`-output-directory=${this.options.outputDirectory}`)
+      command.push(`-output-directory=${this.options.outputDirectory}`)
     }
 
     if (this.options.jobName) {
-      args.push(`-jobname=${this.options.jobName}`)
+      command.push(`-jobname=${this.options.jobName}`)
     }
 
     if (this.options.synctex) {
-      args.push('-synctex=1')
+      command.push('-synctex=1')
     }
 
     switch (this.options.shellEscape) {
       case 'disabled':
-        args.push('-no-shell-escape')
+        command.push('-no-shell-escape')
         break
       case 'restricted':
-        args.push('-shell-restricted')
+        command.push('-shell-restricted')
         break
       case 'enabled':
-        args.push('-shell-escape')
+        command.push('-shell-escape')
         break
     }
 
@@ -88,10 +88,10 @@ export default class LaTeX extends Rule {
       if (this.options.outputFormat !== 'pdf') {
         switch (this.options.engine) {
           case 'xelatex':
-            args.push('-no-pdf')
+            command.push('-no-pdf')
             break
           default:
-            args.push('-output-format=dvi')
+            command.push('-output-format=dvi')
             break
         }
       }
@@ -99,18 +99,18 @@ export default class LaTeX extends Rule {
 
     if (JAPANESE_LATEX_PATTERN.test(engine)) {
       if (this.options.kanji) {
-        args.push(`-kanji=${this.options.kanji}`)
+        command.push(`-kanji=${this.options.kanji}`)
       }
       if (this.options.kanjiInternal) {
-        args.push(`-kanji-internal=${this.options.kanjiInternal}`)
+        command.push(`-kanji-internal=${this.options.kanjiInternal}`)
       }
     }
 
     // Add the source file.
-    args.push('{{$FILEPATH_0}}')
+    command.push('{{$FILEPATH_0}}')
 
     return {
-      args,
+      command,
       cd: '$ROOTDIR',
       severity: 'error',
       inputs: [{ file: '$OUTDIR/$JOB.aux' }],

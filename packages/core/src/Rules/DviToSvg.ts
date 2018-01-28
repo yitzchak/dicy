@@ -16,7 +16,7 @@ export default class DviToSvg extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: [
+      command: [
         'dvisvgm',
         '-o',
         '{{$DIR_0/$NAME_0.svg}}',

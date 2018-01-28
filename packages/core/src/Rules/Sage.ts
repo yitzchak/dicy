@@ -8,7 +8,7 @@ export default class Sage extends Rule {
   constructCommand (): CommandOptions {
     // Sage doesn't seem to have any logs, so try to guess at the outputs.
     return {
-      args: ['sage', '{{$BASE_0}}'],
+      command: ['sage', '{{$BASE_0}}'],
       cd: '$ROOTDIR_0',
       severity: 'error',
       outputs: [

@@ -41,7 +41,7 @@ describe('PdfToPs', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'pdf2ps',
           '{{$FILEPATH_0}}',
           '{{$DIR_0/$NAME_0.ps}}'

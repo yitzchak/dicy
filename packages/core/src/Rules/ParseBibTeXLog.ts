@@ -102,7 +102,7 @@ export default class ParseBibTeXLog extends Rule {
 
     try {
       const { stdout } = await this.executeCommand({
-        args: ['kpsewhich'].concat(parsedLog.inputs),
+        command: ['kpsewhich'].concat(parsedLog.inputs),
         cd: '$ROOTDIR',
         severity: 'warning',
         stdout: true

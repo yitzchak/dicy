@@ -22,7 +22,7 @@ export default class Qpdfview extends Rule {
 
     try {
       await consumer.executeCommand({
-        args: ['qpdfview', '--help'],
+        command: ['qpdfview', '--help'],
         cd: '$ROOTDIR',
         severity: 'info'
       })
@@ -42,7 +42,7 @@ export default class Qpdfview extends Rule {
       ? `#src:${path.resolve(this.rootPath, this.options.sourcePath)}:${this.options.sourceLine}:0`
       : ''
     return {
-      args: [
+      command: [
         'qpdfview',
         '--unique',
         `{{$FILEPATH_0}}${sourceHash}`

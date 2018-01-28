@@ -41,7 +41,7 @@ describe('DviToSvg', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'dvisvgm',
           '-o',
           '{{$DIR_0/$NAME_0.svg}}',

@@ -11,7 +11,7 @@ export default class Pweave extends Rule {
     const kernel = this.options.pweaveKernel
     const outputPath = this.options.pweaveOutputPath
     // Always add output format and output path.
-    const args = [
+    const command = [
       'pweave',
       `--format=${this.options.pweaveOutputFormat}`,
       `--output={{${outputPath}}}`
@@ -19,27 +19,27 @@ export default class Pweave extends Rule {
 
     // If the cache directory is not the default then set it.
     if (cacheDirectory !== 'cache') {
-      args.push(`--cache-directory={{${cacheDirectory}}}`)
+      command.push(`--cache-directory={{${cacheDirectory}}}`)
     }
 
     // If the figure directory is not the default then set it.
     if (figureDirectory !== 'figures') {
-      args.push(`--figure-directory={{${figureDirectory}}}`)
+      command.push(`--figure-directory={{${figureDirectory}}}`)
     }
 
     if (kernel !== 'python3') {
-      args.push(`--kernel=${kernel}`)
+      command.push(`--kernel=${kernel}`)
     }
 
     // Add the documentation mode option if it is set.
     if (this.options.pweaveDocumentationMode) {
-      args.push('--documentation-mode')
+      command.push('--documentation-mode')
     }
 
-    args.push('{{$FILEPATH_0}}')
+    command.push('{{$FILEPATH_0}}')
 
     return {
-      args,
+      command,
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: [{ file: outputPath }]

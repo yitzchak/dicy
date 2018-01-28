@@ -17,7 +17,7 @@ export default class DviToPdf extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: [
+      command: [
         this.options.dviToPdfEngine,
         '-o',
         '{{$DIR_0/$NAME_0.pdf}}',

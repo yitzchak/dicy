@@ -21,10 +21,7 @@ export default class RunTests extends Rule {
 
     for (const command of commands) {
       try {
-        await this.executeCommand({
-          args: command,
-          cd: '$ROOTDIR'
-        })
+        await this.executeCommand({ command, cd: '$ROOTDIR' })
         this.info(`Test of \`${command}\` succeeded.`, 'test')
       } catch (error) {
         this.error(`Test of \`${command}\` failed.`, 'test')

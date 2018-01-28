@@ -173,7 +173,7 @@ describe('LaTeX', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'pdflatex',
           '-file-line-error',
           '-interaction=batchmode',
@@ -203,7 +203,7 @@ describe('LaTeX', () => {
         options: { engine: 'xelatex' }
       })
 
-      expect(rule.constructCommand().args[0]).toEqual('xelatex')
+      expect(rule.constructCommand().command[0]).toEqual('xelatex')
 
       done()
     })
@@ -216,7 +216,7 @@ describe('LaTeX', () => {
         options: { outputDirectory: 'foo' }
       })
 
-      expect(rule.constructCommand().args).toContain('-output-directory=foo')
+      expect(rule.constructCommand().command).toContain('-output-directory=foo')
 
       done()
     })
@@ -229,7 +229,7 @@ describe('LaTeX', () => {
         options: { jobName: 'foo' }
       })
 
-      expect(rule.constructCommand().args).toContain('-jobname=foo')
+      expect(rule.constructCommand().command).toContain('-jobname=foo')
 
       done()
     })
@@ -242,7 +242,7 @@ describe('LaTeX', () => {
         options: { synctex: true }
       })
 
-      expect(rule.constructCommand().args).toContain('-synctex=1')
+      expect(rule.constructCommand().command).toContain('-synctex=1')
 
       done()
     })
@@ -255,7 +255,7 @@ describe('LaTeX', () => {
         options: { shellEscape: 'enabled' }
       })
 
-      expect(rule.constructCommand().args).toContain('-shell-escape')
+      expect(rule.constructCommand().command).toContain('-shell-escape')
 
       done()
     })
@@ -268,7 +268,7 @@ describe('LaTeX', () => {
         options: { shellEscape: 'disabled' }
       })
 
-      expect(rule.constructCommand().args).toContain('-no-shell-escape')
+      expect(rule.constructCommand().command).toContain('-no-shell-escape')
 
       done()
     })
@@ -281,7 +281,7 @@ describe('LaTeX', () => {
         options: { shellEscape: 'restricted' }
       })
 
-      expect(rule.constructCommand().args).toContain('-shell-restricted')
+      expect(rule.constructCommand().command).toContain('-shell-restricted')
 
       done()
     })
@@ -294,7 +294,7 @@ describe('LaTeX', () => {
         options: { outputFormat: 'dvi' }
       })
 
-      expect(rule.constructCommand().args).toContain('-output-format=dvi')
+      expect(rule.constructCommand().command).toContain('-output-format=dvi')
 
       done()
     })
@@ -307,7 +307,7 @@ describe('LaTeX', () => {
         options: { outputFormat: 'ps' }
       })
 
-      expect(rule.constructCommand().args).toContain('-output-format=dvi')
+      expect(rule.constructCommand().command).toContain('-output-format=dvi')
 
       done()
     })
@@ -320,7 +320,7 @@ describe('LaTeX', () => {
         options: { engine: 'xelatex', outputFormat: 'dvi' }
       })
 
-      expect(rule.constructCommand().args).toContain('-no-pdf')
+      expect(rule.constructCommand().command).toContain('-no-pdf')
 
       done()
     })
@@ -333,7 +333,7 @@ describe('LaTeX', () => {
         options: { engine: 'uplatex', kanji: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).toContain('-kanji=uptex')
+      expect(rule.constructCommand().command).toContain('-kanji=uptex')
 
       done()
     })
@@ -346,7 +346,7 @@ describe('LaTeX', () => {
         options: { kanji: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).not.toContain('-kanji=uptex')
+      expect(rule.constructCommand().command).not.toContain('-kanji=uptex')
 
       done()
     })
@@ -359,7 +359,7 @@ describe('LaTeX', () => {
         options: { engine: 'uplatex', kanjiInternal: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).toContain('-kanji-internal=uptex')
+      expect(rule.constructCommand().command).toContain('-kanji-internal=uptex')
 
       done()
     })
@@ -372,7 +372,7 @@ describe('LaTeX', () => {
         options: { kanjiInternal: 'uptex' }
       })
 
-      expect(rule.constructCommand().args).not.toContain('-kanji-internal=uptex')
+      expect(rule.constructCommand().command).not.toContain('-kanji-internal=uptex')
 
       done()
     })

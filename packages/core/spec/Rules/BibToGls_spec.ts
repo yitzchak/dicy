@@ -64,7 +64,7 @@ describe('BibToGls', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['bib2gls', '-t', '{{$NAME_0.gelg}}', '{{$NAME_0}}'],
+        command: ['bib2gls', '-t', '{{$NAME_0.gelg}}', '{{$NAME_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
         inputs: [{ file: '$DIR_0/$NAME_0.gelg-ParsedBibToGlsLog' }],

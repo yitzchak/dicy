@@ -18,7 +18,7 @@ describe('Sage', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['sage', '{{$BASE_0}}'],
+        command: ['sage', '{{$BASE_0}}'],
         cd: '$ROOTDIR_0',
         severity: 'error',
         outputs: [

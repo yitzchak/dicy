@@ -263,7 +263,7 @@ describe('EpsToPdf', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'epstopdf',
           '--outfile={{$DIR_0/$NAME_0.pdf}}',
           '{{$FILEPATH_0}}'
@@ -282,7 +282,7 @@ describe('EpsToPdf', () => {
         options: { epstopdfOutputPath: 'foo.pdf' }
       })
 
-      expect(rule.constructCommand().args).toContain('--outfile={{foo.pdf}}')
+      expect(rule.constructCommand().command).toContain('--outfile={{foo.pdf}}')
 
       done()
     })
@@ -292,7 +292,7 @@ describe('EpsToPdf', () => {
         options: { epstopdfBoundingBox: 'hires' }
       })
 
-      expect(rule.constructCommand().args).toContain('--hires')
+      expect(rule.constructCommand().command).toContain('--hires')
 
       done()
     })
@@ -302,7 +302,7 @@ describe('EpsToPdf', () => {
         options: { epstopdfBoundingBox: 'exact' }
       })
 
-      expect(rule.constructCommand().args).toContain('--exact')
+      expect(rule.constructCommand().command).toContain('--exact')
 
       done()
     })
@@ -312,7 +312,7 @@ describe('EpsToPdf', () => {
         options: { epstopdfRestricted: true }
       })
 
-      expect(rule.constructCommand().args).toContain('--restricted')
+      expect(rule.constructCommand().command).toContain('--restricted')
 
       done()
     })

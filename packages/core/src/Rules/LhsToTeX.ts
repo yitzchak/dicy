@@ -18,37 +18,37 @@ export default class LhsToTeX extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const args = ['lhs2TeX']
+    const command = ['lhs2TeX']
 
     // If the source is a literate Agda file then add the `--agda` option
     if (this.firstParameter.type === 'LiterateAgda') {
-      args.push('--agda')
+      command.push('--agda')
     }
 
     // Add the style option. `poly` is default so omit it.
     switch (this.options.lhs2texStyle) {
       case 'math':
-        args.push('--math')
+        command.push('--math')
         break
       case 'newCode':
-        args.push('--newcode')
+        command.push('--newcode')
         break
       case 'code':
-        args.push('--code')
+        command.push('--code')
         break
       case 'typewriter':
-        args.push('--tt')
+        command.push('--tt')
         break
       case 'verbatim':
-        args.push('--verb')
+        command.push('--verb')
         break
     }
 
     // Add the output file and source files.
-    args.push('-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}')
+    command.push('-o', '{{$DIR_0/$NAME_0.tex}}', '{{$FILEPATH_0}}')
 
     return {
-      args,
+      command,
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: [{ file: '$DIR_0/$NAME_0.tex' }]

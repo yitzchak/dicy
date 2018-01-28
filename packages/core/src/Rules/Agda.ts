@@ -17,7 +17,7 @@ export default class Agda extends Rule {
   constructCommand (): CommandOptions {
     // Force latex mode and save all file to root directory.
     return {
-      args: ['agda', '--latex', '--latex-dir=.', '{{$BASE_0}}'],
+      command: ['agda', '--latex', '--latex-dir=.', '{{$BASE_0}}'],
       cd: '$ROOTDIR/$DIR_0',
       severity: 'error',
       outputs: [

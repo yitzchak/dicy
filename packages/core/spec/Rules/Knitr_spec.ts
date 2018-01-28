@@ -19,7 +19,7 @@ describe('Knitr', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
+        command: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: [{ file: '$JOB.tex' }, { file: '$JOB-concordance.tex' }]
@@ -34,7 +34,7 @@ describe('Knitr', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: ['Rscript', '-e', 'library(knitr);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
+        command: ['Rscript', '-e', 'library(knitr);knit(\'RNoWeb.Rnw\',\'RNoWeb.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: [{ file: '$JOB.tex' }]
@@ -49,7 +49,7 @@ describe('Knitr', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'foo.tex\')'],
+        command: ['Rscript', '-e', 'library(knitr);opts_knit$set(concordance=TRUE);knit(\'RNoWeb.Rnw\',\'foo.tex\')'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: [{ file: 'foo.tex' }, { file: 'foo-concordance.tex' }]

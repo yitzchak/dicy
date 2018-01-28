@@ -523,9 +523,9 @@ export default class StateConsumer implements EventEmitter {
         false, !!commandOptions.stdout, !!commandOptions.stderr)
       // Use ampersand as a filler for empty arguments. This is to work around
       // a bug in command-join.
-      const command = typeof commandOptions.args === 'string'
-        ? commandOptions.args
-        : commandJoin(commandOptions.args.map(arg => this.resolveAllPaths(arg) || '&'))
+      const command = typeof commandOptions.command === 'string'
+        ? commandOptions.command
+        : commandJoin(commandOptions.command.map(arg => this.resolveAllPaths(arg) || '&'))
           .replace(/(['"])\^?&(['"])/g, '$1$2')
 
       this.info(`Executing \`${command}\``, 'command')
@@ -561,7 +561,7 @@ export default class StateConsumer implements EventEmitter {
       child.on('close', (code: any, signal: any) => {
         let error: any
         if (code !== 0 || signal !== null) {
-          error = new Error(`Command failed: \`${commandOptions.args[0]}\`\n${stderr || ''}`.trim()) as any
+          error = new Error(`Command failed: \`${command}\`\n${stderr || ''}`.trim()) as any
           error.code = code
           error.signal = signal
           if (commandOptions.severity) {

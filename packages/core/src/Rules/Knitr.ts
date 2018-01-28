@@ -25,7 +25,7 @@ export default class Knitr extends Rule {
     lines.push(`knit('${escapedFilePath}','${escapedDutputPath}')`)
 
     return {
-      args: ['Rscript', '-e', lines.join(';')],
+      command: ['Rscript', '-e', lines.join(';')],
       cd: '$ROOTDIR',
       severity: 'error',
       outputs: outputs.map(file => ({ file }))

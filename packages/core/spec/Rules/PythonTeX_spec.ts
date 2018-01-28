@@ -18,7 +18,7 @@ describe('PythonTeX', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['pythontex', '{{$NAME_0}}'],
+        command: ['pythontex', '{{$NAME_0}}'],
         cd: '$ROOTDIR_0',
         severity: 'error',
         globbedOutputs: [{ file: '$DIR_0/pythontex-files-$NAME_0/*' }]

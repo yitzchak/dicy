@@ -16,7 +16,7 @@ export default class PdfToPs extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      args: [
+      command: [
         'pdf2ps',
         '{{$FILEPATH_0}}',
         '{{$DIR_0/$NAME_0.ps}}'

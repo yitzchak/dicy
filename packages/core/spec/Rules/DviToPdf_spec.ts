@@ -51,7 +51,7 @@ describe('DviToPdf', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'xdvipdfmx',
           '-o',
           '{{$DIR_0/$NAME_0.pdf}}',
@@ -71,7 +71,7 @@ describe('DviToPdf', () => {
         options: { dviToPdfEngine: 'dvipdfm' }
       })
 
-      expect(rule.constructCommand().args[0]).toEqual('dvipdfm')
+      expect(rule.constructCommand().command[0]).toEqual('dvipdfm')
 
       done()
     })

@@ -48,21 +48,21 @@ export default class BibTeX extends Rule {
 
   constructCommand (): CommandOptions {
     const engine = this.options.bibtexEngine
-    const args: string[] = [engine]
+    const command: string[] = [engine]
 
     if (JAPANESE_BIBTEX_PATTERN.test(engine)) {
       if (this.options.kanji) {
-        args.push(`-kanji=${this.options.kanji}`)
+        command.push(`-kanji=${this.options.kanji}`)
       }
       if (this.options.kanjiInternal) {
-        args.push(`-kanji-internal=${this.options.kanjiInternal}`)
+        command.push(`-kanji-internal=${this.options.kanjiInternal}`)
       }
     }
 
-    args.push('{{$BASE_0}}')
+    command.push('{{$BASE_0}}')
 
     return {
-      args,
+      command,
       cd: '$ROOTDIR/$DIR_0',
       severity: 'error',
       outputs: [{ file: '$DIR_0/$NAME_0.bbl' }, { file: '$DIR_0/$NAME_0.blg' }]

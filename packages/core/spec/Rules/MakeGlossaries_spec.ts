@@ -18,7 +18,7 @@ describe('MakeGlossaries', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['makeglossaries', 'GlossaryControlFile'],
+        command: ['makeglossaries', 'GlossaryControlFile'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: [

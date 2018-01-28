@@ -461,7 +461,7 @@ describe('MakeIndex', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'makeindex',
           '-t',
           '{{$DIR_0/$NAME_0.ilg}}',
@@ -488,7 +488,7 @@ describe('MakeIndex', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'makeindex',
           '-t',
           '{{$DIR_0/$NAME_0.nlg}}',
@@ -517,7 +517,7 @@ describe('MakeIndex', () => {
       })
 
       expect(rule.constructCommand()).toEqual({
-        args: [
+        command: [
           'makeindex',
           '-t',
           '{{$DIR_0/$NAME_0.brlg}}',
@@ -541,7 +541,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'texindy' }
       })
 
-      expect(rule.constructCommand().args[0]).toBe('texindy')
+      expect(rule.constructCommand().command[0]).toBe('texindy')
 
       done()
     })
@@ -551,7 +551,7 @@ describe('MakeIndex', () => {
         options: { indexCompressBlanks: true }
       })
 
-      expect(rule.constructCommand().args).toContain('-c')
+      expect(rule.constructCommand().command).toContain('-c')
 
       done()
     })
@@ -561,7 +561,7 @@ describe('MakeIndex', () => {
         options: { indexOrdering: 'letter' }
       })
 
-      expect(rule.constructCommand().args).toContain('-l')
+      expect(rule.constructCommand().command).toContain('-l')
 
       done()
     })
@@ -571,7 +571,7 @@ describe('MakeIndex', () => {
         options: { indexSorting: 'german' }
       })
 
-      expect(rule.constructCommand().args).toContain('-g')
+      expect(rule.constructCommand().command).toContain('-g')
 
       done()
     })
@@ -581,7 +581,7 @@ describe('MakeIndex', () => {
         options: { indexSorting: 'thai' }
       })
 
-      expect(rule.constructCommand().args).toContain('-T')
+      expect(rule.constructCommand().command).toContain('-T')
 
       done()
     })
@@ -591,7 +591,7 @@ describe('MakeIndex', () => {
         options: { indexSorting: 'locale' }
       })
 
-      expect(rule.constructCommand().args).toContain('-L')
+      expect(rule.constructCommand().command).toContain('-L')
 
       done()
     })
@@ -601,7 +601,7 @@ describe('MakeIndex', () => {
         options: { indexAutomaticRanges: false }
       })
 
-      expect(rule.constructCommand().args).toContain('-r')
+      expect(rule.constructCommand().command).toContain('-r')
 
       done()
     })
@@ -611,7 +611,7 @@ describe('MakeIndex', () => {
         options: { indexStartPage: 'odd' }
       })
 
-      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-p', 'odd']) as any)
+      expect(rule.constructCommand().command).toEqual(jasmine.arrayContaining(['-p', 'odd']) as any)
 
       done()
     })
@@ -621,7 +621,7 @@ describe('MakeIndex', () => {
         options: { indexStyle: 'foo.ist' }
       })
 
-      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-s', 'foo.ist']) as any)
+      expect(rule.constructCommand().command).toEqual(jasmine.arrayContaining(['-s', 'foo.ist']) as any)
 
       done()
     })
@@ -631,7 +631,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', kanji: 'euc' }
       })
 
-      expect(rule.constructCommand().args).toContain('-E')
+      expect(rule.constructCommand().command).toContain('-E')
 
       done()
     })
@@ -641,7 +641,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', kanji: 'jis' }
       })
 
-      expect(rule.constructCommand().args).toContain('-J')
+      expect(rule.constructCommand().command).toContain('-J')
 
       done()
     })
@@ -651,7 +651,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', kanji: 'sjis' }
       })
 
-      expect(rule.constructCommand().args).toContain('-S')
+      expect(rule.constructCommand().command).toContain('-S')
 
       done()
     })
@@ -661,7 +661,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', kanji: 'utf8' }
       })
 
-      expect(rule.constructCommand().args).toContain('-U')
+      expect(rule.constructCommand().command).toContain('-U')
 
       done()
     })
@@ -671,7 +671,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', kanjiInternal: 'euc' }
       })
 
-      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-I', 'euc']) as any)
+      expect(rule.constructCommand().command).toEqual(jasmine.arrayContaining(['-I', 'euc']) as any)
 
       done()
     })
@@ -681,7 +681,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', indexDictionary: 'foo' }
       })
 
-      expect(rule.constructCommand().args).toEqual(jasmine.arrayContaining(['-d', '{{foo}}']) as any)
+      expect(rule.constructCommand().command).toEqual(jasmine.arrayContaining(['-d', '{{foo}}']) as any)
 
       done()
     })
@@ -691,7 +691,7 @@ describe('MakeIndex', () => {
         options: { indexEngine: 'mendex', indexForceKanji: true }
       })
 
-      expect(rule.constructCommand().args).toContain('-f')
+      expect(rule.constructCommand().command).toContain('-f')
 
       done()
     })

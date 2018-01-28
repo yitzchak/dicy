@@ -30,14 +30,14 @@ export default class BibToGls extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const args = ['bib2gls', '-t', '{{$NAME_0.gelg}}']
+    const command = ['bib2gls', '-t', '{{$NAME_0.gelg}}']
 
     // Only push the -d option if needed.
-    if (this.env.DIR_0 !== '.') args.push('-d', '{{$DIR_0}}')
-    args.push('{{$NAME_0}}')
+    if (this.env.DIR_0 !== '.') command.push('-d', '{{$DIR_0}}')
+    command.push('{{$NAME_0}}')
 
     return {
-      args,
+      command,
       cd: '$ROOTDIR',
       severity: 'error',
       inputs: [{ file: '$DIR_0/$NAME_0.gelg-ParsedBibToGlsLog' }],

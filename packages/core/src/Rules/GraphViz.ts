@@ -11,7 +11,7 @@ export default class GraphViz extends Rule {
   constructCommand (): CommandOptions {
     // Right now we only call fdp. Long usefulness of this is unknown.
     return {
-      args: [
+      command: [
         'fdp',
         `-T${this.options.outputFormat}`,
         '-o',

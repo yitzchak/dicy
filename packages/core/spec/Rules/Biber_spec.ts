@@ -80,7 +80,7 @@ describe('Biber', () => {
       const { rule } = await initialize()
 
       expect(rule.constructCommand()).toEqual({
-        args: ['biber', '{{$FILEPATH_0}}'],
+        command: ['biber', '{{$FILEPATH_0}}'],
         cd: '$ROOTDIR',
         severity: 'error',
         outputs: [{ file: '$DIR_0/$NAME_0.bbl' }, { file: '$DIR_0/$NAME_0.blg' }]

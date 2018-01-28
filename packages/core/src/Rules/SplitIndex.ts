@@ -65,7 +65,7 @@ export default class SplitIndex extends Rule {
   constructCommand (): CommandOptions {
     // Be extra verbose and capture all output for parsing
     return {
-      args: ['splitindex', '-v', '-v', '-m', '', '{{$FILEPATH_0}}'],
+      command: ['splitindex', '-v', '-v', '-m', '', '{{$FILEPATH_0}}'],
       cd: '$ROOTDIR',
       severity: 'error',
       inputs: [{
