@@ -427,7 +427,7 @@ export default class Rule extends StateConsumer {
   }
 
   constructCommand (): CommandOptions {
-    return { args: [], cd: '$ROOTDIR', severity: 'error' }
+    return { command: [], cd: '$ROOTDIR' }
   }
 
   actionTrace (action: Action) {
