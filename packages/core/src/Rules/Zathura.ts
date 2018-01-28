@@ -49,7 +49,7 @@ export default class Zathura extends Rule {
   static parameterTypes: Set<string>[] = [new Set([
     'PortableDocumentFormat', 'PostScript'
   ])]
-  static alwaysEvaluate: boolean = true
+  // static alwaysEvaluate: boolean = true
   static description: string = 'Open targets using zathura.'
 
   bus: DBus = new DBus()
@@ -79,23 +79,27 @@ export default class Zathura extends Rule {
   }
 
   async run (): Promise<boolean> {
+    this.spawnProcess(this.constructCommand())
+
     const filePath = this.firstParameter.realFilePath
 
     if (!this.instance || await getZathuraFileName(this.instance) !== filePath) {
-      await this.findInstance(true)
+      delete this.instance
 
-      if (!this.instance) {
-        const child = this.spawnProcess(this.constructCommand())
-        await this.findInstance(false)
+      for (const name of await this.bus.listNames()) {
+        if (name.startsWith(DBUS_NAME)) {
+          const instance = await this.bus.getInterface(name, DBUS_PATH, DBUS_INTERFACE)
+          const filename = await getZathuraFileName(instance)
+          if (filename === filePath) {
+            this.instance = instance
+            instance.on('Edit', this.onEdit.bind(this))
+            break
+          }
+        }
       }
     }
 
-    if (this.instance && this.options.sourcePath) {
-      const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
-      await this.instance.SynctexView(sourcePath, this.options.sourceLine, 0)
-    }
-
-    return true
+    return !!this.instance
   }
 
   async findInstance (reuseInstance: boolean): Promise<void> {
@@ -134,10 +138,10 @@ export default class Zathura extends Rule {
   constructCommand (): CommandOptions {
     const args = ['zathura']
 
-    // if (this.options.sourcePath) {
-    //   const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
-    //   args.push(`--synctex-forward="${this.options.sourceLine}:1:${sourcePath}"`)
-    // }
+    if (this.options.sourcePath) {
+      const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
+      args.push(`--synctex-forward="${this.options.sourceLine}:1:${sourcePath}"`)
+    }
 
     args.push('{{$FILEPATH_0}}')
 
