@@ -13,8 +13,22 @@ export default class SumatraPdf extends Rule {
   static description: string = 'Open targets using Sumatra PDF.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return process.platform === 'win32' &&
-      parameters.every(file => !file.virtual && consumer.isOutputTarget(file))
+    if (process.platform !== 'win32' ||
+      parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
+      return false
+    }
+
+    try {
+      await consumer.executeCommand({
+        command: ['SumatraPDF', '--help'],
+        cd: '$ROOTDIR',
+        severity: 'info'
+      })
+    } catch (error) {
+      return false
+    }
+
+    return true
   }
 
   get group (): Group | undefined {
