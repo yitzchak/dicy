@@ -9,19 +9,27 @@ class Builder extends EventEmitter implements BuilderInterface {
   cache: BuilderCacheInterface
   file: Uri
   logListener: (file: Uri, messages: Message[]) => void
+  syncListener: (file: Uri, source: Uri, line: number) => void
 
   constructor (cache: BuilderCacheInterface, file: Uri) {
     super()
     this.cache = cache
     this.file = file
+
     this.logListener = (file: Uri, messages: Message[]): void => {
       if (file === this.file) this.emit('log', messages)
     }
     this.cache.on('log', this.logListener)
+
+    this.syncListener = (file: Uri, source: Uri, line: number): void => {
+      if (file === this.file) this.emit('sync', source, line)
+    }
+    this.cache.on('sync', this.syncListener)
   }
 
   destroy () {
     this.cache.removeListener('log', this.logListener)
+    this.cache.removeListener('sync', this.syncListener)
   }
 
   getTargets (): Promise<string[]> {
@@ -78,6 +86,8 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   /** @internal */
   private logNotification = new rpc.NotificationType2<Uri, Message[], void>('log')
   /** @internal */
+  private syncNotification = new rpc.NotificationType3<Uri, Uri, number, void>('sync')
+  /** @internal */
   private runRequest = new rpc.RequestType2<Uri, Command[], boolean, void, void>('run')
   /** @internal */
   private setDirectoryOptionsRequest = new rpc.RequestType3<Uri, OptionsSource, boolean | undefined, void, void, void>('setDirectoryOptions')
@@ -117,6 +127,9 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
     this.connection = rpc.createMessageConnection(transport[0], transport[1])
     this.connection.onNotification(this.logNotification, (file: Uri, messages: Message[]): void => {
       this.emit('log', file, messages)
+    })
+    this.connection.onNotification(this.syncNotification, (file: Uri, source: Uri, line: number): void => {
+      this.emit('sync', file, source, line)
     })
 
     this.connection.listen()
