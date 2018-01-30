@@ -40,7 +40,7 @@ export default class Skim extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const command: string[] = [DISPLAYLINE_PATH, '-b']
+    const command: string[] = [DISPLAYLINE_PATH, '-b', '-r']
 
     if (this.options.openInBackground) {
       command.push('-g')
