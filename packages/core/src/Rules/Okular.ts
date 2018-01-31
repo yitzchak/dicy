@@ -41,6 +41,10 @@ export default class Okular extends Rule {
   constructCommand (): CommandOptions {
     const command: string[] = ['okular', '--unique']
 
+    if (this.options.openInBackground) {
+      command.push('--noraise')
+    }
+
     const urlObj: url.UrlObject = {
       protocol: 'file:',
       slashes: true,
@@ -52,10 +56,6 @@ export default class Okular extends Rule {
     }
 
     command.push(url.format(urlObj))
-
-    if (this.options.openInBackground) {
-      command.unshift('--noraise')
-    }
 
     return {
       command,
