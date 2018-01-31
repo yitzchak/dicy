@@ -49,7 +49,7 @@ export default class Zathura extends Rule {
   static parameterTypes: Set<string>[] = [new Set([
     'PortableDocumentFormat', 'PostScript'
   ])]
-  // static alwaysEvaluate: boolean = true
+  static alwaysEvaluate: boolean = true
 
   static description: string = 'Open targets using zathura.'
 
