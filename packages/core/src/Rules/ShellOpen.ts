@@ -25,7 +25,7 @@ export default class ShellOpen extends Rule {
 
   constructCommand (): CommandOptions {
     return {
-      command: ['{{$FILEPATH_0}}'],
+      command: ['start', '{{$FILEPATH_0}}'],
       cd: '$ROOTDIR',
       severity: 'warning'
     }
