@@ -20,7 +20,7 @@ export default class SumatraPdf extends Rule {
 
     try {
       await consumer.executeCommand({
-        command: ['SumatraPDF', '--help'],
+        command: ['WHERE', '/Q', 'SumatraPDF.exe'],
         cd: '$ROOTDIR',
         severity: 'info'
       })
@@ -52,7 +52,8 @@ export default class SumatraPdf extends Rule {
     return {
       command,
       cd: '$ROOTDIR',
-      severity: 'warning'
+      severity: 'warning',
+      spawn: true
     }
   }
 }
