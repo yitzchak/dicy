@@ -93,7 +93,7 @@ export default class Zathura extends Rule {
           const filename = await getZathuraFileName(instance)
           if (filename === filePath) {
             this.instance = instance
-            instance.on('Edit', this.onEdit.bind(this))
+            instance.on('Edit', this.sync.bind(this))
             break
           }
         }
@@ -103,16 +103,12 @@ export default class Zathura extends Rule {
     return !!this.instance
   }
 
-  onEdit (input: string, line: number, column: number): void {
-    this.sync(input, line)
-  }
-
   constructCommand (): CommandOptions {
     const command = ['zathura']
 
     if (this.options.sourcePath) {
       const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
-      command.push(`--synctex-forward="${this.options.sourceLine}:1:${sourcePath}"`)
+      command.push(`--synctex-forward="${this.options.sourceLine}:${this.options.sourceColumn}:${sourcePath}"`)
     }
 
     command.push('{{$FILEPATH_0}}')

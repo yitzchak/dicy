@@ -52,7 +52,10 @@ export default class Okular extends Rule {
     }
 
     if (this.options.sourcePath) {
-      urlObj.hash = encodeURI(`src:${this.options.sourceLine} ${path.resolve(this.rootPath, this.options.sourcePath)}`)
+      // The forward sync in Okular is in the form of DVI source specials. Any
+      // spaces between the line number and the file path will be trimmed by
+      // Okular.
+      urlObj.hash = encodeURI(`src:${this.options.sourceLine}${path.resolve(this.rootPath, this.options.sourcePath)}`)
     }
 
     command.push(url.format(urlObj))

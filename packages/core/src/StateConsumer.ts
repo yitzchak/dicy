@@ -345,8 +345,8 @@ export default class StateConsumer implements EventEmitter {
     }
   }
 
-  sync (source: string, line: number): void {
-    this.emit('sync', source, line)
+  sync (source: string, line: number, column: number): void {
+    this.emit('sync', source, line, column)
   }
 
   get components (): Rule[][] {
@@ -391,14 +391,14 @@ export default class StateConsumer implements EventEmitter {
 
   // EventEmmitter proxy
   addListener (event: 'log', listener: (messages: Message[]) => void): this
-  addListener (event: 'sync', listener: (source: string, line: number) => void): this
+  addListener (event: 'sync', listener: (source: string, line: number, column: number) => void): this
   addListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.addListener(event, listener)
     return this
   }
 
   emit (event: 'log', messages: Message[]): boolean
-  emit (event: 'sync', source: string, line: number): boolean
+  emit (event: 'sync', source: string, line: number, column: number): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return this.state.emit(event, ...args)
   }
@@ -420,28 +420,28 @@ export default class StateConsumer implements EventEmitter {
   }
 
   on (event: 'log', listener: (messages: Message[]) => void): this
-  on (event: 'sync', listener: (source: string, line: number) => void): this
+  on (event: 'sync', listener: (source: string, line: number, column: number) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.on(event, listener)
     return this
   }
 
   once (event: 'log', listener: (messages: Message[]) => void): this
-  once (event: 'sync', listener: (source: string, line: number) => void): this
+  once (event: 'sync', listener: (source: string, line: number, column: number) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.once(event, listener)
     return this
   }
 
   prependListener (event: 'log', listener: (messages: Message[]) => void): this
-  prependListener (event: 'sync', listener: (source: string, line: number) => void): this
+  prependListener (event: 'sync', listener: (source: string, line: number, column: number) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependListener(event, listener)
     return this
   }
 
   prependOnceListener (event: 'log', listener: (messages: Message[]) => void): this
-  prependOnceListener (event: 'sync', listener: (source: string, line: number) => void): this
+  prependOnceListener (event: 'sync', listener: (source: string, line: number, column: number) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependOnceListener(event, listener)
     return this
@@ -457,7 +457,7 @@ export default class StateConsumer implements EventEmitter {
   }
 
   removeListener (event: 'log', listener: (messages: Message[]) => void): this
-  removeListener (event: 'sync', listener: (source: string, line: number) => void): this
+  removeListener (event: 'sync', listener: (source: string, line: number, column: number) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.removeListener(event, listener)
     return this

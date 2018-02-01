@@ -154,7 +154,7 @@ export default class Evince extends Rule {
   }
 
   onSyncSource (source: string, point: [number, number]): void {
-    this.sync(source, point[0])
+    this.sync(source, point[0], point[1])
   }
 
   async run (): Promise<boolean> {
@@ -171,7 +171,8 @@ export default class Evince extends Rule {
     if (this.options.sourcePath) {
       // SyncView seems to want to activate the window sometimes
       const sourcePath = path.resolve(this.rootPath, this.options.sourcePath)
-      await this.windowInstance.evinceWindow.SyncView(sourcePath, [this.options.sourceLine, 0], 0)
+      await this.windowInstance.evinceWindow.SyncView(sourcePath,
+        [this.options.sourceLine, this.options.sourceColumn], 0)
     }
 
     return true

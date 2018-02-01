@@ -127,6 +127,7 @@ export interface OptionsInterface {
   saveCache: boolean
   severity: Severity
   shellEscape?: ShellEscape
+  sourceColumn: number
   sourceLine: number
   sourcePath?: string
   synctex: boolean
@@ -191,6 +192,7 @@ export interface JobOptions {
   saveCache?: boolean
   severity?: Severity
   shellEscape?: ShellEscape
+  sourceColumn?: number
   sourceLine?: number
   sourcePath?: string
   synctex?: boolean
@@ -255,7 +257,8 @@ export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
   pweaveOutputPath: '$JOB.tex',
   saveCache: true,
   severity: 'warning',
-  sourceLine: 0,
+  sourceColumn: 1,
+  sourceLine: 1,
   synctex: false,
   validateCache: true }
 

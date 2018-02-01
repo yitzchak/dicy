@@ -9,7 +9,7 @@ class Builder extends EventEmitter implements BuilderInterface {
   cache: BuilderCacheInterface
   file: Uri
   logListener: (file: Uri, messages: Message[]) => void
-  syncListener: (file: Uri, source: Uri, line: number) => void
+  syncListener: (file: Uri, source: Uri, line: number, column: number) => void
 
   constructor (cache: BuilderCacheInterface, file: Uri) {
     super()
@@ -21,8 +21,8 @@ class Builder extends EventEmitter implements BuilderInterface {
     }
     this.cache.on('log', this.logListener)
 
-    this.syncListener = (file: Uri, source: Uri, line: number): void => {
-      if (file === this.file) this.emit('sync', source, line)
+    this.syncListener = (file: Uri, source: Uri, line: number, column: number): void => {
+      if (file === this.file) this.emit('sync', source, line, column)
     }
     this.cache.on('sync', this.syncListener)
   }
@@ -86,7 +86,7 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
   /** @internal */
   private logNotification = new rpc.NotificationType2<Uri, Message[], void>('log')
   /** @internal */
-  private syncNotification = new rpc.NotificationType3<Uri, Uri, number, void>('sync')
+  private syncNotification = new rpc.NotificationType4<Uri, Uri, number, number, void>('sync')
   /** @internal */
   private runRequest = new rpc.RequestType2<Uri, Command[], boolean, void, void>('run')
   /** @internal */
@@ -128,8 +128,8 @@ export default class Client extends EventEmitter implements BuilderCacheInterfac
     this.connection.onNotification(this.logNotification, (file: Uri, messages: Message[]): void => {
       this.emit('log', file, messages)
     })
-    this.connection.onNotification(this.syncNotification, (file: Uri, source: Uri, line: number): void => {
-      this.emit('sync', file, source, line)
+    this.connection.onNotification(this.syncNotification, (file: Uri, source: Uri, line: number, column: number): void => {
+      this.emit('sync', file, source, line, column)
     })
 
     this.connection.listen()

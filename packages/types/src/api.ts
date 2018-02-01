@@ -30,23 +30,23 @@ export interface BuilderInterface extends EventEmitter {
   setProjectOptions (options: OptionsSource, merge?: boolean): Promise<void>
 
   on (event: 'log', listener: (messages: Message[]) => void): this
-  on (event: 'sync', listener: (file: Uri, line: number) => void): this
+  on (event: 'sync', listener: (file: Uri, line: number, column: number) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this
 
   once (event: 'log', listener: (messages: Message[]) => void): this
-  once (event: 'sync', listener: (source: Uri, line: number) => void): this
+  once (event: 'sync', listener: (source: Uri, line: number, column: number) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this
 
   prependListener (event: 'log', listener: (messages: Message[]) => void): this
-  prependListener (event: 'sync', listener: (source: Uri, line: number) => void): this
+  prependListener (event: 'sync', listener: (source: Uri, line: number, column: number) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this
 
   prependOnceListener (event: 'log', listener: (messages: Message[]) => void): this
-  prependOnceListener (event: 'sync', listener: (source: Uri, line: number) => void): this
+  prependOnceListener (event: 'sync', listener: (source: Uri, line: number, column: number) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this
 
   removeListener (event: 'log', listener: (messages: Message[]) => void): this
-  removeListener (event: 'sync', listener: (source: Uri, line: number) => void): this
+  removeListener (event: 'sync', listener: (source: Uri, line: number, column: number) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this
 }
 
@@ -68,22 +68,22 @@ export interface BuilderCacheInterface extends EventEmitter {
   setProjectOptions (file: Uri, options: OptionsSource, merge?: boolean): Promise<void>
 
   on (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
-  on (event: 'sync', listener: (file: Uri, source: Uri, line: number) => void): this
+  on (event: 'sync', listener: (file: Uri, source: Uri, line: number, column: number) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this
 
   once (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
-  once (event: 'sync', listener: (file: Uri, source: Uri, line: number) => void): this
+  once (event: 'sync', listener: (file: Uri, source: Uri, line: number, column: number) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this
 
   prependListener (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
-  prependListener (event: 'sync', listener: (file: Uri, source: Uri, line: number) => void): this
+  prependListener (event: 'sync', listener: (file: Uri, source: Uri, line: number, column: number) => void): this
   prependListener (event: string | symbol, listener: (...args: any[]) => void): this
 
   prependOnceListener (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
-  prependOnceListener (event: 'sync', listener: (file: Uri, source: Uri, line: number) => void): this
+  prependOnceListener (event: 'sync', listener: (file: Uri, source: Uri, line: number, column: number) => void): this
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this
 
   removeListener (event: 'log', listener: (file: Uri, messages: Message[]) => void): this
-  removeListener (event: 'sync', listener: (file: Uri, source: Uri, line: number) => void): this
+  removeListener (event: 'sync', listener: (file: Uri, source: Uri, line: number, column: number) => void): this
   removeListener (event: string | symbol, listener: (...args: any[]) => void): this
 }

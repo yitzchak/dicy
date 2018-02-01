@@ -39,7 +39,7 @@ export default class Qpdfview extends Rule {
 
   constructCommand (): CommandOptions {
     const sourceHash: string = this.options.sourcePath
-      ? `#src:${path.resolve(this.rootPath, this.options.sourcePath)}:${this.options.sourceLine}:0`
+      ? `#src:${path.resolve(this.rootPath, this.options.sourcePath)}:${this.options.sourceLine}:${this.options.sourceColumn}`
       : ''
     return {
       command: [

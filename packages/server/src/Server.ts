@@ -14,7 +14,7 @@ export default class Server {
   private killRequest = new rpc.RequestType2<Uri, string | undefined, void, void, void>('kill')
   private killAllRequest = new rpc.RequestType1<string | undefined, void, void, void>('killAll')
   private logNotification = new rpc.NotificationType2<Uri, Message[], void>('log')
-  private syncNotification = new rpc.NotificationType3<Uri, Uri, number, void>('sync')
+  private syncNotification = new rpc.NotificationType4<Uri, Uri, number, number, void>('sync')
   private runRequest = new rpc.RequestType2<Uri, Command[], boolean, void, void>('run')
   private setDirectoryOptionsRequest = new rpc.RequestType3<Uri, OptionsSource, boolean | undefined, void, void, void>('setDirectoryOptions')
   private setInstanceOptionsRequest = new rpc.RequestType3<Uri, OptionsSource, boolean | undefined, void, void, void>('setInstanceOptions')
@@ -63,8 +63,8 @@ export default class Server {
       this.connection.sendNotification(this.logNotification, file, messages)
     })
 
-    this.cache.on('sync', (file: Uri, source: Uri, line: number): void => {
-      this.connection.sendNotification(this.syncNotification, file, source, line)
+    this.cache.on('sync', (file: Uri, source: Uri, line: number, column: number): void => {
+      this.connection.sendNotification(this.syncNotification, file, source, line, column)
     })
   }
 
