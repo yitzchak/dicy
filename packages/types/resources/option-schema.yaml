@@ -292,15 +292,15 @@ opener:
   title: Opener
   type: strings
   defaultValue:
-    - evince
-    - okular
-    - skim
-    - atril
-    - qpdfview
-    - sumatra
-    - x-reader
-    - zathura
-    - preview
+    - evince      # forward, reverse, background
+    - okular      # forward, reverse (cli), background
+    - skim        # forward, reverse (cli), background
+    - atril       # forward, reverse
+    - x-reader    # forward, reverse
+    - zathura     # forward, reverse
+    - qpdfview    # forward, reverse (cli)
+    - sumatra-pdf # forward, reverse (cli)
+    - preview     # background
     - shell-open
     - xdg-open
 openInBackground:
