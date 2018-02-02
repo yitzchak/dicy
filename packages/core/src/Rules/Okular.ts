@@ -22,7 +22,7 @@ export default class Okular extends Rule {
 
     try {
       await consumer.executeCommand({
-        command: ['okular', '--help'],
+        command: ['okular', '--version'],
         cd: '$ROOTDIR',
         severity: 'info'
       })
