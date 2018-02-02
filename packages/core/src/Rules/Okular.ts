@@ -16,8 +16,7 @@ export default class Okular extends Rule {
   static description: string = 'Open targets using okular.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    if (process.platform !== 'linux' ||
-      parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
+    if (parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
       return false
     }
 
