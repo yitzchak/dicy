@@ -10,7 +10,7 @@ import { CommandOptions, Group, Phase } from '../types'
 export default class Okular extends Rule {
   static commands: Set<Command> = new Set<Command>(['open'])
   static parameterTypes: Set<string>[] = [new Set([
-    'PortableDocumentFormat', 'PostScript'
+    'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript'
   ])]
   static alwaysEvaluate: boolean = true
   static description: string = 'Open targets using okular.'
