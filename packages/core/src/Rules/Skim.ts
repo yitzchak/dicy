@@ -46,7 +46,7 @@ export default class Skim extends Rule {
       command.push('-g')
     }
 
-    command.push('{{$FILEPATH_0}}', this.options.sourceLine.toString())
+    command.push(this.options.sourceLine.toString(), '{{$FILEPATH_0}}')
 
     if (this.options.sourcePath) {
       command.push(path.resolve(this.rootPath, this.options.sourcePath))
