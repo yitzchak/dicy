@@ -22,7 +22,9 @@ export default class Okular extends Rule {
 
     try {
       await consumer.executeCommand({
-        command: ['okular', '--version'],
+        command: process.platform === 'win32'
+          ? 'WHERE /Q okular.exe'
+          : 'okular --version',
         cd: '$ROOTDIR',
         severity: 'info'
       })
