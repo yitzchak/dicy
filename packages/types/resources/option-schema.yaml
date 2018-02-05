@@ -293,6 +293,7 @@ opener:
   type: strings
   defaultValue:
     - evince      # forward, reverse, background
+    - pdf-view    # forward, reverse (atom), background
     - okular      # forward, reverse (cli), background
     - skim        # forward, reverse (cli), background
     - atril       # forward, reverse
