@@ -78,8 +78,7 @@ export default class Evince extends Rule {
   windowInstance?: WindowInstance
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return await this.initializeDaemon() &&
-      parameters.every(file => !file.virtual && consumer.isOutputTarget(file))
+    return await this.initializeDaemon() && consumer.isOutputTarget(parameters[0])
   }
 
   static async initializeDaemon (): Promise<boolean> {
