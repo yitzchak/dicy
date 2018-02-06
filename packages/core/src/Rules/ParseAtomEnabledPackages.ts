@@ -1,7 +1,7 @@
-import { Command, Message, Reference, Severity } from '@dicy/types'
+import { Command, Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParserMatch } from '../types'
 
 export default class ParseAtomEnabledPackages extends Rule {
   static parameterTypes: Set<string>[] = [new Set<string>(['AtomEnabledPackages'])]
