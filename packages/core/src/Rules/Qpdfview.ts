@@ -8,29 +8,14 @@ import { CommandOptions, Group, Phase } from '../types'
 
 export default class Qpdfview extends Rule {
   static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'PortableDocumentFormat', 'PostScript'
-  ])]
+  static parameterTypes: Set<string>[] = [
+    new Set(['PortableDocumentFormat', 'PostScript']),
+    new Set(['QpdfviewCheck'])]
   static alwaysEvaluate: boolean = true
   static description: string = 'Open targets using qpdfview.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    if (process.platform !== 'linux' ||
-      parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
-      return false
-    }
-
-    try {
-      await consumer.executeCommand({
-        command: ['qpdfview', '--help'],
-        cd: '$ROOTDIR',
-        severity: 'info'
-      })
-    } catch (error) {
-      return false
-    }
-
-    return true
+    return consumer.isOutputTarget(parameters[0])
   }
 
   get group (): Group | undefined {

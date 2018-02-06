@@ -46,9 +46,10 @@ function getZathuraFileName (instance: ZathuraInstance): Promise<string | undefi
 
 export default class Zathura extends Rule {
   static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'PortableDocumentFormat', 'PostScript'
-  ])]
+  static parameterTypes: Set<string>[] = [
+    new Set(['PortableDocumentFormat', 'PostScript']),
+    new Set(['ZathuraCheck'])
+  ]
   static alwaysEvaluate: boolean = true
 
   static description: string = 'Open targets using zathura.'
@@ -57,22 +58,7 @@ export default class Zathura extends Rule {
   instance?: ZathuraInstance
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    if (process.platform !== 'linux' ||
-      parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
-      return false
-    }
-
-    try {
-      await consumer.executeCommand({
-        command: ['zathura', '--version'],
-        cd: '$ROOTDIR',
-        severity: 'info'
-      })
-    } catch (error) {
-      return false
-    }
-
-    return true
+    return consumer.isOutputTarget(parameters[0])
   }
 
   get group (): Group | undefined {

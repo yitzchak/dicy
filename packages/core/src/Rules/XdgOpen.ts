@@ -15,8 +15,7 @@ export default class XdgOpen extends Rule {
   static description: string = 'Open targets using xdg-open.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return process.platform === 'linux' &&
-      parameters.every(file => !file.virtual && consumer.isOutputTarget(file))
+    return process.platform === 'linux' && consumer.isOutputTarget(parameters[0])
   }
 
   get group (): Group | undefined {

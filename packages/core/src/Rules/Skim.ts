@@ -10,29 +10,15 @@ const DISPLAYLINE_PATH: string = '/Applications/Skim.app/Contents/SharedSupport/
 
 export default class Skim extends Rule {
   static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript'
-  ])]
+  static parameterTypes: Set<string>[] = [
+    new Set(['DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript']),
+    new Set(['SkimCheck'])
+  ]
   static alwaysEvaluate: boolean = true
   static description: string = 'Open targets using Skim.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    if (process.platform !== 'darwin' ||
-      parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
-      return false
-    }
-
-    try {
-      await consumer.executeCommand({
-        command: [DISPLAYLINE_PATH, '-h'],
-        cd: '$ROOTDIR',
-        severity: 'info'
-      })
-    } catch (error) {
-      return false
-    }
-
-    return true
+    return consumer.isOutputTarget(parameters[0])
   }
 
   get group (): Group | undefined {

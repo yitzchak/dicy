@@ -15,8 +15,7 @@ export default class ShellOpen extends Rule {
   static description: string = 'Open targets using Windows shell open.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return process.platform === 'win32' &&
-      parameters.every(file => !file.virtual && consumer.isOutputTarget(file))
+    return process.platform === 'win32' && consumer.isOutputTarget(parameters[0])
   }
 
   get group (): Group | undefined {

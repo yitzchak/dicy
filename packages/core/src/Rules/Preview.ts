@@ -14,8 +14,7 @@ export default class Preview extends Rule {
   static description: string = 'Open targets using MacOS preview.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return process.platform === 'darwin' &&
-      parameters.every(file => !file.virtual && consumer.isOutputTarget(file))
+    return process.platform === 'darwin' && consumer.isOutputTarget(parameters[0])
   }
 
   get group (): Group | undefined {

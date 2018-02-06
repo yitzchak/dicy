@@ -11,29 +11,19 @@ const PDF_VIEW_PATTERN = /^pdf-view@/m
 
 export default class PdfView extends Rule {
   static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript',
-    'ScalableVectorGraphics'
-  ])]
+  static parameterTypes: Set<string>[] = [
+    new Set([
+      'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript',
+      'ScalableVectorGraphics'
+    ]),
+    new Set(['ParsedAtomEnabledPackages'])
+  ]
   static alwaysEvaluate: boolean = true
   static description: string = 'Open targets using Atom\'s pdf-view.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    if (parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
-      return false
-    }
-
-    try {
-      const { stdout } = await consumer.executeCommand({
-        command: ['apm', 'list', '--installed', '--packages', '--enabled', '--bare'],
-        cd: '$ROOTDIR',
-        severity: 'info',
-        stdout: true
-      })
-      return PDF_VIEW_PATTERN.test(stdout.toString())
-    } catch (error) {
-      return false
-    }
+    return consumer.isOutputTarget(parameters[0]) && parameters[1].value &&
+      parameters[1].value['pdf-view']
   }
 
   get group (): Group | undefined {

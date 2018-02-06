@@ -9,30 +9,15 @@ import { CommandOptions, Group, Phase } from '../types'
 
 export default class Okular extends Rule {
   static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript'
-  ])]
+  static parameterTypes: Set<string>[] = [
+    new Set(['DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript']),
+    new Set(['OkularCheck'])
+  ]
   static alwaysEvaluate: boolean = true
   static description: string = 'Open targets using okular.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    if (parameters.some(file => file.virtual || !consumer.isOutputTarget(file))) {
-      return false
-    }
-
-    try {
-      await consumer.executeCommand({
-        command: process.platform === 'win32'
-          ? 'WHERE /Q okular.exe'
-          : 'okular --version',
-        cd: '$ROOTDIR',
-        severity: 'info'
-      })
-    } catch (error) {
-      return false
-    }
-
-    return true
+    return consumer.isOutputTarget(parameters[0])
   }
 
   get group (): Group | undefined {
