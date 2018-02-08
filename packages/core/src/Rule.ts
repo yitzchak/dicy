@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import * as path from 'path'
 import * as childProcess from 'child_process'
 
@@ -113,6 +114,14 @@ export default class Rule extends StateConsumer {
     return undefined
   }
 
+  get rank (): number | undefined {
+    if (this.group) {
+      const names: string[] = this.options[this.group] || []
+      const rank = names.indexOf(_.kebabCase(this.constructor.name))
+      if (rank > -1) return rank
+    }
+  }
+
   error (text: string, category?: string, name?: string) {
     super.error(text, category, name || this.id)
   }
@@ -153,6 +162,30 @@ export default class Rule extends StateConsumer {
         if (action === 'updateDependencies' || ruleNeedsUpdate) {
           this.addActions(file, [action])
         }
+      }
+    }
+  }
+
+  async checkForActionVeto (command: Command, phase: Phase, action: Action): Promise<void> {
+    if (this.command === command && this.phase === phase && this.group && this.actions.has(action)) {
+      const myRank = this.rank
+
+      if (myRank === undefined) {
+        this.trace(`Vetoing ${action} action because rule has no rank in group.`)
+        this.actions.delete(action)
+        return
+      }
+
+      const lowestRank = Math.min(...Array.from(this.rules)
+        .filter(rule => rule.command === command && rule.phase === phase &&
+          rule.group === this.group &&
+          this.firstParameter === rule.firstParameter)
+        .map(rule => rule.rank)
+        .filter(rank => rank !== undefined) as number[])
+
+      if (myRank > lowestRank) {
+        this.trace(`Vetoing ${action} action becase rule is lower ranked then others in group.`)
+        this.actions.delete(action)
       }
     }
   }

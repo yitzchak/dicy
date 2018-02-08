@@ -110,23 +110,27 @@ export default class Builder extends StateConsumer implements BuilderInterface {
       0)
     const evaluationNeeded = (rule: Rule): boolean => rule.actions.has(action) && rule.command === command && rule.phase === phase
 
-    const ruleGroups = _.groupBy(Array.from(this.rules).filter(evaluationNeeded).filter(rule => rule.group), rule => rule.group)
+    // const ruleGroups = _.groupBy(Array.from(this.rules).filter(evaluationNeeded).filter(rule => rule.group), rule => rule.group)
+    //
+    // for (const group in ruleGroups) {
+    //   const rules: Rule[] = ruleGroups[group]
+    //   const names: string[] = this.options[group]
+    //   let winner: Rule | undefined
+    //
+    //   for (const name of names) {
+    //     winner = rules.find(rule => _.kebabCase(rule.constructor.name) === name)
+    //     if (winner) break
+    //   }
+    //
+    //   for (const rule of rules) {
+    //     if (rule !== winner) {
+    //       rule.actions.delete(action)
+    //     }
+    //   }
+    // }
 
-    for (const group in ruleGroups) {
-      const rules: Rule[] = ruleGroups[group]
-      const names: string[] = this.options[group]
-      let winner: Rule | undefined
-
-      for (const name of names) {
-        winner = rules.find(rule => _.kebabCase(rule.constructor.name) === name)
-        if (winner) break
-      }
-
-      for (const rule of rules) {
-        if (rule !== winner) {
-          rule.actions.delete(action)
-        }
-      }
+    for (const rule of this.rules) {
+      rule.checkForActionVeto(command, phase, action)
     }
 
     // First separate the rule graph into connected components. For each
