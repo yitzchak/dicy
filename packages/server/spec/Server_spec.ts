@@ -11,7 +11,11 @@ describe('Server', () => {
   let server: Server
   let client: any
   let cache: BuilderCacheInterface
-  let log: (file: Uri, messages: Message[]) => void
+  /* tslint:disable:no-empty */
+  const emitter: { [name: string]: Function } = {
+    log: () => {},
+    sync: () => {}
+  }
 
   beforeEach(() => {
     const input: PassThrough = new PassThrough()
@@ -37,8 +41,8 @@ describe('Server', () => {
     ])
 
     // @ts-ignore
-    cache.on.and.callFake((name: string, handler: (file: Uri, messages: Message[]) => void) => {
-      log = handler
+    cache.on.and.callFake((name: string, handler: Function) => {
+      emitter[name] = handler
       return cache
     })
 
@@ -155,7 +159,7 @@ describe('Server', () => {
 
     client.onNotification(new rpc.NotificationType2<Uri, Message[], void>('log'), logSpy)
 
-    log(file, messages)
+    emitter.log(file, messages)
 
     setTimeout(() => {
       expect(logSpy).toHaveBeenCalledWith(file, messages)
