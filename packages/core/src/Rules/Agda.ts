@@ -3,11 +3,14 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Phase } from '../types'
+import { CommandOptions, Phase, RuleDescription } from '../types'
 
 export default class Agda extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['LiterateAgda'])]
-  static description: string = 'Runs agda on lagda files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['LiterateAgda']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if the literate Agda engine is set to agda

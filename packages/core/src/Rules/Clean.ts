@@ -3,15 +3,16 @@ import * as micromatch from 'micromatch'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
 
-import { Command } from '@dicy/types'
-
 import File from '../File'
 import Rule from '../Rule'
+import { RuleDescription } from '../types'
 
 export default class Clean extends Rule {
-  static commands: Set<Command> = new Set<Command>(['clean', 'scrub'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['clean', 'scrub'],
+    phases: ['execute']
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Clean up a previous build.'
 
   async run () {
     const scrub: boolean = this.command === 'scrub'

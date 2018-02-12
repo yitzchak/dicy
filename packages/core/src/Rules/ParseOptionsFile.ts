@@ -1,12 +1,12 @@
-import { Command } from '@dicy/types'
-
 import Rule from '../Rule'
-import { Action } from '../types'
+import { Action, RuleDescription } from '../types'
 
 export default class ParseOptionsFile extends Rule {
-  static commands: Set<Command> = new Set<Command>(['load'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['load'],
+    phases: ['execute']
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses the YAML option file.'
 
   async preEvaluate () {
     await this.getResolvedInputs(['$CONFIG_HOME/dicy/config.yaml', 'dicy.yaml', '$NAME.yaml'])

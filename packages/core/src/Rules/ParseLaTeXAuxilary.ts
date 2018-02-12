@@ -1,12 +1,15 @@
 import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParserMatch } from '../types'
+import { Action, ParserMatch, RuleDescription } from '../types'
 
 export default class ParseLaTeXAuxilary extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['LaTeXAuxilary'])]
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['LaTeXAuxilary']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses the aux files produced by all variants of LaTeX.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedLaTeXAuxilary')

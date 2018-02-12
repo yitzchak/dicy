@@ -6,14 +6,14 @@ import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Action, CommandOptions, ParsedLog, Phase } from '../types'
+import { Action, CommandOptions, ParsedLog, Phase, RuleDescription } from '../types'
 
 export default class SplitIndex extends Rule {
-  static parameterTypes: Set<string>[] = [
-    new Set(['IndexControlFile']),
-    new Set(['ParsedLaTeXLog'])
-  ]
-  static description: string = 'Runs splitindex on any index files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['IndexControlFile'], ['ParsedLaTeXLog']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     const parsedLog: ParsedLog | undefined = parameters[1].value

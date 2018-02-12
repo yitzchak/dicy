@@ -1,8 +1,6 @@
 import { DBusNames, default as Evince } from './Evince'
 
 export default class XReader extends Evince {
-  static description: string = 'Open targets using x-reader.'
-
   static dbusNames: DBusNames = {
     applicationObject: '/org/x/reader/Xreader',
     applicationInterface: 'org.x.reader.Application',

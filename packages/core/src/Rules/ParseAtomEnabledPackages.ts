@@ -1,13 +1,15 @@
-import { Command, Reference } from '@dicy/types'
+import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParserMatch } from '../types'
+import { Action, ParserMatch, RuleDescription } from '../types'
 
 export default class ParseAtomEnabledPackages extends Rule {
-  static parameterTypes: Set<string>[] = [new Set<string>(['AtomEnabledPackages'])]
-  static commands: Set<Command> = new Set<Command>(['open'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['initialize'],
+    parameters: [['AtomEnabledPackages']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses list of Atom enabled packages.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedAtomEnabledPackages')

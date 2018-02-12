@@ -3,13 +3,17 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CACHE_VERSION, FileCache, Cache, Phase, RuleCache } from '../types'
+import {
+  CACHE_VERSION, FileCache, Cache, Phase, RuleCache, RuleDescription
+} from '../types'
 
 export default class SaveCache extends Rule {
-  static commands: Set<Command> = new Set<Command>(['save'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['save'],
+    phases: ['execute']
+  }]
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
-  static description: string = 'Saves file and rule status to a cache (-cache.yaml) to assist with rebuilding.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if saveCache is enabled

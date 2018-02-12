@@ -4,7 +4,7 @@ import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Action, CommandOptions, Phase } from '../types'
+import { Action, CommandOptions, Phase, RuleDescription } from '../types'
 
 const PDF_CAPABLE_LATEX_PATTERN = /^(pdf|xe|lua)latex$/
 const JAPANESE_LATEX_PATTERN = /^u?platex$/
@@ -12,12 +12,11 @@ const RERUN_LATEX_PATTERN = /(rerun LaTeX|(?:Citation|Label)\(s\) may have chang
 const SUB_FILE_SUB_TYPES = ['subfile', 'standalone']
 
 export default class LaTeX extends Rule {
-  static parameterTypes: Set<string>[] = [new Set([
-    'LaTeX',
-    'LiterateHaskell',
-    'LiterateAgda'
-  ])]
-  static description: string = 'Runs the required latex variant.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['LaTeX', 'LiterateHaskell', 'LiterateAgda']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return parameters.some(file =>

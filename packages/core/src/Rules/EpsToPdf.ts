@@ -6,14 +6,16 @@ import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Action, ShellCall, Phase, CommandOptions, ParsedLog } from '../types'
+import {
+  Action, ShellCall, Phase, CommandOptions, ParsedLog, RuleDescription
+} from '../types'
 
 export default class EpsToPdf extends Rule {
-  static parameterTypes: Set<string>[] = [
-    new Set(['EncapsulatedPostScript']),
-    new Set(['ParsedLaTeXLog', 'Nil'])
-  ]
-  static description: string = 'Converts EPS to PDF using epstopdf.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['EncapsulatedPostScript'], ['ParsedLaTeXLog', 'Nil']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     switch (parameters[1].type) {

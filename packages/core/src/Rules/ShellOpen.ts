@@ -3,16 +3,18 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Group, Phase } from '../types'
+import { CommandOptions, Group, Phase, RuleDescription } from '../types'
 
 export default class ShellOpen extends Rule {
-  static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript',
-    'ScalableVectorGraphics'
-  ])]
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['execute'],
+    parameters: [[
+      'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript',
+      'ScalableVectorGraphics'
+    ]]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Open targets using Windows shell open.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return process.platform === 'win32' && consumer.isOutputTarget(parameters[0])

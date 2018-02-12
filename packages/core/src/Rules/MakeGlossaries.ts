@@ -1,11 +1,14 @@
 import * as path from 'path'
 
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import { CommandOptions, RuleDescription } from '../types'
 
 export default class MakeGlossaries extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['GlossaryControlFile'])]
-  static description: string = 'Runs makeglossaries on any glossary files generated.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['GlossaryControlFile']]
+  }]
 
   async initialize (): Promise<void> {
     await this.getResolvedInputs(['$DIR_0/$NAME_0.acn', '$DIR_0/$NAME_0.ist'])

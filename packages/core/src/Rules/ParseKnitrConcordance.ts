@@ -1,15 +1,19 @@
-import { Command, Reference } from '@dicy/types'
+import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, LineRangeMapping, ParserMatch, SourceMaps } from '../types'
+import {
+  Action, LineRangeMapping, ParserMatch, RuleDescription, SourceMaps
+} from '../types'
 
 const WRAPPED_LINE_PATTERN = /%$/
 
 export default class ParseKnitrConcordance extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['KnitrConcordance'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['KnitrConcordance']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses any knitr concordance files.'
 
   async parse () {
     const outputFile = await this.getResolvedOutput('$FILEPATH_0-ParsedSourceMap')

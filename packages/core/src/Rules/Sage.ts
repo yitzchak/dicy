@@ -1,9 +1,12 @@
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import { CommandOptions, RuleDescription } from '../types'
 
 export default class Sage extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['Sage'])]
-  static description: string = 'Supports SageTeX by running Sage when needed.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['Sage']]
+  }]
 
   constructCommand (): CommandOptions {
     // Sage doesn't seem to have any logs, so try to guess at the outputs.

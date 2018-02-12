@@ -4,7 +4,7 @@ import * as path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Group, Phase } from '../types'
+import { CommandOptions, Group, Phase, RuleDescription } from '../types'
 import { default as DBus, DBusSignalEmitter } from '../DBus'
 
 const DBUS_NAME: string = 'org.pwmt.zathura.PID-'
@@ -45,14 +45,15 @@ function getZathuraFileName (instance: ZathuraInstance): Promise<string | undefi
 }
 
 export default class Zathura extends Rule {
-  static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [
-    new Set(['PortableDocumentFormat', 'PostScript']),
-    new Set(['ZathuraCheck'])
-  ]
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['execute'],
+    parameters: [
+      ['PortableDocumentFormat', 'PostScript'],
+      ['ZathuraCheck']
+    ]
+  }]
   static alwaysEvaluate: boolean = true
-
-  static description: string = 'Open targets using zathura.'
 
   bus: DBus = new DBus()
   instance?: ZathuraInstance

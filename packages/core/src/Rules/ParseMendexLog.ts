@@ -1,14 +1,16 @@
 import * as path from 'path'
 
-import { Command, Message, Reference, Severity } from '@dicy/types'
+import { Message, Reference, Severity } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 export default class ParsedMendexLog extends Rule {
-  static parameterTypes: Set<string>[] = [new Set<string>(['MendexLog'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static description: string = 'Parses the logs produced by all mendex variants.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['MendexLog']]
+  }]
   static defaultActions: Action[] = ['parse']
 
   /**

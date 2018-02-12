@@ -4,16 +4,15 @@ import * as path from 'path'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Group, Phase } from '../types'
+import { CommandOptions, Group, Phase, RuleDescription } from '../types'
 
 export default class SumatraPdf extends Rule {
-  static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [
-    new Set(['PortableDocumentFormat']),
-    new Set(['SumatraPdfCheck'])
-  ]
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['execute'],
+    parameters: [['PortableDocumentFormat'], ['SumatraPdfCheck']]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Open targets using Sumatra PDF.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return consumer.isOutputTarget(parameters[0])

@@ -1,12 +1,12 @@
-import { Command } from '@dicy/types'
-
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import { CommandOptions, RuleDescription } from '../types'
 
 export default class GraphViz extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['GraphViz'])]
-  static commands: Set<Command> = new Set<Command>(['graph'])
-  static description: string = 'Runs GraphViz on dependency graphs.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['graph'],
+    phases: ['execute'],
+    parameters: [['GraphViz']]
+  }]
 
   constructCommand (): CommandOptions {
     // Right now we only call fdp. Long usefulness of this is unknown.

@@ -1,11 +1,13 @@
 import Rule from '../Rule'
-import { Phase } from '../types'
+import { RuleDescription } from '../types'
 
 export default class LogProducedTargets extends Rule {
-  static phases: Set<Phase> = new Set<Phase>(['finalize'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['finalize']
+  }]
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
-  static description: string = 'Reports produced targets.'
 
   async run () {
     for (const target of await this.getTargets()) {

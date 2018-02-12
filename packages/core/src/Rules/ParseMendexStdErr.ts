@@ -1,12 +1,14 @@
-import { Command, Reference } from '@dicy/types'
+import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 export default class ParsedMendexStdErr extends Rule {
-  static parameterTypes: Set<string>[] = [new Set<string>(['MendexStdErr'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static description: string = 'Parses the error produced by all mendex variants.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['MendexStdErr']]
+  }]
   static defaultActions: Action[] = ['parse']
 
   /**

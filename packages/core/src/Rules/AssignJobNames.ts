@@ -1,13 +1,12 @@
-import { Command } from '@dicy/types'
-
 import Rule from '../Rule'
-import { Phase } from '../types'
+import { RuleDescription } from '../types'
 
 export default class AssignJobNames extends Rule {
-  static phases: Set<Phase> = new Set<Phase>(['finalize'])
-  static commands: Set<Command> = new Set<Command>(['load'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['load'],
+    phases: ['finalize']
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Assign job names to initial source file.'
 
   async run (): Promise<boolean> {
     // Get the source file associated with this job and also make sure there

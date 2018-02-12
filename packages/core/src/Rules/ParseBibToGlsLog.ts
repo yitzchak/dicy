@@ -1,13 +1,15 @@
-import { Command, Reference } from '@dicy/types'
+import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 export default class ParseBibTeXLog extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['BibToGlsLog'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['BibToGlsLog']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses any bib2gls produced logs.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedBibToGlsLog')

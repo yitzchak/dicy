@@ -9,17 +9,14 @@ import File from './File'
 import StateConsumer from './StateConsumer'
 import {
   Action, CommandOptions, DependencyType, Group, ParsedLog, Phase,
-  ProcessResults
+  ProcessResults, RuleDescription
 } from './types'
 
 export default class Rule extends StateConsumer {
-  static parameterTypes: Set<string>[] = []
-  static phases: Set<Phase> = new Set<Phase>(['execute'])
-  static commands: Set<Command> = new Set<Command>(['build'])
+  static descriptions: RuleDescription[] = []
   static alwaysEvaluate: boolean = false
   static ignoreJobName: boolean = false
   static defaultActions: Action[] = ['run']
-  static description: string = ''
 
   readonly id: string
   readonly command: Command
@@ -53,8 +50,9 @@ export default class Rule extends StateConsumer {
   }
 
   static async analyzePhase (consumer: StateConsumer, command: Command, phase: Phase): Promise<Rule | undefined> {
-    const appliesToPhase: boolean = this.commands.has(command) && this.phases.has(phase) &&
-          this.parameterTypes.length === 0
+    const appliesToPhase: boolean = this.descriptions.some(x =>
+      x.commands.includes(command) && x.phases.includes(phase) &&
+      (!x.parameters || x.parameters.length === 0))
 
     if (appliesToPhase && await this.isApplicable(consumer, command, phase)) {
       const rule = new this(consumer.state, command, phase, consumer.options)
@@ -66,38 +64,40 @@ export default class Rule extends StateConsumer {
 
   static async analyzeFile (consumer: StateConsumer, command: Command, phase: Phase, file: File): Promise<Rule[]> {
     const rules: Rule[] = []
-    const appliesToFile: boolean = this.commands.has(command) && this.phases.has(phase) &&
-          this.parameterTypes.some(types => file && file.inTypeSet(types))
 
-    if (appliesToFile) {
-      const files: File[] = Array.from(consumer.files).filter(file => !consumer.options.jobName || file.jobNames.has(consumer.options.jobName))
+    for (const description of this.descriptions) {
+      if (description.commands.includes(command) && description.phases.includes(phase) &&
+        description.parameters && description.parameters.some(types => file && file.inTypeSet(types))) {
 
-      for (let i = 0; i < this.parameterTypes.length; i++) {
-        if (file.inTypeSet(this.parameterTypes[i])) {
-          const candidates: File[][] = this.parameterTypes.map((types, index) =>
-            (index === i)
-              ? [file]
-              : files.filter(file => file.inTypeSet(types)))
-          let indicies = candidates.map(files => files.length - 1)
+        const files: File[] = Array.from(consumer.files).filter(file => !consumer.options.jobName || file.jobNames.has(consumer.options.jobName))
 
-          while (indicies.every(index => index > -1)) {
-            const parameters: File[] = candidates.map((files, index) => files[indicies[index]])
-            const ruleId: string = consumer.getRuleId(this.name, command, phase, consumer.options.jobName, parameters.map(file => file.filePath))
+        for (let i = 0; i < description.parameters.length; i++) {
+          if (file.inTypeSet(description.parameters[i])) {
+            const candidates: File[][] = description.parameters.map((types, index) =>
+              (index === i)
+                ? [file]
+                : files.filter(file => file.inTypeSet(types)))
+            let indicies = candidates.map(files => files.length - 1)
 
-            if (!consumer.hasRule(ruleId) && await this.isApplicable(consumer, command, phase, parameters)) {
-              const rule = new this(consumer.state, command, phase, consumer.options, parameters)
-              await rule.initialize()
-              if (this.alwaysEvaluate) rule.addActions(file)
-              rules.push(rule)
+            while (indicies.every(index => index > -1)) {
+              const parameters: File[] = candidates.map((files, index) => files[indicies[index]])
+              const ruleId: string = consumer.getRuleId(this.name, command, phase, consumer.options.jobName, parameters.map(file => file.filePath))
+
+              if (!consumer.hasRule(ruleId) && await this.isApplicable(consumer, command, phase, parameters)) {
+                const rule = new this(consumer.state, command, phase, consumer.options, parameters)
+                await rule.initialize()
+                if (this.alwaysEvaluate) rule.addActions(file)
+                rules.push(rule)
+              }
+
+              let j = 0
+              while (j < indicies.length && --indicies[j] < 0) {
+                indicies[j] = candidates[j].length - 1
+                j++
+              }
+
+              if (j === indicies.length) break
             }
-
-            let j = 0
-            while (j < indicies.length && --indicies[j] < 0) {
-              indicies[j] = candidates[j].length - 1
-              j++
-            }
-
-            if (j === indicies.length) break
           }
         }
       }
@@ -166,7 +166,7 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  async checkForActionVeto (command: Command, phase: Phase, action: Action): Promise<void> {
+  checkForActionVeto (command: Command, phase: Phase, action: Action): void {
     if (this.command === command && this.phase === phase && this.group && this.actions.has(action)) {
       const myRank = this.rank
 

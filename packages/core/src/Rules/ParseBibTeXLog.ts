@@ -1,13 +1,17 @@
-import { Command, Reference } from '@dicy/types'
+import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch, ProcessResults } from '../types'
+import {
+  Action, ParsedLog, ParserMatch, ProcessResults, RuleDescription
+} from '../types'
 
 export default class ParseBibTeXLog extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['BibTeXLog'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['BibTeXLog']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses any bibtex produced logs.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedBibTeXLog')

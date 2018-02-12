@@ -1,19 +1,20 @@
 import * as _ from 'lodash'
 
-import { Command, DEFAULT_OPTIONS } from '@dicy/types'
+import { DEFAULT_OPTIONS } from '@dicy/types'
 
 import File from '../File'
 import Rule from '../Rule'
-import { Phase } from '../types'
+import { RuleDescription } from '../types'
 
 export default class ApplyOptions extends Rule {
-  static commands: Set<Command> = new Set<Command>(['load'])
   // ApplyOptions runs in both the initialize and execute phases so that
   // instance options will be seen in the initialize phase.
-  static phases: Set<Phase> = new Set<Phase>(['initialize', 'execute'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['load'],
+    phases: ['initialize', 'execute']
+  }]
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
-  static description: string = 'Apply options from YAML files and any LaTeX magic comments found in source file.'
 
   async run (): Promise<boolean> {
     // Save the old options so we can tell if they have changed.

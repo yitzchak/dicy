@@ -10,9 +10,9 @@ import State from './State'
 import StateConsumer from './StateConsumer'
 import File from './File'
 import Rule from './Rule'
-import { Action, Phase, RuleInfo } from './types'
+import { Action, Phase } from './types'
 
-const VALID_COMMAND_PATTERN = /^(build|clean|graph|load|log|open|save|scrub|test)$/
+const VALID_COMMAND_PATTERN = /^(build|clean|discover|graph|load|log|open|save|scrub|test)$/
 
 export default class Builder extends StateConsumer implements BuilderInterface {
   private consumers: Map<string | null, StateConsumer> = new Map<string | null, StateConsumer>()
@@ -84,11 +84,11 @@ export default class Builder extends StateConsumer implements BuilderInterface {
     }
   }
 
-  getAvailableRules (command?: Command): RuleInfo[] {
-    return this.ruleClasses
-      .filter(rule => !command || rule.commands.has(command))
-      .map(rule => ({ name: rule.name, description: rule.description }))
-  }
+  // getAvailableRules (command?: Command): RuleInfo[] {
+  //   return this.ruleClasses
+  //     .filter(rule => !command || rule.commands.has(command))
+  //     .map(rule => ({ name: rule.name, description: rule.description }))
+  // }
 
   async evaluateRule (rule: Rule, action: Action): Promise<boolean> {
     this.checkForKill()

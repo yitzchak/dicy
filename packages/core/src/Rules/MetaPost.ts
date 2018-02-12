@@ -1,10 +1,13 @@
 import File from '../File'
 import Rule from '../Rule'
-import { Action, CommandOptions } from '../types'
+import { Action, CommandOptions, RuleDescription } from '../types'
 
 export default class MetaPost extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['MetaPost'])]
-  static description: string = 'Runs MetaPost on produced MetaPost files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['MetaPost']]
+  }]
 
   async getFileActions (file: File): Promise<Action[]> {
     // ParsedFileListing triggers updateDependencies, all others trigger run.

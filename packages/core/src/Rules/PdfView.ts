@@ -5,21 +5,20 @@ import * as url from 'url'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Group, Phase } from '../types'
-
-const PDF_VIEW_PATTERN = /^pdf-view@/m
+import { CommandOptions, Group, Phase, RuleDescription } from '../types'
 
 export default class PdfView extends Rule {
-  static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [
-    new Set([
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['execute'],
+    parameters: [[
       'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript',
       'ScalableVectorGraphics'
-    ]),
-    new Set(['ParsedAtomEnabledPackages'])
-  ]
+    ], [
+      'ParsedAtomEnabledPackages'
+    ]]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Open targets using Atom\'s pdf-view.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return consumer.isOutputTarget(parameters[0]) && parameters[1].value &&

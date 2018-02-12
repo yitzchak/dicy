@@ -5,16 +5,18 @@ import * as url from 'url'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Group, Phase } from '../types'
+import { CommandOptions, Group, Phase, RuleDescription } from '../types'
 
 export default class Okular extends Rule {
-  static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [
-    new Set(['DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript']),
-    new Set(['OkularCheck'])
-  ]
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['execute'],
+    parameters: [
+      ['DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript'],
+      ['OkularCheck']
+    ]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Open targets using okular.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return consumer.isOutputTarget(parameters[0])

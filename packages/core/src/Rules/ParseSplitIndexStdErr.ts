@@ -1,12 +1,15 @@
 import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 export default class ParseSplitIndexStdOut extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['SplitIndexStdErr'])]
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['SplitIndexStdErr']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses the error output of splitindex.'
 
   async parse () {
     const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-ParsedSplitIndexStdErr')

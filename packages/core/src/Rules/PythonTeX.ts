@@ -1,9 +1,12 @@
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import { CommandOptions, RuleDescription } from '../types'
 
 export default class PythonTeX extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['PythonTeX'])]
-  static description: string = 'Supports the PythonTeX package by running pythontex when needed.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['PythonTeX']]
+  }]
 
   constructCommand (): CommandOptions {
     // PythonTeX doesn't seem to have any logs, so try to guess at the outputs.

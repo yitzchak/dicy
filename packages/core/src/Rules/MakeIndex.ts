@@ -6,18 +6,17 @@ import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Action, CommandOptions, ParsedLog, Phase } from '../types'
+import { Action, CommandOptions, ParsedLog, Phase, RuleDescription } from '../types'
 
 export default class MakeIndex extends Rule {
-  static parameterTypes: Set<string>[] = [
-    new Set([
-      'IndexControlFile',
-      'BibRefControlFile',
-      'NomenclatureControlFile'
-    ]),
-    new Set(['ParsedLaTeXLog'])
-  ]
-  static description: string = 'Runs makeindex on any index files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [
+      ['IndexControlFile', 'BibRefControlFile', 'NomenclatureControlFile'],
+      ['ParsedLaTeXLog']
+    ]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     const parsedLog: ParsedLog | undefined = parameters[1].value

@@ -390,8 +390,8 @@ export default class File {
     return false
   }
 
-  inTypeSet (types: Set<string>) {
-    return types.has('*') || types.has(this.type)
+  inTypeSet (types: string[]) {
+    return types.includes('*') || types.includes(this.type)
   }
 
   async delete (): Promise<void> {

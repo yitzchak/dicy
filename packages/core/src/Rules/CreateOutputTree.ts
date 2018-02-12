@@ -6,12 +6,14 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Phase } from '../types'
+import { Phase, RuleDescription } from '../types'
 
 export default class CreateOutputTree extends Rule {
-  static phases: Set<Phase> = new Set<Phase>(['initialize'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['initialize']
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Create directory tree for aux files when `outputDirectory` is set.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return !!consumer.options.outputDirectory && consumer.options.outputDirectory !== '.'

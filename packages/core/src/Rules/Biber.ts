@@ -3,11 +3,14 @@ import * as path from 'path'
 import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
-import { Action, CommandOptions } from '../types'
+import { Action, CommandOptions, RuleDescription } from '../types'
 
 export default class Biber extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['BiberControlFile'])]
-  static description: string = 'Runs Biber to process bibliography files (bib) when need is detected.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['BiberControlFile']]
+  }]
 
   async initialize () {
     await this.getResolvedInputs([

@@ -1,24 +1,18 @@
-import { Command } from '@dicy/types'
-
 import Rule from '../Rule'
-import { ParsedLog } from '../types'
+import { ParsedLog, RuleDescription } from '../types'
 
 export default class ReportLogMessages extends Rule {
-  static parameterTypes: Set<string>[] = [new Set([
-    'ParsedAsymptoteStdOut',
-    'ParsedBiberLog',
-    'ParsedBibTeXLog',
-    'ParsedLaTeXLog',
-    'ParsedMakeIndexLog',
-    'ParsedMendexLog',
-    'ParsedMendexStdErr',
-    'ParsedSplitIndexStdErr',
-    'ParsedSplitIndexStdOut',
-    'ParsedXindyLog'
-  ])]
-  static commands: Set<Command> = new Set<Command>(['log'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['log'],
+    phases: ['execute'],
+    parameters: [[
+      'ParsedAsymptoteStdOut', 'ParsedBiberLog', 'ParsedBibTeXLog',
+      'ParsedLaTeXLog', 'ParsedMakeIndexLog', 'ParsedMendexLog',
+      'ParsedMendexStdErr', 'ParsedSplitIndexStdErr', 'ParsedSplitIndexStdOut',
+      'ParsedXindyLog'
+    ]]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Reports log messages from any parsed log files.'
 
   async run () {
     const parsedLog: ParsedLog | undefined = this.firstParameter.value

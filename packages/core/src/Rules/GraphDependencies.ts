@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 
-import { Command } from '@dicy/types'
+import { RuleDescription } from '../types'
 
 import File from '../File'
 import Rule from '../Rule'
@@ -8,10 +8,12 @@ import Rule from '../Rule'
 const COMMAND_PHASE_JOB_NAME_PATTERN = /\(([^;)]*);([^;)]*);([^;)]*);?/
 
 export default class GraphDependencies extends Rule {
-  static commands: Set<Command> = new Set<Command>(['graph'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['graph'],
+    phases: ['execute']
+  }]
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
-  static description: string = 'Creates a GraphViz dependency graph.'
 
   async run () {
     let lines: string[] = []

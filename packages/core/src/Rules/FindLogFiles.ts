@@ -1,13 +1,12 @@
-import { Command } from '@dicy/types'
-
 import Rule from '../Rule'
-import { Phase } from '../types'
+import { RuleDescription } from '../types'
 
 export default class FindLogFiles extends Rule {
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static phases: Set<Phase> = new Set<Phase>(['initialize'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['initialize']
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Find preexisting log files.'
 
   async run () {
     // Look for physical log files

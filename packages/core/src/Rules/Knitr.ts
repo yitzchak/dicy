@@ -1,13 +1,16 @@
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import { CommandOptions, RuleDescription } from '../types'
 
 function escapePath (filePath: string): string {
   return filePath.replace(/\\/g, '\\\\')
 }
 
 export default class Knitr extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['RNoWeb'])]
-  static description: string = 'Runs knitr on Rnw files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['RNoWeb']]
+  }]
 
   constructCommand (): CommandOptions {
     const escapedFilePath = escapePath(this.firstParameter.filePath)

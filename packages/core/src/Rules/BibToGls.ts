@@ -3,14 +3,14 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Action, CommandOptions, Phase } from '../types'
+import { Action, CommandOptions, Phase, RuleDescription } from '../types'
 
 export default class BibToGls extends Rule {
-  static parameterTypes: Set<string>[] = [
-    new Set(['LaTeXAuxilary']),
-    new Set(['ParsedLaTeXAuxilary'])
-  ]
-  static description: string = 'Runs bib2gls to process bibliography files (bib) when need is detected.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['LaTeXAuxilary'], ['ParsedLaTeXAuxilary']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return consumer.isGrandparentOf(parameters[0], parameters[1]) &&

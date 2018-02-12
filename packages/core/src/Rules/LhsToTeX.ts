@@ -3,14 +3,14 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Phase } from '../types'
+import { CommandOptions, Phase, RuleDescription } from '../types'
 
 export default class LhsToTeX extends Rule {
-  static parameterTypes: Set<string>[] = [new Set([
-    'LiterateHaskell',
-    'LiterateAgda'
-  ])]
-  static description: string = 'Runs lhs2TeX on lhs or lagda files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['LiterateHaskell', 'LiterateAgda']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return parameters.some(file => ((file.type === 'LiterateHaskell' && consumer.options.literateHaskellEngine === 'lhs2TeX') ||

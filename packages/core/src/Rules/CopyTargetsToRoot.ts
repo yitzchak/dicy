@@ -5,11 +5,14 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Phase } from '../types'
+import { Phase, RuleDescription } from '../types'
 
 export default class CopyTargetsToRoot extends Rule {
-  static parameterTypes: Set<string>[] = [new Set<string>(['*'])]
-  static description: string = 'Copy targets to root directory.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['*']]
+  }]
   static alwaysEvaluate: boolean = true
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {

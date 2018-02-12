@@ -18,6 +18,12 @@ export type Action = 'parse' | 'run' | 'updateDependencies'
 
 export type Group = 'opener'
 
+export interface RuleDescription {
+  commands: Command[]
+  phases: Phase[]
+  parameters?: string[][]
+}
+
 export interface RuleInfo {
   name: string
   description: string

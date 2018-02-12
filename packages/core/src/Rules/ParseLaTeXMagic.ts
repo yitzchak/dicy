@@ -1,22 +1,20 @@
-import { Command, Reference } from '@dicy/types'
+import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParserMatch } from '../types'
+import { Action, ParserMatch, RuleDescription } from '../types'
 
 const TRUE_PATTERN = /^(true|yes|enabled?)$/i
 const ITEM_SEPARATOR_PATTERN = /\s*,\s*/
 
 export default class ParseLaTeXMagic extends Rule {
-  static commands: Set<Command> = new Set<Command>(['load'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'LaTeX',
-    'LiterateAgda',
-    'LiterateHaskell',
-    'PythonNoWeb',
-    'RNoWeb'
-  ])]
+  static descriptions: RuleDescription[] = [{
+    commands: ['load'],
+    phases: ['execute'],
+    parameters: [[
+      'LaTeX', 'LiterateAgda', 'LiterateHaskell', 'PythonNoWeb', 'RNoWeb'
+    ]]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedLaTeXMagic')

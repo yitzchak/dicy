@@ -3,11 +3,14 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Phase, CommandOptions } from '../types'
+import { Phase, CommandOptions, RuleDescription } from '../types'
 
 export default class PdfToPs extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['PortableDocumentFormat'])]
-  static description: string = 'Converts PDF to PS using pdf2ps. Enabled by the `pdfProducer` option.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['PortableDocumentFormat']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if output format is ps

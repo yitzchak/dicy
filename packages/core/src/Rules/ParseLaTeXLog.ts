@@ -1,18 +1,20 @@
-import { Command, Message, Reference, Severity } from '@dicy/types'
+import { Message, Reference, Severity } from '@dicy/types'
 
 import File from '../File'
 import Rule from '../Rule'
 import Log from '../Log'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 const WRAPPED_LINE_PATTERN = /^.{76}[^.]{3}$/
 
 const LATEX3_PARSING_MODE = 'latex3'
 
 export default class ParseLaTeXLog extends Rule {
-  static parameterTypes: Set<string>[] = [new Set<string>(['LaTeXLog'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static description: string = 'Parses the logs produced by all latex variants.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['LaTeXLog']]
+  }]
   static defaultActions: Action[] = ['parse']
 
   /**

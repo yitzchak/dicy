@@ -1,14 +1,16 @@
 import * as path from 'path'
 
-import { Command, Reference, Severity } from '@dicy/types'
+import { Reference, Severity } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 export default class ParsedXindyLog extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['XindyLog'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static description: string = 'Parses the logs produced by xindy and texindy.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['XindyLog']]
+  }]
   static defaultActions: Action[] = ['parse']
 
   /**

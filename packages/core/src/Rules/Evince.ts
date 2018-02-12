@@ -6,7 +6,7 @@ import { default as DBus, DBusSignalEmitter } from '../DBus'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Group, Phase } from '../types'
+import { Group, Phase, RuleDescription } from '../types'
 
 export interface DBusNames {
   applicationObject: string,
@@ -54,10 +54,14 @@ interface WindowInstance {
 }
 
 export default class Evince extends Rule {
-  static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set(['DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript'])]
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['execute'],
+    parameters: [[
+      'DeviceIndependentFile', 'PortableDocumentFormat', 'PostScript'
+    ]]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Open targets using evince.'
 
   static dbusNames: DBusNames = {
     applicationObject: '/org/gnome/evince/Evince',

@@ -3,13 +3,15 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Phase } from '../types'
+import { Phase, RuleDescription } from '../types'
 
 export default class CheckForMissingBuildRule extends Rule {
-  static parameterTypes: Set<string>[] = [new Set<string>(['*'])]
-  static phases: Set<Phase> = new Set<Phase>(['finalize'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['finalize'],
+    parameters: [['*']]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Check for no applicable build rule.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     // Only apply if parameter is main source file for job.

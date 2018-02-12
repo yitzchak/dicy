@@ -1,17 +1,16 @@
 import * as semver from 'semver'
 
-import { Command } from '@dicy/types'
-
 import File from '../File'
 import Rule from '../Rule'
-import { CACHE_VERSION, Phase, Cache } from '../types'
+import { CACHE_VERSION, Cache, RuleDescription } from '../types'
 
 export default class LoadAndValidateCache extends Rule {
-  static phases: Set<Phase> = new Set<Phase>(['initialize'])
-  static commands: Set<Command> = new Set<Command>(['load'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['load'],
+    phases: ['initialize']
+  }]
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
-  static description: string = 'Loads the file/rule cache from a previous build.'
 
   cacheFilePath: string
 

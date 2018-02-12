@@ -1,9 +1,12 @@
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import { CommandOptions, RuleDescription } from '../types'
 
 export default class Pweave extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['PythonNoWeb'])]
-  static description: string = 'Runs Pweave on Pnw files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['PythonNoWeb']]
+  }]
 
   constructCommand (): CommandOptions {
     const cacheDirectory = this.options.pweaveCacheDirectory

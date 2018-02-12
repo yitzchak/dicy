@@ -1,8 +1,6 @@
 import { DBusNames, default as Evince } from './Evince'
 
 export default class Atril extends Evince {
-  static description: string = 'Open targets using atril.'
-
   static dbusNames: DBusNames = {
     applicationObject: '/org/mate/atril/Atril',
     applicationInterface: 'org.mate.atril.Application',

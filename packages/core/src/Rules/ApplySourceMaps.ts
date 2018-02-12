@@ -1,27 +1,28 @@
 import * as _ from 'lodash'
 
-import { Command, LineRange } from '@dicy/types'
+import { LineRange } from '@dicy/types'
 
 import Rule from '../Rule'
-import { LineRangeMapping, ParsedLog, SourceMaps } from '../types'
+import {
+  LineRangeMapping, ParsedLog, RuleDescription, SourceMaps
+} from '../types'
 
 function inRange (range: LineRange, line: number) {
   return range.start <= line && range.end >= line
 }
 
 export default class ApplySourceMaps extends Rule {
-  static parameterTypes: Set<string>[] = [
-    new Set<string>(['ParsedSourceMap']),
-    new Set<string>([
-      'ParsedAsymptoteLog',
-      'ParsedBiberLog',
-      'ParsedBibTeXLog',
-      'ParsedLaTeXLog',
-      'ParsedMakeIndexLog'
-    ])
-  ]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
-  static description: string = 'Applies source maps to log files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [
+      ['ParsedSourceMap'],
+      [
+        'ParsedAsymptoteLog', 'ParsedBiberLog', 'ParsedBibTeXLog',
+        'ParsedLaTeXLog', 'ParsedMakeIndexLog'
+      ]
+    ]
+  }]
 
   async initialize () {
     // We are going to modify the log so add it as an output

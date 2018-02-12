@@ -3,12 +3,15 @@ import * as path from 'path'
 import { Reference } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 export default class ParseSplitIndexStdOut extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['SplitIndexStdOut'])]
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['SplitIndexStdOut']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses the console output of splitindex.'
 
   async parse () {
     const output = await this.getResolvedOutput('$DIR_0/$NAME_0.log-ParsedSplitIndexStdOut')

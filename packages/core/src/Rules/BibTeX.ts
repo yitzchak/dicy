@@ -6,16 +6,16 @@ import File from '../File'
 import Log from '../Log'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { Action, CommandOptions, Phase } from '../types'
+import { Action, CommandOptions, Phase, RuleDescription } from '../types'
 
 const JAPANESE_BIBTEX_PATTERN = /^u?pbibtex$/
 
 export default class BibTeX extends Rule {
-  static parameterTypes: Set<string>[] = [
-    new Set(['LaTeXAuxilary']),
-    new Set(['ParsedLaTeXAuxilary'])
-  ]
-  static description: string = 'Runs BibTeX to process bibliography files (bib) when need is detected.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['LaTeXAuxilary'], ['ParsedLaTeXAuxilary']]
+  }]
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return consumer.isGrandparentOf(parameters[0], parameters[1]) &&

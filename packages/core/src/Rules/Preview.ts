@@ -3,15 +3,15 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Group, Phase } from '../types'
+import { CommandOptions, Group, Phase, RuleDescription } from '../types'
 
 export default class Preview extends Rule {
-  static commands: Set<Command> = new Set<Command>(['open'])
-  static parameterTypes: Set<string>[] = [new Set([
-    'PortableDocumentFormat', 'PostScript'
-  ])]
+  static descriptions: RuleDescription[] = [{
+    commands: ['open'],
+    phases: ['execute'],
+    parameters: [['PortableDocumentFormat', 'PostScript']]
+  }]
   static alwaysEvaluate: boolean = true
-  static description: string = 'Open targets using MacOS preview.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
     return process.platform === 'darwin' && consumer.isOutputTarget(parameters[0])

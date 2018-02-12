@@ -1,10 +1,13 @@
 import File from '../File'
 import Rule from '../Rule'
-import { Action, CommandOptions } from '../types'
+import { Action, CommandOptions, RuleDescription } from '../types'
 
 export default class Asymptote extends Rule {
-  static parameterTypes: Set<string>[] = [new Set(['Asymptote'])]
-  static description: string = 'Run Asymptote on any generated .asy files.'
+  static descriptions: RuleDescription[] = [{
+    commands: ['build'],
+    phases: ['execute'],
+    parameters: [['Asymptote']]
+  }]
 
   async getFileActions (file: File): Promise<Action[]> {
     // ParsedAsymptoteLog triggers updateDependencies, all others trigger run.

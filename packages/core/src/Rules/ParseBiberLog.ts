@@ -1,13 +1,15 @@
-import { Command, Message, Reference, Severity } from '@dicy/types'
+import { Message, Reference, Severity } from '@dicy/types'
 
 import Rule from '../Rule'
-import { Action, ParsedLog, ParserMatch } from '../types'
+import { Action, ParsedLog, ParserMatch, RuleDescription } from '../types'
 
 export default class ParseBiberLog extends Rule {
-  static parameterTypes: Set<string>[] = [new Set<string>(['BiberLog'])]
-  static commands: Set<Command> = new Set<Command>(['build', 'log'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['build', 'log'],
+    phases: ['execute'],
+    parameters: [['BiberLog']]
+  }]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses any biber produced logs.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedBiberLog')
