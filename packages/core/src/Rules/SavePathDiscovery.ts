@@ -12,6 +12,9 @@ export default class SavePathDiscovery extends Rule {
 
   async run (): Promise<boolean> {
     const files: File[] = await this.getResolvedInputs([
+      '$JOB.log-LaTeXDiscovery',
+      '$JOB.log-OkularDiscovery',
+      '$JOB.log-SkimDiscovery',
       '$JOB.log-SumatraPdfDiscovery'
     ])
 
