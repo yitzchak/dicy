@@ -5,7 +5,7 @@ import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
 import { Phase, RuleDescription } from '../types'
 
-export default class SkimPathList extends Rule {
+export default class SkimCandidates extends Rule {
   static descriptions: RuleDescription[] = [{
     commands: ['discover'],
     phases: ['initialize']

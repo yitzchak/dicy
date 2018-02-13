@@ -5,7 +5,7 @@ import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
 import { Phase, RuleDescription } from '../types'
 
-export default class SumatraPdfPathList extends Rule {
+export default class SumatraPdfCandidates extends Rule {
   static descriptions: RuleDescription[] = [{
     commands: ['discover'],
     phases: ['initialize']
