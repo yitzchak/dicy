@@ -106,6 +106,7 @@ NomenclatureListing:
   fileName: !!js/regexp /\.nls$/i
 Nil: {}
 OkularCheck: {}
+OkularDiscovery: {}
 OUT:
   fileName: !!js/regexp /\.out$/i
 ParsedAsymptoteStdOut: {}
