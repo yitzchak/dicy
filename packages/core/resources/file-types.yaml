@@ -67,6 +67,8 @@ LaTeXClass:
   fileName: !!js/regexp /\.cls$/i
 FileListing:
   fileName: !!js/regexp /\.fls$/i
+LaTeXCheck: {}
+LaTeXDiscovery: {}
 LaTeXLog:
   contents: !!js/regexp /^This is ((?:pdf|e-u?p|u?p|Lua|Xe)?TeX),/m
   fileName: !!js/regexp /\.log$/i
