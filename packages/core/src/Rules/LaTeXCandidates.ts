@@ -22,11 +22,11 @@ export default class LaTeXCandidates extends Rule {
     switch (process.platform) {
       case 'win32':
         const year: number = (new Date()).getFullYear()
-        candidates.push('$PATH:$ProgramFiles\\MiKTeX 2.9\\miktex\\bin\\x64',
-          '$PATH:${ProgramFiles(x86)}\\MiKTeX 2.9\\miktex\\bin')
+        candidates.push('$PATH;$ProgramFiles\\MiKTeX 2.9\\miktex\\bin\\x64',
+          '$PATH;${ProgramFiles(x86)}\\MiKTeX 2.9\\miktex\\bin')
 
         for (let i = 0; i < 5; i++) {
-          candidates.push(`$PATH:$SystemDrive\\texlive\\${year - i}\\bin\\win32`)
+          candidates.push(`$PATH;$SystemDrive\\texlive\\${year - i}\\bin\\win32`)
         }
 
         break
