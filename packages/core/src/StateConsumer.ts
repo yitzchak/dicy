@@ -19,7 +19,7 @@ import {
   ProcessResults, RuleCache
 } from './types'
 
-const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
+const VARIABLE_PATTERN: RegExp = /\$(?:(\w+)|\{([^}]+)\})/g
 
 export default class StateConsumer implements EventEmitter {
   readonly state: State
@@ -33,7 +33,7 @@ export default class StateConsumer implements EventEmitter {
     this.options = hasLocalOptions
       ? new Proxy(options, {
         deleteProperty: (target: OptionsInterface, key: PropertyKey): any => {
-          delete this.localOptions[key]
+          return delete this.localOptions[key]
         },
         get: (target: OptionsInterface, key: PropertyKey): any => {
           return key in this.localOptions
@@ -260,7 +260,7 @@ export default class StateConsumer implements EventEmitter {
   expandVariables (value: string, additionalProperties: any = {}): string {
     const properties: any = Object.assign({}, this.state.env, this.env, additionalProperties)
 
-    return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
+    return value.replace(VARIABLE_PATTERN, (match, name, escapedName) => properties[name || escapedName] || match[0])
   }
 
   async globPath (pattern: string, { types = 'all', ignorePattern = [] }: GlobOptions = { }): Promise<string[]> {
@@ -489,7 +489,7 @@ export default class StateConsumer implements EventEmitter {
       ]
     }
 
-    for (const name in this.options) {
+    for (const name of Object.getOwnPropertyNames(this.options)) {
       if (!name.startsWith('$')) continue
       const value = this.options[name]
       const envName = (process.platform === 'win32' && name === '$PATH') ? 'Path' : name.substring(1)
