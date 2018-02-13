@@ -1,12 +1,25 @@
+import File from '../File'
 import Rule from '../Rule'
-import { CommandOptions, RuleDescription } from '../types'
+import { Action, CommandOptions, RuleDescription } from '../types'
 
 export default class OkularCheck extends Rule {
   static descriptions: RuleDescription[] = [{
     commands: ['open'],
     phases: ['initialize']
+  }, {
+    commands: ['discover'],
+    phases: ['execute'],
+    parameters: [['OkularDiscovery']]
   }]
   static alwaysEvaluate: boolean = true
+
+  async getFileActions (file: File): Promise<Action[]> {
+    if (this.command !== 'discover') {
+      return []
+    }
+
+    return this.firstParameter.value.current ? ['run', 'update'] : ['update']
+  }
 
   constructCommand (): CommandOptions {
     return {
