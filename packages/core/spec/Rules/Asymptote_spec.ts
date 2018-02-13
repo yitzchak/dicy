@@ -26,13 +26,13 @@ describe('Asymptote', () => {
       done()
     })
 
-    it('returns a updateDependencies action for Asymptote stdout.', async (done) => {
+    it('returns a update action for Asymptote stdout.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('Asymptote.log-ParsedAsymptoteStdOut')
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()

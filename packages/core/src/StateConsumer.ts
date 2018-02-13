@@ -8,19 +8,15 @@ import * as path from 'path'
 import * as kill from 'tree-kill'
 
 import {
-  Command,
-  Message,
-  OptionDefinition,
-  OptionsInterface,
-  Severity
+  Command, Message, OptionDefinition, OptionsInterface, OptionsSource, Severity
 } from '@dicy/types'
 
 import State from './State'
 import File from './File'
 import Rule from './Rule'
 import {
-  CommandOptions, FileCache, GlobOptions, DependencyType, KillToken,
-  Phase, ProcessResults, RuleCache
+  CommandOptions, FileCache, GlobOptions, DependencyType, KillToken, Phase,
+  ProcessResults, RuleCache
 } from './types'
 
 const VARIABLE_PATTERN: RegExp = /\$\{?(\w+)\}?/g
@@ -36,6 +32,9 @@ export default class StateConsumer implements EventEmitter {
     this.state = state
     this.options = hasLocalOptions
       ? new Proxy(options, {
+        deleteProperty: (target: OptionsInterface, key: PropertyKey): any => {
+          delete this.localOptions[key]
+        },
         get: (target: OptionsInterface, key: PropertyKey): any => {
           return key in this.localOptions
             ? this.localOptions[key]
@@ -657,5 +656,60 @@ export default class StateConsumer implements EventEmitter {
 
   async addCachedFile (filePath: string, fileCache: FileCache): Promise<void> {
     await this.state.getFile(filePath, fileCache)
+  }
+
+  async setInstanceOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
+    return this.setOptions(await this.getFile('dicy-instance.yaml-ParsedYAML'), options, merge)
+  }
+
+  setUserOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
+    return this.setOptions('$CONFIG_HOME/dicy/config.yaml', options, merge)
+  }
+
+  setDirectoryOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
+    return this.setOptions('$ROOTDIR/.dicy.yaml', options, merge)
+  }
+
+  setProjectOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
+    return this.setOptions('$ROOTDIR/$NAME.yaml', options, merge)
+  }
+
+  private async setOptions (file: string | File | undefined, options: object = {}, merge: boolean = false): Promise<void> {
+    if (!file) {
+      this.error('Unable to set options.')
+      return
+    }
+
+    const normalizedOptions = {}
+
+    if (typeof file === 'string') file = this.resolvePath(file)
+
+    if (merge) {
+      let current
+
+      if (typeof file === 'string') {
+        if (await File.canRead(file)) {
+          current = await File.readYaml(file)
+        }
+      } else {
+        current = file.value
+      }
+
+      if (current) {
+        this.assignOptions(current, normalizedOptions)
+      } else {
+        this.warning('Unable to retrieve current options.')
+      }
+    }
+
+    this.assignOptions(options, normalizedOptions)
+
+    if (typeof file === 'string') {
+      await File.writeYaml(file, normalizedOptions)
+    } else {
+      file.readOnly = false
+      file.value = normalizedOptions
+      file.readOnly = true
+    }
   }
 }

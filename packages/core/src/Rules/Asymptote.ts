@@ -10,8 +10,8 @@ export default class Asymptote extends Rule {
   }]
 
   async getFileActions (file: File): Promise<Action[]> {
-    // ParsedAsymptoteLog triggers updateDependencies, all others trigger run.
-    return [file.type === 'ParsedAsymptoteStdOut' ? 'updateDependencies' : 'run']
+    // ParsedAsymptoteLog triggers update, all others trigger run.
+    return [file.type === 'ParsedAsymptoteStdOut' ? 'update' : 'run']
   }
 
   constructCommand (): CommandOptions {

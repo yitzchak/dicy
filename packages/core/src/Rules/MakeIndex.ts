@@ -150,13 +150,13 @@ export default class MakeIndex extends Rule {
   }
 
   async getFileActions (file: File): Promise<Action[]> {
-    // Only return a run action for the actual idx file and updateDependencies
+    // Only return a run action for the actual idx file and update
     // for the parsed makeindex log.
     switch (file.type) {
       case 'ParsedMakeIndexLog':
       case 'ParsedMendexLog':
       case 'ParsedXindyLog':
-        return ['updateDependencies']
+        return ['update']
       case 'ParsedLaTeXLog':
         return []
       default:

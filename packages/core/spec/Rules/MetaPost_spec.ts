@@ -26,13 +26,13 @@ describe('MetaPost', () => {
       done()
     })
 
-    it('returns a updateDependencies action for parsed file listing.', async (done) => {
+    it('returns a update action for parsed file listing.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('MetaPost.fls-ParsedFileListing')
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()

@@ -150,6 +150,7 @@ SageOutput:
 ScalableVectorGraphics:
   fileName: !!js/regexp /\.svg$/i
 SkimCheck: {}
+SkimDiscovery: {}
 SplitIndexStdOut: {}
 SplitIndexStdErr: {}
 StandalonePreambles:
@@ -157,6 +158,7 @@ StandalonePreambles:
 StateCache:
   fileName: !!js/regexp /-cache\.yaml$/i
 SumatraPdfCheck: {}
+SumatraPdfDiscovery: {}
 SyncTeX:
   fileName: !!js/regexp /\.synctex(\.gz)?$/i
 TableOfContents:

@@ -38,7 +38,7 @@ export default class BibTeX extends Rule {
         }
         break
       case 'ParsedBibTeXLog':
-        return ['updateDependencies']
+        return ['update']
       case 'LaTeXAuxilary':
         return ['run']
     }

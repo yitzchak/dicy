@@ -29,11 +29,11 @@ export default class SplitIndex extends Rule {
   }
 
   async getFileActions (file: File): Promise<Action[]> {
-    // Only return a run action for the actual idx file and updateDependencies
+    // Only return a run action for the actual idx file and update
     // for the parsed splitindex output.
     switch (file.type) {
       case 'ParsedSplitIndexStdOut':
-        return ['updateDependencies']
+        return ['update']
       case 'ParsedLaTeXLog':
         return []
       default:

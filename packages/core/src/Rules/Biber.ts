@@ -28,7 +28,7 @@ export default class Biber extends Rule {
         }
         break
       case 'ParsedBiberLog':
-        return ['updateDependencies']
+        return ['update']
       default:
         return ['run']
     }

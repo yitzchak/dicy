@@ -119,7 +119,7 @@ describe('LaTeX', () => {
       done()
     })
 
-    it('returns a run and updateDependencies actions for a latex log file if a rerun LaTeX instruction is found.', async (done) => {
+    it('returns a run and update actions for a latex log file if a rerun LaTeX instruction is found.', async (done) => {
       const { rule } = await initialize({
         parameters: [{
           filePath: 'LaTeX_article.tex'
@@ -135,13 +135,13 @@ describe('LaTeX', () => {
           }]
         }
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies', 'run'])
+        expect(actions).toEqual(['update', 'run'])
       }
 
       done()
     })
 
-    it('returns an updateDependencies action for a latex log file if no rerun LaTeX instruction is found.', async (done) => {
+    it('returns an update action for a latex log file if no rerun LaTeX instruction is found.', async (done) => {
       const { rule } = await initialize({
         parameters: [{
           filePath: 'LaTeX_article.tex'
@@ -157,7 +157,7 @@ describe('LaTeX', () => {
           }]
         }
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()

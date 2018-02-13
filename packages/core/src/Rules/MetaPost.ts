@@ -10,8 +10,8 @@ export default class MetaPost extends Rule {
   }]
 
   async getFileActions (file: File): Promise<Action[]> {
-    // ParsedFileListing triggers updateDependencies, all others trigger run.
-    return [file.type === 'ParsedFileListing' ? 'updateDependencies' : 'run']
+    // ParsedFileListing triggers update, all others trigger run.
+    return [file.type === 'ParsedFileListing' ? 'update' : 'run']
   }
 
   constructCommand (): CommandOptions {

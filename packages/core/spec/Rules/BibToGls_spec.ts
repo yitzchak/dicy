@@ -46,13 +46,13 @@ describe('BibToGls', () => {
       done()
     })
 
-    it('returns a updateDependencies action for a BibToGls log file.', async (done) => {
+    it('returns a update action for a BibToGls log file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('BibToGlsLog.gelg-ParsedBibToGlsLog')
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()

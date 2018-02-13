@@ -21,7 +21,7 @@ export default class BibToGls extends Rule {
   async getFileActions (file: File): Promise<Action[]> {
     switch (file.type) {
       case 'ParsedBibToGlsLog':
-        return ['updateDependencies']
+        return ['update']
       case 'LaTeXAuxilary':
         return ['run']
     }

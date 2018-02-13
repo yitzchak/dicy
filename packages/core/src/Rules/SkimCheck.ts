@@ -3,14 +3,16 @@ import { Command } from '@dicy/types'
 import File from '../File'
 import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
-import { CommandOptions, Phase, RuleDescription } from '../types'
-
-const DISPLAYLINE_PATH: string = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+import { Action, CommandOptions, Phase, RuleDescription } from '../types'
 
 export default class SkimCheck extends Rule {
   static descriptions: RuleDescription[] = [{
     commands: ['open'],
     phases: ['initialize']
+  }, {
+    commands: ['discover'],
+    phases: ['execute'],
+    parameters: [['SkimDiscovery']]
   }]
   static alwaysEvaluate: boolean = true
 
@@ -18,9 +20,17 @@ export default class SkimCheck extends Rule {
     return process.platform === 'darwin'
   }
 
+  async getFileActions (file: File): Promise<Action[]> {
+    if (this.command !== 'discover') {
+      return []
+    }
+
+    return this.firstParameter.value.current ? ['run', 'update'] : ['update']
+  }
+
   constructCommand (): CommandOptions {
     return {
-      command: [DISPLAYLINE_PATH, '-h'],
+      command: 'displayline -h',
       cd: '$ROOTDIR',
       severity: 'info',
       stdout: '$JOB.log-SkimCheck'

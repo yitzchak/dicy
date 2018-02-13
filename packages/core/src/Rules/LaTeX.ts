@@ -35,13 +35,13 @@ export default class LaTeX extends Rule {
   async getFileActions (file: File): Promise<Action[]> {
     switch (file.type) {
       case 'ParsedFileListing':
-        return ['updateDependencies']
+        return ['update']
       case 'ParsedLaTeXLog':
         // If a rerun instruction is found then return run, otherwise just
-        // return updateDependencies.
+        // return update.
         return (file.value && !!Log.findMessage(file.value, RERUN_LATEX_PATTERN))
-          ? ['updateDependencies', 'run']
-          : ['updateDependencies']
+          ? ['update', 'run']
+          : ['update']
       default:
         return ['run']
     }

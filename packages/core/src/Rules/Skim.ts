@@ -6,8 +6,6 @@ import Rule from '../Rule'
 import StateConsumer from '../StateConsumer'
 import { CommandOptions, Group, Phase, RuleDescription } from '../types'
 
-const DISPLAYLINE_PATH: string = '/Applications/Skim.app/Contents/SharedSupport/displayline'
-
 export default class Skim extends Rule {
   static descriptions: RuleDescription[] = [{
     commands: ['open'],
@@ -28,7 +26,7 @@ export default class Skim extends Rule {
   }
 
   constructCommand (): CommandOptions {
-    const command: string[] = [DISPLAYLINE_PATH, '-b', '-r']
+    const command: string[] = ['displayline', '-b', '-r']
 
     if (this.options.openInBackground) {
       command.push('-g')

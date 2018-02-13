@@ -14,7 +14,7 @@ export interface GlobOptions {
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
 
-export type Action = 'parse' | 'run' | 'updateDependencies'
+export type Action = 'parse' | 'run' | 'update'
 
 export type Group = 'opener'
 
@@ -138,3 +138,8 @@ export interface SourceMaps {
 }
 
 export interface OptionInterfaceMap { [name: string]: OptionsInterface }
+
+export interface PathDiscovery {
+  current?: string,
+  candidates: string[]
+}

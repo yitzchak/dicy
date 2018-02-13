@@ -26,13 +26,13 @@ describe('Biber', () => {
       done()
     })
 
-    it('returns a updateDependencies action for a biber log file.', async (done) => {
+    it('returns a update action for a biber log file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('BiberControlFile.blg-ParsedBiberLog')
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()

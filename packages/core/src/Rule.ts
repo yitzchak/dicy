@@ -8,9 +8,17 @@ import State from './State'
 import File from './File'
 import StateConsumer from './StateConsumer'
 import {
-  Action, CommandOptions, DependencyType, Group, ParsedLog, Phase,
-  ProcessResults, RuleDescription
+  Action, CommandOptions, DependencyType, Group, ParsedLog, PathDiscovery,
+  Phase, ProcessResults, RuleDescription
 } from './types'
+
+function isParsedLog (arg: any): arg is ParsedLog {
+  return arg.inputs !== undefined || arg.outputs !== undefined
+}
+
+function isPathDiscovery (arg: any): arg is PathDiscovery {
+  return arg.candidates !== undefined
+}
 
 export default class Rule extends StateConsumer {
   static descriptions: RuleDescription[] = []
@@ -159,7 +167,7 @@ export default class Rule extends StateConsumer {
       const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
       for (const action of await this.getFileActions(file)) {
         if (ruleNeedsUpdate) this.failures.delete(action)
-        if (action === 'updateDependencies' || ruleNeedsUpdate) {
+        if (action === 'update' || ruleNeedsUpdate) {
           this.addActions(file, [action])
         }
       }
@@ -251,8 +259,8 @@ export default class Rule extends StateConsumer {
         case 'parse':
           success = await this.parse()
           break
-        case 'updateDependencies':
-          success = await this.updateDependencies()
+        case 'update':
+          success = await this.update()
           break
         default:
           success = await this.run()
@@ -275,16 +283,35 @@ export default class Rule extends StateConsumer {
     return false
   }
 
-  async updateDependencies (): Promise<boolean> {
-    const files = this.actions.get('updateDependencies')
+  async update (): Promise<boolean> {
+    const files = this.actions.get('update')
 
     if (files) {
       for (const file of files.values()) {
-        const parsedLog: ParsedLog | undefined = file.value
+        const value: ParsedLog | PathDiscovery | undefined = file.value
 
-        if (parsedLog) {
-          if (parsedLog.inputs) await this.getInputs(parsedLog.inputs)
-          if (parsedLog.outputs) await this.getOutputs(parsedLog.outputs)
+        if (isParsedLog(value)) {
+          if (value.inputs) {
+            await this.getInputs(value.inputs)
+          }
+          if (value.outputs) {
+            await this.getOutputs(value.outputs)
+          }
+        } else if (isPathDiscovery(value)) {
+          if (value.current && !this.failures.has('run')) {
+            this.firstParameter.value = { current: value.current }
+          } else if (value.candidates.length === 0) {
+            this.firstParameter.value = { candidates: [] }
+            delete this.options.$PATH
+          } else {
+            this.options.$PATH = value.candidates[0]
+            this.firstParameter.value = {
+              current: value.candidates[0],
+              candidates: value.candidates.slice(1)
+            }
+            this.failures.clear()
+          }
+
         }
       }
     }
@@ -439,6 +466,16 @@ export default class Rule extends StateConsumer {
     }
 
     return files
+  }
+
+  async createResolvedOutput (filePath: string, value: any, type?: DependencyType): Promise<File | undefined> {
+    const file: File | undefined = await this.getResolvedOutput(filePath, type)
+
+    if (file) {
+      file.value = value
+    }
+
+    return file
   }
 
   async getGlobbedInputs (pattern: string, type?: DependencyType): Promise<File[]> {

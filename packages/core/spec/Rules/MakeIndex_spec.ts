@@ -98,37 +98,37 @@ describe('MakeIndex', () => {
       done()
     })
 
-    it('returns a updateDependencies action for a makeindex log file.', async (done) => {
+    it('returns a update action for a makeindex log file.', async (done) => {
       const { dicy, rule } = await initialize()
       const file = await dicy.getFile('IndexControlFile.ilg-ParsedMakeIndexLog')
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()
     })
 
-    it('returns a updateDependencies action for a mendex log file.', async (done) => {
+    it('returns a update action for a mendex log file.', async (done) => {
       const { dicy, rule } = await initialize()
       const file = await dicy.getFile('IndexControlFile.ilg-ParsedMendexLog')
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()
     })
 
-    it('returns a updateDependencies action for a xindy log file.', async (done) => {
+    it('returns a update action for a xindy log file.', async (done) => {
       const { dicy, rule } = await initialize()
       const file = await dicy.getFile('IndexControlFile.ilg-ParsedXindyLog')
 
       if (file) {
         const actions = await rule.getFileActions(file)
-        expect(actions).toEqual(['updateDependencies'])
+        expect(actions).toEqual(['update'])
       }
 
       done()
