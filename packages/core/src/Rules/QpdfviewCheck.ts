@@ -1,12 +1,16 @@
+import File from '../File'
 import Rule from '../Rule'
-import { CommandOptions, RuleDescription } from '../types'
+import { Action, CommandOptions, RuleDescription } from '../types'
 
 export default class QpdfviewCheck extends Rule {
   static descriptions: RuleDescription[] = [{
     commands: ['open'],
     phases: ['initialize']
   }]
-  static alwaysEvaluate: boolean = true
+
+  getActions (file?: File): Action[] {
+    return this.hasResolvedOutput('$JOB.log-QpdfviewCheck') ? [] : ['run']
+  }
 
   constructCommand (): CommandOptions {
     return {

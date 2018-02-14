@@ -9,9 +9,11 @@ export default class MetaPost extends Rule {
     parameters: [['MetaPost']]
   }]
 
-  async getFileActions (file: File): Promise<Action[]> {
+  getActions (file?: File): Action[] {
     // ParsedFileListing triggers update, all others trigger run.
-    return [file.type === 'ParsedFileListing' ? 'update' : 'run']
+    return file
+      ? [file.type === 'ParsedFileListing' ? 'update' : 'run']
+      : []
   }
 
   constructCommand (): CommandOptions {

@@ -13,13 +13,13 @@ async function initialize ({
 }
 
 describe('Biber', () => {
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     it('returns a run action for a control file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('BiberControlFile.bcf')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
@@ -31,7 +31,7 @@ describe('Biber', () => {
       const file = await rule.getFile('BiberControlFile.blg-ParsedBiberLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 
@@ -49,7 +49,7 @@ describe('Biber', () => {
             text: 'Please (re)run Biber on the file: BiberControlFile and rerun LaTeX afterwards.'
           }]
         }
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
@@ -67,7 +67,7 @@ describe('Biber', () => {
             text: 'Please (re)run Biber on the file: foo and rerun LaTeX afterwards.'
           }]
         }
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toBeEmptyArray()
       }
 

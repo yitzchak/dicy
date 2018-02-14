@@ -73,13 +73,13 @@ describe('SplitIndex', () => {
     })
   })
 
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     it('returns a run action for a index control file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('IndexControlFile.idx')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
@@ -91,7 +91,7 @@ describe('SplitIndex', () => {
       const file = await rule.getFile('IndexControlFile.ilg-ParsedSplitIndexLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 
@@ -103,7 +103,7 @@ describe('SplitIndex', () => {
       const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toBeEmptyArray()
       }
 

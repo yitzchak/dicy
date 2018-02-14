@@ -4,20 +4,12 @@ import { Action, CommandOptions, RuleDescription } from '../types'
 
 export default class LaTeXCheck extends Rule {
   static descriptions: RuleDescription[] = [{
-    commands: ['open'],
-    phases: ['initialize']
-  }, {
     commands: ['discover'],
     phases: ['execute'],
     parameters: [['LaTeXDiscovery']]
   }]
-  static alwaysEvaluate: boolean = true
 
-  async getFileActions (file: File): Promise<Action[]> {
-    if (this.command !== 'discover') {
-      return []
-    }
-
+  getActions (file?: File): Action[] {
     return this.firstParameter.value.current ? ['run', 'update'] : ['update']
   }
 

@@ -32,19 +32,23 @@ export default class LaTeX extends Rule {
     ])
   }
 
-  async getFileActions (file: File): Promise<Action[]> {
-    switch (file.type) {
-      case 'ParsedFileListing':
-        return ['update']
-      case 'ParsedLaTeXLog':
-        // If a rerun instruction is found then return run, otherwise just
-        // return update.
-        return (file.value && !!Log.findMessage(file.value, RERUN_LATEX_PATTERN))
-          ? ['update', 'run']
-          : ['update']
-      default:
-        return ['run']
+  getActions (file?: File): Action[] {
+    if (file) {
+      switch (file.type) {
+        case 'ParsedFileListing':
+          return ['update']
+        case 'ParsedLaTeXLog':
+          // If a rerun instruction is found then return run, otherwise just
+          // return update.
+          return (file.value && !!Log.findMessage(file.value, RERUN_LATEX_PATTERN))
+            ? ['update', 'run']
+            : ['update']
+        default:
+          return ['run']
+      }
     }
+
+    return []
   }
 
   constructCommand (): CommandOptions {

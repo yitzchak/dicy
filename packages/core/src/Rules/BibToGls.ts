@@ -18,12 +18,11 @@ export default class BibToGls extends Rule {
       !!parameters[1].value.commands.includes('glsxtr@resource')
   }
 
-  async getFileActions (file: File): Promise<Action[]> {
-    switch (file.type) {
-      case 'ParsedBibToGlsLog':
-        return ['update']
-      case 'LaTeXAuxilary':
-        return ['run']
+  getActions (file?: File): Action[] {
+    if (file) {
+      return file.type === 'ParsedBibToGlsLog'
+        ? ['update']
+        : ['run']
     }
 
     return []

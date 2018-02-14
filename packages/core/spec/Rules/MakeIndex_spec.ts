@@ -85,13 +85,13 @@ describe('MakeIndex', () => {
     })
   })
 
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     it('returns a run action for a index control file.', async (done) => {
       const { dicy, rule } = await initialize()
       const file = await dicy.getFile('IndexControlFile.idx')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
@@ -103,7 +103,7 @@ describe('MakeIndex', () => {
       const file = await dicy.getFile('IndexControlFile.ilg-ParsedMakeIndexLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 
@@ -115,7 +115,7 @@ describe('MakeIndex', () => {
       const file = await dicy.getFile('IndexControlFile.ilg-ParsedMendexLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 
@@ -127,7 +127,7 @@ describe('MakeIndex', () => {
       const file = await dicy.getFile('IndexControlFile.ilg-ParsedXindyLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 
@@ -139,7 +139,7 @@ describe('MakeIndex', () => {
       const file = await dicy.getFile('LaTeX.log-ParsedLaTeXLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toBeEmptyArray()
       }
 
@@ -151,7 +151,7 @@ describe('MakeIndex', () => {
     it('retains run action if no makeindex calls present.', async (done) => {
       const { rule } = await initialize()
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeTrue()
 
@@ -177,7 +177,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeFalse()
 
@@ -203,7 +203,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeTrue()
 
@@ -229,7 +229,7 @@ describe('MakeIndex', () => {
         }]
       })
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeTrue()
 

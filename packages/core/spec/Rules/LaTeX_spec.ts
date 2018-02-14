@@ -102,7 +102,7 @@ describe('LaTeX', () => {
     })
   })
 
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     it('returns a run action for a LaTeX file.', async (done) => {
       const { rule } = await initialize({
         parameters: [{
@@ -112,7 +112,7 @@ describe('LaTeX', () => {
       const file = await rule.getFile('LaTeX_article.tex')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
@@ -134,7 +134,7 @@ describe('LaTeX', () => {
             text: 'Please (re)run Biber on the file: BiberControlFile and rerun LaTeX afterwards.'
           }]
         }
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update', 'run'])
       }
 
@@ -156,7 +156,7 @@ describe('LaTeX', () => {
             text: 'Please (re)run Biber on the file: BiberControlFile and rerun foo afterwards.'
           }]
         }
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 

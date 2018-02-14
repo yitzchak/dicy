@@ -16,7 +16,7 @@ async function initialize ({
 }
 
 describe('BibToGls', () => {
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     beforeEach(async (done) => {
       await initialize()
       done()
@@ -27,31 +27,31 @@ describe('BibToGls', () => {
       const file = await rule.getFile('LaTeXAuxilary.aux')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
       done()
     })
 
-    it('returns a no actions for a parsed LaTeX aux file.', async (done) => {
-      const { rule } = await initialize()
-      const file = await rule.getFile('LaTeXAuxilary.aux-ParsedLaTeXAuxilary')
-
-      if (file) {
-        const actions = await rule.getFileActions(file)
-        expect(actions).toBeEmptyArray()
-      }
-
-      done()
-    })
+    // it('returns a no actions for a parsed LaTeX aux file.', async (done) => {
+    //   const { rule } = await initialize()
+    //   const file = await rule.getFile('LaTeXAuxilary.aux-ParsedLaTeXAuxilary')
+    //
+    //   if (file) {
+    //     const actions = rule.getActions(file)
+    //     expect(actions).toBeEmptyArray()
+    //   }
+    //
+    //   done()
+    // })
 
     it('returns a update action for a BibToGls log file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('BibToGlsLog.gelg-ParsedBibToGlsLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 

@@ -352,16 +352,22 @@ export default class StateConsumer implements EventEmitter {
     return this.state.components
   }
 
-  hasInput (rule: Rule, file: File, type?: DependencyType): boolean {
+  hasInput (rule: Rule | string, file: File | string, type?: DependencyType): boolean {
+    const ruleId = typeof rule === 'string' ? rule : rule.id
+    const filePath = typeof file === 'string' ? file : file.filePath
+
     return type
-      ? this.state.edge(file.filePath, rule.id) === type
-      : this.state.hasEdge(file.filePath, rule.id)
+      ? this.state.edge(filePath, ruleId) === type
+      : this.state.hasEdge(filePath, ruleId)
   }
 
-  hasOutput (rule: Rule, file: File, type?: DependencyType): boolean {
+  hasOutput (rule: Rule | string, file: File | string, type?: DependencyType): boolean {
+    const ruleId = typeof rule === 'string' ? rule : rule.id
+    const filePath = typeof file === 'string' ? file : file.filePath
+
     return type
-      ? this.state.edge(rule.id, file.filePath) === type
-      : this.state.hasEdge(rule.id, file.filePath)
+      ? this.state.edge(ruleId, filePath) === type
+      : this.state.hasEdge(ruleId, filePath)
   }
 
   addInput (rule: Rule, file: File, type?: DependencyType): void {
@@ -584,7 +590,7 @@ export default class StateConsumer implements EventEmitter {
     return value.replace(/\{\{(.*?)\}\}/, (match, filePath) => this.resolvePath(filePath))
   }
 
-  isOutputOf (file: File, ruleId: string): boolean {
+  isOutputOf (file: File | string, ruleId: string): boolean {
     return this.state.isOutputOf(file, ruleId)
   }
 

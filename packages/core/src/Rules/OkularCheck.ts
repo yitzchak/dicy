@@ -11,11 +11,10 @@ export default class OkularCheck extends Rule {
     phases: ['execute'],
     parameters: [['OkularDiscovery']]
   }]
-  static alwaysEvaluate: boolean = true
 
-  async getFileActions (file: File): Promise<Action[]> {
+  getActions (file?: File): Action[] {
     if (this.command !== 'discover') {
-      return []
+      return this.hasResolvedOutput('$JOB.log-OkularCheck') ? [] : ['run']
     }
 
     return this.firstParameter.value.current ? ['run', 'update'] : ['update']

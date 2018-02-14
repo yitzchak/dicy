@@ -19,19 +19,22 @@ export default class Biber extends Rule {
     ])
   }
 
-  async getFileActions (file: File): Promise<Action[]> {
-    switch (file.type) {
-      case 'ParsedLaTeXLog':
-        const { name } = path.parse(this.firstParameter.filePath)
-        if (file.value && Log.hasRunMessage(file.value, 'Biber', name)) {
+  getActions (file?: File): Action[] {
+    if (file) {
+      switch (file.type) {
+        case 'ParsedLaTeXLog':
+          const { name } = path.parse(this.firstParameter.filePath)
+          if (file.value && Log.hasRunMessage(file.value, 'Biber', name)) {
+            return ['run']
+          }
+          break
+        case 'ParsedBiberLog':
+          return ['update']
+        default:
           return ['run']
-        }
-        break
-      case 'ParsedBiberLog':
-        return ['update']
-      default:
-        return ['run']
+      }
     }
+
     return []
   }
 

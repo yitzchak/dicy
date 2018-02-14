@@ -149,19 +149,23 @@ export default class MakeIndex extends Rule {
     }
   }
 
-  async getFileActions (file: File): Promise<Action[]> {
-    // Only return a run action for the actual idx file and update
-    // for the parsed makeindex log.
-    switch (file.type) {
-      case 'ParsedMakeIndexLog':
-      case 'ParsedMendexLog':
-      case 'ParsedXindyLog':
-        return ['update']
-      case 'ParsedLaTeXLog':
-        return []
-      default:
-        return ['run']
+  getActions (file?: File): Action[] {
+    if (file) {
+      // Only return a run action for the actual idx file and update
+      // for the parsed makeindex log.
+      switch (file.type) {
+        case 'ParsedMakeIndexLog':
+        case 'ParsedMendexLog':
+        case 'ParsedXindyLog':
+          return ['update']
+        case 'ParsedLaTeXLog':
+          return []
+        default:
+          return ['run']
+      }
     }
+
+    return []
   }
 
   async preEvaluate (): Promise<void> {

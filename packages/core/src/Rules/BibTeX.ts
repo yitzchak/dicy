@@ -29,18 +29,20 @@ export default class BibTeX extends Rule {
     ])
   }
 
-  async getFileActions (file: File): Promise<Action[]> {
-    switch (file.type) {
-      case 'ParsedLaTeXLog':
-        const { name } = path.parse(this.firstParameter.filePath)
-        if (file.value && Log.hasRunMessage(file.value, 'BibTeX', name)) {
+  getActions (file?: File): Action[] {
+    if (file) {
+      switch (file.type) {
+        case 'ParsedLaTeXLog':
+          const { name } = path.parse(this.firstParameter.filePath)
+          if (file.value && Log.hasRunMessage(file.value, 'BibTeX', name)) {
+            return ['run']
+          }
+          break
+        case 'ParsedBibTeXLog':
+          return ['update']
+        default:
           return ['run']
-        }
-        break
-      case 'ParsedBibTeXLog':
-        return ['update']
-      case 'LaTeXAuxilary':
-        return ['run']
+      }
     }
 
     return []

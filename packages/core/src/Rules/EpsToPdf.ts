@@ -81,9 +81,9 @@ export default class EpsToPdf extends Rule {
     }
   }
 
-  async getFileActions (file: File): Promise<Action[]> {
+  getActions (file?: File): Action[] {
     // Only return a run action for the actual eps file.
-    return file.type === 'EncapsulatedPostScript' ? ['run'] : []
+    return (file && file.type === 'EncapsulatedPostScript') ? ['run'] : []
   }
 
   async preEvaluate () {

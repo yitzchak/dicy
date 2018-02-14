@@ -9,9 +9,11 @@ export default class Asymptote extends Rule {
     parameters: [['Asymptote']]
   }]
 
-  async getFileActions (file: File): Promise<Action[]> {
+  getActions (file?: File): Action[] {
     // ParsedAsymptoteLog triggers update, all others trigger run.
-    return [file.type === 'ParsedAsymptoteStdOut' ? 'update' : 'run']
+    return file
+      ? [file.type === 'ParsedAsymptoteStdOut' ? 'update' : 'run']
+      : []
   }
 
   constructCommand (): CommandOptions {

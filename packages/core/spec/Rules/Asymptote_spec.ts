@@ -13,13 +13,13 @@ async function initialize ({
 }
 
 describe('Asymptote', () => {
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     it('returns a run action for an Aymptote file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('Asymptote.asy')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
@@ -31,7 +31,7 @@ describe('Asymptote', () => {
       const file = await rule.getFile('Asymptote.log-ParsedAsymptoteStdOut')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 

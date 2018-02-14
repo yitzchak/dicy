@@ -65,7 +65,7 @@ export default class Rule extends StateConsumer {
     if (appliesToPhase && await this.isApplicable(consumer, command, phase)) {
       const rule = new this(consumer.state, command, phase, consumer.options)
       await rule.initialize()
-      if (this.alwaysEvaluate) rule.addActions()
+      rule.addActions()
       return rule
     }
   }
@@ -94,7 +94,7 @@ export default class Rule extends StateConsumer {
               if (!consumer.hasRule(ruleId) && await this.isApplicable(consumer, command, phase, parameters)) {
                 const rule = new this(consumer.state, command, phase, consumer.options, parameters)
                 await rule.initialize()
-                if (this.alwaysEvaluate) rule.addActions(file)
+                rule.addActions(file)
                 rules.push(rule)
               }
 
@@ -155,7 +155,7 @@ export default class Rule extends StateConsumer {
         this.addActions()
       } else {
         for (const input of this.inputs) {
-          this.addActions(input, await this.getFileActions(input))
+          this.addActions(input)
         }
       }
     }
@@ -165,7 +165,7 @@ export default class Rule extends StateConsumer {
     if ((!command || command === this.command) && (!phase || phase === this.phase) && file.hasBeenUpdated) {
       const timeStamp: Date | undefined = this.timeStamp
       const ruleNeedsUpdate = !timeStamp || timeStamp < file.timeStamp
-      for (const action of await this.getFileActions(file)) {
+      for (const action of this.getActions(file)) {
         if (ruleNeedsUpdate) this.failures.delete(action)
         if (action === 'update' || ruleNeedsUpdate) {
           this.addActions(file, [action])
@@ -198,14 +198,12 @@ export default class Rule extends StateConsumer {
     }
   }
 
-  async getFileActions (file: File): Promise<Action[]> {
+  getActions (file?: File): Action[] {
     return (this.constructor as typeof Rule).defaultActions
   }
 
   addActions (file?: File, actions?: Action[]): void {
-    if (!actions) actions = (this.constructor as typeof Rule).defaultActions
-
-    for (const action of actions || []) {
+    for (const action of actions || this.getActions(file)) {
       const files: Set<File> | undefined = this.actions.get(action)
       if (!files) {
         this.actions.set(action, new Set(file ? [file] : []))
@@ -243,6 +241,10 @@ export default class Rule extends StateConsumer {
 
   get outputs (): File[] {
     return this.getOutputFiles(this)
+  }
+
+  hasResolvedOutput (file: string): boolean {
+    return this.hasOutput(this, this.resolvePath(file))
   }
 
   async preEvaluate (): Promise<void> {}

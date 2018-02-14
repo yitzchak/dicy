@@ -13,13 +13,13 @@ async function initialize ({
 }
 
 describe('MetaPost', () => {
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     it('returns a run action for an Aymptote file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('MetaPost.mp')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['run'])
       }
 
@@ -31,7 +31,7 @@ describe('MetaPost', () => {
       const file = await rule.getFile('MetaPost.fls-ParsedFileListing')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toEqual(['update'])
       }
 

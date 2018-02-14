@@ -114,7 +114,6 @@ export default class State extends EventEmitter {
   async addRule (rule: Rule): Promise<void> {
     this.rules.set(rule.id, rule)
     this.addNode(rule.id)
-    rule.addActions()
   }
 
   removeRule (rule: Rule): void {
@@ -283,8 +282,8 @@ export default class State extends EventEmitter {
     return predecessors.map(id => this.rules.get(id)).filter(rule => rule) as Rule[]
   }
 
-  isOutputOf (file: File, ruleId: string): boolean {
-    const inEdges = this.graph.inEdges(file.filePath) || []
+  isOutputOf (file: File | string, ruleId: string): boolean {
+    const inEdges = this.graph.inEdges(typeof file === 'string' ? file : file.filePath) || []
 
     return inEdges.some(edge => edge.v.startsWith(ruleId))
   }

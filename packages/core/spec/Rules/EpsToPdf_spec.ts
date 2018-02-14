@@ -84,13 +84,13 @@ describe('EpsToPdf', () => {
     })
   })
 
-  describe('getFileActions', () => {
+  describe('getActions', () => {
     it('returns a run action for an EPS file.', async (done) => {
       const { rule } = await initialize()
       const file = await rule.getFile('EncapsulatedPostScript.eps')
 
       if (file) {
-        const actions = await rule.getFileActions(rule.firstParameter)
+        const actions = rule.getActions(rule.firstParameter)
         expect(actions).toEqual(['run'])
       }
 
@@ -102,7 +102,7 @@ describe('EpsToPdf', () => {
       const file = await rule.getFile('LaTeX.log-ParsedLaTeXLog')
 
       if (file) {
-        const actions = await rule.getFileActions(file)
+        const actions = rule.getActions(file)
         expect(actions).toBeEmptyArray()
       }
 
@@ -114,7 +114,7 @@ describe('EpsToPdf', () => {
     it('retains run action if no epstopdf calls present.', async (done) => {
       const { rule } = await initialize()
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeTrue()
 
@@ -140,7 +140,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeFalse()
 
@@ -166,7 +166,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeTrue()
 
@@ -192,7 +192,7 @@ describe('EpsToPdf', () => {
         }]
       })
 
-      rule.addActions()
+      rule.addActions(rule.firstParameter)
       await rule.preEvaluate()
       expect(rule.actions.has('run')).toBeTrue()
 
