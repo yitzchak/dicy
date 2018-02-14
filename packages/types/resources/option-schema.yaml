@@ -304,12 +304,14 @@ opener:
     - preview     # background
     - shell-open
     - xdg-open
+  noInvalidate: true
 openInBackground:
   title: Open in Background
   description: Open targets in background to avoid the changing the window
     focus.
   type: boolean
   defaultValue: false
+  noInvalidate: true
 outputDirectory:
   title: Output Directory
   aliases:
