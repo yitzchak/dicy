@@ -5,9 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][]
 
-### changed
+### Changed
 
 -   LaTeX `engine` setting is now an enumeration versus a free form text value.
+-   User configuration is now stored in platform specific manner which conforms
+    to established norms for each platform as detailed below. Resolves
+    \[[#138][]].
+    -   MacOS - `$HOME/Library/Application Support/dicy/config.yaml`
+    -   Windows - `%APPDATA%\dicy\config.yaml` or
+        `%USERPROFILE%\AppData\Roaming\dicy\config.yaml`
+    -   Linux, BSD and all others - `$XDG_CONFIG_HOME/dicy/config.yaml` or
+        `$HOME/.config/dicy/config.yaml`
 
 ## [v0.12.3][] - 2017-12-10
 
@@ -311,6 +319,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
+
+[#138]: https://github.com/yitzchak/dicy/issues/138
 
 [#106]: https://github.com/yitzchak/dicy/issues/106
 
