@@ -119,16 +119,9 @@ export default class File {
     })
   }
 
-  static write (filePath: string, value: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      fs.writeFile(filePath, value, { encoding: 'utf-8' }, (error) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve()
-        }
-      })
-    })
+  static async write (filePath: string, value: string): Promise<void> {
+    await fs.mkdirp(path.dirname(filePath))
+    await fs.writeFile(filePath, value, { encoding: 'utf-8' })
   }
 
   static async writeYaml (filePath: string, value: object, fullSchema: boolean = false): Promise<void> {
@@ -136,7 +129,8 @@ export default class File {
       skipInvalid: true,
       schema: fullSchema ? yaml.DEFAULT_FULL_SCHEMA : yaml.DEFAULT_SAFE_SCHEMA
     })
-    await fs.writeFile(filePath, contents)
+    await fs.mkdirp(path.dirname(filePath))
+    await fs.writeFile(filePath, contents, { encoding: 'utf-8' })
   }
 
   static canRead (filePath: string): Promise<boolean> {

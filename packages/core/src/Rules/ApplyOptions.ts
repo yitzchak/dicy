@@ -42,7 +42,7 @@ export default class ApplyOptions extends Rule {
 
     // Load the user options if loadUserOptions is true.
     if (loadUserOptions) {
-      const userOptions: File | undefined = await this.getResolvedInput('$HOME/.dicy.yaml-ParsedYAML')
+      const userOptions: File | undefined = await this.getResolvedInput('$CONFIG_HOME/dicy/config.yaml-ParsedYAML')
       if (userOptions) {
         optionSet.unshift(userOptions.value || {})
       }
