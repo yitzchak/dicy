@@ -18,7 +18,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
 
   echo Installing MikTeX...
   curl -fsSL -o basic-miktex-x64.exe http://mirrors.ctan.org/tex-archive/systems/win32/miktex/setup/windows-x64/basic-miktex-x64.exe
-  ./basic-miktex --unattended --shared
+  ./basic-miktex-x64 --unattended --shared
 
   echo Installing TeX packages...
   initexmf --admin --set-config-value=[MPM]AutoInstall=0
