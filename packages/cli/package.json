@@ -31,29 +31,29 @@
   "license": "MIT",
   "dependencies": {
     "@dicy/core": "^0.12.3",
-    "chalk": "^2.3.0",
+    "chalk": "^2.3.1",
     "cliui": "^4.0.0",
     "file-uri-to-path": "^1.0.0",
     "file-url": "^2.0.2",
     "fs-extra": "^5.0.0",
     "js-yaml": "^3.10.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.5",
     "string-width": "^2.1.1",
     "wrap-ansi": "^3.0.1",
-    "yargs": "^10.0.3"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.0",
     "@types/js-yaml": "^3.10.1",
-    "@types/lodash": "^4.14.91",
-    "@types/node": "^8.0.57",
+    "@types/lodash": "^4.14.102",
+    "@types/node": "^9.4.6",
     "@types/wrap-ansi": "^2.0.14",
-    "@types/yargs": "^8.0.3",
-    "jasmine": "^2.8.0",
+    "@types/yargs": "^11.0.0",
+    "jasmine": "^3.0.0",
     "jasmine-ts": "^0.2.1",
     "prepend-file-cli": "^1.0.6",
     "rimraf": "^2.6.2",
-    "typescript": "^2.6.2"
+    "typescript": "^2.7.2"
   },
   "yargs": {
     "dot-notation": false,

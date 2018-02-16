@@ -9,7 +9,7 @@ import {
 
 export interface GlobOptions {
   types?: 'all' | 'files' | 'directories'
-  ignorePattern?: string | string[]
+  ignorePattern?: string[]
 }
 
 export type Phase = 'initialize' | 'execute' | 'finalize'
