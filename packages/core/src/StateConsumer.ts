@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import * as childProcess from 'child_process'
-import fastGlob from 'fast-glob'
+import * as fastGlob from 'fast-glob'
 const fileUrl = require('file-url')
 import * as _ from 'lodash'
 import * as path from 'path'
@@ -268,13 +268,12 @@ export default class StateConsumer implements EventEmitter {
     return value.replace(VARIABLE_PATTERN, (match, name) => properties[name] || match[0])
   }
 
-  async globPath (pattern: string, { types = 'all', ignorePattern }: GlobOptions = {}): Promise<string[]> {
+  async globPath (pattern: string, { types = 'all', ignorePattern = [] }: GlobOptions = { }): Promise<string[]> {
     try {
       return await fastGlob(this.expandVariables(pattern), {
         cwd: this.rootPath,
-        bashNative: [],
         onlyFiles: types === 'files',
-        onlyDirs: types === 'directories',
+        onlyDirectories: types === 'directories',
         ignore: ignorePattern
       }) as string[]
     } catch (error) {
@@ -410,11 +409,11 @@ export default class StateConsumer implements EventEmitter {
     return this.state.getMaxListeners()
   }
 
-  listenerCount (event: string | symbol) {
+  listenerCount (event: string | symbol): number {
     return this.state.listenerCount(event)
   }
 
-  listeners (event: string | symbol) {
+  listeners (event: string | symbol): Function[] {
     return this.state.listeners(event)
   }
 
@@ -440,6 +439,10 @@ export default class StateConsumer implements EventEmitter {
   prependOnceListener (event: string | symbol, listener: (...args: any[]) => void): this {
     this.state.prependOnceListener(event, listener)
     return this
+  }
+
+  rawListeners (event: string | symbol): Function[] {
+    return this.state.rawListeners(event)
   }
 
   removeAllListeners (event: string | symbol): this {

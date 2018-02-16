@@ -1,4 +1,4 @@
-import fastGlob from 'fast-glob'
+import * as fastGlob from 'fast-glob'
 import * as micromatch from 'micromatch'
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'
@@ -66,7 +66,7 @@ export default class Clean extends Rule {
       this.info(`Deleting \`${filePath}\``, 'file')
     }
 
-    const globOptions = { cwd: this.rootPath, onlyDirs: true, bashNative: [] }
+    const globOptions = { cwd: this.rootPath, onlyDirectories: true }
     const candidateDirectories: string[] = await fastGlob('**/*', globOptions) as string[]
     candidateDirectories.reverse()
 

@@ -34,11 +34,11 @@
     "vscode-jsonrpc": "^3.5.0"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.6.2",
-    "@types/node": "^8.5.2",
-    "jasmine": "^2.8.0",
+    "@types/jasmine": "^2.8.6",
+    "@types/node": "^9.4.6",
+    "jasmine": "^3.0.0",
     "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
-    "typescript": "^2.6.2"
+    "typescript": "^2.7.2"
   }
 }

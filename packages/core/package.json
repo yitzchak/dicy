@@ -30,34 +30,34 @@
   "dependencies": {
     "@dicy/types": "^0.12.3",
     "command-join": "^2.0.0",
-    "fast-glob": "^1.0.1",
+    "fast-glob": "^2.0.4",
     "file-uri-to-path": "^1.0.0",
     "file-url": "^2.0.2",
     "fs-extra": "^5.0.0",
-    "graphlib": "^2.1.1",
+    "graphlib": "^2.1.5",
     "js-yaml": "^3.10.0",
-    "lodash": "^4.17.4",
-    "micromatch": "^3.1.4",
-    "readdir-enhanced": "^2.1.0",
-    "semver": "^5.4.1",
+    "lodash": "^4.17.5",
+    "micromatch": "^3.1.5",
+    "readdir-enhanced": "^2.2.0",
+    "semver": "^5.5.0",
     "temp": "^0.8.3",
     "tree-kill": "^1.2.0",
-    "yargs-parser": "^8.1.0"
+    "yargs-parser": "^9.0.2"
   },
   "devDependencies": {
     "@types/file-url": "^2.0.0",
     "@types/fs-extra": "^5.0.0",
     "@types/graphlib": "^2.1.4",
-    "@types/jasmine": "^2.8.2",
+    "@types/jasmine": "^2.8.6",
     "@types/js-yaml": "^3.10.1",
-    "@types/lodash": "^4.14.91",
-    "@types/node": "^8.5.2",
+    "@types/lodash": "^4.14.102",
+    "@types/node": "^9.4.6",
     "@types/semver": "^5.4.0",
     "@types/temp": "^0.8.31",
-    "jasmine": "^2.8.0",
-    "jasmine-expect": "^3.8.1",
+    "jasmine": "^3.0.0",
+    "jasmine-expect": "^3.8.3",
     "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
-    "typescript": "^2.6.2"
+    "typescript": "^2.7.2"
   }
 }

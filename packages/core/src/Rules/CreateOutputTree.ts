@@ -22,7 +22,7 @@ export default class CreateOutputTree extends Rule {
       .filter(outputDirectory => outputDirectory !== '.'))
     const directories = ['.'].concat(await this.globPath('**/*', {
       types: 'directories',
-      ignorePattern: outputDirectories.map(outputDirectory => `${outputDirectory}/**`)
+      ignorePattern: outputDirectories.map(outputDirectory => `**/${outputDirectory}/**`)
     }))
 
     await Promise.all(directories.map(directory => File.ensureDir(path.resolve(this.rootPath, this.options.outputDirectory || '.', directory))))

@@ -21,11 +21,15 @@ export default class Migrate extends Rule {
 
   async moveUserOptions (): Promise<void> {
     const oldPath: string = this.resolvePath('$HOME/.dicy.yaml')
+    const newPath: string = this.resolvePath('$CONFIG_HOME/dicy/config.yaml')
 
     if (await File.canRead(oldPath)) {
-      const newPath: string = this.resolvePath('$CONFIG_HOME/dicy/config.yaml')
-      await fs.move(oldPath, newPath)
-      this.info(`Moved user options file \`${oldPath}\` to \`${newPath}\`.`)
+      if (await File.canRead(newPath)) {
+        this.warning(`Unable to migrate user options from \`${oldPath}\` since \`${newPath}\` already exists.`)
+      } else {
+        await fs.move(oldPath, newPath)
+        this.info(`Moved user options file \`${oldPath}\` to \`${newPath}\`.`)
+      }
     }
   }
 }
