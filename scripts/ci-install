@@ -17,7 +17,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   cinst R.Project --allow-empty-checksums --ia="/DIR=\"${R_HOME}\""
 
   echo Installing MikTeX...
-  curl -fsSL -o basic-miktex-x64.exe http://mirrors.ctan.org/tex-archive/systems/win32/miktex/setup/basic-miktex-x64.exe
+  curl -fsSL -o basic-miktex-x64.exe http://mirrors.ctan.org/tex-archive/systems/win32/miktex/setup/windows-x64/basic-miktex-x64.exe
   ./basic-miktex-x64 --unattended --shared
 
   echo Installing TeX packages...

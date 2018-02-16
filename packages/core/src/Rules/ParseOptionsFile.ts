@@ -9,7 +9,7 @@ export default class ParseOptionsFile extends Rule {
   static description: string = 'Parses the YAML option file.'
 
   async preEvaluate () {
-    await this.getResolvedInputs(['$HOME/.dicy.yaml', 'dicy.yaml', '$NAME.yaml'])
+    await this.getResolvedInputs(['$CONFIG_HOME/dicy/config.yaml', 'dicy.yaml', '$NAME.yaml'])
     if (this.inputs.length === 0) this.actions.delete('run')
   }
 

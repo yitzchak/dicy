@@ -254,7 +254,7 @@ export default class Builder extends StateConsumer implements BuilderInterface {
   }
 
   setUserOptions (options: OptionsSource, merge: boolean = false): Promise<void> {
-    return this.setOptions('$HOME/.dicy.yaml', options, merge)
+    return this.setOptions('$CONFIG_HOME/dicy/config.yaml', options, merge)
   }
 
   setDirectoryOptions (options: OptionsSource, merge: boolean = false): Promise<void> {

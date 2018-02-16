@@ -1,5 +1,6 @@
 import { alg, Graph } from 'graphlib'
 import { EventEmitter } from 'events'
+import * as os from 'os'
 import * as path from 'path'
 
 import { Command, OptionDefinition, OptionsInterface } from '@dicy/types'
@@ -16,6 +17,23 @@ function getLabel (x: File | Rule): string {
 
 type GraphProperties = {
   components?: Rule[][]
+}
+
+function getConfigHome (): string {
+  // Even though Windows and MacOS do not follow the XDG Base Directory spec we
+  // allow the environment variable XDG_CONFIG_HOME to override the platform's
+  // default in case users want to maintain a consistent configuration setup
+  // across multiple platforms.
+  switch (process.platform) {
+    case 'win32':
+      return process.env.XDG_CONFIG_HOME || process.env.APPDATA ||
+        path.join(os.homedir(), 'AppData', 'Roaming')
+    case 'darwin':
+      return process.env.XDG_CONFIG_HOME ||
+        path.join(os.homedir(), 'Library', 'Application Support')
+    default:
+      return process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config')
+  }
 }
 
 export default class State extends EventEmitter {
@@ -62,8 +80,10 @@ export default class State extends EventEmitter {
       DIR: '.',
       BASE: base,
       NAME: name,
-      EXT: ext
+      EXT: ext,
+      CONFIG_HOME: getConfigHome()
     })
+
     if (process.platform === 'win32') {
       Object.assign(this.env, {
         HOME: process.env.USERPROFILE,
