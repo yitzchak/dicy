@@ -11,8 +11,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   User configuration is now stored in platform specific manner which conforms
     to established norms for each platform as detailed below. Resolves
     \[[#138][]].
-    -   MacOS - `$HOME/Library/Application Support/dicy/config.yaml`
-    -   Windows - `%APPDATA%\dicy\config.yaml` or
+    -   MacOS - `$XDG_CONFIG_HOME/dicy/config.yaml` or
+        `$HOME/Library/Application Support/dicy/config.yaml`
+    -   Windows - `$XDG_CONFIG_HOME\dicy\config.yaml`,
+        `%APPDATA%\dicy\config.yaml` or
         `%USERPROFILE%\AppData\Roaming\dicy\config.yaml`
     -   Linux, BSD and all others - `$XDG_CONFIG_HOME/dicy/config.yaml` or
         `$HOME/.config/dicy/config.yaml`
