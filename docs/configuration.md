@@ -4,7 +4,15 @@ During the `load` command DiCy configures the build environment based on
 the options provided directly to the builder and those provided in various
 configuration files. These options are applied the following specific order.
 
-1.  YAML options file named `.dicy.yaml` found in user's home directory.
+1.  YAML options file named `config.yaml` found in platform specific
+    configuration directory as detailed in the following list.
+    -   MacOS - `$XDG_CONFIG_HOME/dicy/config.yaml` or
+        `$HOME/Library/Application Support/dicy/config.yaml`
+    -   Windows - `$XDG_CONFIG_HOME\dicy\config.yaml`,
+        `%APPDATA%\dicy\config.yaml` or
+        `%USERPROFILE%\AppData\Roaming\dicy\config.yaml`
+    -   Linux, BSD and all others - `$XDG_CONFIG_HOME/dicy/config.yaml` or
+        `$HOME/.config/dicy/config.yaml`
 2.  YAML options file named `dicy.yaml` found in the directory of the main
     source file.
 3.  YAML options file with same name as the main source file but with `.yaml`
