@@ -1,17 +1,16 @@
 import * as fs from 'fs-extra'
 
-import { Command } from '@dicy/types'
-
 import File from '../File'
 import Rule from '../Rule'
-import { Phase } from '../types'
+import { RuleDescription } from '../types'
 
 export default class Migrate extends Rule {
-  static commands: Set<Command> = new Set<Command>(['load'])
-  static phases: Set<Phase> = new Set<Phase>(['initialize'])
+  static descriptions: RuleDescription[] = [{
+    commands: ['load'],
+    phases: ['initialize']
+  }]
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
-  static description: string = 'Do migration tasks.'
 
   async run (): Promise<boolean> {
     await this.moveUserOptions()
