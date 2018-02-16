@@ -9,8 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 -   LaTeX `engine` setting is now an enumeration versus a free form text value.
 -   User configuration is now stored in platform specific manner which conforms
-    to established norms for each platform as detailed below. Resolves
-    \[[#138][]].
+    to established norms for each platform as detailed below. Suggested and
+    reviewed by [@yudai-nkt][]. Resolves [#138][].
     -   MacOS - `$XDG_CONFIG_HOME/dicy/config.yaml` or
         `$HOME/Library/Application Support/dicy/config.yaml`
     -   Windows - `$XDG_CONFIG_HOME\dicy\config.yaml`,
