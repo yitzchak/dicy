@@ -2,7 +2,7 @@ import * as fs from 'fs-extra'
 
 import File from '../File'
 import Rule from '../Rule'
-import { RuleDescription } from '../types'
+import { Action, RuleDescription } from '../types'
 
 export default class Migrate extends Rule {
   static descriptions: RuleDescription[] = [{
@@ -11,6 +11,10 @@ export default class Migrate extends Rule {
   }]
   static alwaysEvaluate: boolean = true
   static ignoreJobName: boolean = true
+
+  getActions (file?: File): Action[] {
+    return this.options.migration ? ['run'] : []
+  }
 
   async run (): Promise<boolean> {
     await this.moveUserOptions()

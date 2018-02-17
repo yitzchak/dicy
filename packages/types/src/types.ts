@@ -113,6 +113,7 @@ export interface OptionsInterface {
   loadCache: boolean
   loadUserOptions: boolean
   logCategory?: string
+  migration: boolean
   opener: string[]
   openInBackground: boolean
   outputDirectory?: string
@@ -178,6 +179,7 @@ export interface JobOptions {
   loadCache?: boolean
   loadUserOptions?: boolean
   logCategory?: string
+  migration?: boolean
   opener?: string[]
   openInBackground?: boolean
   outputDirectory?: string
@@ -235,6 +237,7 @@ export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
   literateHaskellEngine: 'lhs2TeX',
   loadCache: true,
   loadUserOptions: true,
+  migration: true,
   opener: [ 'evince',
     'pdf-view',
     'okular',

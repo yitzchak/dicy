@@ -286,6 +286,11 @@ logCategory:
   description: Specific log category to display.
   type: string
   noInvalidate: true
+migration:
+  description: Run migration tasks.
+  type: boolean
+  noInvalidate: true
+  defaultValue: true
 opener:
   description:
     List of preferred openers sorted from high priority to low priority.

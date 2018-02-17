@@ -35,7 +35,7 @@ describe('Builder', () => {
           const filePath = path.resolve(fixturesPath, 'builder-tests', name)
 
           // Initialize dicy and listen for messages
-          dicy = await Builder.create(filePath)
+          dicy = await Builder.create(filePath, { migration: false })
 
           // Load the log archive
           const logFilePath = dicy.resolvePath('$ROOTDIR/$NAME-log.yaml')
