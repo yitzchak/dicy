@@ -105,29 +105,14 @@ export default class Builder extends StateConsumer implements BuilderInterface {
   async evaluate (command: Command, phase: Phase, action: Action): Promise<boolean> {
     this.checkForKill()
 
-    const primaryCount = (ruleGroup: Rule[]) => ruleGroup.reduce(
-      (total, rule) => total + rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
+    const secondaryJobCount = (ruleGroup: Rule[]): Number => ruleGroup.reduce(
+      (total, rule) => total + (rule.options.filePath === this.filePath ? 0 : -1),
+      0)
+    const primaryCount = (ruleGroup: Rule[]): Number => ruleGroup.reduce(
+      (total, rule) => total +
+        rule.parameters.reduce((count, parameter) => parameter.filePath === this.filePath ? count + 1 : count, 0),
       0)
     const evaluationNeeded = (rule: Rule): boolean => rule.actions.has(action) && rule.command === command && rule.phase === phase
-
-    // const ruleGroups = _.groupBy(Array.from(this.rules).filter(evaluationNeeded).filter(rule => rule.group), rule => rule.group)
-    //
-    // for (const group in ruleGroups) {
-    //   const rules: Rule[] = ruleGroups[group]
-    //   const names: string[] = this.options[group]
-    //   let winner: Rule | undefined
-    //
-    //   for (const name of names) {
-    //     winner = rules.find(rule => _.kebabCase(rule.constructor.name) === name)
-    //     if (winner) break
-    //   }
-    //
-    //   for (const rule of rules) {
-    //     if (rule !== winner) {
-    //       rule.actions.delete(action)
-    //     }
-    //   }
-    // }
 
     for (const rule of this.rules) {
       rule.checkForActionVeto(command, phase, action)
@@ -139,10 +124,11 @@ export default class Builder extends StateConsumer implements BuilderInterface {
     // rules that it is directly dependent on within the same component. Only
     // retain those that have the lowest dependency rank. Sort the remaining
     // rules by number of inputs in an ascending order. Finally sort the
-    // components by number of primaries in an ascending order. A rule is
-    // considered a primary is it has as an input the main source file for that
-    // job. Note: we are using lodash's sortBy because the standard sort is
-    // not guaranteed to be a stable sort.
+    // components by number of overridden filePath options (descending) then by
+    // the number of primaries (ascending). A rule is considered a primary is it
+    // has as an input the main source file for that job. Note: we are using
+    // lodash's sortBy because the standard sort is not guaranteed to be a
+    // stable sort.
     const rules: Rule[] = _.flatten(_.sortBy(this.components
       .map(component => {
         const ruleGroup = _.sortBy(component.filter(evaluationNeeded), [(rule: Rule) => rule.inputs.length])
@@ -162,7 +148,7 @@ export default class Builder extends StateConsumer implements BuilderInterface {
 
           return current
         }, { rank: Number.MAX_SAFE_INTEGER, rules: [] }).rules
-      }), [primaryCount]))
+      }), [secondaryJobCount, primaryCount]))
 
     if (rules.length === 0) return false
 
