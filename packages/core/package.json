@@ -45,7 +45,7 @@
     "yargs-parser": "^9.0.2"
   },
   "optionalDependencies": {
-    "dbus-native": "^0.2.3"
+    "dbus-native": "^0.2.5"
   },
   "devDependencies": {
     "@types/file-url": "^2.0.0",
