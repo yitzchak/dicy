@@ -82,6 +82,14 @@ dviToPdfEngine:
     - dvipdfm
     - xdvipdfmx
     - dvipdfmx
+editor:
+  title: Editor Command
+  description:
+    Command line for editor. Used for openers that do no support DBus style
+    reverse sync. The following substitution are available, `$SOURCE_PATH` for the path
+    to the source, `$SOURCE_LINE` for the line number, and `$SOURCE_COLUMN` for the column
+    number.
+  type: string
 engine:
   title: Engine
   aliases:

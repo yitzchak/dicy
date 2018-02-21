@@ -31,8 +31,15 @@ export default class SumatraPdf extends Rule {
         this.options.sourceLine.toString())
     }
 
-    // command.push('-inverse-search',
-    //   `"\\"${editPath}\\" \\"%f:%l\\""`)
+    if (this.options.editor) {
+      const editor: string = this.expandVariables(this.options.editor, {
+        SOURCE_PATH: '%f',
+        SOURCE_LINE: '%l',
+        SOURCE_COLUMN: '1'
+      })
+
+      command.push('-inverse-search', editor)
+    }
 
     command.push('{{$FILEPATH_0}}')
 

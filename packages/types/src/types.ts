@@ -84,6 +84,7 @@ export interface OptionsInterface {
   cleanPatterns: string[]
   copyTargetsToRoot: boolean
   dviToPdfEngine: DviToPdfEngine
+  editor?: string
   engine: Engine
   epstopdfBoundingBox: EpstopdfBoundingBox
   epstopdfOutputPath: string
@@ -152,6 +153,7 @@ export interface JobOptions {
   cleanPatterns?: string[]
   copyTargetsToRoot?: boolean
   dviToPdfEngine?: DviToPdfEngine
+  editor?: string
   engine?: Engine
   epstopdfBoundingBox?: EpstopdfBoundingBox
   epstopdfOutputPath?: string
