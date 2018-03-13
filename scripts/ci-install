@@ -40,7 +40,7 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   brew install gcc
 
   echo Installing Python 3...
-  brew install python3
+  brew upgrade python
   virtualenv venv -p python3
   source venv/bin/activate
 
