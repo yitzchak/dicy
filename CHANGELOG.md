@@ -3,7 +3,7 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased][]
+## [v0.13.0][] - 2018-03-13
 
 ### Changed
 
@@ -274,7 +274,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
 
-[unreleased]: https://github.com/yitzchak/dicy/compare/v0.12.3...master
+[v0.13.0]: https://github.com/yitzchak/dicy/compare/v0.12.3...v0.13.0
 
 [v0.12.3]: https://github.com/yitzchak/dicy/compare/v0.12.2...v0.12.3
 
