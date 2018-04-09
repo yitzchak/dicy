@@ -434,7 +434,7 @@ The severity of messages to display.
 ## shellEscape
 
 -   **Type:** string
--   **Values:** `disable`, `restricted`, `enable`
+-   **Values:** `disabled`, `restricted`, `enabled`
 -   **Default Value:** none
 -   **Command Line Interface:** `--shell-escape <shellEscape>`
 
