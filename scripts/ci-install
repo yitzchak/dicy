@@ -4,7 +4,7 @@ shopt -s nocasematch
 
 if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing node...
-  PowerShell -Command Install-Product node 7 x64
+  PowerShell -Command Install-Product node 10 x64
 
   # TODO: Remove when 'R.Project' package adds it as a dependency.
   echo Installing chocolatey-core.extension...
@@ -17,7 +17,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   cinst R.Project --allow-empty-checksums --ia="/DIR=\"${R_HOME}\""
 
   echo Installing MikTeX...
-  curl -fsSL -o basic-miktex-x64.exe http://mirrors.ctan.org/tex-archive/systems/win32/miktex/setup/windows-x64/basic-miktex-x64.exe
+  curl -fsSL -o basic-miktex-x64.exe http://mirrors.ctan.org/tex-archive/systems/win32/miktex/setup/windows-x64/basic-miktex-2.9.6813-x64.exe
   ./basic-miktex-x64 --unattended --shared
 
   echo Installing TeX packages...
@@ -26,6 +26,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   pdflatex -version
 
   echo Installing package dependencies...
+  npm install -g lerna@2.9.0
   npm install
 elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH
@@ -41,19 +42,21 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
 
   echo Installing Python 3...
   brew upgrade python
-  virtualenv venv -p python3
-  source venv/bin/activate
+  # virtualenv venv -p python3
+  # source venv/bin/activate
 
   echo Installing GhostScript...
   brew install ghostscript
 
   echo Installing Agda and lhs2TeX...
-  brew cask install haskell-platform
+  wget https://haskell.org/platform/download/8.4.3/Haskell%20Platform%208.4.3%20Core%2064bit-signed.pkg
+  sudo installer -pkg "Haskell Platform 8.4.3 Core 64bit-signed.pkg" -target /
+  # brew cask install haskell-platform
   stack update
   sudo cabal install lhs2tex
 
   echo Installing R...
-  brew tap homebrew/science
+  # brew tap homebrew/science
   brew install r
 
   echo Installing MacTeX...

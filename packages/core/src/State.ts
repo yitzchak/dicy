@@ -217,17 +217,17 @@ export default class State extends EventEmitter {
             if (name === 'jobName') return jobName
             if ('jobs' in target) {
               const jobOptions: OptionInterfaceMap = target.jobs[jobName]
-              if (jobOptions && name in jobOptions) return jobOptions[name]
+              if (jobOptions && name in jobOptions) return jobOptions[name.toString()]
             }
           }
 
           const schema: OptionDefinition | void = this.optionSchema.get(name.toString())
 
           if (schema && schema.type === 'boolean') {
-            return !!target[name]
+            return !!target[name.toString()]
           }
 
-          return (name === 'filePath') ? this.filePath : target[name]
+          return (name === 'filePath') ? this.filePath : target[name.toString()]
         },
         ownKeys: target => {
           const keys: Set<string> = new Set<string>(['filePath', 'jobNames'])

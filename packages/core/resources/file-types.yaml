@@ -58,7 +58,7 @@ RNoWeb:
 KnitrConcordance:
   fileName: !!js/regexp /-concordance\.tex$/i
 LaTeX:
-  contents: !!js/regexp /^(?:%.*[\n\r]+)*\s*\\documentclass(?:\[[^\]]*\])?\{([^}]*)\}/
+  contents: !!js/regexp /^\\documentclass(?:\[[^\]]*\])?\{([^}]*)\}/m
   fileName: !!js/regexp /\.tex$/i
 LaTeXAuxilary:
   fileName: !!js/regexp /\.aux$/i

@@ -42,8 +42,8 @@ export default class StateConsumer implements EventEmitter {
       ? new Proxy(options, {
         get: (target: OptionsInterface, key: PropertyKey): any => {
           return key in this.localOptions
-            ? this.localOptions[key]
-            : target[key]
+            ? this.localOptions[key.toString()]
+            : target[key.toString()]
         },
         set: (target: OptionsInterface, key: PropertyKey, value: any) => {
           this.setOption(this.localOptions, key.toString(), value)
@@ -308,19 +308,19 @@ export default class StateConsumer implements EventEmitter {
   }
 
   error (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log(_.pickBy({ severity: 'error', category, name, text }) as Message)
+    this.log(_.pickBy({ severity: 'error', category, name, text } as Message) as Message)
   }
 
   warning (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log(_.pickBy({ severity: 'warning', category, name, text }) as Message)
+    this.log(_.pickBy({ severity: 'warning', category, name, text } as Message) as Message)
   }
 
   info (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log(_.pickBy({ severity: 'info', category, name, text }) as Message)
+    this.log(_.pickBy({ severity: 'info', category, name, text } as Message) as Message)
   }
 
   trace (text: string, category?: string, name: string = 'DiCy'): void {
-    this.log(_.pickBy({ severity: 'trace', category, name, text }) as Message)
+    this.log(_.pickBy({ severity: 'trace', category, name, text } as Message) as Message)
   }
 
   log (...messages: Message[]): void {
