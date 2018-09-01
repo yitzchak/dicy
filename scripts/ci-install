@@ -4,7 +4,7 @@ shopt -s nocasematch
 
 if [[ "${APPVEYOR:-}" == true ]]; then
   echo Installing node...
-  PowerShell -Command Install-Product node 7 x64
+  PowerShell -Command Install-Product node '' x64
 
   # TODO: Remove when 'R.Project' package adds it as a dependency.
   echo Installing chocolatey-core.extension...
