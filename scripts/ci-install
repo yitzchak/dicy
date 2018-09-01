@@ -48,12 +48,14 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   brew install ghostscript
 
   echo Installing Agda and lhs2TeX...
-  brew cask install haskell-platform
+  wget https://haskell.org/platform/download/8.4.3/Haskell%20Platform%208.4.3%20Core%2064bit-signed.pkg
+  sudo installer -pkg "Haskell Platform 8.4.3 Core 64bit-signed.pkg" -target /
+  # brew cask install haskell-platform
   stack update
   sudo cabal install lhs2tex
 
   echo Installing R...
-  brew tap homebrew/science
+  # brew tap homebrew/science
   brew install r
 
   echo Installing MacTeX...
