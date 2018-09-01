@@ -31,14 +31,14 @@
   "dependencies": {
     "@dicy/server": "^0.13.0",
     "@dicy/types": "^0.13.0",
-    "vscode-jsonrpc": "^3.5.0"
+    "vscode-jsonrpc": "^3.6.2"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.8.6",
-    "@types/node": "^9.4.6",
-    "jasmine": "^3.0.0",
+    "@types/jasmine": "^2.8.8",
+    "@types/node": "^10.9.4",
+    "jasmine": "^3.2.0",
     "jasmine-ts": "^0.2.1",
     "rimraf": "^2.6.2",
-    "typescript": "^2.7.2"
+    "typescript": "^3.0.3"
   }
 }

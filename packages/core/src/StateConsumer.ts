@@ -456,6 +456,12 @@ export default class StateConsumer implements EventEmitter {
     return this
   }
 
+  off (event: 'log', listener: (messages: Message[]) => void): this
+  off (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.removeListener(event, listener)
+    return this
+  }
+
   setMaxListeners (n: number): this {
     this.state.setMaxListeners(n)
     return this

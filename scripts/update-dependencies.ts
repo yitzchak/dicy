@@ -6,10 +6,12 @@ var me = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 
 function updateDependencies (me: any , ref: any) {
   var updated = false
-  for (var name in me) {
-    if (name in ref && me[name] !== ref[name]) {
-      me[name] = ref[name]
-      updated = true
+  if (me && ref) {
+    for (var name in me) {
+      if (name in ref && me[name] !== ref[name]) {
+        me[name] = ref[name]
+        updated = true
+      }
     }
   }
   return updated
