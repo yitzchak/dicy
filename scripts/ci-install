@@ -26,6 +26,7 @@ if [[ "${APPVEYOR:-}" == true ]]; then
   pdflatex -version
 
   echo Installing package dependencies...
+  npm install -g lerna@2.9.0
   npm install
 elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
   export PATH=/Library/TeX/texbin:~/Library/Haskell/bin:$PATH
