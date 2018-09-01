@@ -41,8 +41,8 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
 
   echo Installing Python 3...
   brew upgrade python
-  virtualenv venv -p python3
-  source venv/bin/activate
+  # virtualenv venv -p python3
+  # source venv/bin/activate
 
   echo Installing GhostScript...
   brew install ghostscript
