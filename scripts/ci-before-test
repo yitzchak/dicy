@@ -4,6 +4,7 @@ shopt -s nocasematch
 
 echo Bootstrapping...
 if [[ "${APPVEYOR:-}" == true ]]; then
+  npm install
   npm run bootstrap -- --scope=@dicy/types
   npm run bootstrap -- --scope=@dicy/core
   npm run bootstrap -- --scope=@dicy/server
