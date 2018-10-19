@@ -55,6 +55,7 @@ describe('Builder', () => {
 
           expect(await dicy.run(['build', 'log', 'save'])).toBeTrue()
 
+          // @ts-ignore
           expect(messages).toReceiveMessages(expected)
         } catch (err) {
           fail(err)
@@ -96,6 +97,7 @@ describe('Builder', () => {
 
     it('loads and validates cache if outputs have been removed with copy targets enabled.', async (done) => {
       expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
@@ -106,6 +108,7 @@ describe('Builder', () => {
 
     it('rebuilds if all outputs have been removed with copy targets enabled.', async (done) => {
       expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
@@ -116,6 +119,7 @@ describe('Builder', () => {
       await fs.remove(outputDirectory)
 
       expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
@@ -126,6 +130,7 @@ describe('Builder', () => {
 
     it('rebuilds if target has been removed with copy targets enabled.', async (done) => {
       expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
@@ -135,6 +140,7 @@ describe('Builder', () => {
       await fs.remove(outputPath)
 
       expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
@@ -145,6 +151,7 @@ describe('Builder', () => {
 
     it('rebuilds if output directory has been removed with copy targets enabled.', async (done) => {
       expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(outputPath)).toBeTrue()
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
@@ -154,6 +161,7 @@ describe('Builder', () => {
       await fs.remove(outputDirectory)
 
       expect(await primaryBuilder.run(['load', 'build'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
@@ -164,12 +172,14 @@ describe('Builder', () => {
 
     it('produces targets if a new builder is created.', async (done) => {
       expect(await primaryBuilder.run(['load', 'build', 'save'])).toBeTrue()
+      // @ts-ignore
       expect(primaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()
       expect(await primaryBuilder.getTargets()).toEqual([outputUrl])
 
       expect(await secondaryBuilder.run(['load'])).toBeTrue()
+      // @ts-ignore
       expect(secondaryMessages).toReceiveMessages([])
       expect(await fs.pathExists(intermediateOutputPath)).toBeTrue()
       expect(await fs.pathExists(outputPath)).toBeTrue()

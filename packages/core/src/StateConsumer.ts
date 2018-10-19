@@ -488,6 +488,7 @@ export default class StateConsumer implements EventEmitter {
       let stdout: string
       let stderr: string
       let exited: boolean = false
+      // @ts-ignore
       const child = childProcess.spawn(command, options)
       const handleExit = (error: any): void => {
         if (exited) return
