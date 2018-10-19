@@ -25,6 +25,7 @@ mptopdf
 multibib
 natbib
 nomencl
+parskip
 pgf
 pgfopts
 pythontex
