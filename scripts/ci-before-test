@@ -5,9 +5,9 @@ shopt -s nocasematch
 echo Bootstrapping...
 if [[ "${APPVEYOR:-}" == true ]]; then
   npm install -g lerna
-  npm run bootstrap -- --scope=@dicy/types
-  npm run bootstrap -- --scope=@dicy/core
-  npm run bootstrap -- --scope=@dicy/server
+  npm run bootstrap -- --concurrency=1 --scope=@dicy/types
+  npm run bootstrap -- --concurrency=1 --scope=@dicy/core
+  npm run bootstrap -- --concurrency=1 --scope=@dicy/server
 fi
 
-npm run bootstrap
+npm run bootstrap -- --concurrency=1
