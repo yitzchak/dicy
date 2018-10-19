@@ -456,6 +456,12 @@ export default class StateConsumer implements EventEmitter {
     return this
   }
 
+  off (event: 'log', listener: (messages: Message[]) => void): this
+  off (event: string | symbol, listener: (...args: any[]) => void): this {
+    this.state.removeListener(event, listener)
+    return this
+  }
+
   setMaxListeners (n: number): this {
     this.state.setMaxListeners(n)
     return this
@@ -482,6 +488,7 @@ export default class StateConsumer implements EventEmitter {
       let stdout: string
       let stderr: string
       let exited: boolean = false
+      // @ts-ignore
       const child = childProcess.spawn(command, options)
       const handleExit = (error: any): void => {
         if (exited) return
