@@ -51,7 +51,7 @@
     "jasmine-expect": "^3.8.4",
     "jasmine-ts": "^0.2.1",
     "js-yaml": "^3.12.0",
-    "lerna": "^3.2.0",
+    "lerna": "^3.4.3",
     "lodash": "^4.17.10",
     "remark-cli": "^5.0.0",
     "remark-preset-lint-consistent": "^2.0.2",
