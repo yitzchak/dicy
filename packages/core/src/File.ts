@@ -460,9 +460,10 @@ export default class File {
     })
   }
 
-  async update (): Promise<void> {
+  async update (): Promise<boolean> {
     const updated = await this.updateTimeStamp() && await this.updateHash()
     this.hasBeenUpdated = this.hasBeenUpdated || updated
+    return updated
   }
 
   read (): Promise<string> {
