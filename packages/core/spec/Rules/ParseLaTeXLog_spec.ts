@@ -551,6 +551,7 @@ describe('ParseLaTeXLog', () => {
     expect(parsedLog.value).toBeDefined()
     if (!parsedLog.value) return
 
+    // @ts-ignore
     expect(parsedLog.value.messages).toEqual(messages.map(jasmine.objectContaining))
 
     done()
