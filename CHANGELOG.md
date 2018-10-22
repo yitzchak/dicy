@@ -3,6 +3,13 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.14.0][] - 2018-10-22
+
+### Changed
+
+-   LaTeX file identification now permits TeX and LaTeX commands to appear
+    before `documentclass` command. Fixes [#142][].
+
 ## [v0.13.0][] - 2018-03-13
 
 ### Changed
@@ -274,6 +281,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
 
+[v0.14.0]: https://github.com/yitzchak/dicy/compare/v0.13.0...v0.14.0
+
 [v0.13.0]: https://github.com/yitzchak/dicy/compare/v0.12.3...v0.13.0
 
 [v0.12.3]: https://github.com/yitzchak/dicy/compare/v0.12.2...v0.12.3
@@ -321,6 +330,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [v0.2.0]: https://github.com/yitzchak/dicy/compare/v0.1.0...v0.2.0
 
 [v0.1.0]: https://github.com/yitzchak/dicy/tree/v0.1.0
+
+[#142]: https://github.com/yitzchak/dicy/issues/142
 
 [#138]: https://github.com/yitzchak/dicy/issues/138
 
