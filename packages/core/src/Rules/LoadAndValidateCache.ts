@@ -84,7 +84,9 @@ export default class LoadAndValidateCache extends Rule {
 
     if (cache.rules) {
       for (const rule of cache.rules) {
-        await this.addCachedRule(rule)
+        if (rule.name !== 'LoadAndValidateCache') {
+          await this.addCachedRule(rule)
+        }
       }
     }
   }
