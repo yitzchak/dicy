@@ -13,10 +13,12 @@ export default class ParseLaTeXMagic extends Rule {
     'LiterateAgda',
     'LiterateHaskell',
     'PythonNoWeb',
-    'RNoWeb'
+    'RNoWeb',
+    'TexMetys',
+    'TexNoWeb'
   ])]
   static defaultActions: Action[] = ['parse']
-  static description: string = 'Parses Magic comments in LaTeX or knitr documents.'
+  static description: string = 'Parses Magic comments in LaTeX, noweb or metys documents.'
 
   async parse () {
     const output = await this.getResolvedOutput('$FILEPATH_0-ParsedLaTeXMagic')
