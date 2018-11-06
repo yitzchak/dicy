@@ -1,6 +1,9 @@
+import { Command } from '@dicy/types'
+
 import File from '../File'
 import Rule from '../Rule'
-import { Action, CommandOptions } from '../types'
+import StateConsumer from '../StateConsumer'
+import { Action, CommandOptions, ParsedLog, Phase } from '../types'
 
 export default class Metys extends Rule {
   static parameterTypes: Set<string>[] = [new Set([
@@ -12,6 +15,10 @@ export default class Metys extends Rule {
     'TexNoWeb'
   ])]
   static description: string = 'Run metys.'
+
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return consumer.options.weaveEngine === 'metys' || parameters.some(parameter => parameter.type === 'TexMetys')
+  }
 
   async getFileActions (file: File): Promise<Action[]> {
     // ParsedMetysStdOut triggers updateDependencies, all others trigger run.

@@ -62,6 +62,8 @@ export type LiterateAgdaEngine = 'agda' | 'lhs2TeX' | 'none'
 
 export type LiterateHaskellEngine = 'lhs2TeX' | 'none'
 
+export type WeaveEngine = 'knitr' | 'metys' | 'pweave'
+
 export type OutputFormat = 'dvi' | 'pdf' | 'ps' | 'svg'
 
 export type PweaveOutputFormat = 'tex' | 'texminted' | 'texpweave' | 'texpygments'
@@ -113,6 +115,7 @@ export interface OptionsInterface {
   loadCache: boolean
   loadUserOptions: boolean
   logCategory?: string
+  weaveEngine: WeaveEngine
   outputDirectory?: string
   outputFormat: OutputFormat
   phaseCycles: number
@@ -173,6 +176,7 @@ export interface JobOptions {
   loadCache?: boolean
   loadUserOptions?: boolean
   logCategory?: string
+  weaveEngine?: WeaveEngine
   outputDirectory?: string
   outputFormat?: OutputFormat
   phaseCycles?: number
@@ -220,6 +224,7 @@ export const DEFAULT_OPTIONS = { $BIBINPUTS: [ '$ROOTDIR',
   literateHaskellEngine: 'lhs2TeX',
   loadCache: true,
   loadUserOptions: true,
+  weaveEngine: 'knitr',
   outputFormat: 'pdf',
   phaseCycles: 20,
   pweaveCacheDirectory: 'pweave-cache-for-$JOB',
