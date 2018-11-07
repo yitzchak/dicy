@@ -72,6 +72,7 @@ fi
 
 echo Installing Python libraries...
 PIP_MODULES=(Pygments Pweave matplotlib metys)
+pip3 install --upgrade pip setuptools wheel
 if [[ "${TRAVIS_OS_NAME:-}" == "linux" ]]; then
   pip3 install --user ${PIP_MODULES[*]}
 else
