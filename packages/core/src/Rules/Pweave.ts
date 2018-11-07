@@ -1,9 +1,17 @@
+import { Command } from '@dicy/types'
+
+import File from '../File'
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import StateConsumer from '../StateConsumer'
+import { Action, CommandOptions, ParsedLog, Phase } from '../types'
 
 export default class Pweave extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['PythonNoWeb'])]
   static description: string = 'Runs Pweave on Pnw files.'
+
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return consumer.options.weaveEngine === 'pweave'
+  }
 
   constructCommand (): CommandOptions {
     const cacheDirectory = this.options.pweaveCacheDirectory

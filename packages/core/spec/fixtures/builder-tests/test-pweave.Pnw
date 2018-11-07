@@ -1,3 +1,4 @@
+%!TeX weaveEngine = pweave
 %!TeX jobNames = job-1, job-2
 %!TeX job-2:pweaveOutputFormat = texminted
 %!TeX job-2:shellEscape = enabled

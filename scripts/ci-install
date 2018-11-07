@@ -71,7 +71,7 @@ elif [[ "${TRAVIS_OS_NAME:-}" == "osx" ]]; then
 fi
 
 echo Installing Python libraries...
-PIP_MODULES=(Pygments Pweave matplotlib)
+PIP_MODULES=(Pygments Pweave matplotlib metys)
 if [[ "${TRAVIS_OS_NAME:-}" == "linux" ]]; then
   pip3 install --user ${PIP_MODULES[*]}
 else

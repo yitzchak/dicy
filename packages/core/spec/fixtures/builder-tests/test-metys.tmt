@@ -1,0 +1,16 @@
+%!TeX tests = metys --help
+\documentclass{article}
+
+\begin{document}
+
+\section{Python says hello}
+
+Hello Python?
+
+<|kernel=python, stdout_echo=true:
+print('Hello world!')
+|>
+
+Goodbye Python.
+
+\end{document}

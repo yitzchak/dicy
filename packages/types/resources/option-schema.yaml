@@ -286,6 +286,14 @@ logCategory:
   description: Specific log category to display.
   type: string
   noInvalidate: true
+weaveEngine:
+  description: Weave engine to use if file extension is ambigious.
+  type: string
+  values:
+    - knitr
+    - metys
+    - pweave
+  defaultValue: knitr
 outputDirectory:
   title: Output Directory
   aliases:
