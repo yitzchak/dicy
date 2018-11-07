@@ -17,7 +17,7 @@ export default class Metys extends Rule {
   static description: string = 'Run metys.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return consumer.options.weaveEngine === 'metys' || parameters.some(parameter => parameter.type === 'TexMetys')
+    return parameters.some(parameter => (consumer.options.weaveEngine === 'metys' || parameter.type === 'TexMetys') && parameter.filePath === consumer.filePath)
   }
 
   async getFileActions (file: File): Promise<Action[]> {

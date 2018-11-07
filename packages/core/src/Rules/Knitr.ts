@@ -14,7 +14,8 @@ export default class Knitr extends Rule {
   static description: string = 'Runs knitr on Rnw files.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return consumer.options.weaveEngine === 'knitr'
+    return consumer.options.weaveEngine === 'knitr' &&
+      parameters.some(parameter => parameter.filePath === consumer.filePath)
   }
 
   constructCommand (): CommandOptions {

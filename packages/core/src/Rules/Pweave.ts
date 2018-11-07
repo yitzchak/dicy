@@ -10,7 +10,8 @@ export default class Pweave extends Rule {
   static description: string = 'Runs Pweave on Pnw files.'
 
   static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
-    return consumer.options.weaveEngine === 'pweave'
+    return consumer.options.weaveEngine === 'pweave' &&
+      parameters.some(parameter => parameter.filePath === consumer.filePath)
   }
 
   constructCommand (): CommandOptions {
