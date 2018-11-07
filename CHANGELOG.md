@@ -3,6 +3,12 @@
 All significant changes to this project will be documented in the notes below.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.15.0][] - 2018-11-07
+
+### Added
+
+-   Support for metys weaver.
+
 ## [v0.14.1][] - 2018-10-31
 
 ### Fixed
@@ -287,6 +293,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     `sage`.
 -   Log parsing for Asymptote, BibTeX, Biber, and LaTeX.
 -   Configuration parsing in YAML or TeX magic comments.
+
+[v0.15.0]: https://github.com/yitzchak/dicy/compare/v0.14.1...v0.15.0
 
 [v0.14.1]: https://github.com/yitzchak/dicy/compare/v0.14.0...v0.14.1
 
