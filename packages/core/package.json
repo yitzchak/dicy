@@ -1,6 +1,6 @@
 {
   "name": "@dicy/core",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "Library interface to DiCy, a builder for LaTeX, knitr, literate Agda, literate Haskell and Pweave that automatically builds dependencies.",
   "keywords": [
     "latex",
