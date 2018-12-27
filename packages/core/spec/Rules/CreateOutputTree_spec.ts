@@ -1,5 +1,4 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
-/// <reference path="../../node_modules/jasmine-expect/jasmine-matchers.d.ts" />
 
 import * as fs from 'fs-extra'
 import * as path from 'path'

@@ -1,5 +1,4 @@
 /// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
-/// <reference path="../../node_modules/jasmine-expect/jasmine-matchers.d.ts" />
 
 import SplitIndex from '../../src/Rules/SplitIndex'
 import { initializeRule, RuleDefinition } from '../helpers'

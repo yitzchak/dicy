@@ -161,7 +161,7 @@ specifies the transport mechanism.
 ### RPC Requests and Notificatons
 
 | Name                         | Type                | Parameters                                        | Return             |
-|------------------------------|---------------------|---------------------------------------------------|--------------------|
+| ---------------------------- | ------------------- | ------------------------------------------------- | ------------------ |
 | `clear`                      | Server Request      | `file: Uri`                                       | `Promise<void>`    |
 | `clearAll`                   | Server Request      | None                                              | `Promise<void>`    |
 | `exit`                       | Server Notification | None                                              | None               |

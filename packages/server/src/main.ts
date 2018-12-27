@@ -42,7 +42,7 @@ if (argv.stdio) {
 } else if (argv.nodeIpc) {
   transport = [new rpc.IPCMessageReader(process), new rpc.IPCMessageWriter(process)]
 } else if (argv.port) {
-  transport = rpc.createServerSocketTransport(argv.port)
+  transport = rpc.createServerSocketTransport(argv.port as number)
 } else if (argv.pipe) {
   transport = rpc.createServerPipeTransport(argv.pipe)
 } else {

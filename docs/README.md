@@ -26,7 +26,7 @@ to install a package use a command like `npm install @dicy/core`. Whereas to
 install for command line access use `npm install -g @dicy/cli`.
 
 | Package          | Description                                                   |
-|------------------|---------------------------------------------------------------|
+| ---------------- | ------------------------------------------------------------- |
 | [@dicy/core][]   | JavaScript/TypeScript library interface                       |
 | [@dicy/client][] | JavaScript/TypeScript library interface using JSON-RPC server |
 | [@dicy/cli][]    | Command line interface                                        |

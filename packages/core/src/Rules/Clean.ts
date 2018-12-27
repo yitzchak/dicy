@@ -67,6 +67,7 @@ export default class Clean extends Rule {
     }
 
     const globOptions = { cwd: this.rootPath, onlyDirectories: true }
+    // tslint:disable-next-line:no-unnecessary-type-assertion
     const candidateDirectories: string[] = await fastGlob('**/*', globOptions) as string[]
     candidateDirectories.reverse()
 

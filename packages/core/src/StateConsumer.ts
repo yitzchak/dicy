@@ -270,6 +270,7 @@ export default class StateConsumer implements EventEmitter {
 
   async globPath (pattern: string, { types = 'all', ignorePattern = [] }: GlobOptions = { }): Promise<string[]> {
     try {
+      // tslint:disable-next-line:no-unnecessary-type-assertion
       return await fastGlob(this.expandVariables(pattern), {
         cwd: this.rootPath,
         onlyFiles: types === 'files',
