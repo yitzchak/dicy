@@ -18,6 +18,7 @@ glossaries
 glossaries-extra
 ifplatform
 imakeidx
+l3kernel
 lazylist
 lipsum
 logreq
