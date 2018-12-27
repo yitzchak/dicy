@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import PatchSyncTeX from '../../src/Rules/PatchSyncTeX'
 import { initializeRule } from '../helpers'

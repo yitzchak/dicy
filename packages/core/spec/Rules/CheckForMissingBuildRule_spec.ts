@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import CheckForMissingBuildRule from '../../src/Rules/CheckForMissingBuildRule'
 import Rule from '../../src/Rule'

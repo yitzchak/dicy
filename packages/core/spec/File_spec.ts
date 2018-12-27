@@ -1,4 +1,3 @@
-/// <reference path="../node_modules/@types/jasmine/index.d.ts" />
 
 import * as path from 'path'
 import * as readdir from 'readdir-enhanced'

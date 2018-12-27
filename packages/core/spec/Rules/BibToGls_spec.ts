@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import BibToGls from '../../src/Rules/BibToGls'
 import { initializeRule, RuleDefinition } from '../helpers'

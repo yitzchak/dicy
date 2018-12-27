@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import Sage from '../../src/Rules/Sage'
 import { initializeRule, RuleDefinition } from '../helpers'

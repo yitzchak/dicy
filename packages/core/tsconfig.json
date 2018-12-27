@@ -12,7 +12,7 @@
     "sourceMap": false,
     "strictNullChecks": true,
     "target": "ES2015",
-    "types": ["jasmine-expect"]
+    "types": ["node", "jasmine", "jasmine-expect"]
   },
   "include": [
     "src",

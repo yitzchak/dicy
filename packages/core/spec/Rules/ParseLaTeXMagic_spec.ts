@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import File from '../../src/File'
 import ParseLaTeXMagic from '../../src/Rules/ParseLaTeXMagic'

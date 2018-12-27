@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import ReportLogMessages from '../../src/Rules/ReportLogMessages'
 import { initializeRule, RuleDefinition } from '../helpers'

@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import MetaPost from '../../src/Rules/MetaPost'
 import { initializeRule, RuleDefinition } from '../helpers'

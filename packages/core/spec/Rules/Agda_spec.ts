@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import Agda from '../../src/Rules/Agda'
 import { initializeRule, RuleDefinition } from '../helpers'

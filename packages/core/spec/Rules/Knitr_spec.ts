@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import Knitr from '../../src/Rules/Knitr'
 import { initializeRule, RuleDefinition } from '../helpers'

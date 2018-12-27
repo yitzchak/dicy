@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import LaTeX from '../../src/Rules/LaTeX'
 import { initializeRule, RuleDefinition } from '../helpers'

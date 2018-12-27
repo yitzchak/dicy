@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import DviToSvg from '../../src/Rules/DviToSvg'
 import { initializeRule, RuleDefinition } from '../helpers'

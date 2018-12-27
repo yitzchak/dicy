@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import PsToPdf from '../../src/Rules/PsToPdf'
 import { initializeRule, RuleDefinition } from '../helpers'

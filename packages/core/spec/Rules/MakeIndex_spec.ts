@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import MakeIndex from '../../src/Rules/MakeIndex'
 import { initializeRule, RuleDefinition } from '../helpers'

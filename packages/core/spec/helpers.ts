@@ -1,4 +1,3 @@
-/// <reference path="../node_modules/@types/jasmine/index.d.ts" />
 
 import * as _ from 'lodash'
 import * as fs from 'fs-extra'

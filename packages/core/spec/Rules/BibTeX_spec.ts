@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import BibTeX from '../../src/Rules/BibTeX'
 import { initializeRule, RuleDefinition } from '../helpers'

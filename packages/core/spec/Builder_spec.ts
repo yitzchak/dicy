@@ -1,4 +1,3 @@
-/// <reference path="../node_modules/@types/jasmine/index.d.ts" />
 
 const fileUrl = require('file-url')
 import * as fs from 'fs-extra'

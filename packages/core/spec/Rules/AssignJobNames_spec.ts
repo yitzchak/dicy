@@ -1,4 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
 
 import AssignJobNames from '../../src/Rules/AssignJobNames'
 import { initializeRule, RuleDefinition } from '../helpers'
