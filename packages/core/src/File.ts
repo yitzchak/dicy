@@ -461,6 +461,7 @@ export default class File {
   }
 
   async update (): Promise<boolean> {
+    if (!await this.canRead()) return false
     const updated = await this.updateTimeStamp() && await this.updateHash()
     this.hasBeenUpdated = this.hasBeenUpdated || updated
     return updated
