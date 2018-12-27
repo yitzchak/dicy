@@ -25,7 +25,7 @@ describe('Builder', () => {
   describe('can successfully build', () => {
     let dicy: Builder
     const testPath: string = path.join(__dirname, 'fixtures', 'builder-tests')
-    let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw)$/i })
+    let tests: Array<string> = readdir.sync(testPath, { filter: /\.(lhs|tex|Rnw|lagda|Pnw|tmt)$/i })
 
     for (const name of tests) {
       const spec: any = it(name, async (done) => {

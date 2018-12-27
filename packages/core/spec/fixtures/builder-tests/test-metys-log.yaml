@@ -1,0 +1,20 @@
+- severity: info
+  category: command
+  name: RunTests(test;execute;)
+  text: Executing `metys --help`
+- severity: info
+  category: command
+  name: Metys(build;execute;;test-metys.tmt)
+  text: Executing `metys test-metys.tmt`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;test-metys.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    test-metys.tex`
+- severity: info
+  category: command
+  name: LaTeX(build;execute;;test-metys.tex)
+  text: >-
+    Executing `pdflatex -file-line-error -interaction=batchmode -recorder
+    test-metys.tex`

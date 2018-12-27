@@ -99,6 +99,7 @@ MetaPostLog:
   hashSkip: !!js/regexp /^This is/
 MetaPostOutput:
   fileName: !!js/regexp /\.[0-9]+$/i
+MetysStdOut: {}
 NomenclatureControlFile:
   fileName: !!js/regexp /\.nlo$/i
 NomenclatureListing:
@@ -120,6 +121,7 @@ ParsedMendexLog: {}
 ParsedMendexStdErr: {}
 ParsedMendexStdOut: {}
 ParsedMetaPostLog: {}
+ParsedMetysStdOut: {}
 ParsedSourceMap: {}
 ParsedSplitIndexStdOut: {}
 ParsedSplitIndexStdErr: {}
@@ -137,6 +139,10 @@ PTB:
   fileName: !!js/regexp /\.ptb$/
 PythonNoWeb:
   fileName: !!js/regexp /\.p(n|tex)w$/i
+PythonMarkdown:
+  fileName: !!js/regexp /\.pmd$/i
+RMarkdown:
+  fileName: !!js/regexp /\.rmd$/i
 Sage:
   fileName: !!js/regexp /\.sage$/i
   hashSkip: !!js/regexp /^( _st_.goboom|print .SageT)/
@@ -156,6 +162,10 @@ TableOfContents:
   fileName: !!js/regexp /\.toc$/i
 TeX:
   fileName: !!js/regexp /\.tex$/i
+TexMetys:
+  fileName: !!js/regexp /\.tmt$/i
+TexNoWeb:
+  fileName: !!js/regexp /\.tnw$/i
 XML:
   fileName: !!js/regexp /\.xml$/i
 XindyLog:

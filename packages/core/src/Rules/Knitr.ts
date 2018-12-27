@@ -1,5 +1,9 @@
+import { Command } from '@dicy/types'
+
+import File from '../File'
 import Rule from '../Rule'
-import { CommandOptions } from '../types'
+import StateConsumer from '../StateConsumer'
+import { Action, CommandOptions, ParsedLog, Phase } from '../types'
 
 function escapePath (filePath: string): string {
   return filePath.replace(/\\/g, '\\\\')
@@ -8,6 +12,11 @@ function escapePath (filePath: string): string {
 export default class Knitr extends Rule {
   static parameterTypes: Set<string>[] = [new Set(['RNoWeb'])]
   static description: string = 'Runs knitr on Rnw files.'
+
+  static async isApplicable (consumer: StateConsumer, command: Command, phase: Phase, parameters: File[] = []): Promise<boolean> {
+    return consumer.options.weaveEngine === 'knitr' &&
+      parameters.some(parameter => parameter.filePath === consumer.filePath)
+  }
 
   constructCommand (): CommandOptions {
     const escapedFilePath = escapePath(this.firstParameter.filePath)
