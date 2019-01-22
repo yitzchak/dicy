@@ -29,7 +29,7 @@ the [DiCy][] website.
 This project is licensed under the MIT License - see the LICENSE.md file for
 details.
 
-[appveyor svg]: https://ci.appveyor.com/api/projects/status/s3unjr8c90bhcd99?svg=true
+[appveyor svg]: https://ci.appveyor.com/api/projects/status/606n3xt2oa8l2vme?svg=true
 
 [appveyor]: https://ci.appveyor.com/project/yitzchak/dicy/branch/master
 
