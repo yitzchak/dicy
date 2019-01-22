@@ -1,4 +1,5 @@
 amsrefs
+asymptote
 biblatex
 bibtopic
 caption
@@ -17,6 +18,7 @@ ifplatform
 imakeidx
 index
 l3kernel
+l3packages
 lineno
 lipsum
 logreq
