@@ -39,87 +39,87 @@
   category: Input style
   log:
     file: >-
-      file:///home/yitzi/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/job-1.nlg
+      file:///home/tburton/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/job-1.nlg
     range:
       start: 3
       end: 4
   source:
-    file: 'file:///usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist'
+    file: 'file:///usr/local/texlive/2018/texmf-dist/makeindex/nomencl/nomencl.ist'
     range:
-      start: 70
-      end: 70
+      start: 36
+      end: 36
 - severity: error
   name: makeindex
   text: Unknown specifier lethead_suffix.
   category: Input style
   log:
     file: >-
-      file:///home/yitzi/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/job-1.nlg
+      file:///home/tburton/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/job-1.nlg
     range:
       start: 5
       end: 6
   source:
-    file: 'file:///usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist'
+    file: 'file:///usr/local/texlive/2018/texmf-dist/makeindex/nomencl/nomencl.ist'
     range:
-      start: 71
-      end: 71
+      start: 37
+      end: 37
 - severity: error
   name: makeindex
   text: Unknown specifier lethead_flag.
   category: Input style
   log:
     file: >-
-      file:///home/yitzi/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/job-1.nlg
+      file:///home/tburton/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/job-1.nlg
     range:
       start: 7
       end: 8
   source:
-    file: 'file:///usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist'
+    file: 'file:///usr/local/texlive/2018/texmf-dist/makeindex/nomencl/nomencl.ist'
     range:
-      start: 72
-      end: 72
+      start: 38
+      end: 38
 - severity: error
   name: makeindex
   text: Unknown specifier lethead_prefix.
   category: Input style
   log:
     file: >-
-      file:///home/yitzi/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/output/job-2.nlg
+      file:///home/tburton/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/output/job-2.nlg
     range:
       start: 3
       end: 4
   source:
-    file: 'file:///usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist'
+    file: 'file:///usr/local/texlive/2018/texmf-dist/makeindex/nomencl/nomencl.ist'
     range:
-      start: 70
-      end: 70
+      start: 36
+      end: 36
 - severity: error
   name: makeindex
   text: Unknown specifier lethead_suffix.
   category: Input style
   log:
     file: >-
-      file:///home/yitzi/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/output/job-2.nlg
+      file:///home/tburton/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/output/job-2.nlg
     range:
       start: 5
       end: 6
   source:
-    file: 'file:///usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist'
+    file: 'file:///usr/local/texlive/2018/texmf-dist/makeindex/nomencl/nomencl.ist'
     range:
-      start: 71
-      end: 71
+      start: 37
+      end: 37
 - severity: error
   name: makeindex
   text: Unknown specifier lethead_flag.
   category: Input style
   log:
     file: >-
-      file:///home/yitzi/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/output/job-2.nlg
+      file:///home/tburton/Documents/git/dicy/packages/core/spec/fixtures/builder-tests/output/job-2.nlg
     range:
       start: 7
       end: 8
   source:
-    file: 'file:///usr/local/texlive/2017/texmf-dist/makeindex/nomencl/nomencl.ist'
+    file: 'file:///usr/local/texlive/2018/texmf-dist/makeindex/nomencl/nomencl.ist'
     range:
-      start: 72
-      end: 72
+      start: 38
+      end: 38
