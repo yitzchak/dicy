@@ -16,6 +16,7 @@ fvextra
 ifplatform
 imakeidx
 index
+l3kernel
 lineno
 lipsum
 logreq
